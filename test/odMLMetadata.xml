@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1">
+    <section name="Dataset">
+        <definition>Names (URLs) and times of recorded data files.
+     Datasets are obtained during a Recording and may belong to
+     different Experiments. Related sections that can be used as
+     subsections, parent sections, or siblilngs are Stimulus,
+     HardwareSettings, and Experiment.</definition>
+        <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/dataset/datasetTerms.xml</terminologyURL>
+        <property>
+            <name>Identifier</name>
+            <id />
+            <value><type>string</type>sdafasdfdsf</value>
+            <uncertainty>dsfa</uncertainty>
+            <unit />
+            <type>string</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>An identifier of this dataset. This can be a
+       name under which the dataset should be referred
+       to.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <section name="Cell">
+            <definition>Specification of the recorded cell.
+      Can be a subsection of the Subsect section.</definition>
+            <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/cell/cellTerms.xml</terminologyURL>
+        </section>
+    </section>
+    <section name="Subject">
+        <definition>The investigated experimental subject (animal or person).
+      May contain the Cell and Preparation sections as subsections.</definition>
+        <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/subject/subjectTerms.xml</terminologyURL>
+        <section name="Cell">
+            <definition>Specification of the recorded cell.
+      Can be a subsection of the Subsect section.</definition>
+            <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/cell/cellTerms.xml</terminologyURL>
+        </section>
+        <section name="Cell">
+            <definition>Specification of the recorded cell.
+      Can be a subsection of the Subsect section.</definition>
+            <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/cell/cellTerms.xml</terminologyURL>
+            <section name="Analysis">
+                <definition>Methods, parameters, and files of a data analysis.</definition>
+                <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/analysis/analysisTerms.xml</terminologyURL>
+            </section>
+        </section>
+    </section>
+    <section name="Experiment">
+        <definition>Specification of an experiment. The Experiment is
+      part of a Project and the recorded data for a specific
+      Experiment are found in Datasets. Possible subsections are, for
+      example, Dataset and Stimulus.</definition>
+        <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/experiment/experimentTerms.xml</terminologyURL>
+    </section>
+    <section name="Cell">
+        <definition>Specification of the recorded cell.
+      Can be a subsection of the Subsect section.</definition>
+        <terminologyURL>http://www.g-node.org/odml/terminologies/v1.0/cell/cellTerms.xml</terminologyURL>
+        <property>
+            <name>Identifier</name>
+            <id>Foobar</id>
+            <value>foobarse</value>
+            <uncertainty>super</uncertainty>
+            <unit />
+            <type>string</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>An identifier of this cell. This can be a name under which the cell should be referred to.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>BrainRegion</name>
+            <id>PFC</id>
+            <value>Prefrontal Cortex</value>
+            <uncertainty />
+            <unit />
+            <type>string</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>The region the cell is located in. For example
+         Retina, Cortex, Cerebellum etc.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>Identification</name>
+            <id />
+            <value>dsfsdf</value>
+            <uncertainty />
+            <unit />
+            <type>string</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>How was the cell identified?</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>RestingPotential</name>
+            <id />
+            <value>-70.00</value>
+            <uncertainty />
+            <unit>mV</unit>
+            <type>float</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>What is the cells resting potential of the
+         cell. An indiator for the recording quality.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>Rheobase</name>
+            <id />
+            <value>344.00<type>float</type></value>
+            <uncertainty />
+            <unit>nA</unit>
+                       <valueComment />
+            <defaultFileName />
+            <nameDefinition>The minimum current required to make the cell
+         fire action potentials.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>MembraneCapacity</name>
+            <id>-</id>
+            <value>687.00</value>
+	    <value>123.00</value>
+	    <value>212.00</value>
+            <uncertainty />
+            <unit>pF</unit>
+            <type>float</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>The capacity of the cell.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>TimeConstant</name>
+            <id />
+            <value>23432.00</value>
+            <uncertainty />
+            <unit>ms</unit>
+            <type>float</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>The mebrane time-constant.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+        <property>
+            <name>Comment</name>
+            <id />
+            <value>dsfdsafdsf</value>
+            <uncertainty />
+            <unit />
+            <type>text</type>
+            <valueComment />
+            <defaultFileName />
+            <nameDefinition>A comment on the cell.</nameDefinition>
+            <dependency />
+            <dependencyValue />
+        </property>
+    </section>
+</odML>
+
