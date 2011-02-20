@@ -1,9 +1,42 @@
-
 class Value(object):
-    """A odML value"""
-    def __init__(self, value, dtype=None):
+    """
+    An odML value
+    
+    value
+        mandatory, its the value = content itself.
+    
+    uncertainty (optional)
+        an estimation of the value's uncertainty.
+    
+    unit (optional)
+        the value's unit
+    
+    dtype (optional)
+        the data type of the value
+    
+    defaultFileName (optional)
+        the default file name which should be used when saving the object
+    
+    valueDefinition
+        optional, here additional comments on the value of the property can be given
+        
+    TODO: comment, id?
+    """
+    def __init__(self, value, uncertainty=None, unit=None, dtype=None, defaultFileName=None, valueDefinition=None):
         self._value = value
         self._dtype = None
+        
+        # getter and setter methods are omnitted for now, but they can easily
+        # be introduced later using python-properties
+        self.unit = unit
+        self.uncertainty = uncertainty
+        self.dtype = dtype
+        self.defaultFileName = defaultFileName
+
+    def __repr__(self):
+        if self._dtype:
+            return "<%s %s>" % (str(self._dtype), str(self._value))
+        return "<%s>" % str(self._value)
 
     @property
     def data(self):
@@ -26,7 +59,7 @@ class Value(object):
         return self._uncertainty
 
     @uncertainty.setter
-    def uncertainty(self, new_value)
+    def uncertainty(self, new_value):
         self._uncertainty = new_value
 
     @property

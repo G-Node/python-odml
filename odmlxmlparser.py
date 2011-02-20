@@ -1,23 +1,23 @@
 #!/usr/bin/python
 
-
-from odml import *
+from odML import *
 from xml.etree.ElementTree import ElementTree
 from optparse import OptionParser
 from StringIO import StringIO
+from event import Event
 
 def dumpSection(section, indent=1):
     if not section:
         return
 
-    print "%*s*%s {%s}" % (indent, " ", section.Name, section.NameDefinition)
+    print "%*s*%s {%s}" % (indent, " ", section.name, section.NameDefinition)
 
-    for prop in section.getproperties():
-        print  "%*s:%s" % (indent + 1, " ", prop.Name)
+    for prop in section.properties:
+        print  "%*s:%s" % (indent + 1, " ", prop.name)
         for value in prop.values:
             print  "%*s:%s (%s)" % (indent + 3, " ", value.data, value.dtype)
 
-    for sub in section.getsections():
+    for sub in section.sections:
         dumpSection(sub, indent * 2)
 
 def parseValue(this_node, prop):
@@ -28,7 +28,7 @@ def parseValue(this_node, prop):
         print "node does not have text: %s [%s] of %s" % (this_node, this_node.tag, prop.name)
         return
     
-    val = odMLValue (txt)
+    val = Value (txt)
      
     nodes = list (this_node)
     for node in nodes:
@@ -42,7 +42,7 @@ def parseProperty(this_node):
     name = this_node.find ("name")
     if name is None:
         return None
-    prop = odMLProperty(name.text)
+    prop = Property(name.text)
 
     vls = list (this_node)
     for v in vls:
@@ -56,7 +56,7 @@ def parseSection(this_node):
     name = this_node.get("name")
     if not name:
         return None
-    section = odMLSection(name)
+    section = Section(name)
 
     for node in list(this_node):
         if node.tag == "section":
@@ -75,15 +75,18 @@ def parseSection(this_node):
     return section
 
 def parseXML(xml_file):
-    (data, length, etag) = xml_file.load_contents ()
-    path = StringIO(data)
-
+    """parses an xml-file
+    
+    *xml_file* is a file-object
+    
+    returns an odML-Document
+    """
     tree = ElementTree()
-    root = tree.parse(path)
+    root = tree.parse(xml_file)
 
     print "Parsing odML"
     nodes = list (root)
-    doc = odMLDocument()
+    doc = Document()
     for node in nodes:
         if node.tag != "section":
             continue
@@ -104,7 +107,7 @@ def xml_main():
         parser.print_help()
         return 1
         
-    doc = parseXML (args[0])
+    doc = parseXML (open(args[0]))
 
 
 if __name__ == '__main__':

@@ -4,9 +4,8 @@ import gtk
 import gobject
 import gio
 
-from odml import *
-from document_model import *
-from section_model import *
+from odML import *
+from odML.extra.treemodel import *
 import odmlxmlparser
 
 class odMLTreeModel(gtk.GenericTreeModel):
@@ -91,7 +90,7 @@ class EditorInfoBar(gtk.InfoBar):
 
 class Editor(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
-    def __init__(self, parent=None):
+    def __init__(self, filename=None, parent=None):
         gtk.Window.__init__(self)
         try:
             self.set_screen(parent.get_screen())
@@ -224,6 +223,8 @@ class Editor(gtk.Window):
         statusbar.show()
         
         self._info_bar.show_info ("Welcome to the G-Node odML Editor 0.1")
+        if not filename is None:
+            self.load_document(filename)
         self.show_all()
 
     def __create_action_group(self):
@@ -328,7 +329,7 @@ class Editor(gtk.Window):
 
     def load_document (self, uri):
         xml_file = gio.File (uri)
-        doc = odmlxmlparser.parseXML (xml_file)
+        doc = odmlxmlparser.parseXML(xml_file.read())
         model = None
         if doc:
             model = DocumentModel (doc)
@@ -371,7 +372,7 @@ class Editor(gtk.Window):
         else:
             path = (int(path_string), )
         
-        prop = section.props[path[0]]
+        prop = section._props[path[0]]
         prop.name = new_text
         
 def register_stock_icons():
@@ -422,9 +423,9 @@ def load_icon_pixbufs():
                 icons.append(icon)
     return icons
 
-def main():
+def main(filename=None):
     register_stock_icons()
-    editor = Editor()
+    editor = Editor(filename=filename)
     gtk.main()
 
 if __name__ == '__main__':
@@ -432,4 +433,8 @@ if __name__ == '__main__':
     libc = cdll.LoadLibrary("libc.so.6")
     res = libc.prctl (15, 'odMLEditor', 0, 0, 0)
     print res
-    main()
+    from optparse import OptionParser
+    parser = OptionParser()
+    (options, args) = parser.parse_args()
+    main(filename=args[0]) if len(args) > 0 else main()
+    
