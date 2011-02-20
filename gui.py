@@ -5,8 +5,8 @@ import gobject
 import gio
 
 from odML import *
-from odML.tools.treemodel import *
-import odmlxmlparser
+from odML.tools.treemodel import SectionModel, DocumentModel
+from odML.tools.xmlparser import parseXML
 
 class odMLTreeModel(gtk.GenericTreeModel):
     def __init__(self):
@@ -329,7 +329,7 @@ class Editor(gtk.Window):
 
     def load_document (self, uri):
         xml_file = gio.File (uri)
-        doc = odmlxmlparser.parseXML(xml_file.read())
+        doc = parseXML(xml_file.read())
         model = None
         if doc:
             model = DocumentModel(doc)

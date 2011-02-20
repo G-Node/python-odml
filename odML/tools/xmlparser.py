@@ -1,6 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+"""
+The XML parsing module.
 
-from odML import *
+Parses odML files. Can be invoked standalone:
+
+    python -m odML.tools.xmlparser file.odml
+"""
+from .. import *
 from xml.etree.ElementTree import ElementTree
 from optparse import OptionParser
 from StringIO import StringIO
@@ -97,17 +103,11 @@ def parseXML(xml_file):
 
     return doc
     
-
-def xml_main():
+if __name__ == '__main__':
     parser = OptionParser()
     (options, args) = parser.parse_args()
 
     if len(args) < 1:
         parser.print_help()
-        return 1
-        
-    doc = parseXML (open(args[0]))
-
-
-if __name__ == '__main__':
-    xml_main()
+    else:
+        doc = parseXML (open(args[0]))
