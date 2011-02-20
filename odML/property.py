@@ -3,9 +3,9 @@ from value import Value
 
 class Property(object):
     """An odML Property"""
-    def __init__(self, name, 
-        #definition, dependency, dependencyValue, mapURL, #TODO
-        value=None, section=None, unit=None, dtype=None, uncertainty=None):
+    def __init__(self, name, value, section=None, 
+        synonym=None, definition=None, dependency=None, dependencyValue=None, mapping=None,
+        unit=None, dtype=None, uncertainty=None):
     	"""
     	create a new Property
     	
@@ -30,9 +30,10 @@ class Property(object):
 	 * @param definition {@link String}
 	 * @param dependency {@link String}
 	 * @param dependencyValue {@link String}
-	 * @param mapURL {@link URL}
-	 
+	 * @param mapping {@link URL}
     	"""
+        #TODO doc description for arguments
+        #TODO validate arguments
         self._name = name
         self._section = section
         self._values = []

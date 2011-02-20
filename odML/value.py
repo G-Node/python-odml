@@ -13,18 +13,23 @@ class Value(object):
     
     dtype (optional)
         the data type of the value
+
+    id (optional)
+        an external reference number (e.g. entry in a database)
     
     defaultFileName (optional)
         the default file name which should be used when saving the object
     
-    valueDefinition
+    definition
         optional, here additional comments on the value of the property can be given
         
     TODO: comment, id?
     """
-    def __init__(self, value, uncertainty=None, unit=None, dtype=None, defaultFileName=None, valueDefinition=None):
+    def __init__(self, value, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None):
         self._value = value
         self._dtype = None
+        #TODO fix other values
+        #TODO validate arguments
         
         # getter and setter methods are omnitted for now, but they can easily
         # be introduced later using python-properties

@@ -2,6 +2,13 @@ from property import Property
 
 class Section(object):
     """A odML Section"""
+    type       = None
+    id         = None
+    link       = None
+    repository = None
+    mapping    = None
+    reference  = None # the *import* property
+
     def __init__(self, name, parent=None):
         self._name = name
         self._parent = parent
@@ -31,7 +38,7 @@ class Section(object):
     def del_name_definition(self):
         del self._name_definition
 
-    NameDefinition = property(get_name_definition,
+    definition = property(get_name_definition,
                               set_name_definition,
                               del_name_definition,
                               "Name Definition of the section")
@@ -42,6 +49,7 @@ class Section(object):
     @property
     def properties(self):
     	return self._props
+
     @property
     def sections(self):
     	return self._sections
@@ -59,14 +67,7 @@ class Section(object):
 
     def __iter__(self):
         """iterate over each section and property contained in this section"""
-        self.itersections()
-        self.iterprops()
-        
-    def itersections(self):
         for section in self._sections:
             yield section
-
-    def iterprops(self):
         for prop in self._props:
             yield prop
-
