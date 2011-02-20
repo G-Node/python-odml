@@ -1,4 +1,3 @@
-#from event import Event #no events yet
 from property import Property
 
 class Section(object):

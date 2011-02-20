@@ -4,7 +4,6 @@ from odML import *
 from xml.etree.ElementTree import ElementTree
 from optparse import OptionParser
 from StringIO import StringIO
-from event import Event
 
 def dumpSection(section, indent=1):
     if not section:

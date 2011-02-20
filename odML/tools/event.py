@@ -1,5 +1,3 @@
-
-
 class Event (object):
     def __init__(self):
         self.handlers = set()
@@ -41,6 +39,6 @@ class EventHandler(object):
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
     
-    
-    
-    
+class Eventable:
+    def __init__(self, *args, **kwargs):
+        self.Changed = Event()
