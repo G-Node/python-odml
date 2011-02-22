@@ -1,25 +1,24 @@
-from ...doc import Document
-from ...section import Section
-from ...property import Property
-from ..event import Eventable
+from .. import event
 
-class RootNode(Eventable):
-    def from_path (self, path):
-        child = self._sections[path[0]]
+class RootNode(object):
+    child_name  = "_sections"
+    def from_path(self, path):
+        child = getattr(self, self.child_name)[path[0]]
         if len (path) == 1:
             return child
-        return child.from_path (path[1:])
+        return child.from_path(path[1:])
 
     def to_path(self):
         return None
 
-class ChildNode(RootNode):
-    def to_path (self):
-        path = self._parent.to_path()
-        if not path:
+class ParentedNode(RootNode):
+    parent_name = "_parent"
+    def to_path(self):
+        path = getattr(self, self.parent_name).to_path()
+        if path is None:
             return (self.position, )
         return path + (self.position, )
-
+        
     def next(self):
         """
         returns the next section following in this section's parent's list of sections
@@ -33,46 +32,68 @@ class ChildNode(RootNode):
         will return sec-b
         """
         try:
-            return self._parent._sections[self.position + 1]
-        except:
+            parent = getattr(self, self.parent_name)
+            return getattr(parent, self.child_name)[self.position + 1]
+        except IndexError:
             return None
-
-    @property
-    def position(self):    
-        return self._parent._sections.index(self)
-
-class ListElement(Eventable):
+            
     @property
     def position(self):
-        return self._section._props.index(self)
-        
-    def next(self):
-        try:
-            return self._section._props[self.position + 1]
-        except:
-            return None
+        parent = getattr(self, self.parent_name)
+        return getattr(parent, self.child_name).index(self)
 
-    def _fire_change_event(self, prop_name):
-        if not self._section:
-            return
-        path = (self.position,)
-        print "YYY %s %s" % (self.position, path)
-        self.section.Changed(prop=self, propname=prop_name, path=path)
+class SectionNode(ParentedNode):
+    def from_path(self, path):
+        if not str(path[0]).startswith('p'):
+            return super(SectionNode, self).from_path(path)
+            
+        child = self._props[int(path[0][1:])]
+        if len(path) == 1:
+            return child
+        return child.from_path(path[1:])
 
-def extend_class(A, B):
-    """
-    add our mixin class B to A.__bases__
-    also make sure, that __init__ of both A and B is called
-    """
-    bases = list(A.__bases__)
-    bases.append(B)
-    A.__bases__ = tuple(bases)
-    org = A.__init__
-    def init(*args, **kwargs):
-        org(*args, **kwargs)
-        B.__init__(*args, **kwargs)
-    A.__init__ = init
+class PropertyNode(ParentedNode):
+    parent_name = "_section"
+    child_name = "_props"
+    def to_path(self, parent_name=None):
+        path = super(PropertyNode, self).to_path()
+        return path[:-1] + ("p"+str(path[-1]),)
 
-extend_class(Document, RootNode)
-extend_class(Section, ChildNode)
-extend_class(Property, ListElement)
+class ValueNode(SectionNode):
+    parent_name = "_property"
+    child_name  = "_values"
+
+class Document(event.Document, RootNode): pass
+class Value(event.Value, ValueNode): pass
+class Property(event.Property, PropertyNode): pass
+class Section(event.Section, SectionNode): pass
+
+def on_value_change(value, **kwargs):
+    prop = val._property
+    prop.Changed(prop=prop, value=value, value_pos=treetools.value_position(val), **kwargs)
+    
+Value.Changed += on_value_change
+
+def on_property_change(prop, **kwargs):
+    sec = prop._section
+    sec.Changed(section=sec, prop=prop, prop_pos=treetools.property_position(prop), **kwargs)
+    
+Property.Changed += on_property_change
+
+#old obsolete stuff
+def value_position(cls):
+    return cls._property._values.index(cls)
+
+def property_position(cls):
+    return cls._section._props.index(cls)
+
+def section_position(cls):
+    return cls._parent._sections.index(cls)
+
+def position(cls):
+    if isinstance(cls, Value):
+        return value_position(cls)
+    elif isinstance(cls, Property):
+        return property_position(cls)
+    elif isinstance(cls, Section):
+        return section_position(cls)

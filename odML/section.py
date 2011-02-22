@@ -53,7 +53,7 @@ class Section(object):
     @property
     def sections(self):
     	return self._sections
-        
+    
     def append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):

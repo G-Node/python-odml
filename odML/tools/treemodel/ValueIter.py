@@ -1,5 +1,4 @@
 from ...value import Value
-from ...property import Property
 import PropIter
 import SectionModel
 
@@ -9,21 +8,17 @@ class ValueIter(object):
 
     
     """
-    def __init__(self, value, parent):
+    def __init__(self, value):
         """
         create a new value iterator with a Value object and it's parent a Property object
         """
         assert isinstance(value, Value)
-        assert isinstance(parent, Property)
         self._value = value
-        self._parent = parent
 
     def get_value(self, column):
-        if column == SectionModel.ColMapper["Value"]:
-            return self._value.data
-        if column == SectionModel.ColMapper["Type"]:
-            return self._value.dtype
-        return ""
+        print ":get_value(%s)" % column
+        prop = SectionModel.ColMapper.name_by_column(column)
+        return getattr(self._value, prop)
     
     def to_path(self):
         return None
@@ -33,18 +28,12 @@ class ValueIter(object):
         returns a new ValueIter object for the next element in this multivalue list
         or None
         """
-        try:
-            value = self._parent._values[self.position + 1]
-        except IndexError:
-            return None
-        return ValueIter(value, self._parent)
+        value = self._value.next()
+        if value:
+            return ValueIter(value, self._parent)
     
     def get_children(self):
         return None
-
-    @property
-    def position(self):
-        return self._parent._values.index(self._value)
 
     @property
     def has_child(self):
@@ -56,10 +45,10 @@ class ValueIter(object):
     
     @property
     def parent(self):
-        return PropIter.PropIter(self._parent)
+        return PropIter.PropIter(self._value._property)
     
     def get_nth_child(self, n):
         return None
 
     def __repr__(self):
-        return "<Iter %s <= %s[%d]>" % (repr(self._value), repr(self._parent), self.position)
+        return "<Iter %s <= %s[%d]>" % (repr(self._value), repr(self._value._property), self.position)

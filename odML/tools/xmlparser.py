@@ -6,9 +6,10 @@ Parses odML files. Can be invoked standalone:
 
     python -m odML.tools.xmlparser file.odml
 """
-from .. import *
+#TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
+
+from .. import Document, Section, Property, Value
 from lxml.etree import ElementTree
-from optparse import OptionParser
 from StringIO import StringIO
 
 def get_props(obj, props):
@@ -184,6 +185,8 @@ def parseXML(xml_file):
     return doc
 
 if __name__ == '__main__':
+    from optparse import OptionParser
+
     parser = OptionParser()
     (options, args) = parser.parse_args()
 

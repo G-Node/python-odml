@@ -23,20 +23,19 @@ class Value(object):
     definition
         optional, here additional comments on the value of the property can be given
         
-    TODO: comment, id?
+    TODO: comment
     """
     def __init__(self, value, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None):
-        self._value = value
-        self._dtype = None
+        self._value  = value
+        self._dtype  = None
+        self._property = None
         #TODO fix other values
         #TODO validate arguments
         
-        # getter and setter methods are omnitted for now, but they can easily
-        # be introduced later using python-properties
-        self.unit = unit
-        self.uncertainty = uncertainty
-        self.dtype = dtype
-        self.defaultFileName = defaultFileName
+        self._unit = unit
+        self._uncertainty = uncertainty
+        self._dtype = dtype
+        self._defaultFileName = defaultFileName
 
     def __repr__(self):
         if self._dtype:
@@ -89,7 +88,7 @@ class Value(object):
 
     @comment.setter
     def comment(self, new_value):
-        self.comment = new_value    
+        self._comment = new_value    
 
     @property
     def default_filename(self):

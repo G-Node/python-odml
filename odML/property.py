@@ -37,13 +37,14 @@ class Property(object):
         self._name = name
         self._section = section
         self._values = []
+
         if type(value) is list:
             for v in value:
                 if not isinstance(v, Value):
                     v = Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
-                self._values.append(v)
+                self.add_value(v)
         elif not value is None:
-            self._values.append(value)
+            self.add_value(value)
 
         # getter and setter methods are omnitted for now, but they can easily
         # be introduced later using python-properties
@@ -68,8 +69,7 @@ class Property(object):
     @property
     def values(self):
         """returns the list of values for this property"""
-        #create a copy of the list, so mutations in there won’t affect us:
-        return self._values[:]
+        return self._values
         
     @property
     def value(self):
@@ -102,8 +102,10 @@ class Property(object):
                 if uncertainty is None: uncertainty = self._values[-1].uncertainty
             val = Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
-        value._prop = self
+        value._property = self
 
+    def __iter__(self):
+        return self._values.__iter__()
     # API (private)
     #def _fire_change_event(self, prop_name): #TODO see how we handle events
     #    return None #FIXME: IMPLEMENT

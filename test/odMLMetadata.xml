@@ -49,6 +49,19 @@
                 <type>undefined</type>
                 <definition>Methods, parameters, and files of a data analysis.</definition>
                 <repository>http://www.g-node.org/odml/terminologies/v1.0/analysis/analysisTerms.xml</repository>
+                <property>
+                    <name>MembraneCapacity</name>
+                    <value>212.00
+                    <uncertainty />
+                    <unit>pF</unit>
+                    <type>float</type>
+                    <defaultFileName /></value>
+                    <value>687.00</value>
+                    <value>123.00</value>
+                    <definition>The capacity of the cell.</definition>
+                    <dependency />
+                    <dependencyValue />
+                </property>
             </section>
         </section>
     </section>

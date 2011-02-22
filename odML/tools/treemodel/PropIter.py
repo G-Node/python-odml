@@ -22,32 +22,29 @@ class PropIter(object):
     def get_value(self, column):
         #Stuff that is handled the same way in both cases
         #appears here
-        if column == SectionModel.ColMapper["Name"]:
+        name = SectionModel.ColMapper.name_by_column(column)
+        if name == "name":
             return self._prop.name
         
         if self.has_child:
-            return self.get_mulitvalue(column)
+            return self.get_mulitvalue(name)
         else:
-            return self.get_singlevalue(column)
+            return self.get_singlevalue(name)
         
-    def get_mulitvalue(self, column):
+    def get_mulitvalue(self, name):
         #Most of the stuff is empty and handled by the
         #value
-        if column == SectionModel.ColMapper["Value"]:
+        if name == "value":
                 return "<multi>"
         return ""
     
-    def get_singlevalue(self, column):
+    def get_singlevalue(self, name):
         #here we proxy the value object
         if len (self._prop._values) == 0:
             return ""
         
         prop = self._prop.values[0]
-        if column == SectionModel.ColMapper["Value"]:
-            return prop.data
-        elif column == SectionModel.ColMapper["Type"]:
-            return prop.dtype
-        return "" 
+        return getattr(prop, name)
              
     def to_path(self):
         return None
@@ -61,7 +58,7 @@ class PropIter(object):
     def get_children(self):
         if self.has_child == False:
             return None
-        return ValueIter(self._prop._values[0], parent=self._prop)
+        return ValueIter(self._prop._values[0])
 
     @property
     def has_child(self):
@@ -76,7 +73,7 @@ class PropIter(object):
         return None
     
     def get_nth_child(self, n):
-        return ValueIter(self._prop._values[n], parent=self._prop)
+        return ValueIter(self._prop._values[n])
 
     def __str__(self):
         return "<Iter%d %s>" % (self.id, repr(self._prop))

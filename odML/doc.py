@@ -23,10 +23,13 @@ class Document(object):
     def sections(self):
         return self._sections
 
-    def add_section(self, section):
+    def append(self, section):
         """adds the section to the section-list and makes this document the section’s parent"""
         self._sections.append (section)
         section._parent = self
+        
+    def __iter__(self):
+        return self._sections.__iter__()
 
     def __repr__(self):
         return "<Doc %s by %s (%d sections)>" % (self._version, self._author, len(self._sections))

@@ -174,24 +174,14 @@ class Editor(gtk.Window):
 
         property_tv = gtk.TreeView()
 
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Name", renderer,
-                                    text=SectionModel.ColMapper["Name"])
-        renderer.connect("edited", self.on_prop_edited, SectionModel.ColMapper["Name"])
-        renderer.set_property("editable", True)
-        property_tv.append_column(column)
-        
-        
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Value", renderer,
-                                    text=SectionModel.ColMapper["Value"])
-        property_tv.append_column(column)
-        property_tv.set_expander_column(column)
-        
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Type", renderer,
-                                    text=SectionModel.ColMapper["Type"])
-        property_tv.append_column(column)
+        for name, (id, propname) in SectionModel.ColMapper.sort_iteritems():
+            renderer = gtk.CellRendererText()
+            column = gtk.TreeViewColumn(name, renderer, text=id)
+            renderer.connect("edited", self.on_prop_edited, propname)
+            renderer.set_property("editable", True)
+            property_tv.append_column(column)
+            if name == "Value":
+                property_tv.set_expander_column(column)
         
         property_tv.set_headers_visible(True)
         property_tv.set_rules_hint(True)
@@ -366,14 +356,30 @@ class Editor(gtk.Window):
 
     def on_prop_edited(self, cell, path_string, new_text, model):
         print "n: %s -> %s %s %s" % (path_string, new_text, cell, model)
+        line, col = path_string, model
         section = self._prop_model.section
-        if path_string.startswith ("("):
-            path = tuple(int(s) for s in path_string[1:-1].split(','))
+        if ":" in path_string:
+            path = tuple(int(s) for s in path_string.split(':'))
         else:
             path = (int(path_string), )
+
         
         prop = section._props[path[0]]
-        prop.name = new_text
+        first_row_of_multi = len(path) == 1 and len(prop.values) == 1
+        if first_row_of_multi and col == "value": return
+        if first_row_of_multi and col != "name":
+            for value in prop.values:
+                setattr(value, col, new_text)
+        if len(path) > 1:
+            if col == "name": return
+            value = prop.values[path[1]]
+            setattr(value, col, new_text)
+        else:
+            if col == "name":
+                prop.name = new_text
+            else:
+                value = prop.values[0]
+                setattr(value, col, new_text)
         
 def register_stock_icons():
     icons = [('odml-logo', '_odML', 0, 0, '')]

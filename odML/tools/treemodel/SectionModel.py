@@ -3,19 +3,35 @@ from PropIter import PropIter
 from ValueIter import ValueIter
 import sys
 debug = lambda x: sys.stderr.write(x+"\n")
-#debug = lambda x: 0
+debug = lambda x: 0
 
 class ColumnMapper(object):
     def __init__(self):
-        self._col_map = {"Name"        : 0,
-                         "Value"       : 1,
-                         "Definition"  : 2,
-                         "Type"        : 3,
-                         "Unit"        : 4,
-                         "Comment"     : 5}    
+        self._col_map = {"Name"        : (0, "name"),
+                         "Value"       : (1, "value"),
+                         "Definition"  : (2, "definition"),
+                         "Type"        : (3, "dtype"),
+                         "Unit"        : (4, "unit"),
+                         "Comment"     : (5, "comment"),
+                         "Id"          : (6, "id")}
+        rev_map = {}
+        for k, v in self._col_map.iteritems():
+            rev_map[v[0]] = k
+
+        self.rev_map = rev_map
 
     def __getitem__(self, key):
         return self._col_map[key]
+    
+    def iteritems(self):
+        return self._col_map.iteritems()
+
+    def sort_iteritems(self):
+        for i in xrange(len(self.rev_map)):
+            yield self.rev_map[i], self._col_map[self.rev_map[i]]
+
+    def name_by_column(self, column):
+        return self._col_map[self.rev_map[column]][1]
 
     def __len__(self):
         return len (self._col_map)
@@ -88,8 +104,15 @@ class SectionModel(gtk.GenericTreeModel):
         debug(":on_iter_parent [%s]" % tree_iter)
         return tree_iter.parent
     
-    def on_section_changed(self, *args, **kargs):
-        path = kargs["path"]
+    def on_section_changed(self, section=None, prop=None, value=None, prop_pos=None, value_pos=None, *args, **kargs):
+        """
+        this is called by the Eventable modified MixIns of Value/Property/Section
+        and causes the GUI to refresh the corresponding cells
+        """
+        path = (prop_pos,)
+        if value_pos is not None:
+            path += (value_pos,)
+
         iter = self.get_iter(path)
         self.row_changed(path, iter)
         print ":: Foo! %s" % (str (path))
