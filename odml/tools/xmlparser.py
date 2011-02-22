@@ -177,7 +177,7 @@ def parseXML(xml_file):
             error("Invalid element <%s> in odML document" % node.tag)
         section = parseSection(node)
         if section:
-            doc.add_section(section)
+            doc.append(section)
 
     for sec in doc.sections:
         dumpSection(sec)

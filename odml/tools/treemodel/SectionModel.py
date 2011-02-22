@@ -42,7 +42,7 @@ class SectionModel(gtk.GenericTreeModel):
     def __init__(self, section):
         gtk.GenericTreeModel.__init__(self)
         self._section = section
-        self._section.Changed += self.on_section_changed
+        self._section._Changed += self.on_section_changed
 
     def on_get_flags(self):
         return 0
@@ -71,11 +71,11 @@ class SectionModel(gtk.GenericTreeModel):
         value = prop.values[path[1]]
         if not value:
             return None
-        return ValueIter(value, parent=prop)
+        return ValueIter(value)
 
     def on_get_value(self, tree_iter, column):
         debug(":on_get_value [%d]: %s" % (column, tree_iter))
-        return tree_iter.get_value (column)
+        return tree_iter.get_value(column)
 
     def on_iter_next(self, tree_iter):
         next = tree_iter.get_next()
@@ -109,13 +109,15 @@ class SectionModel(gtk.GenericTreeModel):
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
+        if prop is None: return
+        
         path = (prop_pos,)
         if value_pos is not None:
             path += (value_pos,)
 
+        print path, section, kargs
         iter = self.get_iter(path)
         self.row_changed(path, iter)
-        print ":: Foo! %s" % (str (path))
 
     @property
     def section(self):

@@ -1,11 +1,12 @@
-from odml.tools import treemodel, xmlparser
+#from odml.tools import xmlparser
+import odml.tools.treemodel.mixin
 import unittest
 import samplefile
 
 class TestTreemodel(unittest.TestCase):
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        for s in self.doc: xmlparser.dumpSection(s)
+        #for s in self.doc: xmlparser.dumpSection(s)
 
     def path_property(self, prop, path):
         for i, val in enumerate(prop):
@@ -21,13 +22,14 @@ class TestTreemodel(unittest.TestCase):
             p = path + ('p%d' % i,)
             self.assertEqual(prop.to_path(), p)
             self.path_property(prop, p)
+
+    def test_path_example(self):
+        self.assertEqual(self.doc.sections[0].sections[1].properties[1].value.to_path(), (0,1,'p1',0))
             
     def test_path_consistency(self):
-        doc = self.doc
-        self.assertEqual(doc.sections[0].sections[1].properties[1].value.to_path(), (0,1,'p1',0))
-        for i, section in enumerate(doc):
+        for i, section in enumerate(self.doc):
             self.path_section(section, (i,))
-
+        
 if __name__ == '__main__':
     unittest.main()
 

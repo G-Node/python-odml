@@ -41,22 +41,23 @@ class EventHandler(object):
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
     
-class ModificationNotifier:
+class ModificationNotifier(object):
     def __setattr__(self, name, value):
-        if not name.startswith('_'):
-            self.Changed(self)
-            
+        super(ModificationNotifier, self).__setattr__(name, value)
+        if not name.startswith('_') and hasattr(self, name):
+            self._Changed(self)
+
 # create a seperate Event listener for each class
 # and provide ModificationNotifier Capabilities
 class Value(value.Value, ModificationNotifier):
-    Changed = Event()
+    _Changed = Event()
 
 class Property(prop.Property, ModificationNotifier):
-    Changed = Event()
+    _Changed = Event()
 
 class Section(section.Section, ModificationNotifier):
-    Changed = Event()
+    _Changed = Event()
 
 class Document(doc.Document, ModificationNotifier):
-    Changed = Event()
+    _Changed = Event()
 

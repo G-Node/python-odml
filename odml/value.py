@@ -25,7 +25,7 @@ class Value(object):
         
     TODO: comment
     """
-    def __init__(self, value, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None):
+    def __init__(self, value, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None, comment=None):
         self._value  = value
         self._dtype  = None
         self._property = None
@@ -35,7 +35,10 @@ class Value(object):
         self._unit = unit
         self._uncertainty = uncertainty
         self._dtype = dtype
+        self._definition = definition
+        self._id = id
         self._defaultFileName = defaultFileName
+        self._comment = comment
 
     def __repr__(self):
         if self._dtype:
@@ -48,7 +51,15 @@ class Value(object):
 
     @data.setter
     def data (self, new_value):
-        self._data = new_value
+        self._value = new_value
+        
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        self._value = new_value
 
     @property
     def dtype(self):
@@ -81,6 +92,14 @@ class Value(object):
     @id.setter
     def id(self, new_value):
         self._id = new_value
+        
+    @property
+    def definition(self):
+        return self._definition
+
+    @definition.setter
+    def definition(self, new_value):
+        self._definition = new_value
 
     @property
     def comment(self):

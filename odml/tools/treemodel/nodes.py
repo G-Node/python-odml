@@ -63,37 +63,24 @@ class ValueNode(SectionNode):
     parent_name = "_property"
     child_name  = "_values"
 
+#TODO? provide this externally?
 class Document(event.Document, RootNode): pass
 class Value(event.Value, ValueNode): pass
 class Property(event.Property, PropertyNode): pass
 class Section(event.Section, SectionNode): pass
 
 def on_value_change(value, **kwargs):
-    prop = val._property
-    prop.Changed(prop=prop, value=value, value_pos=treetools.value_position(val), **kwargs)
+    prop = value._property
+    if prop is not None:
+        prop._Changed(prop, value=value, value_pos=value.position, **kwargs)
     
-Value.Changed += on_value_change
+Value._Changed += on_value_change
 
 def on_property_change(prop, **kwargs):
     sec = prop._section
-    sec.Changed(section=sec, prop=prop, prop_pos=treetools.property_position(prop), **kwargs)
+    if sec is not None:
+        sec._Changed(sec, prop=prop, prop_pos=prop.position, **kwargs)
     
-Property.Changed += on_property_change
+Property._Changed += on_property_change
 
-#old obsolete stuff
-def value_position(cls):
-    return cls._property._values.index(cls)
-
-def property_position(cls):
-    return cls._section._props.index(cls)
-
-def section_position(cls):
-    return cls._parent._sections.index(cls)
-
-def position(cls):
-    if isinstance(cls, Value):
-        return value_position(cls)
-    elif isinstance(cls, Property):
-        return property_position(cls)
-    elif isinstance(cls, Section):
-        return section_position(cls)
+# TODO on_section_change(sec, **kwargs)

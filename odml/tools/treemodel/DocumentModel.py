@@ -21,7 +21,7 @@ class DocumentModel(gtk.GenericTreeModel):
 
     def on_get_iter(self, path):
         debug("+on_get_iter: %s" % repr(path))
-        section = self._document.from_path (path)
+        section = self._document.from_path(path)
         debug("-on_get_iter: %s" % (section))
         return section
 

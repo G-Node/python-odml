@@ -16,8 +16,9 @@ class ValueIter(object):
         self._value = value
 
     def get_value(self, column):
-        print ":get_value(%s)" % column
         prop = SectionModel.ColMapper.name_by_column(column)
+        if prop == "name":
+            return
         return getattr(self._value, prop)
     
     def to_path(self):
@@ -28,9 +29,10 @@ class ValueIter(object):
         returns a new ValueIter object for the next element in this multivalue list
         or None
         """
+        print ":get_next(%s)" % repr(self._value)
         value = self._value.next()
         if value:
-            return ValueIter(value, self._parent)
+            return ValueIter(value)
     
     def get_children(self):
         return None
@@ -45,10 +47,11 @@ class ValueIter(object):
     
     @property
     def parent(self):
+        print ":get_parent(%s)" % repr(self._value)
         return PropIter.PropIter(self._value._property)
     
     def get_nth_child(self, n):
         return None
 
     def __repr__(self):
-        return "<Iter %s <= %s[%d]>" % (repr(self._value), repr(self._value._property), self.position)
+        return "<Iter %s <= %s[%d]>" % (repr(self._value), repr(self._value._property), self._value.position)

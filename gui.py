@@ -4,9 +4,10 @@ import gtk
 import gobject
 import gio
 
-from odML import *
-from odML.tools.treemodel import SectionModel, DocumentModel
-from odML.tools.xmlparser import parseXML
+#from odML import *
+import odml.tools.treemodel.mixin
+from odml.tools.treemodel import SectionModel, DocumentModel
+from odml.tools.xmlparser import parseXML
 
 class odMLTreeModel(gtk.GenericTreeModel):
     def __init__(self):
@@ -322,7 +323,7 @@ class Editor(gtk.Window):
         doc = parseXML(xml_file.read())
         model = None
         if doc:
-            model = DocumentModel(doc)
+            model = DocumentModel.DocumentModel(doc)
             self._info_bar.show_info ("Loading of %s done!" % (xml_file.get_basename()))
         self._section_tv.set_model (model)
         self._document = doc
@@ -363,10 +364,10 @@ class Editor(gtk.Window):
         else:
             path = (int(path_string), )
 
-        
         prop = section._props[path[0]]
-        first_row_of_multi = len(path) == 1 and len(prop.values) == 1
+        first_row_of_multi = len(path) == 1 and len(prop.values) > 1
         if first_row_of_multi and col == "value": return
+        print prop, path
         if first_row_of_multi and col != "name":
             for value in prop.values:
                 setattr(value, col, new_text)
