@@ -1,5 +1,8 @@
 import gtk, gobject
 debug = lambda x: 0
+# to enable tree debugging:
+#import sys
+#debug = lambda x: sys.stdout.write(x + "\n")
 
 class DocumentModel(gtk.GenericTreeModel):
     def __init__(self, odml_document):
@@ -16,12 +19,17 @@ class DocumentModel(gtk.GenericTreeModel):
         return gobject.TYPE_STRING
 
     def on_get_path(self, section):
-        debug("+on_get_path: %s" % (section))
+        debug("+on_get_path: %s (%s)" % (section, section.to_path()))
         return section.to_path()
 
     def on_get_iter(self, path):
         debug("+on_get_iter: %s" % repr(path))
-        section = self._document.from_path(path)
+        # we get the path from the treemodel which does not show the properties
+        # therefore adjust the path to always select the sections
+        rpath = (path[0],) # document -> section
+        for i in path[1:]:
+            rpath += (0,i) # section -> sub-section
+        section = self._document.from_path(rpath)
         debug("-on_get_iter: %s" % (section))
         return section
 

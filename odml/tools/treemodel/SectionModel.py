@@ -2,6 +2,7 @@ import gtk, gobject
 from PropIter import PropIter
 from ValueIter import ValueIter
 import sys
+from ... import value, property as odmlproperty
 debug = lambda x: sys.stderr.write(x+"\n")
 debug = lambda x: 0
 
@@ -55,23 +56,22 @@ class SectionModel(gtk.GenericTreeModel):
 
     def on_get_path(self, tree_iter):
         debug("+on_get_path: %s" % (tree_iter))
+        debug("path: %s" % repr(tree_iter.to_path()))
         return tree_iter.to_path()
 
     def on_get_iter(self, path):
         debug(":on_get_iter [%s] " % repr(path))
         assert (len (path) < 3)
         
-        if len(self._section.properties) < (path[0] + 1):
-            return None
+        if len(self._section._props) == 0: return None
         
-        prop = self._section.properties[path[0]]
-        if len(path) == 1:
-            return PropIter(prop)
-
-        value = prop.values[path[1]]
-        if not value:
-            return None
-        return ValueIter(value)
+        path = (1,) + path # we consider properties only
+        
+        res = self._section.from_path(path)
+        if isinstance(res, value.Value):
+            return ValueIter(res)
+        else:
+            return PropIter(res)
 
     def on_get_value(self, tree_iter, column):
         debug(":on_get_value [%d]: %s" % (column, tree_iter))
@@ -97,7 +97,7 @@ class SectionModel(gtk.GenericTreeModel):
         if tree_iter == None:
             prop = self._section._props[n]
             return PropIter(prop)
-            
+        
         tree_iter.get_nth_child(n)
 
     def on_iter_parent(self, tree_iter):

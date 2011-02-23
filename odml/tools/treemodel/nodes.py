@@ -1,24 +1,36 @@
+"""
+provides node functionality for the eventable odml types
+Document, Section, Property and Value
+
+additionally implements change notifications up to the corresponding section
+"""
 from .. import event
 
 class RootNode(object):
-    child_name  = "_sections"
+    @property
+    def children(self):
+        return self._sections
+        
     def from_path(self, path):
-        child = getattr(self, self.child_name)[path[0]]
-        if len (path) == 1:
+        child = self.children[path[0]]
+        if len(path) == 1:
             return child
         return child.from_path(path[1:])
 
     def to_path(self):
-        return None
+        return ()
+    
+    def path_to(self, child):
+        """return the path from this node to its direct child *child*"""
+        return (self._sections.index(child),)
 
 class ParentedNode(RootNode):
-    parent_name = "_parent"
     def to_path(self):
-        path = getattr(self, self.parent_name).to_path()
-        if path is None:
-            return (self.position, )
-        return path + (self.position, )
-        
+        return self.parent.to_path() + self.parent.path_to(self)
+    
+    def successor(self):
+        return self.parent.children[self.position + 1]
+    
     def next(self):
         """
         returns the next section following in this section's parent's list of sections
@@ -32,36 +44,73 @@ class ParentedNode(RootNode):
         will return sec-b
         """
         try:
-            parent = getattr(self, self.parent_name)
-            return getattr(parent, self.child_name)[self.position + 1]
+            return self.successor()
         except IndexError:
             return None
-            
+    
     @property
     def position(self):
-        parent = getattr(self, self.parent_name)
-        return getattr(parent, self.child_name).index(self)
+        return self.parent.path_to(self)[-1]
+        
+    @property
+    def parent(self):
+        return self._parent
 
 class SectionNode(ParentedNode):
+    """
+    SectionNodes are special as they wrap two types of sub-nodes:
+    
+    * SubSections (path = (0, idx))
+    * Properties  (path = (1, idx))
+    """
     def from_path(self, path):
-        if not str(path[0]).startswith('p'):
-            return super(SectionNode, self).from_path(path)
-            
-        child = self._props[int(path[0][1:])]
-        if len(path) == 1:
+        assert len(path) > 1
+        
+        if path[0] == 0: # sections
+            return super(SectionNode, self).from_path(path[1:])
+        
+        # else: properties
+        child = self._props[path[1]]
+        print self, "from_path", path, child
+
+        if len(path) == 2:
             return child
-        return child.from_path(path[1:])
+        return child.from_path(path[2:])
+        
+    
+    def path_to(self, child):
+        print self, "path_to", child
+        if isinstance(child, event.Property):
+            return (1, self._props.index(child))
+        return (0, self._sections.index(child))
 
+        
 class PropertyNode(ParentedNode):
-    parent_name = "_section"
-    child_name = "_props"
-    def to_path(self, parent_name=None):
-        path = super(PropertyNode, self).to_path()
-        return path[:-1] + ("p"+str(path[-1]),)
+    @property
+    def parent(self):
+        """returns the parent section of this Property"""
+        return self._section
+    
+    @property
+    def children(self):
+        return self._values
+    
+    def successor(self):
+        return self.parent._props[self.position + 1]
+    
+    def path_to(self, child):
+        return (self.values.index(child),)
 
-class ValueNode(SectionNode):
-    parent_name = "_property"
-    child_name  = "_values"
+class ValueNode(ParentedNode):
+    @property
+    def parent(self):
+        return self._property
+    
+    def path_from(self, path):
+        raise TypeError("Value objects have no children")
+    
+    def path_to(self, child):
+        raise TypeError("Value objects have no children")
 
 #TODO? provide this externally?
 class Document(event.Document, RootNode): pass
