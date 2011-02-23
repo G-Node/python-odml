@@ -47,7 +47,7 @@ class PropIter(object):
         return getattr(prop, name)
              
     def to_path(self):
-        return None
+        return self._prop.to_path()
     
     def get_next(self):
         prop = self._prop.next()
