@@ -1,9 +1,14 @@
+import types
 class Value(object):
     """
     An odML value
     
     value
-        mandatory, its the value = content itself.
+        mandatory (unless data is set). It's the string representation of the value.
+    
+    data
+        mandatory (unless value is set). It's the content itself.
+        (see the data and value attributes of this object)
     
     uncertainty (optional)
         an estimation of the value's uncertainty.
@@ -25,13 +30,14 @@ class Value(object):
         
     TODO: comment
     """
-    def __init__(self, value, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None, comment=None):
-        self._value  = value
-        self._dtype  = None
-        self._property = None
-        #TODO fix other values
-        #TODO validate arguments
+    def __init__(self, value=None, data=None, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None, comment=None):
+        if data is None and value is None:
+            raise TypeError("either data or value has to be set")
+        if data is not None and value is not None:
+            raise TypeError("only one of data or value can be set")
         
+        self._dtype  = dtype
+        self._property = None        
         self._unit = unit
         self._uncertainty = uncertainty
         self._dtype = dtype
@@ -39,6 +45,13 @@ class Value(object):
         self._id = id
         self._defaultFileName = defaultFileName
         self._comment = comment
+        
+        if value is not None:
+            # assign value directly (through property would raise a change-event)
+            self._value  = types.get(value, self._dtype)
+        elif data is not None:
+            self._value = data
+
 
     def __repr__(self):
         if self._dtype:
@@ -47,6 +60,11 @@ class Value(object):
 
     @property
     def data(self):
+        """
+        used to access the raw data of the value
+        (i.e. a datetime-object if dtype is "datetime")
+        see also the value attribute
+        """
         return self._value
 
     @data.setter
@@ -55,20 +73,58 @@ class Value(object):
         
     @property
     def value(self):
-        return self._value
+        """
+        used to access typed data of the value as a string.
+        Use data to access the raw type, i.e.:
+        
+        >>> v = Value("1", type="float")
+        >>> v.data
+        1.0
+        >>> v.data = 1.5
+        >>> v.value
+        "1.5"
+        >>> v.value = 2
+        >>> v.data
+        2.0
+        """        
+        return types.set(self._value, self._dtype)
 
     @value.setter
-    def value(self, new_value):
-        self._value = new_value
+    def value(self, new_string):
+        self._value = types.get(new_string, self._dtype)
 
     @property
     def dtype(self):
+        """
+        the data type of the value
+        
+        If the data type is changed, it is tried, to convert the value to the new type.
+        
+        If this doesn't work, the change is refused.
+        This behaviour can be overridden by directly accessing the *_dtype* attribute
+        and adjusting the *data* attribute manually.
+        """
         return self._dtype
     
     @dtype.setter
     def dtype(self, new_type):
+        # check if this is a valid type
+        if not types.valid_type(new_type):
+            raise AttributeError("'%s' is not a valid type." % (new_type))
+        # we convert the value if possible
+        old_type  = self._dtype
+        old_value = types.set(self._value, self._dtype)
+        try:
+            new_value = types.get(old_value,  new_type)
+        except: # cannot convert, try the other way around
+            try:
+                old_value = types.set(self._value, new_type)
+                new_value = types.get(old_value,   new_type)
+            except: #doesn't work either, therefore refuse
+                raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
+        self._value = new_value
         self._dtype = new_type
-        
+    
     @property
     def uncertainty(self):
         return self._uncertainty

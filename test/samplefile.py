@@ -33,6 +33,25 @@ class SampleFileCreatorTest(unittest.TestCase):
         doc = SampleFileCreator().create_document()
         for sec in doc.sections:
             xmlparser.dumpSection(sec)
+
+class AttributeTest(unittest.TestCase):
+    def test_value_int(self):
+        v = odml.Value(value="1", dtype="int")
+        self.assertEqual(v.data, 1)
+    def test_conversion_int_to_float(self):
+        v = odml.Value(value="1", dtype="int")
+        v.dtype = "float" #change dtype
+        self.assertEqual(v.dtype, "float")
+        self.assertEqual(v.data, 1.0)
+        self.assertEqual(v.value, "1.0")
+    def test_conversion_float_to_int(self):
+        v = odml.Value(value="1.5", dtype="float")
+        v.dtype = "int"
+        self.assertEqual(v.dtype, "int")
+        self.assertEqual(v.data, 1)
+    def test_value_float(self):
+        v = odml.Value(value="1.5", dtype="float")
+        self.assertEqual(v.data, 1.5)
         
 if __name__ == '__main__':
     unittest.main()
