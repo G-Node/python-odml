@@ -355,33 +355,59 @@ class Editor(gtk.Window):
         print action
         self.visit_uri(Editor.odMLHomepage, timestamp)
 
-    def on_prop_edited(self, cell, path_string, new_text, model):
-        print "n: %s -> %s %s %s" % (path_string, new_text, cell, model)
-        line, col = path_string, model
+    def on_prop_edited(self, cell, path_string, new_text, column_name):
+        """
+        called upon an edit event of the list view
+        
+        updates the underlying model property that corresponds to the edited cell
+        """
+        print "n: %s -> %s %s %s" % (path_string, new_text, cell, column_name)
         section = self._prop_model.section
-        if ":" in path_string:
-            path = tuple(int(s) for s in path_string.split(':'))
-        else:
-            path = (int(path_string), )
+        path    = tuple(int(s) for s in path_string.split(':'))
 
         prop = section._props[path[0]]
+        
+        # are we editing the first_row of a <multi> value?
         first_row_of_multi = len(path) == 1 and len(prop.values) > 1
-        if first_row_of_multi and col == "value": return
-        print prop, path
-        if first_row_of_multi and col != "name":
+        
+        # can only edit the subvalues, but not <multi> itself
+        if first_row_of_multi and column_name == "value": return
+        
+        error = None
+        # if we edit another attribute (e.g. unit), set this for all values of this property
+        if first_row_of_multi and column_name != "name":
             for value in prop.values:
-                setattr(value, col, new_text)
-        if len(path) > 1:
-            if col == "name": return
+                try:
+                    setattr(value, column_name, new_text)
+                except Exception, e:
+                    error = e.message
+        
+        if len(path) > 1: # we edit a sub-value
+            # but do not allow to modify the name of the property there
+            if column_name == "name": return
+            
             value = prop.values[path[1]]
-            setattr(value, col, new_text)
+            try:
+                setattr(value, column_name, new_text)
+            except Exception, e:
+                error = e.message
+
         else:
-            if col == "name":
+            # otherwise we edit a simple property, name maps to the property
+            # everything else to the value
+            if column_name == "name":
                 prop.name = new_text
             else:
                 value = prop.values[0]
-                setattr(value, col, new_text)
+                try:
+                    setattr(value, column_name, new_text)
+                except Exception, e:
+                    error = e.message
         
+        if error:
+            self._info_bar.show_info("Editing failed: %s" % error)
+
+
 def register_stock_icons():
     icons = [('odml-logo', '_odML', 0, 0, '')]
     gtk.stock_add(icons)
