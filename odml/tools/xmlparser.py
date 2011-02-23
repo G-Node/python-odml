@@ -4,11 +4,12 @@ The XML parsing module.
 
 Parses odML files. Can be invoked standalone:
 
-    python -m odML.tools.xmlparser file.odml
+    python -m odml.tools.xmlparser file.odml
 """
 #TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 
 from .. import Document, Section, Property, Value
+from .. import format
 from lxml.etree import ElementTree
 from StringIO import StringIO
 
@@ -37,32 +38,13 @@ def dumpSection(section, indent=1):
 
 class ParserException(Exception): pass
 
-VALUE_ARGUMENTS = {'uncertainty': 0, 'unit': 0, 'type': 0, 'definition': 0, 'id': 0, 'defaultFileName': 0}
-PROPERTY_ARGUMENTS = {'name': 1, 'value': 1, 'synonym': 0, 'definition': 0, 'mapping': 0, 'dependency': 0, 'dependencyValue': 0}
-SECTION_ARGUMENTS = {'type': 1, 'name': 0, 'definition': 0, 'id': 0, 'link': 0, 'import': 0, 'repository': 0, 'mapping': 0, 'section': 0, 'property': 0}
-
-DATA_TYPES = {
-    'int': 0,
-    'float': 0,
-    'string': 0,
-    'text': 0,
-    #n-tuple (extra) TODO
-    'date': 0,
-    'time': 0,
-    'datetime': 0,
-    'boolean': 0,
-    'URL': 0,
-    'binary': 0,
-    'person': 0,
-    }
-
-def check_mandatory_arguments(data, ARGS, tag_name, node):
-    for k, v in ARGS.iteritems():
+def check_mandatory_arguments(data, ArgClass, tag_name, node):
+    for k, v in ArgClass._args.iteritems():
         if v != 0 and not k in data:
             error("missing element <%s> within <%s> tag" % (k, tag_name), node)
 
-def is_valid_argument(child, ARGS, tag_name):
-     if not child.tag in ARGS:
+def is_valid_argument(child, ArgClass, tag_name):
+     if not child.tag in ArgClass._args:
         error("Invalid element <%s> inside <%s> tag" % (child.tag, tag_name), child)
 
 def error(msg, elem):
@@ -87,7 +69,7 @@ def parseValue(node):
     text = node.text.strip() if node.text else ""
     args = {}
     for child in node:
-        is_valid_argument(child, VALUE_ARGUMENTS, "value")
+        is_valid_argument(child, format.Value, "value")
         if child.tag in args:
             error("Element <%s> is given multiple times in <value> tag" % child.tag, child)
         args[child.tag] = child.text.strip() if child.text else None
@@ -113,13 +95,13 @@ def parseProperty(node):
     args = {}
     values = []
     for child in node:
-        is_valid_argument(child, PROPERTY_ARGUMENTS, "property")
+        is_valid_argument(child, format.Property, "property")
         #TODO check if tags occur multiple times?
         if child.tag == "value":
             values.append(parseValue(child))
         args[child.tag] = child.text.strip() if child.text else None
 
-    check_mandatory_arguments(args, PROPERTY_ARGUMENTS, "property", node)
+    check_mandatory_arguments(args, format.Property, "property", node)
     args['value'] = values
     return Property(**args)
 
@@ -136,7 +118,7 @@ def parseSection(node):
     args = {}
 
     for child in node:
-        is_valid_argument(child, SECTION_ARGUMENTS, "section")
+        is_valid_argument(child, format.Section, "section")
         if child.tag == "section":
             subsection = parseSection(child)
             if subsection:
@@ -148,7 +130,7 @@ def parseSection(node):
         else:
             args[child.tag] = child.text.strip() if child.text else None
 
-    check_mandatory_arguments(args, SECTION_ARGUMENTS, "section", node)
+    check_mandatory_arguments(args, format.Section, "section", node)
 
     if 'name' in args: #don't want to overwrite it
         del args['name']
