@@ -334,7 +334,8 @@ class Editor(gtk.Window):
         (model, tree_iter) = tree_selection.get_selected ()
         if not tree_iter:
             return
-        path = model.get_path (tree_iter)
+        path = model.get_path(tree_iter)
+        print "selecting section", repr(path), repr(tree_iter), repr(model)
         section = self._document.from_path(path)
         section_model = SectionModel.SectionModel(section)
         self._property_tv.set_model(section_model)
@@ -380,7 +381,7 @@ class Editor(gtk.Window):
                 try:
                     setattr(value, column_name, new_text)
                 except Exception, e:
-                    error = e.message
+                    error = e
         
         if len(path) > 1: # we edit a sub-value
             # but do not allow to modify the name of the property there
@@ -390,7 +391,7 @@ class Editor(gtk.Window):
             try:
                 setattr(value, column_name, new_text)
             except Exception, e:
-                error = e.message
+                error = e
 
         else:
             # otherwise we edit a simple property, name maps to the property
@@ -402,10 +403,11 @@ class Editor(gtk.Window):
                 try:
                     setattr(value, column_name, new_text)
                 except Exception, e:
-                    error = e.message
+                    error = e
         
-        if error:
-            self._info_bar.show_info("Editing failed: %s" % error)
+        if error is not None:
+            self._info_bar.show_info("Editing failed: %s" % error.message)
+            raise #reraise the exception for a traceback
 
 
 def register_stock_icons():
