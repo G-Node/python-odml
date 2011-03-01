@@ -31,6 +31,10 @@ class XMLWriter:
     """
     Creates XML nodes storing the information of an odML Document
     """
+    header = """<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+"""
     def __init__(self, odml_document):
         self.doc = odml_document
     
@@ -79,10 +83,7 @@ class XMLWriter:
     
     def write_file(self, filename):
         f = open(filename, "w")
-        f.write("""<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
-<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
-""")
+        f.write(self.header)
         f.write(unicode(self))
         f.close()
 
