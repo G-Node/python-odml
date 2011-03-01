@@ -10,31 +10,82 @@ Parses odML files. Can be invoked standalone:
 
 from .. import Document, Section, Property, Value
 from .. import format
-from lxml.etree import ElementTree
+from dumper import dumpSection
+from lxml import etree as ET
+from lxml.builder import E
+
+
 from StringIO import StringIO
 
-def get_props(obj, props):
-    out = []
-    for p in props:
-        if hasattr(obj, p):
-            x = getattr(obj, p)
-            if not x is None:
-                out.append("%s=%s" % (p, repr(x)))
-    return ", ".join(out)
+format.Document._xml_name = "odML"
+format.Section._xml_name = "section"
+format.Property._xml_name = "property"
+format.Value._xml_name = "value"
+format.Document._xml_attributes = ['version']
+format.Section._xml_attributes = ['name']
+format.Property._xml_attributes = []
+format.Value._xml_attributes = []
+format.Value._xml_content = 'value'
 
-def dumpSection(section, indent=1):
-    if not section:
-        return
+class XMLWriter:
+    """
+    Creates XML nodes storing the information of an odML Document
+    """
+    def __init__(self, odml_document):
+        self.doc = odml_document
+    
+    @staticmethod
+    def save_element(e):
+        """
+        returns an xml node for the odML object e
+        """
+        fmt = format.elements[e.__class__]
+        if hasattr(fmt, "_xml_content"):
+            cur = E(fmt._name, getattr(e, fmt.map(fmt._xml_content)))
+        else:
+            cur = E(fmt._name)
+            
+        # generate attributes
+        for k in fmt._xml_attributes:
+            if not hasattr(e, fmt.map(k)): continue
+            
+            val = getattr(e, fmt.map(k))
+            if val is None: continue # no need to save this
+            cur.attrib[k] = unicode(val)
 
-    print "%*s*%s (%s)" % (indent, " ", section.name, get_props(section, ["type", "definition", "id", "link", "import", "repository", "mapping"]))
+        # generate elements
+        for k in fmt._args:
+#            print "processing %s -> %s" % (e, k)
+            if k in fmt._xml_attributes \
+                or not hasattr(e, fmt.map(k)) \
+                or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
+                    continue
+            
+            val = getattr(e, fmt.map(k))
+            if val is None: continue
+            
+            if type(val) is list:
+                for v in val:
+                    ele = XMLWriter.save_element(v)
+                    cur.append(ele)
+            else:
+                ele = E(k, unicode(val))
+                cur.append(ele)
+        
+        return cur
+    
+    def __unicode__(self):
+        return ET.tounicode(self.save_element(self.doc), pretty_print=True)
+    
+    def write_file(self, filename):
+        f = open(filename, "w")
+        f.write("""<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+""")
+        f.write(unicode(self))
+        f.close()
 
-    for prop in section.properties:
-        print  "%*s:%s (%s)" % (indent + 1, " ", prop.name, get_props(prop, ["synonym", "definition", "mapping", "dependency", "dependencyValue"]))
-        for value in prop.values:
-            print  "%*s:%s (%s)" % (indent + 3, " ", value.data, get_props(value, ["dtype", "unit", "uncertainty", "definition", "id", "defaultFileName"]))
-
-    for sub in section.sections:
-        dumpSection(sub, indent * 2)
 
 class ParserException(Exception): pass
 
@@ -150,7 +201,7 @@ def parseXML(xml_file):
     
     returns an odML-Document
     """
-    tree = ElementTree()
+    tree = ET.ElementTree()
     root = tree.parse(xml_file)
 
     doc = Document()
@@ -175,4 +226,5 @@ if __name__ == '__main__':
     if len(args) < 1:
         parser.print_help()
     else:
-        doc = parseXML (open(args[0]))
+        doc = parseXML(open(args[0]))
+    
