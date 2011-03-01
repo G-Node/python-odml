@@ -14,17 +14,17 @@ class TestTreemodel(unittest.TestCase):
         
     def path_section(self, sec, path):
         for i, section in enumerate(sec.sections):
-            p = path + (i,)
+            p = path + (0,i)
             self.assertEqual(section.to_path(), p)
             self.path_section(section, p)
         
         for i, prop in enumerate(sec.properties):
-            p = path + ('p%d' % i,)
+            p = path + (1,i)
             self.assertEqual(prop.to_path(), p)
             self.path_property(prop, p)
 
     def test_path_example(self):
-        self.assertEqual(self.doc.sections[0].sections[1].properties[1].value.to_path(), (0,1,'p1',0))
+        self.assertEqual(self.doc.sections[0].sections[1].properties[1].value.to_path(), (0,0,1,1,1,0))
             
     def test_path_consistency(self):
         for i, section in enumerate(self.doc):

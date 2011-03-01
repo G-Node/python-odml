@@ -71,7 +71,6 @@ class SectionNode(ParentedNode):
         
         # else: properties
         child = self._props[path[1]]
-        print self, "from_path", path, child
 
         if len(path) == 2:
             return child
@@ -79,7 +78,6 @@ class SectionNode(ParentedNode):
         
     
     def path_to(self, child):
-        print self, "path_to", child
         if isinstance(child, event.Property):
             return (1, self._props.index(child))
         return (0, self._sections.index(child))
