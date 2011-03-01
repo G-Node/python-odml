@@ -24,6 +24,7 @@ class DocumentModel(gtk.GenericTreeModel):
 
     def on_get_iter(self, path):
         debug("+on_get_iter: %s" % repr(path))
+        if path == (0,) and len(self._document.sections) == 0: return None
         # we get the path from the treemodel which does not show the properties
         # therefore adjust the path to always select the sections
         rpath = (path[0],) # document -> section
