@@ -4,10 +4,10 @@ import gtk
 import gobject
 import gio
 
-#from odML import *
 import odml.tools.treemodel.mixin
+from odml import *
 from odml.tools.treemodel import SectionModel, DocumentModel
-from odml.tools.xmlparser import parseXML
+from odml.tools.xmlparser import XMLWriter, parseXML
 
 class odMLTreeModel(gtk.GenericTreeModel):
     def __init__(self):
@@ -91,6 +91,8 @@ class EditorInfoBar(gtk.InfoBar):
 
 class Editor(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
+    file_uri = None
+    
     def __init__(self, filename=None, parent=None):
         gtk.Window.__init__(self)
         try:
@@ -213,9 +215,11 @@ class Editor(gtk.Window):
         self._statusbar = statusbar
         statusbar.show()
         
-        self._info_bar.show_info ("Welcome to the G-Node odML Editor 0.1")
         if not filename is None:
             self.load_document(filename)
+        else:
+            self._info_bar.show_info("Welcome to the G-Node odML Editor 0.1")
+
         self.show_all()
 
     def __create_action_group(self):
@@ -226,7 +230,7 @@ class Editor(gtk.Window):
               ( "NewFile", gtk.STOCK_NEW,                  # name, stock id */
                 "_New", "<control>N",                      # label, accelerator */
                 "Create a new document",                   # tooltip */
-                self.activate_action ),
+                self.new_file ),
               ( "FileOpen", gtk.STOCK_OPEN,                # name, stock id */
                 "_Open", None,                             # label, accelerator */
                 "Open a File",                             # tooltip */
@@ -234,11 +238,11 @@ class Editor(gtk.Window):
               ( "Save", gtk.STOCK_SAVE,                    # name, stock id */
                 "_Save", None,                             # label, accelerator */
                 "Save the current file",                   # tooltip */
-                self.activate_action ),
+                self.save ),
               ( "Quit", gtk.STOCK_QUIT,                    # name, stock id */
                 "_Quit", "<control>Q",                     # label, accelerator */
                 "Quit",                                    # tooltip */
-                self.activate_action ),
+                self.quit ),
               ( "About", None,                             # name, stock id */
                 "_About", "",                    # label, accelerator */
                 "About",                                   # tooltip */
@@ -278,7 +282,10 @@ class Editor(gtk.Window):
         dialog = gtk.AboutDialog()
         dialog.set_name("odMLEditor")
         dialog.set_copyright("\302\251 Copyright 2010 Chrisitan Kellner")
-        dialog.set_authors(["Christian Kellner <kellner@bio.lmu.de>"])
+        dialog.set_authors([
+            "Christian Kellner <kellner@bio.lmu.de>",
+            "Hagen Fritsch <fritsch+odml@in.tum.de>",
+            ])
         dialog.set_website(Editor.odMLHomepage)
         dialog.set_license (license_lgpl)
         dialog.set_logo(logo)
@@ -287,11 +294,18 @@ class Editor(gtk.Window):
         
         dialog.connect ("response", lambda d, r: d.destroy())
         dialog.show()
+        
+    def new_file(self, action):
+        print action
+        self._document = Document()
+        self.file_uri = None
+        self.update_statusbar("<new file>")
+        self.update_model()
 
-    def open_file(self, action):
+    def chooser_dialog(self, title, callback, default_button=gtk.STOCK_OPEN):
         chooser = gtk.FileChooserDialog(title="Open Document",
                                         parent=self,
-                                        buttons=(gtk.STOCK_OPEN, gtk.RESPONSE_OK,
+                                        buttons=(default_button, gtk.RESPONSE_OK,
                                                  gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
         file_filter = gtk.FileFilter()
         self._setup_file_filter(file_filter)
@@ -302,12 +316,13 @@ class Editor(gtk.Window):
         
         chooser.add_filter (file_filter)
         chooser.add_filter (all_files)
-        chooser.connect("response", self.on_chooser_resonse)
+        chooser.connect("response", calllback)
         chooser.show()
-        print 'file: open'
-        pass
 
-    def on_chooser_resonse(self, chooser, response_id):
+    def open_file(self, action):
+        self.chooser_dialog(title="Open Document", callback=self.on_file_open)
+        
+    def on_file_open(self, chooser, response_id):
         if response_id == gtk.RESPONSE_OK:
             uri = chooser.get_uri()
             self.load_document (uri)
@@ -319,17 +334,49 @@ class Editor(gtk.Window):
         self.load_document (uri)
 
     def load_document (self, uri):
-        xml_file = gio.File (uri)
-        doc = parseXML(xml_file.read())
+        self.file_uri = uri
+        xml_file = gio.File(uri)
+        self._document = parseXML(xml_file.read())
+        self._info_bar.show_info ("Loading of %s done!" % (xml_file.get_basename()))
+        self.update_statusbar("%s" % (self.file_uri))
+        self.update_model()
+        
+    def update_model(self):
+        """updates the models if self._document changed"""
         model = None
-        if doc:
-            model = DocumentModel.DocumentModel(doc)
-            self._info_bar.show_info ("Loading of %s done!" % (xml_file.get_basename()))
+        if self._document:
+            model = DocumentModel.DocumentModel(self._document)
+            
         self._section_tv.set_model (model)
-        self._document = doc
-        self.update_statusbar("%s" % (uri))
         self._document_model = model
+        
+    def save(self, action):
+        if action == "conditional save":
+            pass #TODO ask if wanna save changes
+        if not self.file_uri:
+            self.chooser_dialog(title="Save Document", callback=self.on_file_save, default_button=gtk.STOCK_SAVE)
+        self.save_file(self.file_uri)
+    
+    def on_file_save(self, chooser, response_id):
+        if response_id == gtk.RESPONSE_OK:
+            uri = chooser.get_uri()
+            self.save_file(uri)
+        chooser.destroy()
+    
+    def save_file(self, uri):
+        doc = XMLWriter(self._document)
+        gf = gio.File(uri)
+        gf.trash() # delete the old one
+        xml_file = gf.create()
+        xml_file.write(doc.header)
+        xml_file.write(unicode(doc))
+        xml_file.close()
+        self._info_bar.show_info("%s was saved" % (gf.get_basename()))
 
+    def quit(self, action):
+        self.save("conditional save")
+        gtk.main_quit()
+        
     def on_section_changed (self, tree_selection):
         (model, tree_iter) = tree_selection.get_selected ()
         if not tree_iter:
