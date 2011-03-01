@@ -111,13 +111,19 @@ class SectionModel(gtk.GenericTreeModel):
         """
         if prop is None: return
         
+        # a change listener is installed globally
+        # we only take notifications for our own section
+        if not section == self._section: return
+        
         path = (prop_pos,)
         if value_pos is not None:
             path += (value_pos,)
 
-        print path, section, kargs
         iter = self.get_iter(path)
         self.row_changed(path, iter)
+        
+    def destroy(self):
+        self._section._Changed -= self.on_section_changed
 
     @property
     def section(self):

@@ -92,6 +92,7 @@ class EditorInfoBar(gtk.InfoBar):
 class Editor(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
     file_uri = None
+    _prop_model = None
     
     def __init__(self, filename=None, parent=None):
         gtk.Window.__init__(self)
@@ -383,6 +384,8 @@ class Editor(gtk.Window):
             return
         path = model.get_path(tree_iter)
         print "selecting section", repr(path), repr(tree_iter), repr(model)
+        if self._prop_model:
+            self._prop_model.destroy()
         section = self._document.from_path(path)
         section_model = SectionModel.SectionModel(section)
         self._property_tv.set_model(section_model)
