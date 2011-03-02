@@ -4,8 +4,9 @@ import gtk
 import gobject
 import gio
 
+import odml
 import odml.tools.treemodel.mixin
-from odml import *
+
 from odml.tools.treemodel import SectionModel, DocumentModel
 from odml.tools.xmlparser import XMLWriter, parseXML
 
@@ -93,14 +94,15 @@ class Editor(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
     file_uri = None
     _prop_model = None
+    edited = False
     
     def __init__(self, filename=None, parent=None):
         gtk.Window.__init__(self)
         try:
             self.set_screen(parent.get_screen())
         except AttributeError:
-            self.connect('destroy', lambda *w: gtk.main_quit())
-
+            self.connect('delete-event', self.quit)
+            
         self.set_title("odML Editor")
         self.set_default_size(700, 500)
 
@@ -297,11 +299,14 @@ class Editor(gtk.Window):
         dialog.show()
         
     def new_file(self, action):
-        print action
-        self._document = Document()
+        if not self.save_if_changed(): return
+        doc = odml.doc.Document()
+        doc.append(odml.section.Section(name="Default Section"))
+        self._document = doc
         self.file_uri = None
         self.update_statusbar("<new file>")
         self.update_model()
+        self.edited = False
 
     def chooser_dialog(self, title, callback, default_button=gtk.STOCK_OPEN):
         chooser = gtk.FileChooserDialog(title="Open Document",
@@ -317,10 +322,12 @@ class Editor(gtk.Window):
         
         chooser.add_filter (file_filter)
         chooser.add_filter (all_files)
-        chooser.connect("response", calllback)
+        chooser.connect("response", callback)
         chooser.show()
 
     def open_file(self, action):
+        """called to show the open file dialog"""
+        if not self.save_if_changed(): return False
         self.chooser_dialog(title="Open Document", callback=self.on_file_open)
         
     def on_file_open(self, chooser, response_id):
@@ -341,6 +348,7 @@ class Editor(gtk.Window):
         self._info_bar.show_info ("Loading of %s done!" % (xml_file.get_basename()))
         self.update_statusbar("%s" % (self.file_uri))
         self.update_model()
+        self.edited = False
         
     def update_model(self):
         """updates the models if self._document changed"""
@@ -348,15 +356,46 @@ class Editor(gtk.Window):
         if self._document:
             model = DocumentModel.DocumentModel(self._document)
             
-        self._section_tv.set_model (model)
+        self._section_tv.set_model(model)
         self._document_model = model
+    
+    def save_if_changed(self):
+        """
+        if the document was modified, ask the user if he or she wants to save the document
         
+        returns false if the user cancelled the action
+        """
+        if not self.edited: return True
+        
+        dialog = gtk.MessageDialog(self, gtk.DIALOG_MODAL,
+                                   gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO,
+                                   "%s has been modified. Do you want to save your changes?" % self.file_uri)
+
+        dialog.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        dialog.set_title("Save changes?")
+        dialog.set_default_response(gtk.RESPONSE_CANCEL)
+
+        response = dialog.run()
+        dialog.destroy()
+
+        if response == gtk.RESPONSE_CANCEL: return False
+        if response == gtk.RESPONSE_NO: return True
+        return self.save(None)
+    
     def save(self, action):
-        if action == "conditional save":
-            pass #TODO ask if wanna save changes
-        if not self.file_uri:
-            self.chooser_dialog(title="Save Document", callback=self.on_file_save, default_button=gtk.STOCK_SAVE)
-        self.save_file(self.file_uri)
+        """
+        called upon save_file action
+        
+        runs a file_chooser dialog if the file_uri is not set
+        """
+        if self.file_uri:
+            return self.save_file(self.file_uri)
+        self.chooser_dialog(title="Save Document", callback=self.on_file_save, default_button=gtk.STOCK_SAVE)
+        return False # TODO this signals that file saving was not successful
+                     #      because no action should be taken until the chooser
+                     #      dialog is finish, however the user might then need to
+                     #      repeat the action, once the document was saved and the
+                     #      edited flag was cleared
     
     def on_file_save(self, chooser, response_id):
         if response_id == gtk.RESPONSE_OK:
@@ -367,15 +406,22 @@ class Editor(gtk.Window):
     def save_file(self, uri):
         doc = XMLWriter(self._document)
         gf = gio.File(uri)
-        gf.trash() # delete the old one
+        try:
+            gf.trash() # delete the old one
+        except gio.Error:
+            # the file most likely did not exists. that's fine
+            pass
         xml_file = gf.create()
         xml_file.write(doc.header)
         xml_file.write(unicode(doc))
         xml_file.close()
         self._info_bar.show_info("%s was saved" % (gf.get_basename()))
+        self.edited = False
+        return True # TODO return false on any error and notify the user
 
-    def quit(self, action):
-        self.save("conditional save")
+    def quit(self, action, extra=None):
+        if not self.save_if_changed(): return True # the event is handled and 
+                                                   # won't be passed to the window
         gtk.main_quit()
         
     def on_section_changed (self, tree_selection):
@@ -424,6 +470,9 @@ class Editor(gtk.Window):
         # can only edit the subvalues, but not <multi> itself
         if first_row_of_multi and column_name == "value": return
         
+        self.edited = True # don't be too strict about real modification
+                           # could also wait for real change events of our
+                           # data structures in the future
         error = None
         # if we edit another attribute (e.g. unit), set this for all values of this property
         if first_row_of_multi and column_name != "name":
@@ -458,7 +507,6 @@ class Editor(gtk.Window):
         if error is not None:
             self._info_bar.show_info("Editing failed: %s" % error.message)
             raise #reraise the exception for a traceback
-
 
 def register_stock_icons():
     icons = [('odml-logo', '_odML', 0, 0, '')]
@@ -517,7 +565,6 @@ if __name__ == '__main__':
     from ctypes import *
     libc = cdll.LoadLibrary("libc.so.6")
     res = libc.prctl (15, 'odMLEditor', 0, 0, 0)
-    print res
     from optparse import OptionParser
     parser = OptionParser()
     (options, args) = parser.parse_args()
