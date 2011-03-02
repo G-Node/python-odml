@@ -42,9 +42,9 @@ class Property(object):
             for v in value:
                 if not isinstance(v, Value):
                     v = Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
-                self.add_value(v)
+                self.append(v)
         elif not value is None:
-            self.add_value(value)
+            self.append(value)
 
         # getter and setter methods are omnitted for now, but they can easily
         # be introduced later using python-properties
@@ -83,7 +83,7 @@ class Property(object):
         #create a copy of the list, so mutations in there won’t affect us:
         return self._values[:] 
     
-    def add_value(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
+    def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
         """
         adds a value to the list of values
         
@@ -100,7 +100,7 @@ class Property(object):
                 if unit is None: unit = self._values[-1].unit
                 if type is None: dtype = self._values[-1].dtype
                 if uncertainty is None: uncertainty = self._values[-1].uncertainty
-            val = Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            value = Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
         value._property = self
 
