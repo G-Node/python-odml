@@ -9,6 +9,7 @@ import odml.tools.treemodel.mixin
 
 from odml.tools.treemodel import SectionModel, DocumentModel
 from odml.tools.xmlparser import XMLWriter, parseXML
+from odml.tools.gui.PropertyView import PropertyView
 
 class odMLTreeModel(gtk.GenericTreeModel):
     def __init__(self):
@@ -90,10 +91,19 @@ class EditorInfoBar(gtk.InfoBar):
         self.hide()
         self._timerid = 0
 
+class ScrolledWindow(gtk.ScrolledWindow):
+    def __init__(self, widget):
+        super(ScrolledWindow, self).__init__()
+        self.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.add(widget)
+        self.show()
+
 class Editor(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
     file_uri = None
     _prop_model = None
+    _current_property_object = None
     edited = False
     
     def __init__(self, filename=None, parent=None):
@@ -104,7 +114,7 @@ class Editor(gtk.Window):
             self.connect('delete-event', self.quit)
             
         self.set_title("odML Editor")
-        self.set_default_size(700, 500)
+        self.set_default_size(800, 500)
 
         icons = load_icon_pixbufs()
         self.set_icon_list(*icons)
@@ -121,12 +131,12 @@ class Editor(gtk.Window):
         bar = merge.get_widget("/MenuBar")
         bar.show()
 
-        table = gtk.Table(1, 6, False)
+        table = gtk.Table(2, 6, False)
         self.add(table)
         
         table.attach(bar,
                      # X direction #          # Y direction
-                     0, 1,                      0, 1,
+                     0, 2,                      0, 1,
                      gtk.EXPAND | gtk.FILL,     0,
                      0,                         0);
         
@@ -144,13 +154,26 @@ class Editor(gtk.Window):
         tool_button.set_arrow_tooltip_text ("Open a recently used file")
         tool_button.set_label ("Open")
         tool_button.set_tooltip_text ("Open Files")
+        
+        statusbar = gtk.Label()
+        table.attach(statusbar,
+                     # X direction           Y direction
+                     1, 2,                   1, 2,
+                     0,                      0,
+                     0,                      0)
+        statusbar.show()
+        statusbar.set_use_markup(True)
+        statusbar.set_justify(gtk.JUSTIFY_RIGHT)
+        statusbar.set_alignment(1, 0.9) # all free space left, and most top of widget
+        statusbar.connect("activate-link", self.property_switch)
+        self._property_status = statusbar
 
         hpaned = gtk.HPaned ()
         hpaned.show()
         hpaned.set_position (150)
         table.attach (hpaned,
                       # X direction           Y direction
-                      0, 1,                   3, 4,
+                      0, 2,                   3, 4,
                       gtk.EXPAND | gtk.FILL,  gtk.EXPAND | gtk.FILL,
                       0,                      0);
         
@@ -165,17 +188,11 @@ class Editor(gtk.Window):
 
         selection = section_tv.get_selection()
         selection.set_mode (gtk.SELECTION_BROWSE)
-        selection.connect ("changed", self.on_section_changed)
+        selection.connect("changed", self.on_section_selected)
 
         section_view = gtk.VBox (homogeneous=False, spacing=0)
-        section_scrolled = gtk.ScrolledWindow ()
-        section_scrolled.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        section_scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        section_scrolled.add (section_tv)
-        section_scrolled.show()
-        section_view.pack_start (section_scrolled, True, True, 1)
+        section_view.pack_start(ScrolledWindow(section_tv), True, True, 1)
         section_view.show()
-
         hpaned.add1(section_view)
 
         property_tv = gtk.TreeView()
@@ -191,28 +208,32 @@ class Editor(gtk.Window):
         
         property_tv.set_headers_visible(True)
         property_tv.set_rules_hint(True)
+        property_tv.get_selection().connect("changed", self.on_property_selected)
         
-        property_scrolled = gtk.ScrolledWindow ()
-        property_scrolled.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        property_scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        property_scrolled.add (property_tv)
-        property_scrolled.show()
-        property_view = gtk.VBox (homogeneous=False, spacing=0)
+        property_view = gtk.VBox(homogeneous=False, spacing=0)
 
         info_bar = EditorInfoBar ()
         self._info_bar = info_bar
-        property_view.pack_start (info_bar, False, False, 1)
+        property_view.pack_start(info_bar, False, False, 1)
 
-        property_view.pack_start (property_scrolled, True, True, 1)
+        property_view.pack_start(ScrolledWindow(property_tv), True, True, 1)
         self._property_tv = property_tv
         self._section_tv = section_tv
-
-        hpaned.add2(property_view)
-
+        # property_view to edit ODML-Properties
+        
+        # to edit properties of Document, Section or Property:
+        self._property_view = PropertyView()
+        hp = gtk.HPaned()
+        hp.add1(property_view)
+        hp.add2(ScrolledWindow(self._property_view._treeview))
+        hp.set_position(450)
+        hp.show()
+        hpaned.add2(hp)
+        
         statusbar = gtk.Statusbar()
         table.attach(statusbar,
                      # X direction           Y direction
-                     0, 1,                   5, 6,
+                     0, 2,                   5, 6,
                      gtk.EXPAND | gtk.FILL,  0,
                      0,                      0)
         self._statusbar = statusbar
@@ -357,6 +378,7 @@ class Editor(gtk.Window):
             model = DocumentModel.DocumentModel(self._document)
             
         self._section_tv.set_model(model)
+        self.set_property_object(self._document)
         self._document_model = model
     
     def save_if_changed(self):
@@ -424,8 +446,8 @@ class Editor(gtk.Window):
                                                    # won't be passed to the window
         gtk.main_quit()
         
-    def on_section_changed (self, tree_selection):
-        (model, tree_iter) = tree_selection.get_selected ()
+    def on_section_selected(self, tree_selection):
+        (model, tree_iter) = tree_selection.get_selected()
         if not tree_iter:
             return
         path = model.get_path(tree_iter)
@@ -436,6 +458,41 @@ class Editor(gtk.Window):
         section_model = SectionModel.SectionModel(section)
         self._property_tv.set_model(section_model)
         self._prop_model = section_model
+        self.set_property_object(section)
+    
+    def on_property_selected(self, tree_selection):
+        (model, tree_iter) = tree_selection.get_selected()
+        if not tree_iter: return
+        path = model.get_path(tree_iter)
+        if path:
+            self.set_property_object(self._document.from_path(path))
+    
+    def set_property_object(self, cur, obj=None):
+        self._property_view.set_model(cur)
+        names = []
+        if obj is None:
+            self._current_property_object = cur
+            obj = cur
+        
+        while hasattr(obj, "parent"):
+            names.append(
+                ( ("<b>%s</b>" if obj == cur else "%s") % obj.name,
+                  ":".join([str(i) for i in obj.to_path()])) )
+            obj = obj.parent
+        names.append(("<b>Document</b>" if obj == cur else "Document", ""))
+        self._property_status.set_markup(": ".join(
+            ['<a href="%s">%s</a>' % (path, name) for name, path in names[::-1]]
+            ) + " ")
+        
+    def property_switch(self, widget, path):
+        """called if a link in the property_status Label widget is clicked"""
+        if path:
+            path = [int(i) for i in path.split(":")]
+            obj = self._document.from_path(path)
+        else:
+            obj = self._document
+        self.set_property_object(obj, self._current_property_object)
+        return True
 
     def update_statusbar(self, message, clear_previous=True):
         if clear_previous:
