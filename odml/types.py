@@ -5,6 +5,9 @@ for odml
 
 import sys
 self = sys.modules[__name__].__dict__
+
+from datetime import date
+
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
 def valid_type(dtype):
@@ -78,8 +81,14 @@ def time_set(value):
     raise Exception("Not implemented")
     return "TODO" #TODO read spec
 
-date_get = time_get
-date_set = time_set
+def date_get(string):
+    if not string: return None
+    return date(*[int(i) for i in string.split('-')])
+
+def date_set(value):
+    if not value: return None
+    return value.isoformat()
+
 datetime_get = time_get
 datetime_set = datetime_get
 
