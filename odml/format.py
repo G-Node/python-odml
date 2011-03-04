@@ -53,7 +53,6 @@ class Section(Format):
         'definition': 0,
         'id': 0,
         'link': 0,
-        'import': 0,
         'repository': 0,
         'mapping': 0,
         'section': 0,

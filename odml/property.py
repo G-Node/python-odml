@@ -3,6 +3,13 @@ from value import Value
 
 class Property(object):
     """An odML Property"""
+    definition = None
+    synonym    = None
+    dependency = None
+    dependencyValue = None
+    mapping    = None
+    
+    
     def __init__(self, name, value, section=None, 
         synonym=None, definition=None, dependency=None, dependencyValue=None, mapping=None,
         unit=None, dtype=None, uncertainty=None):

@@ -1,24 +1,42 @@
 #-*- coding: utf-8
+import types
+
 class Document(object):
     """A represenation of an odML document in memory"""
-    def __init__(self, author=None, date=None, version=1.0):
+    
+    repository = None
+    
+    def __init__(self, author=None, date=None, version=None, repository=None):
         self._author = author
-        self._date = date
+        self._date = date # date must be a datetime
         self._version = version
+        self._repository = repository
         self._sections = []
 
     @property
     def author(self):
         return self._author
+        
+    @author.setter
+    def author(self, new_value):
+        self._author = new_value
 
     @property
     def version(self):
         return self._version
+        
+    @version.setter
+    def version(self, new_value):
+        self._version = new_value
 
     @property
     def date(self):
-        return self._date
+        return types.set(self._date, "date")
         
+    @date.setter
+    def date(self, new_value):
+        self._date = types.get(new_value, "date")
+
     @property
     def sections(self):
         return self._sections
