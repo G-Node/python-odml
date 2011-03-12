@@ -37,7 +37,15 @@ ui_info = \
     <toolitem name='Open' action='OpenRecent' />
     <toolitem name='Save' action='Save' />
   </toolbar>
+  <popup name='SectionPopupMenu'>
+    <menuitem name='NewSection' action='AddSection'/>
+  </popup>
+  <popup name='PropertyPopupMenu'>
+    <menuitem name='NewProperty' action='AddProperty'/>
+    <menuitem name='NewValue' action='AddValue'/>
+  </popup>
 </ui>'''
+
 
 license_lgpl = \
     '''This program is free software; you can redistribute it and/or
@@ -130,6 +138,9 @@ class Editor(gtk.Window):
             print "building menus failed: %s" % msg
         bar = merge.get_widget("/MenuBar")
         bar.show()
+        
+        self.section_popup_menu = merge.get_widget("/SectionPopupMenu")
+        self.property_popup_menu = merge.get_widget("/PropertyPopupMenu")
 
         table = gtk.Table(2, 6, False)
         self.add(table)
@@ -189,6 +200,7 @@ class Editor(gtk.Window):
         selection = section_tv.get_selection()
         selection.set_mode (gtk.SELECTION_BROWSE)
         selection.connect("changed", self.on_section_selected)
+        section_tv.connect("button_press_event", self.on_button_press)
 
         section_view = gtk.VBox (homogeneous=False, spacing=0)
         section_view.pack_start(ScrolledWindow(section_tv), True, True, 1)
@@ -209,6 +221,7 @@ class Editor(gtk.Window):
         property_tv.set_headers_visible(True)
         property_tv.set_rules_hint(True)
         property_tv.get_selection().connect("changed", self.on_property_selected)
+        property_tv.connect("button_press_event", self.on_button_press)
         
         property_view = gtk.VBox(homogeneous=False, spacing=0)
 
@@ -275,6 +288,18 @@ class Editor(gtk.Window):
                 "Visit Homepage", "",                      # label, accelerator */
                 "Go to the odML Homepage",                 # tooltip */
                 self.on_visit_homepage ),
+              ( "AddSection", None,
+                "Add a Section", "",
+                "Insert a new section",
+                self.add_section ),
+              ( "AddProperty", None,
+                "Add a Property", "",
+                "Insert a new property",
+                self.add_property ),
+              ( "AddValue", None,
+                "Add a Value", "",
+                "Insert an additional value to the property",
+                self.add_value ),
               )
 
         recent_action = gtk.RecentAction ("OpenRecent",
@@ -446,11 +471,94 @@ class Editor(gtk.Window):
                                                    # won't be passed to the window
         gtk.main_quit()
         
+    # ################
+    # popup menu stuff
+        
+    def on_button_press(self, widget, event):
+        if event.button == 3: # right-click
+            x = int(event.x)
+            y = int(event.y)
+            model = widget.get_model()
+            path = widget.get_path_at_pos(x, y)
+            if path:
+                path, col, x, y = path
+            else:
+                path = ()
+            if path:
+                path = model.model_path_to_odml_path(path)
+            
+            if isinstance(model, DocumentModel.DocumentModel):
+                popup = self.section_popup_menu
+            else:
+                popup = self.property_popup_menu
+                    
+            self.popup_data = (model, path)
+            popup.popup(None, None, None, event.button, event.time)
+    
+    def add_section(self, action):
+        """
+        popup menu action: add section
+        
+        adds a section to the selected section or to the root document
+        """
+        model, path = self.popup_data
+        obj = self._document
+        if path:
+            obj = obj.from_path(path)
+        sec = odml.Section(name="unnamed section")
+        obj.append(sec)
+        
+        # notify the selected section row, that it might have got a new child
+        path = model.odml_path_to_model_path(path)
+        model.row_has_child_toggled(path, model.get_iter(path))
+        
+        # notify the model about the newly inserted row
+        path = model.odml_path_to_model_path(sec.to_path())
+        model.row_inserted(path, model.get_iter(path))
+
+    
+    def add_property(self, action):
+        """
+        popup menu action: add property
+        
+        add a property to the active section
+        """
+        model, path = self.popup_data
+        prop = odml.Property(name="unnamed property", value="")
+        model.section.append(prop)
+        
+        # notify the model about the newly inserted row
+        path = model.odml_path_to_model_path(prop.to_path())
+        model.row_inserted(path, model.get_iter(path))
+    
+    def add_value(self, action):
+        """
+        popup menu action: add value
+        
+        add a value to the selected property
+        """
+        # TODO this can be reached also if no property is selected
+        #      the context-menu item should be disabled in this case?
+        model, path = self.popup_data
+        obj = self._document.from_path(path)
+        val = odml.Value("")
+        obj.append(val)
+        
+        # notify the current property row, that it might have got a new child
+        path = model.odml_path_to_model_path(path)
+        model.row_has_child_toggled(path, model.get_iter(path))
+        
+        # notify the model about the newly inserted row
+        path = model.odml_path_to_model_path(val.to_path())
+        model.row_inserted(path, model.get_iter(path))        
+        
     def on_section_selected(self, tree_selection):
         (model, tree_iter) = tree_selection.get_selected()
         if not tree_iter:
             return
         path = model.get_path(tree_iter)
+        # if path:
+        #    path = model.model_path_to_odml_path(path)
         print "selecting section", repr(path), repr(tree_iter), repr(model)
         if self._prop_model:
             self._prop_model.destroy()
@@ -504,9 +612,8 @@ class Editor(gtk.Window):
             timestamp = gtk.get_current_event_time()
         gtk.show_uri(self.get_screen(), uri, timestamp)
 
-    def on_visit_homepage (self, action):
+    def on_visit_homepage(self, action):
         timestamp = None
-        print action
         self.visit_uri(Editor.odMLHomepage, timestamp)
 
     def on_prop_edited(self, cell, path_string, new_text, column_name):

@@ -53,7 +53,15 @@ class SectionModel(gtk.GenericTreeModel):
 
     def on_get_column_type(self, index):
         return gobject.TYPE_STRING
-
+      
+    def model_path_to_odml_path(self, path):
+        # (n, ...) -> (1, ...)
+        return self.section.to_path() + (1,) + path # we consider properties only
+        
+    def odml_path_to_model_path(self, path):
+        sp = len(self.section.to_path())
+        return path[sp+1:]
+    
     def on_get_path(self, tree_iter):
         debug("+on_get_path: %s" % (tree_iter))
         debug("path: %s" % repr(tree_iter.to_path()))
