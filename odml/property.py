@@ -1,5 +1,5 @@
 #-*- coding: utf-8
-from value import Value
+import value as odml_value
 
 class Property(object):
     """An odML Property"""
@@ -47,8 +47,8 @@ class Property(object):
 
         if type(value) is list:
             for v in value:
-                if not isinstance(v, Value):
-                    v = Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
+                if not isinstance(v, odml_value.Value):
+                    v = odml_value.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
                 self.append(v)
         elif not value is None:
             self.append(value)
@@ -102,12 +102,12 @@ class Property(object):
         value-list if *copy_attributes* is True. If there is no value present to be
         copied from, an IndexError will be raised.
         """
-        if not isinstance(value, Value):
+        if not isinstance(value, odml_value.Value):
             if copy_attributes:
                 if unit is None: unit = self._values[-1].unit
                 if type is None: dtype = self._values[-1].dtype
                 if uncertainty is None: uncertainty = self._values[-1].uncertainty
-            value = Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            value = odml_value.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
         value._property = self
 
