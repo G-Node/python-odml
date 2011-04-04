@@ -1,6 +1,9 @@
-from property import Property
+import base
+import format
+from property import Property # this is supposedly ok, as we only use it for an isinstance check
+                              # it MUST however not be used to create any Property objects
 
-class Section(object):
+class Section(base.sectionable):
     """A odML Section"""
     type       = None
     id         = None
@@ -9,11 +12,13 @@ class Section(object):
     mapping    = None
     reference  = None # the *import* property
 
+    _format = format.Section
+
     def __init__(self, name, parent=None):
         self._name = name
         self._parent = parent
-        self._sections = []
-        self._props = []
+        self._props = base.SmartList()
+        super(BaseSection, self).__init__()
 
     def __repr__(self):
         return "<Section %s (%d)>" % (self._name, len(self._sections))
@@ -53,6 +58,10 @@ class Section(object):
     @property
     def sections(self):
     	return self._sections
+
+    @property
+    def parent(self):
+        return self._parent
     
     def append(self, obj):
         """append a Section or Property"""
@@ -71,3 +80,18 @@ class Section(object):
             yield section
         for prop in self._props:
             yield prop
+
+    def clone(self):
+        """
+        clone this object recursively allowing to copy it independently
+        to another document
+        """
+        obj = super(BaseSection, self).clone()
+        
+        obj._props = base.SmartList()
+        for p in self._props:
+            obj.append(p.clone())
+        
+        return obj
+
+BaseSection = Section

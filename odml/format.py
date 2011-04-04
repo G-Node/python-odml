@@ -3,21 +3,27 @@ A module providing general format information
 and mappings of xml-attributes to their python class equivalents
 """
 
-from . import doc, section, property, value
-
 class Format(object):
     _map = {}
     _rev_map = None
     
     def map(self, name):
+        """maps an odml name to a python name"""
         return self._map.get(name, name)
+    
     def revmap(self, name):
+        """maps a python name to an odml name"""
         if self._rev_map is None:
             # create the reverse map only if requested
             self._rev_map = {}
             for k,v in self._map.iteritems():
                 self._rev_map[v] = k
         return self._rev_map.get(name, name)
+    
+    def __iter__(self):
+        """iterates each python property name"""
+        for k in self._args:
+            yield self.map(k)
 
 class Value(Format):
     _name = "value"
@@ -80,14 +86,6 @@ class Document(Format):
 Document = Document()
 Section  = Section()
 Value    = Value()
-Property = Property()
+Property = Property()    
 
-elements = {
-    doc.Document:      Document,
-    section.Section:   Section,
-    property.Property: Property,
-    value.Value:       Value
-    }
-    
-
-__all__ = [Document, Section, Property, Value, elements]
+__all__ = [Document, Section, Property, Value]

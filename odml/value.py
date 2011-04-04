@@ -1,5 +1,8 @@
 import types
-class Value(object):
+import base
+import format
+
+class Value(base.baseobject):
     """
     An odML value
     

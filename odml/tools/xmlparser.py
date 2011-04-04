@@ -43,7 +43,7 @@ class XMLWriter:
         """
         returns an xml node for the odML object e
         """
-        fmt = format.elements[e.__class__]
+        fmt = e._format
         if hasattr(fmt, "_xml_content"):
             cur = E(fmt._name, getattr(e, fmt.map(fmt._xml_content)))
         else:

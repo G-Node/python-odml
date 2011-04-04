@@ -1,7 +1,9 @@
 #-*- coding: utf-8
+import base
+import format
 import value as odml_value
 
-class Property(object):
+class Property(base.baseobject):
     """An odML Property"""
     definition = None
     synonym    = None
@@ -9,6 +11,7 @@ class Property(object):
     dependencyValue = None
     mapping    = None
     
+    _format = format.Property
     
     def __init__(self, name, value, section=None, 
         synonym=None, definition=None, dependency=None, dependencyValue=None, mapping=None,
@@ -113,6 +116,16 @@ class Property(object):
 
     def __iter__(self):
         return self._values.__iter__()
-    # API (private)
-    #def _fire_change_event(self, prop_name): #TODO see how we handle events
-    #    return None #FIXME: IMPLEMENT
+
+    def clone(self):
+        """
+        clone this object recursively allowing to copy it independently
+        to another document
+        """
+        obj = super(Property, self).clone()
+        
+        obj._values = []
+        for v in self._values:
+            obj.append(v.clone())
+
+        return obj
