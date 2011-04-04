@@ -62,9 +62,11 @@ def set(value, dtype=None):
     return self.get(dtype+"_set", str_set)(value)
 
 def int_get(string):
+    if not string: return 0
     return int(float(string))
 
 def float_get(string):
+    if not string: return 0.0
     return float(string)
 
 def str_get(string):
