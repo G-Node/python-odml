@@ -22,7 +22,7 @@ class Value(object):
     id (optional)
         an external reference number (e.g. entry in a database)
     
-    defaultFileName (optional)
+    default_filename (optional)
         the default file name which should be used when saving the object
     
     definition
@@ -30,7 +30,10 @@ class Value(object):
         
     TODO: comment
     """
-    def __init__(self, value=None, data=None, uncertainty=None, unit=None, dtype=None, definition=None, id=None, defaultFileName=None, comment=None):
+
+    _format = format.Value
+
+    def __init__(self, value=None, data=None, uncertainty=None, unit=None, dtype=None, definition=None, id=None, default_filename=None, comment=None):
         if data is None and value is None:
             raise TypeError("either data or value has to be set")
         if data is not None and value is not None:
@@ -43,7 +46,7 @@ class Value(object):
         self._dtype = dtype
         self._definition = definition
         self._id = id
-        self._defaultFileName = defaultFileName
+        self._default_filename = default_filename
         self._comment = comment
         
         if value is not None:

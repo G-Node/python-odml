@@ -30,7 +30,8 @@ class Value(Format):
         'id': 0,
         'defaultFileName': 0
         }
-    _map = {'type': 'dtype'}
+    _map = {'type': 'dtype',
+            'defaultFileName': 'default_filename'}
     
 class Property(Format):
     _name = "property"
