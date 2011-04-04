@@ -13,7 +13,7 @@ from .. import format
 from dumper import dumpSection
 from lxml import etree as ET
 from lxml.builder import E
-
+import sys
 
 from StringIO import StringIO
 
@@ -105,8 +105,8 @@ def error(msg, elem):
     raise ParserException(msg)
 
 def warn(msg, elem):
-    if elem:
-        msg = "warning[%d]: %s\n" % (elem.sourceline, msg)
+    if not elem is None:
+        msg = "warning[<%s>:%d]: %s\n" % (elem.tag, elem.sourceline, msg)
     else:
         msg = "warning: %s\n" % msg
     sys.stderr.write(msg)
@@ -159,11 +159,11 @@ def parseProperty(node):
 
 def parseSection(node):
     name = node.get("name") # property name= overrides
-    if not name:            # the element
+    if name is None:        # the element
         name = node.find("name")
-        if name: name = name.text
+        if name is not None: name = name.text
     
-    if not name:
+    if name is None:
         return error("Missing name element in <section>", node)
 
     section = Section(name)
@@ -207,11 +207,15 @@ def parseXML(xml_file):
 
     doc = Document()
     for node in root:
-        if node.tag != "section":
-            error("Invalid element <%s> in odML document" % node.tag)
-        section = parseSection(node)
-        if section:
-            doc.append(section)
+        if node.tag in format.Document._args:
+            if node.tag == "section":
+                section = parseSection(node)
+                if section:
+                    doc.append(section)
+            else:
+                setattr(doc, format.Document.map(node.tag), node.text.strip() if node.text else None)
+        else:
+            error("Invalid element <%s> in odML document" % node.tag, node)
 
     for sec in doc.sections:
         dumpSection(sec)
