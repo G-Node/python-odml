@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Open Metadata Editor
+Comment=Editor for odML documents
+Comment[de]=Editor f?r odML Dokumente
+TryExec=odml-gui
+Exec=odml-gui
+Type=Application
+Terminal=False
+Categories=Science;
+Icon=odMLIcon
