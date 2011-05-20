@@ -68,7 +68,7 @@ class XMLWriter:
             val = getattr(e, fmt.map(k))
             if val is None: continue
             
-            if type(val) is list:
+            if isinstance(val, list):
                 for v in val:
                     ele = XMLWriter.save_element(v)
                     cur.append(ele)
