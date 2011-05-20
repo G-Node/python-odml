@@ -124,12 +124,8 @@ def parseValue(node):
         is_valid_argument(child, format.Value, "value")
         if child.tag in args:
             error("Element <%s> is given multiple times in <value> tag" % child.tag, child)
-        args[child.tag] = child.text.strip() if child.text else None
+        args[format.Value.map(child.tag)] = child.text.strip() if child.text else None
         text += child.tail.strip() if child.tail else ""
-
-    if 'type' in args: #rename the attribute, it's called dtype in the python implementation
-        args['dtype'] = args['type']
-        del args['type']
 
     if text == "":
         warn("empty value", node)
@@ -151,7 +147,7 @@ def parseProperty(node):
         #TODO check if tags occur multiple times?
         if child.tag == "value":
             values.append(parseValue(child))
-        args[child.tag] = child.text.strip() if child.text else None
+        args[format.Property.map(child.tag)] = child.text.strip() if child.text else None
 
     check_mandatory_arguments(args, format.Property, "property", node)
     args['value'] = values
@@ -171,16 +167,17 @@ def parseSection(node):
 
     for child in node:
         is_valid_argument(child, format.Section, "section")
-        if child.tag == "section":
+        tag = format.Section.map(child.tag)
+        if tag == "section":
             subsection = parseSection(child)
             if subsection:
                 section.append(subsection)
-        elif child.tag == "property":
+        elif tag == "property":
             prop = parseProperty(child)
             if prop:
                 section.append(prop)
         else:
-            args[child.tag] = child.text.strip() if child.text else None
+            args[tag] = child.text.strip() if child.text else None
 
     check_mandatory_arguments(args, format.Section, "section", node)
 
