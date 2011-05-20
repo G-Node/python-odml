@@ -34,7 +34,7 @@ class PropertyView():
     
     def set_model(self, obj):
         self._model = obj
-        self._fmt   = format.elements[obj.__class__]
+        self._fmt   = obj._format
         self.fill()
     
     def fill(self):
