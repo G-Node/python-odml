@@ -92,7 +92,7 @@ class ParserException(Exception): pass
 
 def check_mandatory_arguments(data, ArgClass, tag_name, node):
     for k, v in ArgClass._args.iteritems():
-        if v != 0 and not k in data:
+        if v != 0 and not ArgClass.map(k) in data:
             error("missing element <%s> within <%s> tag" % (k, tag_name), node)
 
 def is_valid_argument(child, ArgClass, tag_name):
@@ -149,8 +149,17 @@ def parseProperty(node):
             values.append(parseValue(child))
         args[format.Property.map(child.tag)] = child.text.strip() if child.text else None
 
+    if values:
+        # set this, because the constructor users the value property even for multiple values
+        # (and also so that the mandatory arguments-checker is fine)
+        args['value'] = values
+        
     check_mandatory_arguments(args, format.Property, "property", node)
-    args['value'] = values
+    
+    # same hack as above: Property constructor takes a value argument
+    # kind of violating the format description
+    del args['values']
+
     return Property(**args)
 
 def parseSection(node):
@@ -168,11 +177,11 @@ def parseSection(node):
     for child in node:
         is_valid_argument(child, format.Section, "section")
         tag = format.Section.map(child.tag)
-        if tag == "section":
+        if child.tag == "section":
             subsection = parseSection(child)
             if subsection:
                 section.append(subsection)
-        elif tag == "property":
+        elif child.tag == "property":
             prop = parseProperty(child)
             if prop:
                 section.append(prop)
