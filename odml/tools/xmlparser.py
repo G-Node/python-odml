@@ -13,6 +13,10 @@ from .. import format
 from dumper import dumpSection
 from lxml import etree as ET
 from lxml.builder import E
+
+# this is needed for py2exe to include lxml completely
+from lxml import _elementpath as _dummy
+
 import sys
 
 from StringIO import StringIO

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os, sys
 
 import gtk
 import gobject
@@ -672,6 +673,18 @@ class Editor(gtk.Window):
             self._info_bar.show_info("Editing failed: %s" % error.message)
             raise #reraise the exception for a traceback
 
+def get_image_path():
+    try:
+        filename = __file__
+    except:
+        filename = sys.argv[0]
+    
+    path = os.path.join(os.path.dirname(filename), 'images')
+    other_paths = ['/usr/share/pixmaps', '/usr/local/share/pixmaps', 'share/pixmaps']
+    while not os.path.exists(path):
+        path = other_paths.pop()
+    return path
+    
 def register_stock_icons():
     icons = [('odml-logo', '_odML', 0, 0, '')]
     gtk.stock_add(icons)
@@ -680,8 +693,7 @@ def register_stock_icons():
     factory = gtk.IconFactory()
     factory.add_default()
 
-    import os
-    img_dir = os.path.join(os.path.dirname(__file__), 'images')
+    img_dir = get_image_path()
     img_path = os.path.join(img_dir, 'odMLIcon.png')
 
     try:
@@ -709,8 +721,7 @@ def load_pixbuf(path):
 
 def load_icon_pixbufs():
     icons = []
-    import os
-    img_dir = os.path.join(os.path.dirname(__file__), 'images')
+    img_dir = get_image_path()
     files = os.listdir (img_dir)
     for f in files:
         if f.startswith("odMLIcon"):
@@ -726,9 +737,12 @@ def main(filename=None):
     gtk.main()
 
 if __name__ == '__main__':
-    from ctypes import *
-    libc = cdll.LoadLibrary("libc.so.6")
-    res = libc.prctl (15, 'odMLEditor', 0, 0, 0)
+    try: # this works only on linux
+        from ctypes import *
+        libc = cdll.LoadLibrary("libc.so.6")
+        res = libc.prctl (15, 'odMLEditor', 0, 0, 0)
+    except:
+        pass
     from optparse import OptionParser
     parser = OptionParser()
     (options, args) = parser.parse_args()
