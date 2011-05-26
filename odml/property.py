@@ -48,7 +48,7 @@ class Property(base.baseobject):
         self._section = section
         self._values = []
 
-        if type(value) is list:
+        if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
                     v = odml_value.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)

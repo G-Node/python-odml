@@ -42,7 +42,7 @@ class PropertyView():
         
         for k in self._fmt._args:
             v = getattr(self._model, self._fmt.map(k))
-            if not type(v) is list:
+            if not isinstance(v, list):
                 self._store.append([k, v])
 
     def on_edited(self, widget, row, new_value, col):
