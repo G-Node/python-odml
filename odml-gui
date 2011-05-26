@@ -355,11 +355,14 @@ class Editor(gtk.Window):
         self.update_model()
         self.edited = False
 
-    def chooser_dialog(self, title, callback, default_button=gtk.STOCK_OPEN):
+    def chooser_dialog(self, title, callback, save=False):
+        default_button = gtk.STOCK_SAVE if save else gtk.STOCK_OPEN
+        default_action = gtk.FILE_CHOOSER_ACTION_OPEN if save else gtk.FILE_CHOOSER_ACTION_SAVE
         chooser = gtk.FileChooserDialog(title="Open Document",
                                         parent=self,
                                         buttons=(default_button, gtk.RESPONSE_OK,
-                                                 gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+                                                 gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
+                                        action=default_action)
         file_filter = gtk.FileFilter()
         self._setup_file_filter(file_filter)
         
@@ -438,7 +441,7 @@ class Editor(gtk.Window):
         """
         if self.file_uri:
             return self.save_file(self.file_uri)
-        self.chooser_dialog(title="Save Document", callback=self.on_file_save, default_button=gtk.STOCK_SAVE)
+        self.chooser_dialog(title="Save Document", callback=self.on_file_save, save=True)
         return False # TODO this signals that file saving was not successful
                      #      because no action should be taken until the chooser
                      #      dialog is finish, however the user might then need to
