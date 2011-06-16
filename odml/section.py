@@ -14,8 +14,9 @@ class Section(base.sectionable):
 
     _format = format.Section
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, type="undefined", parent=None):
         self._name = name
+        self.type = type
         self._parent = parent
         self._props = base.SmartList()
         super(BaseSection, self).__init__()
