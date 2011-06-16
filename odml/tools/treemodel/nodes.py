@@ -6,6 +6,32 @@ additionally implements change notifications up to the corresponding section
 """
 from .. import event
 
+def identity_index(obj, val):
+    """
+    same as obj.index(val) but will only return a position
+    if the object val is found in the list
+    
+    i.e.
+    >>> identity_index(["1"], "1")
+    will raise an ValueError because the two strings
+    are different objects with the same content
+
+    >>> a = "1"
+    >>> identity_index([a], a)
+    0
+
+    The difference to obj.index comes apparent here as well:
+    >>> a="1", b="1"
+    >>> identity_index([a,b], b)
+    1
+    >>> [a,b].index(b)
+    0
+    """
+    for i, v in enumerate(obj):
+        if v is val: return i
+
+    raise ValueError("%s does not contain the item %s" % (repr(obj), repr(val)))
+
 class RootNode(object):
     @property
     def children(self):
@@ -22,13 +48,14 @@ class RootNode(object):
     
     def path_to(self, child):
         """return the path from this node to its direct child *child*"""
-        return (self._sections.index(child),)
+        return (identity_index(self._sections, child),)
 
 class ParentedNode(RootNode):
     def to_path(self):
         return self.parent.to_path() + self.parent.path_to(self)
     
     def successor(self):
+        print self, "position: ", self.position, identity_index(self.parent, self), "in", self.parent
         return self.parent.children[self.position + 1]
     
     def next(self):
@@ -79,8 +106,8 @@ class SectionNode(ParentedNode):
     
     def path_to(self, child):
         if isinstance(child, event.Property):
-            return (1, self._props.index(child))
-        return (0, self._sections.index(child))
+            return (1, identity_index(self._props, child))
+        return (0, identity_index(self._sections, child))
 
         
 class PropertyNode(ParentedNode):
@@ -97,7 +124,7 @@ class PropertyNode(ParentedNode):
         return self.parent._props[self.position + 1]
     
     def path_to(self, child):
-        return (self.values.index(child),)
+        return (identity_index(self.values, child),)
 
 class ValueNode(ParentedNode):
     @property
