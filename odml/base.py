@@ -57,6 +57,7 @@ class baseobject(object):
         clone this object recursively allowing to copy it independently
         to another document
         """
+        # TODO don't we need some recursion / deepcopy here?
         import copy
         obj = copy.copy(self)
         return obj
@@ -93,7 +94,60 @@ class sectionable(baseobject):
         
     def __iter__(self):
         return self._sections.__iter__()
+    
+    def itersections(self, recursive=False):
+        """
+        iterate each child section
+        
+        if *recursive* is set, iterate all child sections recurively (depth-search)
+        """
+        for i in self._sections:
+            yield i
+            if recursive:
+                i.itersections(recursive=recursive)
+    
+    def _matches(self, obj, key=None, type=None): 
+        return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
+            and (type is None or (type is not None and hasattr(obj, "type") and obj.type == type))
+               
+    def find(self, key=None, type=None):
+        """return the first subsection named *key* of type *type*"""
+        for s in self._sections:
+            if self._matches(s, key, type): return s
+                
+    def find_related(self, key=None, type=None, children=True, siblings=True, parents=True, recursive=True):
+        """
+        finds a related section named *key* and/or *type*
+        
+          * by searching its children’s children if *children* is True
+            if *recursive* is true all leave nodes will be searched
+          * by searching its siblings if *siblings* is True
+          * by searching the parent element if *parents* is True
+            if *recursive* is True all parent nodes until the root are searched
+        """
+        if children:
+            for section in self._sections:
+                if self._matches(section, key, type):
+                    return section
 
+                if recursive:
+                    obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive)
+                if obj is not None: return obj
+        
+        if siblings and hasattr(self, "parent"):
+            obj = self.parent.find(key, type)
+            if obj is not None: return obj
+            
+        if parents:
+            obj = self
+            while hasattr(obj, "parent"):
+                obj = obj.parent
+                if self._matches(obj, key, type):
+                    return obj
+                if not recursive: break
+
+        return None
+    
     def clone(self):
         """
         clone this object recursively allowing to copy it independently

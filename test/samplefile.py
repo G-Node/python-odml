@@ -1,5 +1,6 @@
 import odml
 import unittest
+import os
 from odml.tools import xmlparser
 
 class SampleFileCreator:
@@ -22,7 +23,7 @@ class SampleFileCreator:
         return s
     
     def create_property(self, name):
-        value = self.create_value(name)
+        value = self.create_value(name.replace("sec", "val"))
         return odml.Property(name=name.replace("sec", "prop"), value=value)
 
     def create_value(self, content):
@@ -33,6 +34,49 @@ class SampleFileCreatorTest(unittest.TestCase):
         doc = SampleFileCreator().create_document()
         for sec in doc.sections:
             xmlparser.dumpSection(sec)
+    
+class SampleFileOperationTest(unittest.TestCase):
+    def setUp(self):
+        doc = SampleFileCreator().create_document()
+        doc.sections['sec 0'].sections['sec 0/1'].type = "test"
+        self.doc = doc
+    
+    def test_find_key(self):
+        self.assertEqual(self.doc.find(key="sec 1/1"), None)
+        
+        # find distant child
+        sec = self.doc.find_related(key="sec 1/1")
+        self.assertEqual(sec.name, "sec 1/1")
+        
+        # find sibling
+        res = sec.find_related(key="sec 0/0")
+        self.assertEqual(res, None)
+        
+        sec = sec.find_related(key="sec 1/0")
+        self.assertEqual(sec.name, "sec 1/0")
+        
+        # find parent
+        res = sec.find_related(key="sec 0")
+        self.assertEqual(res, None)
+
+        sec = sec.find_related(key="sec 1")
+        self.assertEqual(sec.name, "sec 1")
+        
+        # find section by type
+        self.assertEqual(self.doc.find_related(type="test").name, "sec 0/1")
+        
+    def test_save(self):
+        doc = xmlparser.XMLWriter(self.doc)
+        path = os.tempnam()
+        doc.write_file(path)
+        os.unlink(path)
+    
+    def test_restore(self):
+        import StringIO
+        doc = xmlparser.XMLWriter(self.doc)
+        doc = StringIO.StringIO(unicode(doc))
+        doc = xmlparser.parseXML(doc)
+        self.assertEqual(doc, self.doc)
 
 class AttributeTest(unittest.TestCase):
     def test_value_int(self):
@@ -52,7 +96,26 @@ class AttributeTest(unittest.TestCase):
     def test_value_float(self):
         v = odml.Value(value="1.5", dtype="float")
         self.assertEqual(v.data, 1.5)
+
+class CopyTest(unittest.TestCase):
+    def setUp(self):
+        self.p = odml.Property(value=1)
         
+    def test_dependence(self):
+        a = self.p
+        b = self.p
+        self.assertEqual(a, b)
+        a.value = odml.Value(5)
+        self.assertEqual(a, b)
+        self.assertEqual(a.value, b.value)
+        
+    def test_independence(self):
+        a = self.p.clone()
+        b = self.p.clone()
+        self.assertNotEqual(a, b)
+        a.value = odml.Value(5)
+        self.assertUn
+                
 if __name__ == '__main__':
     unittest.main()
 
