@@ -7,6 +7,7 @@ import gio
 
 import odml
 import odml.tools.treemodel.mixin
+import odml.tools.gui.commands as commands
 
 from odml.tools.treemodel import SectionModel, DocumentModel
 from odml.tools.xmlparser import XMLWriter, parseXML
@@ -37,6 +38,8 @@ ui_info = \
     <toolitem name='New' action='NewFile' />
     <toolitem name='Open' action='OpenRecent' />
     <toolitem name='Save' action='Save' />
+    <toolitem name='Undo' action='Undo' />
+    <toolitem name='Redo' action='Redo' />
   </toolbar>
   <popup name='SectionPopupMenu'>
     <menuitem name='NewSection' action='AddSection'/>
@@ -108,6 +111,54 @@ class ScrolledWindow(gtk.ScrolledWindow):
         self.add(widget)
         self.show()
 
+class CommandManager(object):
+    def __init__(self, error_func = lambda cmd, e: None):
+        self.undo_stack = []
+        self.redo_stack = []
+        self.error_func = error_func
+        
+    def execute(self, cmd, redo=False):
+        print "run", cmd
+        if not redo:
+            self.redo_stack = []
+
+        e = None
+        try:
+            cmd()
+        except Exception, e:
+            self.error_func(cmd, e)
+        
+        self.undo_stack.append(cmd)
+        if e:
+            raise
+        
+    def undo(self):
+        cmd = self.undo_stack.pop()
+        self.redo_stack.append(cmd)
+        e = None
+        try:
+            cmd.undo()
+        except Exception, e:
+            self.error_func(cmd, e)
+        
+        if e:
+            raise
+
+    def redo(self):
+        self.execute(self.redo_stack.pop(), redo=True)
+
+    def reset(self):
+        """clears the command stack"""
+        self.undo_stack = []
+        self.redo_stack = []
+    
+    def __len__(self):
+        return len(self.undo_stack)
+
+    @property
+    def is_modified(self):
+        return bool(self.undo_stack)
+
 class Editor(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
     file_uri = None
@@ -116,6 +167,8 @@ class Editor(gtk.Window):
     edited = False
     
     def __init__(self, filename=None, parent=None):
+        self.command_manager = CommandManager(error_func=self.command_error)
+
         gtk.Window.__init__(self)
         try:
             self.set_screen(parent.get_screen())
@@ -132,6 +185,8 @@ class Editor(gtk.Window):
         self.set_data("ui-manager", merge)
         merge.insert_action_group(self.__create_action_group(), 0)
         self.add_accel_group(merge.get_accel_group())
+
+        self.reset_editor()
 
         try:
             mergeid = merge.add_ui_from_string(ui_info)
@@ -281,6 +336,14 @@ class Editor(gtk.Window):
                 "_Quit", "<control>Q",                     # label, accelerator */
                 "Quit",                                    # tooltip */
                 self.quit ),
+              ( "Undo", gtk.STOCK_UNDO,                    # name, stock id */
+                "_Undo", "<control>Z",                     # label, accelerator */
+                "Undo last editing action",                # tooltip */
+                self.undo ),
+              ( "Redo", gtk.STOCK_REDO,                    # name, stock id */
+                "_Redo", "<control>Y",                     # label, accelerator */
+                "Redo an undone editing action",           # tooltip */
+                self.redo ),
               ( "About", None,                             # name, stock id */
                 "_About", "",                    # label, accelerator */
                 "About",                                   # tooltip */
@@ -317,6 +380,7 @@ class Editor(gtk.Window):
         recent_action.set_show_not_found (False)
 
         action_group = gtk.ActionGroup("EditorActions")
+        self.editor_actions = action_group
         action_group.add_actions(entries)
         action_group.add_action(recent_action)
         return action_group
@@ -391,14 +455,20 @@ class Editor(gtk.Window):
         print 'open recent %s' % (uri)
         self.load_document (uri)
 
-    def load_document (self, uri):
+    def load_document(self, uri):
         self.file_uri = uri
         xml_file = gio.File(uri)
         self._document = parseXML(xml_file.read())
         self._info_bar.show_info ("Loading of %s done!" % (xml_file.get_basename()))
         self.update_statusbar("%s" % (self.file_uri))
         self.update_model()
-        self.edited = False
+        self.reset_editor()
+
+    def reset_editor(self):
+        self.edited = 0 # initialize the edit stack position
+        self.command_manager.reset()
+        self.enable_undo(enable=False)
+        self.enable_redo(enable=False)
         
     def update_model(self):
         """updates the models if self._document changed"""
@@ -467,7 +537,7 @@ class Editor(gtk.Window):
         xml_file.write(unicode(doc))
         xml_file.close()
         self._info_bar.show_info("%s was saved" % (gf.get_basename()))
-        self.edited = False
+        self.edited = 0
         return True # TODO return false on any error and notify the user
 
     def quit(self, action, extra=None):
@@ -506,20 +576,37 @@ class Editor(gtk.Window):
         adds a section to the selected section or to the root document
         """
         model, path = self.popup_data
+        path = path
         obj = self._document
         if path:
             obj = obj.from_path(path)
         sec = odml.Section(name="unnamed section")
-        obj.append(sec)
-        
-        # notify the selected section row, that it might have got a new child
-        path = model.odml_path_to_model_path(path)
-        model.row_has_child_toggled(path, model.get_iter(path))
-        
-        # notify the model about the newly inserted row
-        path = model.odml_path_to_model_path(sec.to_path())
-        model.row_inserted(path, model.get_iter(path))
 
+        cmd = commands.AppendValue(obj=obj, val=sec, odml_path=path)
+        
+        def cmd_action(undo=False):
+            # notify the selected section row, that it might have got a new child
+            if not undo:
+                path = model.odml_path_to_model_path(cmd.odml_path)
+                model.row_has_child_toggled(path, model.get_iter(path))
+                cmd.parent_path = path
+            
+                # notify the model about the newly inserted row
+                path = model.odml_path_to_model_path(sec.to_path())
+                model.row_inserted(path, model.get_iter(path))
+                cmd.path = path
+            else:
+                path = cmd.parent_path
+                model.row_has_child_toggled(path, model.get_iter(path))
+                model.row_deleted(cmd.path)
+
+                # ensure internal view consistency
+                if self._prop_model.section == cmd.val:
+                    self.change_section(self._document.sections[0].to_path())
+
+        cmd.on_action = cmd_action
+
+        self.execute(cmd)
     
     def add_property(self, action):
         """
@@ -529,11 +616,23 @@ class Editor(gtk.Window):
         """
         model, path = self.popup_data
         prop = odml.Property(name="unnamed property", value="")
-        model.section.append(prop)
+        cmd = commands.AppendValue(
+                obj = model.section,
+                val = prop,
+                model = self._prop_model)
         
-        # notify the model about the newly inserted row
-        path = model.odml_path_to_model_path(prop.to_path())
-        model.row_inserted(path, model.get_iter(path))
+        def cmd_action(undo=False): #TODO
+            # notify the model about the newly inserted row (unless the model changed anyways)
+            if self._prop_model.section != cmd.model.section: return
+
+            if undo:
+                self._prop_model.row_deleted(cmd.path)
+            else:
+                cmd.path = self._prop_model.odml_path_to_model_path(prop.to_path())
+                self._prop_model.row_inserted(cmd.path, self._prop_model.get_iter(cmd.path))
+            
+        cmd.on_action = cmd_action
+        self.execute(cmd)
     
     def add_value(self, action):
         """
@@ -546,24 +645,38 @@ class Editor(gtk.Window):
         model, path = self.popup_data
         obj = self._document.from_path(path)
         val = odml.Value("")
-        obj.append(val)
+
+        cmd = commands.AppendValue(obj=obj, val=val, model=self._prop_model, odml_path=path)
         
-        # notify the current property row, that it might have got a new child
-        path = model.odml_path_to_model_path(path)
-        model.row_has_child_toggled(path, model.get_iter(path))
-        
-        # notify the model about the newly inserted row
-        path = model.odml_path_to_model_path(val.to_path())
-        model.row_inserted(path, model.get_iter(path))        
-        
+        def cmd_action(undo=False):
+            if self._prop_model.section != cmd.model.section: return        
+
+            if not undo:
+                # notify the current property row, that it might have got a new child            
+                path = self._prop_model.odml_path_to_model_path(cmd.odml_path)
+                self._prop_model.row_has_child_toggled(path, self._prop_model.get_iter(path))
+                cmd.prop_path = path
+                
+                # notify the model about the newly inserted row
+                path = self._prop_model.odml_path_to_model_path(val.to_path())
+                self._prop_model.row_inserted(path, self._prop_model.get_iter(path))
+                cmd.val_path = path
+            else:
+                self._prop_model.row_has_child_toggled(cmd.prop_path, self._prop_model.get_iter(cmd.prop_path))
+                self._prop_model.row_deleted(cmd.val_path)
+
+        cmd.on_action = cmd_action
+        self.execute(cmd)
+    
+    # TODO should we save a navigation history here
     def on_section_selected(self, tree_selection):
         (model, tree_iter) = tree_selection.get_selected()
         if not tree_iter:
             return
         path = model.get_path(tree_iter)
-        # if path:
-        #    path = model.model_path_to_odml_path(path)
-        print "selecting section", repr(path), repr(tree_iter), repr(model)
+        self.change_section(path)
+
+    def change_section(self, path):
         if self._prop_model:
             self._prop_model.destroy()
         section = self._document.from_path(path)
@@ -634,6 +747,7 @@ class Editor(gtk.Window):
         
         # are we editing the first_row of a <multi> value?
         first_row_of_multi = len(path) == 1 and len(prop.values) > 1
+        print "multi", first_row_of_multi
         
         # can only edit the subvalues, but not <multi> itself
         if first_row_of_multi and column_name == "value": return
@@ -641,41 +755,76 @@ class Editor(gtk.Window):
         self.edited = True # don't be too strict about real modification
                            # could also wait for real change events of our
                            # data structures in the future
-        error = None
+        cmd = None
         # if we edit another attribute (e.g. unit), set this for all values of this property
-        if first_row_of_multi and column_name != "name":
-            for value in prop.values:
-                try:
-                    setattr(value, column_name, new_text)
-                except Exception, e:
-                    error = e
         
-        if len(path) > 1: # we edit a sub-value
+        if first_row_of_multi and column_name != "name":
+            cmds = []
+            for value in prop.values:
+                cmds.append(commands.ChangeValue(
+                    value     = value,
+                    prop      = column_name,
+                    new_value = new_text))
+
+            cmd = commands.Multiple(cmds=cmds)
+        
+        elif len(path) > 1: # we edit a sub-value
             # but do not allow to modify the name of the property there
             if column_name == "name": return
-            
             value = prop.values[path[1]]
-            try:
-                setattr(value, column_name, new_text)
-            except Exception, e:
-                error = e
-
+            cmd = commands.ChangeValue(
+                    value     = value,
+                    prop      = column_name,
+                    new_value = new_text)
+            
         else:
             # otherwise we edit a simple property, name maps to the property
             # everything else to the value
             if column_name == "name":
-                prop.name = new_text
+                cmd = commands.ChangeValue(
+                    value     = prop,
+                    prop      = "name",
+                    new_value = new_text)
             else:
                 value = prop.values[0]
-                try:
-                    setattr(value, column_name, new_text)
-                except Exception, e:
-                    error = e
+                cmd = commands.ChangeValue(
+                    value     = value,
+                    prop      = column_name,
+                    new_value = new_text)
         
-        if error is not None:
-            self._info_bar.show_info("Editing failed: %s" % error.message)
-            raise #reraise the exception for a traceback
+        if cmd:
+            self.execute(cmd)
 
+    def execute(self, cmd):
+        """run a command through the command manager and update gui elements accordingly"""
+        self.command_manager.execute(cmd)
+        self.enable_undo()
+        self.enable_redo(enable=False)
+
+    def enable_action(self, action_name, enable):
+        self.editor_actions.get_action(action_name).set_sensitive(enable)
+
+    def enable_undo(self, enable=True):
+        self.enable_action("Undo", enable)
+
+    def enable_redo(self, enable=True):
+        self.enable_action("Redo", enable)
+
+    def undo(self, action):
+        self.command_manager.undo()
+        if len(self.command_manager) == 0:
+            self.enable_undo(enable=False)
+        self.enable_redo()
+
+    def redo(self, action):
+        self.command_manager.redo()
+        if len(self.command_manager.redo_stack) == 0:
+            self.enable_redo(enable=False)
+        self.enable_undo()
+
+    def command_error(self, cmd, error):
+        self._info_bar.show_info("Editing failed: %s" % error.message)
+        
 def get_image_path():
     try:
         filename = __file__

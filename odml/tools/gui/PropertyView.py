@@ -1,5 +1,6 @@
 import gtk
 from ... import format
+import commands
 
 COL_KEY = 0
 COL_VALUE = 1
@@ -51,7 +52,16 @@ class PropertyView():
         store = self._store
         iter = store.get_iter(row)
         k = store.get_value(iter, COL_KEY)
-        setattr(self._model, self._fmt.map(k), new_value)
-        new_value = getattr(self._model, self._fmt.map(k))
-        
-        store.set_value(iter, COL_VALUE, new_value)
+        cmd = commands.ChangeValue(
+            value     = self._model,
+            prop      = self._fmt.map(k),
+            new_value = new_value)
+
+        def cmd_action(undo=False):
+            new_value = getattr(cmd.value, cmd.prop)
+            store.set_value(iter, COL_VALUE, new_value)
+
+        cmd.on_action = cmd_action
+
+        # TODO call one level higher to execute the command
+        # TODO ... .execute(cmd)

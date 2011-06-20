@@ -114,6 +114,12 @@ class Property(base.baseobject):
         self._values.append(value)
         value._property = self
 
+    def remove(self, value):
+        self._values.remove(value)
+
+    def __len__(self):
+        return len(self._values)
+
     def __iter__(self):
         return self._values.__iter__()
 

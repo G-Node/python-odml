@@ -75,12 +75,24 @@ class Section(base.sectionable):
         else:
             raise ValueError, "Can only append sections and properties"
 
+    def remove(self, obj):
+        if isinstance(obj, Section):
+            self._sections.remove(obj)
+        elif isinstance(obj, Property):
+            self._props.remove(obj)
+        else:
+            raise ValueError, "Can only remove sections and properties"
+
     def __iter__(self):
         """iterate over each section and property contained in this section"""
         for section in self._sections:
             yield section
         for prop in self._props:
             yield prop
+
+    def __len__(self):
+        """number of children (sections AND properties)"""
+        return len(self._sections) + len(self._props)
 
     def clone(self):
         """

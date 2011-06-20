@@ -44,7 +44,9 @@ class baseobject(object):
         do a deep comparison of this object and its odml properties
         """
         # cannot compare totally different stuff # TODO do the check for the actual class
+        print "cmp", self, obj
         if not isinstance(obj, baseobject): return False
+        if not isinstance(self, obj.__class__ ): return False
 
         for key in self._format:
             if getattr(self, key) != getattr(obj, key):
@@ -89,8 +91,17 @@ class sectionable(baseobject):
 
     def append(self, section):
         """adds the section to the section-list and makes this document the section’s parent"""
-        self._sections.append (section)
+        self._sections.append(section)
         section._parent = self
+
+    def remove(self, section):
+        self._sections.remove(section)
+
+    def __getitem__(self, key):
+        return self._sections[key]
+
+    def __len__(self):
+        return len(self._sections)
         
     def __iter__(self):
         return self._sections.__iter__()
