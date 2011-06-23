@@ -15,6 +15,7 @@ def valid_type(dtype):
     checks if *dtype* is a valid type
     """
     if dtype in types: return True
+    if dtype is None: return True
     if dtype.endswith("-tuple"):
         try:
             count = int(dtype[:-6])
@@ -26,7 +27,7 @@ def valid_type(dtype):
 def validate(string, dtype):
     """
     checks if:
-    
+
      * *dtype* is a valid type
      * *string* is a valid expression of type *dtype*
     """
@@ -42,7 +43,7 @@ def validate(string, dtype):
         self.get(dtype+"_get", str_get)(string)
     except: #any error, this type ain't valid
         return False
-    
+
 def get(string, dtype=None):
     """
     convert *string* to the corresponding *dtype*
@@ -100,7 +101,7 @@ def boolean_get(string):
     false = ["false", "f", "0"]
     if string in false: return False
     raise ValueError("Cannot interpret '%s' as boolean" % string)
-    
+
 def binary_get(string):
     "base64decode the data"
     return base64.b64decode(string)
