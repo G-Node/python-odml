@@ -18,7 +18,7 @@ class SectionView(TreeView):
         self._treeview.set_model(model)
 
     def on_object_edit(self, tree_iter, attr, new_value):
-        section = tree_iter.section
+        section = tree_iter._obj
         cmd = commands.ChangeValue(
             value     = section,
             prop      = "name",
