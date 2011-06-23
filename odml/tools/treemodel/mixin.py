@@ -11,7 +11,7 @@ classes manually::
 
     >>> import odml.tools.treemodel.nodes as odml
     >>> s = odml.Section("sample section")
-    
+
 """
 #Please note: tree-functionality is already based on event-functionality.
 #Therefore mixin in odml.tools.events will be troublesome / not work.
@@ -23,4 +23,3 @@ doc.Document      = nodes.Document
 section.Section   = nodes.Section
 property.Property = nodes.Property
 value.Value       = nodes.Value
-

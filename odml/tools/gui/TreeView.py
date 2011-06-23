@@ -43,18 +43,32 @@ class TreeView(object):
             y = int(event.y)
             model = widget.get_model()
             path = widget.get_path_at_pos(x, y)
+            obj = None
+
             if path:
                 path, col, x, y = path
             else:
                 path = ()
+
             if path:
-                path = model.model_path_to_odml_path(path)
+                obj = model.on_get_iter(path)._obj
 
             if self.popup is None:
                 return
 
-            self.popup_data = (model, path)
+            self.popup_data = (model, path, obj)
             self.popup.popup(None, None, None, event.button, event.time)
+
+    def on_edited(self, widget, path, new_value, data):
+        """
+        a user edited a value
+
+        now callback another method with more meaningful information
+        """
+        model = self._treeview.get_model()
+        gtk_tree_iter = model.get_iter(path)
+        tree_iter = model.on_get_iter(model.get_path(gtk_tree_iter))
+        return self.on_object_edit(tree_iter, data, new_value)
 
     def execute(self, cmd):
         cmd()

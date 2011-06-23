@@ -17,23 +17,8 @@ class SectionView(TreeView):
     def set_model(self, model):
         self._treeview.set_model(model)
 
-    def on_edited(self, widget, path, new_value, data):
-        """
-        a user edited a value
-
-        now callback another method with more meaningful information
-        """
-        model = self._treeview.get_model()
-        #tree_iter = store.get_iter(row)
-        #path = model.get_path(tree_iter)
-        path = map(int, path.split(':'))
-        return self.on_section_edit(model, path, new_value)
-
-    def on_section_edit(self, model, path, new_value):
-        path = model.model_path_to_odml_path(path)
-        print path
-
-        section = model._document.from_path(path)
+    def on_object_edit(self, tree_iter, attr, new_value):
+        section = tree_iter.section
         cmd = commands.ChangeValue(
             value     = section,
             prop      = "name",
@@ -50,5 +35,5 @@ class SectionView(TreeView):
         (model, tree_iter) = tree_selection.get_selected()
         if not tree_iter:
             return
-        path = model.get_path(tree_iter)
-        return self.on_section_change(path)
+
+        return self.on_section_change(model.get_object(tree_iter))

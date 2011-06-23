@@ -301,7 +301,7 @@ class Editor(gtk.Window):
 
         dialog.set_transient_for(self)
 
-        dialog.connect ("response", lambda d, r: d.destroy())
+        dialog.connect("response", lambda d, r: d.destroy())
         dialog.show()
 
     def new_file(self, action):
@@ -358,7 +358,7 @@ class Editor(gtk.Window):
         self.file_uri = uri
         xml_file = gio.File(uri)
         self._document = parseXML(xml_file.read())
-        self._info_bar.show_info ("Loading of %s done!" % (xml_file.get_basename()))
+        self._info_bar.show_info("Loading of %s done!" % (xml_file.get_basename()))
         self.update_statusbar("%s" % (self.file_uri))
         self.update_model()
         self.reset_editor()
@@ -452,38 +452,6 @@ class Editor(gtk.Window):
 #
 #        adds a section to the selected section or to the root document
 #        """
-#        model, path = self.popup_data
-#        path = path
-#        obj = self._document
-#        if path:
-#            obj = obj.from_path(path)
-#        sec = odml.Section(name="unnamed section")
-#
-#        cmd = commands.AppendValue(obj=obj, val=sec, odml_path=path)
-#
-#        def cmd_action(undo=False):
-#            # notify the selected section row, that it might have got a new child
-#            if not undo:
-#                path = model.odml_path_to_model_path(cmd.odml_path)
-#                model.row_has_child_toggled(path, model.get_iter(path))
-#                cmd.parent_path = path
-#
-#                # notify the model about the newly inserted row
-#                path = model.odml_path_to_model_path(sec.to_path())
-#                model.row_inserted(path, model.get_iter(path))
-#                cmd.path = path
-#            else:
-#                path = cmd.parent_path
-#                model.row_has_child_toggled(path, model.get_iter(path))
-#                model.row_deleted(cmd.path)
-#
-#                # ensure internal view consistency
-#                if self._prop_model.section == cmd.val:
-#                    self.change_section(self._document.sections[0].to_path())
-#
-#        cmd.on_action = cmd_action
-#
-#        self.command_manager.execute(cmd)
         self._section_tv.add_section(action)
 
     def add_property(self, action):
@@ -492,25 +460,6 @@ class Editor(gtk.Window):
 #
 #        add a property to the active section
 #        """
-#        model, path = self.popup_data
-#        prop = odml.Property(name="unnamed property", value="")
-#        cmd = commands.AppendValue(
-#                obj = model.section,
-#                val = prop,
-#                model = self._prop_model)
-#
-#        def cmd_action(undo=False): #TODO
-#            # notify the model about the newly inserted row (unless the model changed anyways)
-#            if self._prop_model.section != cmd.model.section: return
-#
-#            if undo:
-#                self._prop_model.row_deleted(cmd.path)
-#            else:
-#                cmd.path = self._prop_model.odml_path_to_model_path(prop.to_path())
-#                self._prop_model.row_inserted(cmd.path, self._prop_model.get_iter(cmd.path))
-#
-#        cmd.on_action = cmd_action
-#        self.command_manager.execute(cmd)
         self._property_tv.add_property(action)
 
     def add_value(self, action):
@@ -522,10 +471,7 @@ class Editor(gtk.Window):
         self._property_tv.add_value(action)
 
     # TODO should we save a navigation history here?
-    def on_section_change(self, path):
-        if self._property_tv.model:
-            self._property_tv.model.destroy()
-        section = self._document.from_path(path)
+    def on_section_change(self, section):
         self._property_tv.section = section
         self.set_property_object(section)
 

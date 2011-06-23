@@ -21,10 +21,13 @@ class Command(object):
     def _undo(self):
         pass
 
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, ', '.join(["%s=%s" % (k,v) for k,v in self.__dict__.iteritems()]))
+
 class Multiple(Command):
     """
     Multiple(cmds=[])
-    
+
     aggregator for multiple command, args: cmds=[]
     """
     def _execute(self):
@@ -38,7 +41,7 @@ class Multiple(Command):
 class ChangeValue(Command):
     """
     ChangeValue(value=, prop=, new_value=)
-    
+
     params: *value* object, *prop* (a property of the value), *new_value* text
     """
     # TODO known bug: if the data type of a Value is edited, other properties
@@ -54,12 +57,15 @@ class ChangeValue(Command):
         setattr(self.value, self.prop, self.new_value)
 
     def _undo(self):
+        if not hasattr(self, "old_value"):
+            # execute failed
+            return
         setattr(self.value, self.prop, self.old_value)
 
 class AppendValue(Command):
     """
     AppendValue(obj=, val=)
-    
+
     appends value *val* to object *obj*
     """
     def _execute(self):

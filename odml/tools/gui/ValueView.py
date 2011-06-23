@@ -20,7 +20,7 @@ class ValueView(TreeView):
         for name, (id, propname) in SectionModel.ColMapper.sort_iteritems():
             column = self.add_column(
                 name=name,
-                edit_func=self.on_prop_edited,
+                edit_func=self.on_edited,
                 id=id, data=propname)
             if name == "Value":
                 tv.set_expander_column(column)
@@ -36,6 +36,8 @@ class ValueView(TreeView):
     @section.setter
     def section(self, section):
         self._section = section
+        if self.model:
+            self.model.destroy()
         self.model = SectionModel.SectionModel(section)
 
     @property
@@ -51,45 +53,38 @@ class ValueView(TreeView):
         if not tree_iter:
             return
 
-        path = model.get_path(tree_iter)
-        print path
-        if path:
-            self.on_property_select(self.model.section.from_path(path))
+        obj = model.get_object(tree_iter)
+        print "select", obj
+        self.on_property_select(obj)
 
     def on_property_select(self, prop):
         """called when a different property is selected"""
         pass
 
-    def on_edited(self, foo):
-        pass
-
-    def on_prop_edited(self, cell, path_string, new_text, column_name):
+    def on_object_edit(self, tree_iter, column_name, new_text):
         """
         called upon an edit event of the list view
 
         updates the underlying model property that corresponds to the edited cell
         """
-        print "n: %s -> %s %s %s" % (path_string, new_text, cell, column_name)
         section = self.section
-        path    = tuple(int(s) for s in path_string.split(':'))
-
-        prop = section._props[path[0]]
+        prop = tree_iter._obj
 
         # are we editing the first_row of a <multi> value?
-        first_row_of_multi = len(path) == 1 and len(prop.values) > 1
-        print "multi", first_row_of_multi
+        first_row = not tree_iter.parent
+        first_row_of_multi = first_row and tree_iter.has_child
 
         # can only edit the subvalues, but not <multi> itself
         if first_row_of_multi and column_name == "value":
             return
+        if not first_row and column_name == "name":
+            return
 
-        self.edited = True # don't be too strict about real modification
-                           # could also wait for real change events of our
-                           # data structures in the future
         cmd = None
         # if we edit another attribute (e.g. unit), set this for all values of this property
 
         if first_row_of_multi and column_name != "name":
+            # editing multiple values of a property at once
             cmds = []
             for value in prop.values:
                 cmds.append(commands.ChangeValue(
@@ -99,28 +94,13 @@ class ValueView(TreeView):
 
             cmd = commands.Multiple(cmds=cmds)
 
-        elif len(path) > 1: # we edit a sub-value
-            # but do not allow to modify the name of the property there
-            if column_name == "name":
-                return
-            value = prop.values[path[1]]
-            cmd = commands.ChangeValue(
-                    value     = value,
-                    prop      = column_name,
-                    new_value = new_text)
-
         else:
-            # otherwise we edit a simple property, name maps to the property
-            # everything else to the value
-            if column_name == "name":
-                cmd = commands.ChangeValue(
+
+            # first row edit event for the value, so switch the object
+            if column_name != "name" and first_row:
+                prop = prop.values[0]
+            cmd = commands.ChangeValue(
                     value     = prop,
-                    prop      = "name",
-                    new_value = new_text)
-            else:
-                value = prop.values[0]
-                cmd = commands.ChangeValue(
-                    value     = value,
                     prop      = column_name,
                     new_value = new_text)
 
@@ -133,30 +113,33 @@ class ValueView(TreeView):
 
         add a value to the selected property
         """
+        model, path, obj = self.popup_data
+
         # TODO this can be reached also if no property is selected
         #      the context-menu item should be disabled in this case?
-        model, path = self.popup_data
-        obj = self._document.from_path(path)
+        if obj is None:
+            return
+
         val = odml.Value("")
 
-        cmd = commands.AppendValue(obj=obj, val=val, model=self.model, odml_path=path)
+        cmd = commands.AppendValue(obj=obj, val=val, model=self.model, path=path)
 
         def cmd_action(undo=False):
             model = self.model
-            if model.section != cmd.model.section: return
+            if model.section != cmd.model.section:
+                return
 
             if not undo:
                 # notify the current property row, that it might have got a new child
-                path = model.odml_path_to_model_path(cmd.odml_path)
-                model.row_has_child_toggled(path, model.get_iter(path))
-                cmd.prop_path = path
+                model.row_has_child_toggled(cmd.path, model.get_iter(cmd.path))
 
                 # notify the model about the newly inserted row
-                path = model.odml_path_to_model_path(val.to_path())
+                path = model.odml_path_to_model_path(val.to_path(model.section))
+                print val.to_path(model.section), path
                 model.row_inserted(path, model.get_iter(path))
                 cmd.val_path = path
             else:
-                model.row_has_child_toggled(cmd.prop_path, model.get_iter(cmd.prop_path))
+                model.row_has_child_toggled(cmd.path, model.get_iter(cmd.path))
                 model.row_deleted(cmd.val_path)
 
         cmd.on_action = cmd_action
@@ -169,14 +152,14 @@ class ValueView(TreeView):
 
         add a property to the active section
         """
-        model, path = self.popup_data
+        model, path, obj = self.popup_data
         prop = odml.Property(name="unnamed property", value="")
         cmd = commands.AppendValue(
                 obj = model.section,
                 val = prop,
                 model = self.model)
 
-        def cmd_action(undo=False): #TODO
+        def cmd_action(undo=False):
             # notify the model about the newly inserted row (unless the model changed anyways)
             model = self.model
             if model.section != cmd.model.section: return
@@ -184,7 +167,7 @@ class ValueView(TreeView):
             if undo:
                 model.row_deleted(cmd.path)
             else:
-                cmd.path = model.odml_path_to_model_path(prop.to_path())
+                cmd.path = model.odml_path_to_model_path(prop.to_path(model.section))
                 model.row_inserted(cmd.path, model.get_iter(cmd.path))
 
         cmd.on_action = cmd_action

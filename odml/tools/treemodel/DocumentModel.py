@@ -1,87 +1,53 @@
 import gtk, gobject
+import odml.doc
+from TreeIters import SectionIter
+from TreeModel import TreeModel, ColumnMapper
 debug = lambda x: 0
 # to enable tree debugging:
 #import sys
 #debug = lambda x: sys.stdout.write(x + "\n")
 
-class DocumentModel(gtk.GenericTreeModel):
+ColMapper = ColumnMapper({"Name"        : (0, "name")})
+
+class DocumentModel(TreeModel):
     def __init__(self, odml_document):
-        gtk.GenericTreeModel.__init__(self)
-        self._document = odml_document
+        super(DocumentModel, self).__init__(ColMapper)
 
-    def on_get_flags(self):
-        return 0
+        # otherwise bad things happen
+        assert isinstance(odml_document, odml.doc.Document)
 
-    def on_get_n_columns(self):
-        return 1
+        self._section = odml_document
+        #self._section._Changed += self.on_section_changed
 
-    def on_get_column_type(self, index):
-        return gobject.TYPE_STRING
-    
+    @property
+    def document(self):
+        return self._section
+
     def model_path_to_odml_path(self, path):
         # (a,b,c) -> (a,b,0,c)
         rpath = (path[0],) # document -> section
         for i in path[1:]:
             rpath += (0,i) # section -> sub-section
         return rpath
-        
+
     def odml_path_to_model_path(self, path):
         # (a,b,0,c) -> (a,b,c)
         if not path: return (0,) # the 0, is also the root-node, which sucks :/
         return (path[0],) + path[1::2]
-    
-    def on_get_path(self, section):
-        debug("+on_get_path: %s (%s)" % (section, section.to_path()))
-        return section.to_path()
 
     def on_get_iter(self, path):
         debug("+on_get_iter: %s" % repr(path))
-        if path == (0,) and len(self._document.sections) == 0: return None
+        if path == (0,) and len(self._section.sections) == 0: return None
         # we get the path from the treemodel which does not show the properties
         # therefore adjust the path to always select the sections
         rpath = (path[0],) # document -> section
         for i in path[1:]:
             rpath += (0,i) # section -> sub-section
-        section = self._document.from_path(rpath)
+        section = self._section.from_path(rpath)
         debug("-on_get_iter: %s" % (section))
-        return section
+        return SectionIter(section)
 
-    def on_get_value(self, section, column):
-        assert column == 0
-        debug(":on_get_value [%d]: %s" % (column, section))
-        return section.name
-
-    def on_iter_next(self, section):
-        debug("+on_iter_next [%s]: %s" % (self._document, section))
-        next = section.next()
-        debug(":on_iter_next [%s]: %s" % (section, next))
-        return next
-
-    def on_iter_children(self, section):
-        debug("+on_iter_children: %s" % (section))
-        try:
-            return section.sections[0]
-        except:
-            return None
-
-    def on_iter_has_child(self, section):
-        children = section.sections
-        debug(":on_iter_has_children: %s:%s" % (section, len(children)))
-        return len (children)
-
-    def on_iter_n_children(self, section):
-        return len (section.sections)
-
-    def on_iter_nth_child(self, section, n):
-        if section == None:
-            children = self._document.sections
-        else:
-            children = section.sections
-        return children[n]
-
-    def on_iter_parent(self, section):
-        parent = None
-        if section._parent != self._document:
-            parent = section._parent
-        debug(":on_iter_parent: %s:%s" % (section, parent))
-        return parent
+    def on_iter_nth_child(self, tree_iter, n):
+        if tree_iter == None:
+            return SectionIter(self._section.sections[n])
+        return super(DocumentModel, self).on_iter_nth_child(tree_iter, n)
