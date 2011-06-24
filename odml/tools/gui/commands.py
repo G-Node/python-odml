@@ -40,9 +40,12 @@ class Multiple(Command):
 
 class ChangeValue(Command):
     """
-    ChangeValue(value=, prop=, new_value=)
+    ChangeValue(object=, attr=, new_value=)
 
-    params: *value* object, *prop* (a property of the value), *new_value* text
+    params: *object* object, *attr* (an attribute of the object), *new_value* text
+
+    if *attr* is a list, only the first attribute is changed, but all other attributes
+    are stored for the undo mechanism
     """
     # TODO known bug: if the data type of a Value is edited, other properties
     # are affected as well (i.e. the value) which is not undone in undo
@@ -53,14 +56,22 @@ class ChangeValue(Command):
     # hack:
     #   save the value as well for Value objects
     def _execute(self):
-        self.old_value = getattr(self.value, self.prop)
-        setattr(self.value, self.prop, self.new_value)
+        if not isinstance(self.attr, list):
+            self.attr = [self.attr]
+
+        self.old_value = {}
+        for attr in self.attr:
+            self.old_value[attr] = getattr(self.object, attr)
+
+        setattr(self.object, self.attr[0], self.new_value)
 
     def _undo(self):
         if not hasattr(self, "old_value"):
             # execute failed
             return
-        setattr(self.value, self.prop, self.old_value)
+
+        for attr in self.attr:
+            setattr(self.object, attr, self.old_value[attr])
 
 class AppendValue(Command):
     """

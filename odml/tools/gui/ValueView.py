@@ -88,8 +88,8 @@ class ValueView(TreeView):
             cmds = []
             for value in prop.values:
                 cmds.append(commands.ChangeValue(
-                    value     = value,
-                    prop      = column_name,
+                    object    = value,
+                    attr      = [column_name, "value"],
                     new_value = new_text))
 
             cmd = commands.Multiple(cmds=cmds)
@@ -99,9 +99,11 @@ class ValueView(TreeView):
             # first row edit event for the value, so switch the object
             if column_name != "name" and first_row:
                 prop = prop.values[0]
+            if not (column_name == "name" and first_row):
+                column_name = [column_name, "value"] # backup the value attribute too
             cmd = commands.ChangeValue(
-                    value     = prop,
-                    prop      = column_name,
+                    object    = prop,
+                    attr      = column_name,
                     new_value = new_text)
 
         if cmd:

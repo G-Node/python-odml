@@ -20,8 +20,8 @@ class SectionView(TreeView):
     def on_object_edit(self, tree_iter, attr, new_value):
         section = tree_iter._obj
         cmd = commands.ChangeValue(
-            value     = section,
-            prop      = "name",
+            object    = section,
+            attr      = "name",
             new_value = new_value)
 
         self.execute(cmd)

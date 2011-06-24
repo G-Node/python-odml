@@ -50,12 +50,13 @@ class PropertyView(TreeView):
         iter = store.get_iter(row)
         k = store.get_value(iter, COL_KEY)
         cmd = commands.ChangeValue(
-            value     = self._model,
-            prop      = self._fmt.map(k),
+            object    = self._model,
+            attr      = self._fmt.map(k),
             new_value = new_value)
 
         def cmd_action(undo=False):
-            new_value = getattr(cmd.value, cmd.prop)
+            # TODO this needs actually be handle by a change listener on the model
+            new_value = getattr(cmd.object, cmd.attr[0])
             store.set_value(iter, COL_VALUE, new_value)
 
         cmd.on_action = cmd_action
