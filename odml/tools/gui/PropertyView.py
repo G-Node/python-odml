@@ -15,6 +15,7 @@ class PropertyView(TreeView):
         self.execute = execute_func
         self._store = gtk.ListStore(str, str)
         self._store.set_sort_column_id(COL_KEY, gtk.SORT_ASCENDING)
+        self._model = None
         if obj is not None:
             self.set_model(obj)
 
@@ -31,6 +32,10 @@ class PropertyView(TreeView):
         tv.show()
 
     def set_model(self, obj):
+        if self._model:
+            self._model._Changed -= self.on_object_change
+        obj._Changed += self.on_object_change
+
         self._model = obj
         self._fmt   = obj._format
         self.fill()
@@ -45,7 +50,6 @@ class PropertyView(TreeView):
 
     def on_edited(self, widget, row, new_value, col):
         print "edit:", widget, row, col, new_value
-        #if col == COL_KEY: return False # cannot edit keys!
         store = self._store
         iter = store.get_iter(row)
         k = store.get_value(iter, COL_KEY)
@@ -54,12 +58,14 @@ class PropertyView(TreeView):
             attr      = self._fmt.map(k),
             new_value = new_value)
 
-        def cmd_action(undo=False):
-            # TODO this needs actually be handle by a change listener on the model
-            new_value = getattr(cmd.object, cmd.attr[0])
-            store.set_value(iter, COL_VALUE, new_value)
-
-        cmd.on_action = cmd_action
-
         self.execute(cmd)
 
+    def on_object_change(self, document=None, section=None, prop=None, value=None, *args, **kargs):
+        """
+        this change listener is attached to the current object class
+        and updates the GUI elements upon relevant change events
+        """
+        if (document is self._model and section is None) \
+            or (section is self._model and prop is None) \
+            or (prop is self._model and value is None):
+                self.fill()

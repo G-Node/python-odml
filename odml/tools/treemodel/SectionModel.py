@@ -55,16 +55,16 @@ class SectionModel(TreeModel):
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
+        print "change event: ", section, prop, value, prop_pos, value_pos, args, kargs
         if prop is None: return
 
         # a change listener is installed globally
         # we only take notifications for our own section
         if not section == self._section: return
 
-        path = (prop_pos,)
-        if value_pos is not None:
-            path += (value_pos,)
-
+        path = value.to_path(section) if value and len(prop.values) > 1 else prop.to_path(section)
+        path = self.odml_path_to_model_path(path)
+        print " ", path
         iter = self.get_iter(path)
         self.row_changed(path, iter)
 

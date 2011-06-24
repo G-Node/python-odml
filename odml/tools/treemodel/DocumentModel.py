@@ -17,7 +17,7 @@ class DocumentModel(TreeModel):
         assert isinstance(odml_document, odml.doc.Document)
 
         self._section = odml_document
-        #self._section._Changed += self.on_section_changed
+        self._section._Changed += self.on_section_changed
 
     @property
     def document(self):
@@ -51,3 +51,21 @@ class DocumentModel(TreeModel):
         if tree_iter == None:
             return SectionIter(self._section.sections[n])
         return super(DocumentModel, self).on_iter_nth_child(tree_iter, n)
+
+    def destroy(self):
+        self._section._Changed -= self.on_section_changed
+
+    def on_section_changed(self, document=None, section=None, prop=None, value=None, prop_pos=None, value_pos=None, *args, **kargs):
+        """
+        this is called by the Eventable modified MixIns of Value/Property/Section
+        and causes the GUI to refresh the corresponding cells
+        """
+        print "change event: ", section, prop, value, prop_pos, value_pos, args, kargs
+
+        if prop is not None or value is not None: return
+
+        path = section.to_path()
+        path = self.odml_path_to_model_path(path)
+        print " ", path
+        iter = self.get_iter(path)
+        self.row_changed(path, iter)

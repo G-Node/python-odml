@@ -494,7 +494,7 @@ class Editor(gtk.Window):
             self._current_property_object = cur
             obj = cur
 
-        while hasattr(obj, "parent"):
+        while hasattr(obj, "parent") and obj.parent is not None:
             names.append(
                 ( ("<b>%s</b>" if obj == cur else "%s") % obj.name,
                   ":".join([str(i) for i in obj.to_path()])) )

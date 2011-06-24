@@ -2,8 +2,9 @@ from .. import doc, section, value
 from .. import property as prop
 
 class Event (object):
-    def __init__(self):
+    def __init__(self, name):
         self.handlers = set()
+        self.name = name
 
     def add_handler(self, handler):
         self.handlers.add(handler)
@@ -24,6 +25,9 @@ class Event (object):
     def n_handler(self):
         return len(self.handlers)
 
+    def __repr__(self):
+        return "<%sEvent>" % (self.name)
+
     __iadd__ = add_handler
     __isub__ = remove_handler
     __call__ = fire
@@ -37,10 +41,10 @@ class ChangedEvent(object):
 class EventHandler(object):
     def __init__(self, func):
         self._func = func
-        
+
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
-    
+
 class ModificationNotifier(object):
     def __setattr__(self, name, value):
         super(ModificationNotifier, self).__setattr__(name, value)
@@ -50,14 +54,14 @@ class ModificationNotifier(object):
 # create a seperate Event listener for each class
 # and provide ModificationNotifier Capabilities
 class Value(value.Value, ModificationNotifier):
-    _Changed = Event()
+    _Changed = Event("value")
 
 class Property(prop.Property, ModificationNotifier):
-    _Changed = Event()
+    _Changed = Event("prop")
 
 class Section(section.Section, ModificationNotifier):
-    _Changed = Event()
+    _Changed = Event("sec")
 
 class Document(doc.Document, ModificationNotifier):
-    _Changed = Event()
+    _Changed = Event("doc")
 

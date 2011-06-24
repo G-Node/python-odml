@@ -2,6 +2,7 @@ import base
 import format
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
+import doc
 
 class Section(base.sectionable):
     """A odML Section"""
@@ -15,9 +16,9 @@ class Section(base.sectionable):
     _format = format.Section
 
     def __init__(self, name, type="undefined", parent=None):
+        self._parent = parent
         self._name = name
         self.type = type
-        self._parent = parent
         self._props = base.SmartList()
         super(BaseSection, self).__init__()
 
@@ -31,7 +32,7 @@ class Section(base.sectionable):
     @name.setter
     def name(self, new_value):
         self._name = new_value
-        
+
     def get_name_definition(self, UseTerminology=True):
         if hasattr (self, "_name_definition"):
             return self._name_definition
@@ -49,7 +50,7 @@ class Section(base.sectionable):
                               del_name_definition,
                               "Name Definition of the section")
 
-    # API (public) 
+    # API (public)
     #
     #  properties
     @property
@@ -63,7 +64,18 @@ class Section(base.sectionable):
     @property
     def parent(self):
         return self._parent
-    
+
+    @property
+    def document(self):
+        """
+        returns the parent-most node (if its a document instance) or None
+        """
+        p = self
+        while p.parent:
+            p = p.parent
+        if isinstance(p, doc.Document):
+            return p
+
     def append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
@@ -100,11 +112,11 @@ class Section(base.sectionable):
         to another document
         """
         obj = super(BaseSection, self).clone()
-        
+
         obj._props = base.SmartList()
         for p in self._props:
             obj.append(p.clone())
-        
+
         return obj
 
 BaseSection = Section

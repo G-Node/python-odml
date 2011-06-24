@@ -159,6 +159,14 @@ def on_property_change(prop, **kwargs):
 
 Property._Changed += on_property_change
 
+def on_section_change(section, **kwargs):
+    doc = section.document
+    if doc is not None:
+        print doc._Changed.handlers, doc._Changed
+        doc._Changed(doc, section=section, **kwargs)
+
+Section._Changed += on_section_change
+
 # TODO this should probably be mixed in somewhere else too
 import TreeIters
 Section.IterClass  = TreeIters.SectionIter
