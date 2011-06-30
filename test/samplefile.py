@@ -9,19 +9,19 @@ class SampleFileCreator:
         for i in xrange(3):
             doc.append(self.create_section("sec %d" % i))
         return doc
-    
+
     def create_section(self, name, depth=0):
         s = odml.Section(name=name)
         if depth < 1:
             for i in xrange(2):
-                s.append(self.create_section("%s/%d" % (name, i), depth=depth+1))
-                
+                s.append(self.create_section("%s,%d" % (name, i), depth=depth+1))
+
         if name.endswith("1"):
             for i in xrange(3):
                 s.append(self.create_property("%s:%d" % (name, i)))
-        
+
         return s
-    
+
     def create_property(self, name):
         value = self.create_value(name.replace("sec", "val"))
         return odml.Property(name=name.replace("sec", "prop"), value=value)
@@ -34,50 +34,60 @@ class SampleFileCreatorTest(unittest.TestCase):
         doc = SampleFileCreator().create_document()
         for sec in doc.sections:
             xmlparser.dumpSection(sec)
-    
+
 class SampleFileOperationTest(unittest.TestCase):
     def setUp(self):
         doc = SampleFileCreator().create_document()
-        doc.sections['sec 0'].sections['sec 0/1'].type = "test"
+        doc.sections['sec 0'].sections['sec 0,1'].type = "test"
         self.doc = doc
-    
+
     def test_find_key(self):
-        self.assertEqual(self.doc.find(key="sec 1/1"), None)
-        
+        self.assertEqual(self.doc.find(key="sec 1,1"), None)
+
         # find distant child
-        sec = self.doc.find_related(key="sec 1/1")
-        self.assertEqual(sec.name, "sec 1/1")
-        
+        sec = self.doc.find_related(key="sec 1,1")
+        self.assertEqual(sec.name, "sec 1,1")
+
         # find sibling
-        res = sec.find_related(key="sec 0/0")
+        res = sec.find_related(key="sec 0,0")
         self.assertEqual(res, None)
-        
-        sec = sec.find_related(key="sec 1/0")
-        self.assertEqual(sec.name, "sec 1/0")
-        
+
+        sec = sec.find_related(key="sec 1,0")
+        self.assertEqual(sec.name, "sec 1,0")
+
         # find parent
         res = sec.find_related(key="sec 0")
         self.assertEqual(res, None)
 
         sec = sec.find_related(key="sec 1")
         self.assertEqual(sec.name, "sec 1")
-        
+
         # find section by type
-        self.assertEqual(self.doc.find_related(type="test").name, "sec 0/1")
-        
+        self.assertEqual(self.doc.find_related(type="test").name, "sec 0,1")
+
     def test_save(self):
         doc = xmlparser.XMLWriter(self.doc)
         path = os.tempnam()
         doc.write_file(path)
         os.unlink(path)
-    
+
     def test_restore(self):
         import StringIO
         doc = xmlparser.XMLWriter(self.doc)
         doc = StringIO.StringIO(unicode(doc))
         doc = xmlparser.parseXML(doc)
         self.assertEqual(doc, self.doc)
-
+#        for a,b in zip(doc.sections, self.doc.sections):
+#            print "sec cmp", a, b
+#            self.assertEqual(a, b)
+#        print "A ---------------------------------"
+#        for sec in doc.sections:
+#            xmlparser.dumpSection(sec)
+#        print "B ---------------------------------"
+#        for sec in self.doc.sections:
+#            xmlparser.dumpSection(sec)
+#        print "-----------------------------------"
+#
 class AttributeTest(unittest.TestCase):
     def test_value_int(self):
         v = odml.Value(value="1", dtype="int")
@@ -99,8 +109,8 @@ class AttributeTest(unittest.TestCase):
 
 class CopyTest(unittest.TestCase):
     def setUp(self):
-        self.p = odml.Property(value=1)
-        
+        self.p = odml.Property(name="test", value=1)
+
     def test_dependence(self):
         a = self.p
         b = self.p
@@ -108,14 +118,16 @@ class CopyTest(unittest.TestCase):
         a.value = odml.Value(5)
         self.assertEqual(a, b)
         self.assertEqual(a.value, b.value)
-        
+
     def test_independence(self):
         a = self.p.clone()
         b = self.p.clone()
-        self.assertNotEqual(a, b)
+        self.assertEqual(a, b)
         a.value = odml.Value(5)
-        self.assertUn
-                
+        self.assertNotEqual(a, b)
+
+        #self.assertUn
+
 if __name__ == '__main__':
     unittest.main()
 
