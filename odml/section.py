@@ -79,19 +79,33 @@ class Section(base.sectionable):
     def append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
-            self._sections.append (obj)
+            self._sections.append(obj)
             obj._parent = self
         elif isinstance(obj, Property):
-            self._props.append (obj)
+            self._props.append(obj)
             obj._section = self
         else:
             raise ValueError, "Can only append sections and properties"
 
-    def remove(self, obj):
+
+    def insert(self, position, obj):
+        """insert a Section or Property at the respective position"""
         if isinstance(obj, Section):
+            self._sections.insert(position, obj)
+            obj._parent = self
+        elif isinstance(obj, Property):
+            self._props.insert(position, obj)
+            obj._section = self
+        else:
+            raise ValueError, "Can only insert sections and properties"
+
+    def remove(self, obj):
+        if isinstance(obj, Section): # TODO make sure this is not compare based
             self._sections.remove(obj)
+            obj._parent = None
         elif isinstance(obj, Property):
             self._props.remove(obj)
+            obj._section = None
         else:
             raise ValueError, "Can only remove sections and properties"
 

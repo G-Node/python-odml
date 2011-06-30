@@ -97,3 +97,30 @@ class AppendValue(Command):
             if val == self.val: return
             self.obj.append(val)
         self.obj.remove(self.val)
+
+class MoveObject(Command):
+    """
+    MoveObject(obj=, dst=)
+
+    removes *obj* from *obj.parent* and appends it to *dst*
+    """
+    def _execute(self):
+        try:
+            self.index = self.obj.position
+        except:
+            self.index = self.obj.parent.index(self.obj)
+        self.parent = self.obj.parent
+        self.parent.remove(self.obj)
+        self.dst.append(self.obj)
+
+    def _undo(self):
+        """
+        move the object back to its original parent
+        and try to insert it at its old position
+        """
+        parent = self.obj.parent
+        parent.remove(self.obj)
+        try:
+            self.parent.insert(self.index, self.obj)
+        except:
+            self.parent.append(self.obj)
