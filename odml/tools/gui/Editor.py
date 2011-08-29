@@ -290,7 +290,7 @@ class Editor(gtk.Window):
 
         dialog = gtk.AboutDialog()
         dialog.set_name("odMLEditor")
-        dialog.set_copyright("\302\251 Copyright 2010 Chrisitan Kellner")
+        dialog.set_copyright("\302\251 Copyright 2010-2011 G-Node")
         dialog.set_authors([
             "Christian Kellner <kellner@bio.lmu.de>",
             "Hagen Fritsch <fritsch+odml@in.tum.de>",
