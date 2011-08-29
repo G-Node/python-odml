@@ -6,7 +6,7 @@ Installation
 
 To install the package simply run:
 
-  sudo python setup.py install --prefix /usr
+   $ sudo python setup.py install --prefix /usr
 
 ### Windows
 
@@ -20,7 +20,9 @@ To build the windows package from source, follow these instructions:
     * [setuptools](http://pypi.python.org/pypi/setuptools#files)
 
 2. Install build dependencies
-    `# easy_install.exe lxml`
+
+   $ easy_install.exe lxml
 
 3. Compile
-    `# python.exe setup.py py2exe`
+
+   $ python.exe setup.py py2exe
