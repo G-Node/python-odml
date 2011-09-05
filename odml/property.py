@@ -72,7 +72,6 @@ class Property(base.baseobject):
         return "<Property %s>" % self._name
 
 
-
     # API (public)
     #
     #  properties
@@ -80,6 +79,12 @@ class Property(base.baseobject):
     def values(self):
         """returns the list of values for this property"""
         return self._values
+
+    @values.setter
+    def values(self, new_values):
+        self._values = []
+        for i in new_values:
+            self.append(i)
 
     @property
     def value(self):
@@ -92,6 +97,11 @@ class Property(base.baseobject):
 
         #create a copy of the list, so mutations in there won’t affect us:
         return self._values[:]
+
+    @value.setter
+    def value(self, new_value):
+        self._values = []
+        self.append(new_value)
 
     def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
         """
@@ -136,5 +146,11 @@ class Property(base.baseobject):
             obj.append(v.clone())
 
         return obj
+
+    def merge(self):
+        pass
+
+    def unmerge(self, property):
+        pass
 
 BaseProperty = Property

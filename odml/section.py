@@ -9,10 +9,12 @@ class Section(base.sectionable):
     """A odML Section"""
     type       = None
     id         = None
-    link       = None
+    _link      = None
     repository = None
     mapping    = None
     reference  = None # the *import* property
+
+    _merged = None
 
     _format = format.Section
 
@@ -34,8 +36,20 @@ class Section(base.sectionable):
     def name(self, new_value):
         self._name = new_value
 
+    @property
+    def link(self):
+        return self._link
+
+    @link.setter
+    def link(self, new_value):
+        new_section = self.find_by_path(new_value) # raises exception if path cannot be found
+        if self._link:
+            self.clean()
+        self._link = new_value
+        self.merge(new_section)
+
     def get_name_definition(self, UseTerminology=True):
-        if hasattr (self, "_name_definition"):
+        if hasattr(self, "_name_definition"):
             return self._name_definition
         else:
             return None
@@ -133,5 +147,53 @@ class Section(base.sectionable):
             obj.append(p.clone())
 
         return obj
+
+    def contains(self, obj):
+        """
+        finds a property or section with the same name&type properties or None
+        """
+        if isinstance(obj, Section):
+            return super(BaseSection, self).contains(obj)
+        for i in self._props:
+            if obj.name == i.name:
+                return i
+
+    def _find_by_path(self, path):
+        if path[0] == "": # this indicates a path like "/name1" i.e. starting with a slash
+            return self.document._find_by_path(path[1:])
+        return super(BaseSection, self)._find_by_path(path)
+
+    def merge(self, section):
+        for obj in section:
+            mine = self.contains(obj)
+            if mine:
+                mine.merge(obj)
+            else:
+                mine = self.append(obj.clone())
+        self.merged = section
+
+    def clean(self):
+        if self._merged is not None:
+            self.unmerge(self._merged)
+        super(BaseSection, self).clean()
+
+    def unmerge(self, section):
+        """
+        clean up a merged section by removing objects that are totally equal
+        to the linked object
+        """
+        if self == section:
+            raise "cannot unmerge myself?"
+            return #self._sections
+        removals = []
+        for obj in section:
+            mine = self.contains(obj)
+            if mine == obj:
+                removals.append(mine)
+            else:
+                mine.unmerge(obj)
+        for obj in removals:
+            self.remove(obj)
+        self._merged = None
 
 BaseSection = Section

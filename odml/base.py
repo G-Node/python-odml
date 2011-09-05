@@ -53,6 +53,9 @@ class baseobject(object):
 
         return True
 
+    def clean(self):
+        pass
+
     def clone(self):
         """
         clone this object recursively allowing to copy it independently
@@ -79,6 +82,18 @@ class SmartList(list):
 
         # and fail eventually
         raise KeyError(key)
+
+    def remove(self, obj):
+        """
+        remove an element from this list
+
+        be sure to use "is" based comparison (instead of __cmp__ / ==)
+        """
+        for i, e in enumerate(self):
+            if e is obj:
+                del self[i]
+                return
+        raise ValueError("remove: %s not in list" % repr(obj))
 
 class sectionable(baseobject):
     def __init__(self):
@@ -120,9 +135,38 @@ class sectionable(baseobject):
                 for j in i.itersections(recursive=recursive):
                     yield j
 
+    def contains(self, obj):
+        """
+        checks if a subsection of name&type of *obj* is a child of this section
+        if so return this child
+        """
+        for i in self._sections:
+            if obj.name == i.name and obj.type == i.type:
+                return i
+
     def _matches(self, obj, key=None, type=None):
         return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
             and (type is None or (type is not None and hasattr(obj, "type") and obj.type == type))
+
+    def find_by_path(self, path):
+        """
+        find a Section/Property through a path like "name1/name2"
+        """
+        path = path.split("/")
+        return self._find_by_path(path)
+
+    def _find_by_path(self, path):
+        """
+        find a Section/Property through a path like ("name1", "name2")
+        """
+        cur = self
+        for i in path:
+            if i == "." or i == "": continue
+            if i == "..":
+                cur = self.parent
+                continue
+            cur = cur[i]
+        return cur
 
     def find(self, key=None, type=None):
         """return the first subsection named *key* of type *type*"""
@@ -161,6 +205,10 @@ class sectionable(baseobject):
                 if not recursive: break
 
         return None
+
+    def clean(self):
+        for i in self:
+            i.clean()
 
     def clone(self):
         """
