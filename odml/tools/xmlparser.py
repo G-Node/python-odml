@@ -182,11 +182,11 @@ def parseSection(node):
         tag = format.Section.map(child.tag)
         if child.tag == "section":
             subsection = parseSection(child)
-            if subsection:
+            if subsection is not None:
                 section.append(subsection)
         elif child.tag == "property":
             prop = parseProperty(child)
-            if prop:
+            if prop is not None:
                 section.append(prop)
         else:
             args[tag] = child.text.strip() if child.text else None
@@ -219,7 +219,7 @@ def parseXML(xml_file):
         if node.tag in format.Document._args:
             if node.tag == "section":
                 section = parseSection(node)
-                if section:
+                if section is not None:
                     doc.append(section)
             else:
                 setattr(doc, format.Document.map(node.tag), node.text.strip() if node.text else None)
