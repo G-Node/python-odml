@@ -36,7 +36,7 @@ class GenericIter(object):
         """
         #print ":get_next(%s)" % repr(self._obj)
         obj = self._obj.next()
-        if obj:
+        if obj is not None:
             return obj.IterClass(obj)
 
     def get_children(self):
