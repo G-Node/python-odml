@@ -80,6 +80,7 @@ class TreeModel(gtk.GenericTreeModel):
         return tree_iter.has_child
 
     def on_iter_n_children(self, tree_iter):
+        if tree_iter is None: return 0
         return tree_iter.n_children
 
     def on_iter_nth_child(self, tree_iter, n):
