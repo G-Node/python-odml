@@ -1,3 +1,4 @@
+#-*- coding: utf-8
 import base
 import format
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
