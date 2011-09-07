@@ -43,6 +43,46 @@ class TestCommands(unittest.TestCase):
             src=self.doc.sections[0].sections[1],
             dst=self.doc.sections[1])
 
+    def obj_copy(self, case):
+        """case: 0 (first section), 1 (first property))"""
+        dst = self.doc.sections[0]
+        src = self.doc.sections[1]
+
+        if case == 0:
+            obj = src.sections[0]
+        else:
+            obj = src.properties[0]
+
+        cmd = commands.CopyObject(obj=obj, dst=dst)
+        cmd()
+        self.assertIn(obj, dst)
+        self.assertIn(obj, src)
+        self.assertIs(obj.parent, src)
+
+        cmd.undo()
+        self.assertIn(obj, src)
+        self.assertNotIn(obj, dst)
+        self.assertIs(obj.parent, src)
+
+    def test_section_copy(self):
+        self.obj_copy(0)
+
+    def test_property_copy(self):
+        self.obj_copy(1)
+
+    def test_delete_object(self):
+        src = self.doc.sections[1]
+        parent = src.parent
+
+        cmd = commands.DeleteObject(obj=src)
+        cmd()
+        self.assertNotIn(src, parent)
+        self.assertIsNone(src.parent)
+
+        cmd.undo()
+        self.assertIn(src, parent)
+        self.assertIs(parent, src.parent)
+
     def test_value_move(self):
         """not yet needed"""
         pass

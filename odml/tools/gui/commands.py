@@ -98,28 +98,71 @@ class AppendValue(Command):
             self.obj.append(val)
         self.obj.remove(self.val)
 
-class MoveObject(Command):
+class DeleteObject(Command):
+    """
+    DeleteObject(obj=)
+
+    removes *obj* from its parent
+    """
+    def __init__(self, *args, **kwargs):
+        super(DeleteObject, self).__init__(*args, **kwargs)
+        # use an AppendCommand for the actual operation
+        # but use it reversed
+        self.append_cmd = AppendValue(obj=self.obj.parent, val=self.obj)
+        self.append_cmd.index = self.obj.position
+
+    def _execute(self):
+        """remove obj (append_cmd.val) from its parent"""
+        self.append_cmd._undo()
+
+    def _undo(self):
+        """append obj (append_cmd.val) to its original parent (append_cmd.obj)"""
+        self.append_cmd._execute()
+
+class CopyObject(Command):
+    """
+    CopyObject(obj=, dst=)
+
+    appends a clone of *obj* to *dst*
+    """
+    def get_new_object(self):
+        return self.obj.clone()
+
+    def _execute(self):
+        """clone the obj and append it to dst"""
+        self.new_obj = self.get_new_object()
+        self.dst.append(self.new_obj)
+
+    def _undo(self):
+        """
+        remove the clone from its parent
+        """
+        parent = self.new_obj.parent
+        parent.remove(self.new_obj)
+
+class MoveObject(CopyObject):
     """
     MoveObject(obj=, dst=)
 
     removes *obj* from *obj.parent* and appends it to *dst*
     """
-    def _execute(self):
+    def get_new_object(self):
         try:
             self.index = self.obj.position
         except:
             self.index = self.obj.parent.index(self.obj)
         self.parent = self.obj.parent
         self.parent.remove(self.obj)
-        self.dst.append(self.obj)
+        return self.obj
+
+    # _execute is inherited from CopyObject
 
     def _undo(self):
         """
         move the object back to its original parent
         and try to insert it at its old position
         """
-        parent = self.obj.parent
-        parent.remove(self.obj)
+        super(MoveObject, self)._undo()
         try:
             self.parent.insert(self.index, self.obj)
         except:
