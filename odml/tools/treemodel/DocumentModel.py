@@ -52,6 +52,9 @@ class DocumentModel(TreeModel):
             return SectionIter(self._section.sections[n])
         return super(DocumentModel, self).on_iter_nth_child(tree_iter, n)
 
+    def _get_node_iter(self, node):
+        return SectionIter(node)
+
     def destroy(self):
         self._section._Changed -= self.on_section_changed
 

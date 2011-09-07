@@ -37,11 +37,8 @@ class SectionModel(TreeModel):
         if len(self._section._props) == 0: return None
 
         path = self.model_path_to_odml_path(path) # we consider properties only
-        res = self._section.from_path(path)
-        if isinstance(res, value.Value):
-            return ValueIter(res)
-        else:
-            return PropIter(res)
+        node = self._section.from_path(path)
+        return self._get_node_iter(node)
 
     def on_iter_nth_child(self, tree_iter, n):
         debug(":on_iter_nth_child [%d]: %s " % (n, tree_iter))
@@ -49,6 +46,11 @@ class SectionModel(TreeModel):
             prop = self._section._props[n]
             return PropIter(prop)
         return super(SectionModel, self).on_iter_nth_child(tree_iter, n)
+
+    def _get_node_iter(self, node):
+        if isinstance(node, value.Value):
+            return ValueIter(node)
+        return PropIter(node)
 
     def on_section_changed(self, section=None, prop=None, value=None, prop_pos=None, value_pos=None, *args, **kargs):
         """

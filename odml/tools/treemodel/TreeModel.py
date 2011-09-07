@@ -92,3 +92,52 @@ class TreeModel(gtk.GenericTreeModel):
     def on_iter_parent(self, tree_iter):
         debug(":on_iter_parent [%s]" % tree_iter)
         return tree_iter.parent
+
+    def _get_node_iter(self, node):
+        raise NotImplementedError
+
+    def get_node_iter(self, node):
+        """
+        returns the corresponding iter to a node
+        """
+        #ugly fix, so to get a GtkTreeIter from our custom Iter instance
+        #we first convert our custom Iter to a path and the return an iter from it
+        #(apparently they are different)
+        path = self.get_node_path(node)
+        if path is ():
+            return self.get_iter_root()
+        return self.get_iter(path)
+
+    def get_node_path(self, node):
+        """
+        returns the path of a node
+        """
+        custom_iter = self._get_node_iter(node)
+        return self.on_get_path(custom_iter)
+
+    def post_insert(self, node):
+        """
+        called to notify the treemodel that *node* is a new inserted row
+        and the parent may have a child toggled
+        """
+        iter = self.get_node_iter(node)
+        self.row_inserted(self.get_path(iter), iter)
+        if self.iter_has_child(iter):
+            self.row_has_child_toggled(self.get_path(iter), iter)
+        else:
+            print node, "has no child"
+        # todo recurse to children!
+        iter = self.iter_parent(iter)
+        if not iter: return
+        self.row_has_child_toggled(self.get_path(iter), iter)
+
+    def post_delete(self, parent, old_path):
+        """
+        called to notify the treemodel that the path *old_path* is no
+        longer valid and parent might have its child toggled
+
+        TODO figure out how to handle recursive removals
+        """
+        iter = self.get_node_iter(parent)
+        self.row_deleted(old_path)
+        self.row_has_child_toggled(self.get_path(iter), iter)
