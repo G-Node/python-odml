@@ -10,33 +10,33 @@ class Property(base.baseobject):
     dependency = None
     dependencyValue = None
     mapping    = None
-    
+
     _format = format.Property
-    
-    def __init__(self, name, value, section=None, 
+
+    def __init__(self, name, value, section=None,
         synonym=None, definition=None, dependency=None, dependencyValue=None, mapping=None,
         unit=None, dtype=None, uncertainty=None):
     	"""
     	create a new Property
-    	
+
     	*value*
     	    specifies a direct value that shall be assigned as a first value
     	    if *value* is a list, the whole list of values will be assigned.
     	    Further info
-    	    
+
 	    	*unit*
 	            the unit of the value(s)
-	
+
 	        *dtype*
 	            the data type of the value(s)
-	
+
 	        *uncertainty*
 	            an estimation of uncertainty of the value(s)
 
     	*section*
     	    the parent section to which this property belongs
-    	
-    	
+
+
 	 * @param definition {@link String}
 	 * @param dependency {@link String}
 	 * @param dependencyValue {@link String}
@@ -73,33 +73,33 @@ class Property(base.baseobject):
 
 
 
-    # API (public) 
+    # API (public)
     #
     #  properties
     @property
     def values(self):
         """returns the list of values for this property"""
         return self._values
-        
+
     @property
     def value(self):
         """
         returns the value of this property (or list if multiple values are present)
-        
+
         use :ref:`values`() to always return the list"""
         if len(self._values) == 1:
             return self._values[0]
-        
+
         #create a copy of the list, so mutations in there won’t affect us:
-        return self._values[:] 
-    
+        return self._values[:]
+
     def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
         """
         adds a value to the list of values
-        
+
         If *value* is not an odml.Value instance, such an instance will be created
         given the addition function arguments (see :ref:`__init__` for their description).
-        
+
         If *value* is not an odml.Value instance and *unit*, *dtype* or *uncertainty* are
         missing, the values will be copied from the last value in this properties
         value-list if *copy_attributes* is True. If there is no value present to be
@@ -116,6 +116,7 @@ class Property(base.baseobject):
 
     def remove(self, value):
         self._values.remove(value)
+        value._property = None
 
     def __len__(self):
         return len(self._values)
@@ -128,10 +129,12 @@ class Property(base.baseobject):
         clone this object recursively allowing to copy it independently
         to another document
         """
-        obj = super(Property, self).clone()
-        
+        obj = super(BaseProperty, self).clone()
+
         obj._values = []
         for v in self._values:
             obj.append(v.clone())
 
         return obj
+
+BaseProperty = Property

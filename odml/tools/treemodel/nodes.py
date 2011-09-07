@@ -57,7 +57,6 @@ class ParentedNode(RootNode):
         return self.parent.to_path(parent) + self.parent.path_to(self)
 
     def successor(self):
-        print self, "position: ", self.position, identity_index(self.parent, self), "in", self.parent
         return self.parent.children[self.position + 1]
 
     def next(self):
@@ -162,7 +161,6 @@ Property._Changed += on_property_change
 def on_section_change(section, **kwargs):
     doc = section.document
     if doc is not None:
-        print doc._Changed.handlers, doc._Changed
         doc._Changed(doc, section=section, **kwargs)
 
 Section._Changed += on_section_change

@@ -41,7 +41,7 @@ class XMLWriter:
 """
     def __init__(self, odml_document):
         self.doc = odml_document
-    
+
     @staticmethod
     def save_element(e):
         """
@@ -52,26 +52,25 @@ class XMLWriter:
             cur = E(fmt._name, getattr(e, fmt.map(fmt._xml_content)))
         else:
             cur = E(fmt._name)
-            
+
         # generate attributes
         for k in fmt._xml_attributes:
             if not hasattr(e, fmt.map(k)): continue
-            
+
             val = getattr(e, fmt.map(k))
             if val is None: continue # no need to save this
             cur.attrib[k] = unicode(val)
 
         # generate elements
         for k in fmt._args:
-#            print "processing %s -> %s" % (e, k)
             if k in fmt._xml_attributes \
                 or not hasattr(e, fmt.map(k)) \
                 or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
                     continue
-            
+
             val = getattr(e, fmt.map(k))
             if val is None: continue
-            
+
             if isinstance(val, list):
                 for v in val:
                     ele = XMLWriter.save_element(v)
@@ -79,12 +78,12 @@ class XMLWriter:
             else:
                 ele = E(k, unicode(val))
                 cur.append(ele)
-        
+
         return cur
-    
+
     def __unicode__(self):
         return ET.tounicode(self.save_element(self.doc), pretty_print=True)
-    
+
     def write_file(self, filename):
         f = open(filename, "w")
         f.write(self.header)
@@ -157,9 +156,9 @@ def parseProperty(node):
         # set this, because the constructor users the value property even for multiple values
         # (and also so that the mandatory arguments-checker is fine)
         args['value'] = values
-        
+
     check_mandatory_arguments(args, format.Property, "property", node)
-    
+
     # same hack as above: Property constructor takes a value argument
     # kind of violating the format description
     del args['values']
@@ -171,7 +170,7 @@ def parseSection(node):
     if name is None:        # the element
         name = node.find("name")
         if name is not None: name = name.text
-    
+
     if name is None:
         return error("Missing name element in <section>", node)
 
@@ -207,9 +206,9 @@ def parseSection(node):
 
 def parseXML(xml_file):
     """parses an xml-file
-    
+
     *xml_file* is a file-object
-    
+
     returns an odML-Document
     """
     tree = ET.ElementTree()
@@ -242,4 +241,4 @@ if __name__ == '__main__':
         parser.print_help()
     else:
         doc = parseXML(open(args[0]))
-    
+

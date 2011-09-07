@@ -124,8 +124,6 @@ class TreeModel(gtk.GenericTreeModel):
         self.row_inserted(self.get_path(iter), iter)
         if self.iter_has_child(iter):
             self.row_has_child_toggled(self.get_path(iter), iter)
-        else:
-            print node, "has no child"
         # todo recurse to children!
         iter = self.iter_parent(iter)
         if not iter: return
