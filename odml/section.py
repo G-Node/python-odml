@@ -21,9 +21,10 @@ class Section(base.sectionable):
     def __init__(self, name, type="undefined", parent=None):
         self._parent = parent
         self._name = name
-        self.type = type
         self._props = base.SmartList()
         super(BaseSection, self).__init__()
+        # this may fire a change event, so have the section setup then
+        self.type = type
 
     def __repr__(self):
         return "<Section %s (%d)>" % (self._name, len(self._sections))
@@ -44,6 +45,11 @@ class Section(base.sectionable):
     def link(self, new_value):
         if self.parent is None: # we cannot possibly know where the link is going
             self._link = new_value
+            return
+
+        if new_value == '':
+            self._link = None
+            self.clean()
             return
 
         new_section = self.find_by_path(new_value) # raises exception if path cannot be found

@@ -178,3 +178,10 @@ class Value(base.baseobject):
     @default_filename.setter
     def default_filename(self, new_value):
         self._default_filename = new_value
+
+    def clone(self):
+        obj = super(BaseValue, self).clone()
+        obj._property = None
+        return obj
+
+BaseValue = Value

@@ -215,8 +215,8 @@ class sectionable(baseobject):
         clone this object recursively allowing to copy it independently
         to another document
         """
-        import copy
-        obj = copy.copy(self)
+        obj = super(sectionable, self).clone()
+        obj._parent = None
         obj._sections = SmartList()
         for s in self._sections:
             obj.append(s.clone())

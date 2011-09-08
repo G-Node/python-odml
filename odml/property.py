@@ -140,6 +140,7 @@ class Property(base.baseobject):
         to another document
         """
         obj = super(BaseProperty, self).clone()
+        obj._section = None
 
         obj._values = []
         for v in self._values:
