@@ -226,6 +226,8 @@ def parseXML(xml_file):
         else:
             error("Invalid element <%s> in odML document" % node.tag, node)
 
+    doc.finalize()
+
     for sec in doc.sections:
         dumpSection(sec)
 

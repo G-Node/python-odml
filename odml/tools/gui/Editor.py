@@ -426,6 +426,7 @@ class Editor(gtk.Window):
         chooser.destroy()
 
     def save_file(self, uri):
+        self._document.clean()
         doc = XMLWriter(self._document)
         gf = gio.File(uri)
         try:
@@ -437,6 +438,7 @@ class Editor(gtk.Window):
         xml_file.write(doc.header)
         xml_file.write(unicode(doc))
         xml_file.close()
+        self._document.finalize() # undo the clean
         self._info_bar.show_info("%s was saved" % (gf.get_basename()))
         self.edited = 0
         return True # TODO return false on any error and notify the user

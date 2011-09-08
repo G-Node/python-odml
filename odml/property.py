@@ -147,7 +147,7 @@ class Property(base.baseobject):
 
         return obj
 
-    def merge(self):
+    def merge(self, property):
         pass
 
     def unmerge(self, property):

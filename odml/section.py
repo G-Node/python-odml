@@ -42,8 +42,12 @@ class Section(base.sectionable):
 
     @link.setter
     def link(self, new_value):
+        if self.parent is None: # we cannot possibly know where the link is going
+            self._link = new_value
+            return
+
         new_section = self.find_by_path(new_value) # raises exception if path cannot be found
-        if self._link:
+        if self._link is not None:
             self.clean()
         self._link = new_value
         self.merge(new_section)
@@ -160,17 +164,19 @@ class Section(base.sectionable):
 
     def _find_by_path(self, path):
         if path[0] == "": # this indicates a path like "/name1" i.e. starting with a slash
+            if self.document is None: # for dangling sections (e.g. parsing not complete)
+                return None
             return self.document._find_by_path(path[1:])
         return super(BaseSection, self)._find_by_path(path)
 
     def merge(self, section):
         for obj in section:
             mine = self.contains(obj)
-            if mine:
+            if mine is not None:
                 mine.merge(obj)
             else:
-                mine = self.append(obj.clone())
-        self.merged = section
+                self.append(obj.clone())
+        self._merged = section
 
     def clean(self):
         if self._merged is not None:
@@ -183,11 +189,13 @@ class Section(base.sectionable):
         to the linked object
         """
         if self == section:
-            raise "cannot unmerge myself?"
+            raise RuntimeException("cannot unmerge myself?")
             return #self._sections
         removals = []
         for obj in section:
             mine = self.contains(obj)
+            if mine is None:
+                continue
             if mine == obj:
                 removals.append(mine)
             else:

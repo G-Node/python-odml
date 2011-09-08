@@ -48,4 +48,15 @@ class Document(base.sectionable):
     def __repr__(self):
         return "<Doc %s by %s (%d sections)>" % (self._version, self._author, len(self._sections))
 
+    def finalize(self):
+        """
+        This needs to be called after the document is set up from parsing
+        it will perform additional operations, that need the complete document
+        """
+        # we could not fill out links while parsing (referenced sections where not known),
+        # so try to set them now, where the document is complete
+        for sec in self.itersections(recursive=True):
+            if sec._link is not None:
+                sec.link = sec._link
+
 BaseDocument = Document
