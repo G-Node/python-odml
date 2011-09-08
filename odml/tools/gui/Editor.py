@@ -359,10 +359,13 @@ class Editor(gtk.Window):
         xml_file = gio.File(uri)
         self._document = parseXML(xml_file.read())
         self._info_bar.show_info("Loading of %s done!" % (xml_file.get_basename()))
-        self.update_statusbar("%s" % (self.file_uri))
+        self.set_status_filename()
         self.update_model()
         self.reset_editor()
         # TODO select default section
+
+    def set_status_filename(self):
+        self.update_statusbar("%s" % (self.file_uri))
 
     def reset_editor(self):
         self.edited = 0 # initialize the edit stack position
@@ -421,20 +424,16 @@ class Editor(gtk.Window):
 
     def on_file_save(self, chooser, response_id):
         if response_id == gtk.RESPONSE_OK:
-            uri = chooser.get_uri()
-            self.save_file(uri)
+            self.file_uri = chooser.get_uri()
+            self.save_file(self.file_uri)
+            self.set_status_filename()
         chooser.destroy()
 
     def save_file(self, uri):
         self._document.clean()
         doc = XMLWriter(self._document)
         gf = gio.File(uri)
-        try:
-            gf.trash() # delete the old one
-        except gio.Error:
-            # the file most likely did not exists. that's fine
-            pass
-        xml_file = gf.create()
+        xml_file = gf.replace(etag='', make_backup=False) # TODO make backup?
         xml_file.write(doc.header)
         xml_file.write(unicode(doc))
         xml_file.close()
