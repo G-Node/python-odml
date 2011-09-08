@@ -4,9 +4,50 @@ from ... import format
 import commands
 from TreeView import TreeView
 from odml.tools.treemodel import SectionModel
+from DragProvider import DragProvider
+from .. import xmlparser
 
 COL_KEY = 0
 COL_VALUE = 1
+
+class PropertyDragProvider(DragProvider):
+    def get_data(self, mime, model, iter):
+        obj = model.get_object(iter)
+        print ":get_data(%s)" % (mime), obj
+
+        if mime == "odml/property-path":
+            if isinstance(obj, odml.value.Value): # here we want a Property-object only
+                return self.get_data(mime, model, model.iter_parent(iter))
+            return model.get_string_from_iter(iter) #':'.join(map(str, obj.to_path()))
+
+        elif mime == "odml/value-path":
+            if not isinstance(obj, odml.value.Value): # here we want a Value-object only
+                return self.get_data(mime, model, model.iter_children(iter))
+            return model.get_string_from_iter(iter) #':'.join(map(str, obj.to_path()))
+
+        return unicode(xmlparser.XMLWriter(obj))
+
+    def can_handle_data(self, mime_types):
+        print ":can_handle_data", mime_types
+        return True
+
+    def receive_data(self, mime, action, data, model, iter, position):
+        print ":receive_data(%s)" % mime
+        if iter is None: # can't drop anything here
+            return False
+
+        dest = model.get_object(iter)
+
+        if mime == "odml/value-path":
+            data_iter = model.get_iter_from_string(data)
+            data = model.get_object(data_iter)
+            # now move the data
+            print "moving values not (yet) implemented"
+            raise NotImplementedError
+
+        print "unimplemented (from xml)", data
+        raise NotImplementedError
+
 class ValueView(TreeView):
     """
     The Main treeview for editing properties and their value-attributes
@@ -28,6 +69,16 @@ class ValueView(TreeView):
         tv.set_headers_visible(True)
         tv.set_rules_hint(True)
         tv.show()
+
+        # set up our drag provider
+        dp = PropertyDragProvider(self._treeview)
+        # value paths will be implemented later
+        #dp.add_mime_type('odml/value-path', flags=gtk.TARGET_SAME_WIDGET)
+        dp.add_mime_type('odml/property-path', flags=gtk.TARGET_SAME_APP, allow_drop=False)
+        dp.add_mime_type('TEXT', allow_drop=False)
+        dp.add_mime_type('STRING', allow_drop=False)
+        dp.add_mime_type('text/plain', allow_drop=False)
+        dp.execute = lambda cmd: self.execute(cmd)
 
     @property
     def section(self):

@@ -4,16 +4,26 @@ from TreeView import TreeView
 from DragProvider import DragProvider
 from .. import xmlparser
 
-
-class TreeMoveCommand(commands.MoveObject):
+class CopyOrMoveCommand(commands.Command):
     """
-    TreeMoveCommand(tv=, obj=, dst=)
+    CopyOrMoveCommand(obj=, dst=, copy=True/False)                            tv=TreeView,)
+    """
+    def __init__(self, *args, **kwargs):
+        super(CopyOrMoveCommand, self).__init__(*args, **kwargs)
+        cmd_class = commands.CopyObject if self.copy else commands.MoveObject
+        self.cmd = cmd_class(obj=self.obj, dst=self.dst)
+
+class TreeCopyOrMoveCommand(CopyOrMoveCommand):
+    """
+    TreeMoveCommand(tv=, obj=, dst=, old_path=)
 
     Move an object backed by a tree-view
     """
     undo_state = None
 
     def saveExpandedLines(self):
+        # TODO: this could be stored directly in the odml nodes
+        #       restoring would then work even after the modification
        def checkLine(model, path, iter, data = None):
            if self.tv.row_expanded(path):
                expandedLines.append(path)
@@ -34,7 +44,7 @@ class TreeMoveCommand(commands.MoveObject):
         model = self.tv.get_model()
         self.tv.freeze_child_notify()
         self.tv.set_model(None)
-        super(TreeMoveCommand, self)._execute()
+        self.cmd()
         self.tv.set_model(model)
         self.tv.thaw_child_notify()
         if self.undo_state is not None:
@@ -50,16 +60,56 @@ class TreeMoveCommand(commands.MoveObject):
         model = self.tv.get_model()
         self.tv.freeze_child_notify()
         self.tv.set_model(None)
-        super(TreeMoveCommand, self)._undo()
+        self.cmd.undo()
         self.tv.set_model(model)
         self.tv.thaw_child_notify()
         self.restoreExpandedLines(self.tv_state)
 
+class PropertyCopyOrMoveCommand(CopyOrMoveCommand):
+    """
+    PropertyCopyOrMoveCommand(obj=, dst=, copy=True/False,
+                            tv=TreeView,)
+    """
+    def __init__(self, *args, **kwargs):
+        super(PropertyCopyOrMoveCommand, self).__init__(*args, **kwargs)
+        self.parent = self.obj.parent
+
+    def _execute(self):
+        model = self.tv.get_model()
+        if model.section is self.parent:
+            # we are in the source-section and the row is to be removed
+            # remember the path!
+            path = model.get_node_path(self.obj)
+        self.cmd() # run the actual move / copy command
+
+        if model.section is self.dst:
+            # we are viewing the destination section now
+            model.post_insert(self.cmd.new_obj)
+
+        if model.section is self.parent:
+            # we are viewing the source section now
+            model.post_delete(parent=self.dst, old_path=path)
+
+    def _undo(self):
+        model = self.tv.get_model()
+        if model.section is self.dst:
+            # we are in the dest-section and the row is to removed again
+            # remember the path!
+            path = model.get_node_path(self.cmd.new_obj)
+
+        self.cmd.undo()
+
+        if model.section is self.dst:
+            model.post_delete(parent=self.parent, old_path=path)
+
+        if model.section is self.parent:
+            model.post_insert(self.obj)
+
 class SectionDragProvider(DragProvider):
     def get_data(self, mime, model, iter):
         obj = model.get_object(iter)
-        print ":get_data(%s)" % (mime), obj
-        if mime == "odml/object-path":
+        print (":get_data(%s)" % (mime)), repr(obj)
+        if mime == "odml/section-path":
             return model.get_string_from_iter(iter) #':'.join(map(str, obj.to_path()))
         return unicode(xmlparser.XMLWriter(obj))
 
@@ -67,23 +117,33 @@ class SectionDragProvider(DragProvider):
         print ":can_handle_data", mime_types
         return True
 
-    def receive_data(self, mime, data, model, iter, position):
+    def receive_data(self, mime, action, data, model, iter, position):
         print ":receive_data(%s)" % mime
         if iter is None:
             iter = model.get_iter_root()
         dest = model.get_object(iter)
-        if mime == "odml/object-path":
+
+        copy = action == gtk.gdk.ACTION_COPY
+
+        if mime == "odml/property-path":
+            model = self.context.get_source_widget().get_model()
             data_iter = model.get_iter_from_string(data)
             data = model.get_object(data_iter)
+            return self.dropProperty(model, data, dest, data_iter, iter, copy)
+
+        if mime == "odml/section-path":
+            data_iter = model.get_iter_from_string(data)
+            data = model.get_object(data_iter)
+            if position == gtk.TREE_VIEW_DROP_BEFORE or position == gtk.TREE_VIEW_DROP_AFTER:
+                dest = dest.parent
+            else: # if position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
+                pass
+            return self.dropSection(model, data, dest, data_iter, iter, copy)
         else:
             print "unimplemented (from xml)", data
-            return False
+            raise NotImplementedError
 
-        if position == gtk.TREE_VIEW_DROP_BEFORE or position == gtk.TREE_VIEW_DROP_AFTER:
-            dest = dest.parent
-        else: # if position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
-            pass
-
+    def dropSection(self, model, section, dest, section_iter, dest_iter, copy=False):
 #        cmd = commands.MoveObject(
 #            obj=data, dst=dest,
 #            old_path  = model.get_path(data_iter),
@@ -97,12 +157,32 @@ class SectionDragProvider(DragProvider):
         # for now we don't care about model updating and just reset the
         # treeview und expand the related rows
 
-        cmd = TreeMoveCommand(
-            tv = self.widget,
-            obj=data, dst=dest,
-            old_path  = model.get_path(data_iter),
-            dest_path = model.get_path(iter))
+        cmd = TreeCopyOrMoveCommand(
+                obj=section, dst=dest, copy=copy,
+                tv=self.widget,
+                old_path=model.get_path(section_iter))
 
+        self.execute(cmd)
+
+    def dropProperty(self, model, prop, dest, prop_iter, dest_iter, copy=False):
+        if copy:
+            cmd = commands.CopyObject(obj=prop, dst=dest)
+        else:
+            cmd = commands.MoveObject(obj=prop, dst=dest)
+
+        print prop
+        print model.get_node_iter(prop)
+        widget = self.context.get_source_widget()
+        prop_path = model.get_path(model.get_node_iter(prop))
+        prop_parent = prop.parent
+
+        cmd = PropertyCopyOrMoveCommand(
+                    obj=prop,
+                    dst=dest,
+                    tv =widget,
+                    copy=copy)
+
+        print cmd
         self.execute(cmd)
 
 class SectionView(TreeView):
@@ -116,13 +196,15 @@ class SectionView(TreeView):
         super(SectionView, self).__init__()
         self.add_column(name="Name", edit_func=self.on_edited)
         self._treeview.show()
-        dp = SectionDragProvider(self._treeview)
-        dp.add_mime_type('odml/object-path', gtk.TARGET_SAME_APP)
-        dp.add_mime_type('TEXT')
-        dp.add_mime_type('STRING')
-        dp.add_mime_type('text/plain')
-        dp.execute = lambda cmd: self.execute(cmd)
 
+        # set up our drag provider
+        dp = SectionDragProvider(self._treeview)
+        dp.add_mime_type('odml/section-path', flags=gtk.TARGET_SAME_WIDGET)
+        dp.add_mime_type('odml/property-path', flags=gtk.TARGET_SAME_APP, allow_drag=False)
+        dp.add_mime_type('TEXT', allow_drop=False)
+        dp.add_mime_type('STRING', allow_drop=False)
+        dp.add_mime_type('text/plain', allow_drop=False)
+        dp.execute = lambda cmd: self.execute(cmd)
 
     def set_model(self, model):
         self._treeview.set_model(model)
