@@ -3,6 +3,12 @@ import unittest
 import os
 from odml.tools import xmlparser
 
+def dump(doc, filename):
+    """
+    helper function to dump a duocument for debugging purposes
+    """
+    open(filename, "w").write(unicode(xmlparser.XMLWriter(doc)))
+
 class SampleFileCreator:
     def create_document(self):
         doc = odml.Document()

@@ -34,9 +34,9 @@ class TestCommands(unittest.TestCase):
             dst=self.doc.sections[1])
 
     def test_property_move(self):
-        print self.doc.sections[0]
-        print self.doc.sections[0].sections[1]
-        print self.doc.sections[0].sections[1].properties[1]
+        #print self.doc.sections[0]
+        #print self.doc.sections[0].sections[1]
+        #print self.doc.sections[0].sections[1].properties[1]
 
         self.move_object(
             obj=self.doc.sections[0].sections[1].properties[1],
@@ -59,8 +59,19 @@ class TestCommands(unittest.TestCase):
         self.assertIn(obj, src)
         self.assertIs(obj.parent, src)
 
+        clone = dst.contains(obj)
+        self.assertIsNot(clone, obj)
+        self.assertEqual(clone, obj)
+        self.assertIs(clone.parent, dst)
+        if case == 0:
+            self.assertIs(clone, dst.sections[clone.position])
+        else:
+            self.assertIs(clone, dst.properties[clone.position])
+
         cmd.undo()
         self.assertIn(obj, src)
+        self.assertNotIn(clone, dst)
+        self.assertIsNone(clone.parent)
         self.assertNotIn(obj, dst)
         self.assertIs(obj.parent, src)
 
