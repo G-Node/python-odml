@@ -65,6 +65,15 @@ class SectionModel(TreeModel):
                 isinstance(context.val, self._section.__class__):
             return
 
+        if context.action == "set" and context.postChange:
+            path = self.get_node_path(context.obj)
+            if not path: return # probably the section changed
+            iter = self.get_iter(path)
+            self.row_changed(path, iter)
+
+        if not context.obj is self._section:
+            return
+
         if context.action == "remove":
             self.event_remove(context)
 
@@ -72,11 +81,7 @@ class SectionModel(TreeModel):
             print "row inserted", context.val
             self.post_insert(context.val)
 
-        if context.action == "set" and context.postChange:
-            path = self.get_node_path(context.obj)
-            if not path: return # probably the section changed
-            iter = self.get_iter(path)
-            self.row_changed(path, iter)
+
 
     def destroy(self):
         self._section._Changed -= self.on_section_changed
