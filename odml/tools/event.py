@@ -20,6 +20,14 @@ class Event (object):
     def fire(self, *args, **kargs):
         for handler in self.handlers:
             handler(*args, **kargs)
+        self.finish(*args, **kargs)
+
+    def finish(self, *args, **kargs):
+        """
+        a final handler for this event
+        (typically passing the event on to higher layers)
+        """
+        pass
 
     @property
     def n_handler(self):
@@ -33,6 +41,53 @@ class Event (object):
     __call__ = fire
     __len__  = n_handler
 
+class ChangeContext(object):
+    def __init__(self, obj, val):
+        self._obj = [obj]
+        self.val = val
+        self.action = None
+        self.when = None
+
+    @property
+    def preChange(self):
+        return self.when is True
+
+    @preChange.setter
+    def preChange(self, val):
+        self.when = True if val else None
+
+    @property
+    def postChange(self):
+        return self.when is False
+
+    @postChange.setter
+    def postChange(self, val):
+        self.when = False if val else None
+
+    @property
+    def obj(self):
+        return self._obj[0]
+
+    def getStack(self, count):
+        return ([None * count] + self._obj)[-count:]
+
+    @property
+    def cur(self):
+        return self._obj[-1]
+
+    def passOn(self, obj):
+        self._obj.append(obj)
+        obj._Changed(self)
+        self._obj.remove(obj)
+
+    def reset(self):
+        self._obj = [self.obj]
+
+    def __repr__(self):
+        v = ""
+        if self.preChange: v = "Pre"
+        if self.postChange: v = "Post"
+        return "<%sChange %s.%s(%s)>" % (v, repr(self.obj), self.action, repr(self.val))
 
 class ChangedEvent(object):
     def __init__(self):
@@ -46,22 +101,49 @@ class EventHandler(object):
         return self._func(*args, **kargs)
 
 class ModificationNotifier(object):
+    """
+    Override some methods, to get notification on their calls
+    """
     def __setattr__(self, name, value):
-        super(ModificationNotifier, self).__setattr__(name, value)
-        if not name.startswith('_') and hasattr(self, name):
-            self._Changed(self)
+        fire = not name.startswith('_') and hasattr(self, name)
+        func = lambda: super(ModificationNotifier, self).__setattr__(name, value)
+        if fire:
+            self.__fireChange("set", (name, value), func)
+        else:
+            func()
+
+    def __fireChange(self, action, obj, func):
+        c = ChangeContext(self, obj)
+        c.action = action
+        c.preChange = True
+        self._Changed(c)
+        func()
+        c.postChange = True
+        self._Changed(c)
+
+    def append(self, obj):
+        func = lambda: super(ModificationNotifier, self).append(obj)
+        self.__fireChange("append", obj, func)
+
+    def remove(self, obj):
+        func = lambda: super(ModificationNotifier, self).remove(obj)
+        self.__fireChange("remove", obj, func)
+
+    def insert(self, position, obj):
+        func = lambda: super(ModificationNotifier, self).insert(position, obj)
+        self.__fireChange("insert", obj, func)
 
 # create a seperate Event listener for each class
 # and provide ModificationNotifier Capabilities
-class Value(value.Value, ModificationNotifier):
+class Value(ModificationNotifier, value.Value):
     _Changed = Event("value")
 
-class Property(prop.Property, ModificationNotifier):
+class Property(ModificationNotifier, prop.Property):
     _Changed = Event("prop")
 
-class Section(section.Section, ModificationNotifier):
+class Section(ModificationNotifier, section.Section):
     _Changed = Event("sec")
 
-class Document(doc.Document, ModificationNotifier):
+class Document(ModificationNotifier, doc.Document):
     _Changed = Event("doc")
 

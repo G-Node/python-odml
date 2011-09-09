@@ -60,12 +60,10 @@ class PropertyView(TreeView):
 
         self.execute(cmd)
 
-    def on_object_change(self, document=None, section=None, prop=None, value=None, *args, **kargs):
+    def on_object_change(self, context):
         """
         this change listener is attached to the current object class
         and updates the GUI elements upon relevant change events
         """
-        if (document is self._model and section is None) \
-            or (section is self._model and prop is None) \
-            or (prop is self._model and value is None):
+        if context.cur is self._model and context.postChange:
                 self.fill()

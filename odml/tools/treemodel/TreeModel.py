@@ -57,8 +57,6 @@ class TreeModel(gtk.GenericTreeModel):
         return gobject.TYPE_STRING
 
     def on_get_path(self, tree_iter):
-        debug("+on_get_path: %s" % (tree_iter))
-        debug(" odml path: %s" % repr(tree_iter.to_path()))
         return self.odml_path_to_model_path(tree_iter.to_path()[self.offset:])
 
     def on_get_value(self, tree_iter, column):
@@ -126,8 +124,8 @@ class TreeModel(gtk.GenericTreeModel):
             self.row_has_child_toggled(self.get_path(iter), iter)
         # todo recurse to children!
         iter = self.iter_parent(iter)
-        if not iter: return
-        self.row_has_child_toggled(self.get_path(iter), iter)
+        if iter is not None:
+            self.row_has_child_toggled(self.get_path(iter), iter)
 
     def post_delete(self, parent, old_path):
         """
@@ -136,6 +134,16 @@ class TreeModel(gtk.GenericTreeModel):
 
         TODO figure out how to handle recursive removals
         """
-        iter = self.get_node_iter(parent)
         self.row_deleted(old_path)
-        self.row_has_child_toggled(self.get_path(iter), iter)
+        iter = self.get_node_iter(parent)
+        if iter is not None:
+            self.row_has_child_toggled(self.get_path(iter), iter)
+
+    def event_remove(self, context):
+        if context.preChange:
+            context.path = self.get_node_path(context.val)
+            context.parent = context.val.parent
+        if context.postChange:
+            if hasattr(context, "path"):
+                print "row deleted", context.path
+                self.post_delete(context.parent, context.path)

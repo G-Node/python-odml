@@ -8,10 +8,16 @@ class TestEvents(unittest.TestCase):
         self.doc = samplefile.SampleFileCreator().create_document()
         for obj in [value.Value, property.Property, section.Section, doc.Document]:
             obj._Changed += self.event_success
-    
-    def event_success(self, obj, **kwargs):
-        obj._modified = kwargs
-        
+
+    def tearDown(self):
+        for obj in [value.Value, property.Property, section.Section, doc.Document]:
+            obj._Changed -= self.event_success
+
+    def event_success(self, context):
+        if context.preChange: return
+        context.cur._modified = context._obj[:]
+        context.cur._context  = context
+
     def test_simple_events(self):
         a = value.Value(1)
         a._value = 2
@@ -19,24 +25,35 @@ class TestEvents(unittest.TestCase):
         # modifying a protected attribute should not make a call,
         # thus the _modified property won't be set
         self.assertRaises(AttributeError, lambda: a._modified)
-        
+
         a.data = 3
-        self.assertEqual(a._modified, {})
         self.assertEqual(a.data, 3)
+        self.assertIs(a._modified[0], a)
+        self.assertEqual(a._context.val, ("data", 3))
+        self.assertTrue(a._context.postChange)
+
+    def test_pre_post_change(self):
+        res = []
+        func = lambda context: res.append((context.preChange, context.postChange))
+        value.Value._Changed += func
+        a = value.Value(1)
+        a.value = 2
+        value.Value._Changed -= func
+        self.assertEqual(res, [(True, False), (False, True)])
 
     def test_event_passing(self):
         s = section.Section(name="section")
         v = value.Value(1)
         p = property.Property(name="prop", value=v)
         s.append(p)
-        
+
         v.data = 4
-        self.assertEqual(v._modified, {})
-        self.assertEqual(p._modified, {'value': v, 'value_pos': 0})
-        self.assertEqual(s._modified, {'value': v, 'value_pos': 0, 'prop': p, 'prop_pos': 0})
+        self.assertEqual(v._modified, [v])
+        self.assertEqual(p._modified, [v, p])
+        self.assertEqual(s._modified, [v, p, s])
         self.assertEqual(v.data, 4)
         #TODO integrate Document
-        
+
 if __name__ == '__main__':
     unittest.main()
 

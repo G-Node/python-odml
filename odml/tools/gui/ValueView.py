@@ -195,7 +195,7 @@ class ValueView(TreeView):
                 model.row_has_child_toggled(cmd.path, model.get_iter(cmd.path))
                 model.row_deleted(cmd.val_path)
 
-        cmd.on_action = cmd_action
+        #cmd.on_action = cmd_action
         self.execute(cmd)
 
 
@@ -223,5 +223,5 @@ class ValueView(TreeView):
                 cmd.path = model.odml_path_to_model_path(prop.to_path(model.section))
                 model.row_inserted(cmd.path, model.get_iter(cmd.path))
 
-        cmd.on_action = cmd_action
+        #cmd.on_action = cmd_action
         self.execute(cmd)

@@ -13,6 +13,12 @@ class CopyOrMoveCommand(commands.Command):
         cmd_class = commands.CopyObject if self.copy else commands.MoveObject
         self.cmd = cmd_class(obj=self.obj, dst=self.dst)
 
+    def _execute(self):
+        self.cmd()
+
+    def _undo(self):
+        self.cmd.undo()
+
 class TreeCopyOrMoveCommand(CopyOrMoveCommand):
     """
     TreeMoveCommand(tv=, obj=, dst=, old_path=)
@@ -162,6 +168,9 @@ class SectionDragProvider(DragProvider):
                 tv=self.widget,
                 old_path=model.get_path(section_iter))
 
+        cmd = CopyOrMoveCommand(
+                 obj=section, dst=dest, copy=copy)
+
         self.execute(cmd)
 
     def dropProperty(self, model, prop, dest, prop_iter, dest_iter, copy=False):
@@ -182,6 +191,8 @@ class SectionDragProvider(DragProvider):
                     tv =widget,
                     copy=copy)
 
+        cmd = CopyOrMoveCommand(
+                 obj=prop, dst=dest, copy=copy)
         print cmd
         self.execute(cmd)
 

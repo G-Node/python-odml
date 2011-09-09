@@ -30,6 +30,7 @@ def identity_index(obj, val):
     for i, v in enumerate(obj):
         if v is val: return i
 
+    import pdb; pdb.set_trace()
     raise ValueError("%s does not contain the item %s" % (repr(obj), repr(val)))
 
 class RootNode(object):
@@ -144,26 +145,14 @@ class Value(event.Value, ValueNode): pass
 class Property(event.Property, PropertyNode): pass
 class Section(event.Section, SectionNode): pass
 
-def on_value_change(value, **kwargs):
-    prop = value._property
-    if prop is not None:
-        prop._Changed(prop, value=value, value_pos=value.position, **kwargs)
+def pass_on_change(context):
+    parent = context.cur.parent
+    if parent is not None:
+        context.passOn(parent)
 
-Value._Changed += on_value_change
-
-def on_property_change(prop, **kwargs):
-    sec = prop._section
-    if sec is not None:
-        sec._Changed(sec, prop=prop, prop_pos=prop.position, **kwargs)
-
-Property._Changed += on_property_change
-
-def on_section_change(section, **kwargs):
-    doc = section.document
-    if doc is not None:
-        doc._Changed(doc, section=section, **kwargs)
-
-Section._Changed += on_section_change
+Value._Changed.finish    = pass_on_change
+Property._Changed.finish = pass_on_change
+Section._Changed.finish  = pass_on_change
 
 # TODO this should probably be mixed in somewhere else too
 import TreeIters

@@ -1,5 +1,7 @@
 import gtk, gobject
 import odml.doc
+import odml.base
+
 from TreeIters import SectionIter
 from TreeModel import TreeModel, ColumnMapper
 debug = lambda x: 0
@@ -58,17 +60,31 @@ class DocumentModel(TreeModel):
     def destroy(self):
         self._section._Changed -= self.on_section_changed
 
-    def on_section_changed(self, document=None, section=None, prop=None, value=None, prop_pos=None, value_pos=None, *args, **kargs):
+    def on_section_changed(self, context): # document=None, section=None, prop=None, value=None,
+       # prop_pos=None, value_pos=None,
+       # attr=None, remove=None, append=None, pre_change=False, post_change=False,
+       # *args, **kargs):
         """
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
-        print "change event: ", section, prop, value, prop_pos, value_pos, args, kargs
+        print "CHANGE event: ", context
 
-        if prop is not None or value is not None: return
+        # we are only interested in changes on sections
+        if not isinstance(context.obj, odml.base.sectionable): return
 
-        path = section.to_path()
-        path = self.odml_path_to_model_path(path)
-        print " ", path
-        iter = self.get_iter(path)
-        self.row_changed(path, iter)
+        if context.action == "set" and context.postChange:
+            name, value = context.val
+            if name == "name":
+                path = self.get_node_path(context.obj)
+                self.row_changed(path, self.get_iter(path))
+
+        obj = context.val
+        if not isinstance(obj, odml.base.sectionable): return
+
+        if context.action == "remove":
+            self.event_remove(context)
+
+        if (context.action == "append" or context.action == "insert") and context.postChange:
+            print "row inserted", obj
+            self.post_insert(obj)

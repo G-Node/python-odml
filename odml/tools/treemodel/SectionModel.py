@@ -52,23 +52,31 @@ class SectionModel(TreeModel):
             return ValueIter(node)
         return PropIter(node)
 
-    def on_section_changed(self, section=None, prop=None, value=None, prop_pos=None, value_pos=None, *args, **kargs):
+    def on_section_changed(self, context):
         """
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
-        print "change event: ", section, prop, value, prop_pos, value_pos, args, kargs
-        if prop is None: return
+        print "change event: ", context
 
-        # a change listener is installed globally
-        # we only take notifications for our own section
-        if not section == self._section: return
+        # we are only interested in changes going up to the section level,
+        # but not those dealing with subsections of ours
+        if not context.cur is self._section or \
+                isinstance(context.val, self._section.__class__):
+            return
 
-        path = value.to_path(section) if value and len(prop.values) > 1 else prop.to_path(section)
-        path = self.odml_path_to_model_path(path)
-        print " ", path
-        iter = self.get_iter(path)
-        self.row_changed(path, iter)
+        if context.action == "remove":
+            self.event_remove(context)
+
+        if (context.action == "append" or context.action == "insert") and context.postChange:
+            print "row inserted", context.val
+            self.post_insert(context.val)
+
+        if context.action == "set" and context.postChange:
+            path = self.get_node_path(context.obj)
+            if not path: return # probably the section changed
+            iter = self.get_iter(path)
+            self.row_changed(path, iter)
 
     def destroy(self):
         self._section._Changed -= self.on_section_changed
