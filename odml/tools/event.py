@@ -42,6 +42,35 @@ class Event (object):
     __len__  = n_handler
 
 class ChangeContext(object):
+    """
+    A ChangeContext holds information about a change event
+
+    the context object stays the same within preChange and postChange
+    events, thus you can store information in a preChange event and use
+    it later in the postChange event where the information might not be
+    available any more.
+
+    Attributes:
+
+    * action: the action that caused the event
+    * obj: the object upon which the action is executed
+    * val: a value assotiated with a action
+    * preChange: True if the change has not yet occurred
+    * postChange: True if the change has already occured
+
+    Actions defined so far:
+
+    * "set": val = (attribute_name, new_value)
+    * "insert", "append": val = object to be inserted
+    * "remove": val = object to be remove
+
+    Events may be passed on in the hierarchy, thus the context also
+    holds state for this. *cur* holds the current node receiving the
+    event and is a direct or indirect parent of obj.
+
+    The hidden attribute *_obj* holds the complete pass stack, where
+    obj is obj[0] and cur is _obj[-1]
+    """
     def __init__(self, obj, val):
         self._obj = [obj]
         self.val = val
@@ -69,13 +98,32 @@ class ChangeContext(object):
         return self._obj[0]
 
     def getStack(self, count):
-        return ([None * count] + self._obj)[-count:]
+        """
+        helper function used to obtain a event-pass-stack for a certain hierarchy
+
+        i.e. for a property-change event caught at the parent section, _obj will be
+        [property, section] with getStack you can now obtain:
+
+        >>> value, property, section = getStack(3)
+
+        without checking the depth of the level, this will also hold true for longer stacks
+        such as [val, prop, sec, doc] and will still work as expected
+        """
+        if len(self._obj) < count:
+            return ([None] * count + self._obj)[-count:]
+        return self._obj[:count]
 
     @property
     def cur(self):
         return self._obj[-1]
 
     def passOn(self, obj):
+        """
+        pass the event to obj
+
+        appends obj to the event-pass-stack and calls obj._Changed
+        after handling obj is removed from the stack again
+        """
         self._obj.append(obj)
         obj._Changed(self)
         self._obj.remove(obj)
@@ -113,11 +161,19 @@ class ModificationNotifier(object):
             func()
 
     def __fireChange(self, action, obj, func):
+        """
+        create a ChangeContext and
+
+        * fire a preChange-event
+        * call func
+        * fire a postChange-event
+        """
         c = ChangeContext(self, obj)
         c.action = action
         c.preChange = True
         self._Changed(c)
         func()
+        c.reset()
         c.postChange = True
         self._Changed(c)
 

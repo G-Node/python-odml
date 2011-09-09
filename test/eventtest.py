@@ -1,4 +1,5 @@
 import odml.tools.treemodel.mixin #this also provides event functionality, and we also test tree-based event passing
+import odml.tools.event
 import unittest
 import samplefile
 from odml import doc, section, property, value
@@ -53,6 +54,15 @@ class TestEvents(unittest.TestCase):
         self.assertEqual(s._modified, [v, p, s])
         self.assertEqual(v.data, 4)
         #TODO integrate Document
+
+    def test_change_context_getStack(self):
+        c = odml.tools.event.ChangeContext(1, None)
+        c._obj = [1]
+        self.assertEqual(c.getStack(2), [None, 1])
+        c._obj = [1, 2]
+        self.assertEqual(c.getStack(2), [1, 2])
+        c._obj = [1, 2, 3]
+        self.assertEqual(c.getStack(2), [1, 2])
 
 if __name__ == '__main__':
     unittest.main()
