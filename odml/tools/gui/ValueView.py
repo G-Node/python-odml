@@ -175,27 +175,8 @@ class ValueView(TreeView):
 
         val = odml.Value("")
 
-        cmd = commands.AppendValue(obj=obj, val=val, model=self.model, path=path)
+        cmd = commands.AppendValue(obj=obj, val=val)
 
-        def cmd_action(undo=False):
-            model = self.model
-            if model.section != cmd.model.section:
-                return
-
-            if not undo:
-                # notify the current property row, that it might have got a new child
-                model.row_has_child_toggled(cmd.path, model.get_iter(cmd.path))
-
-                # notify the model about the newly inserted row
-                path = model.odml_path_to_model_path(val.to_path(model.section))
-                print val.to_path(model.section), path
-                model.row_inserted(path, model.get_iter(path))
-                cmd.val_path = path
-            else:
-                model.row_has_child_toggled(cmd.path, model.get_iter(cmd.path))
-                model.row_deleted(cmd.val_path)
-
-        #cmd.on_action = cmd_action
         self.execute(cmd)
 
 
@@ -209,19 +190,6 @@ class ValueView(TreeView):
         prop = odml.Property(name="unnamed property", value="")
         cmd = commands.AppendValue(
                 obj = model.section,
-                val = prop,
-                model = self.model)
+                val = prop)
 
-        def cmd_action(undo=False):
-            # notify the model about the newly inserted row (unless the model changed anyways)
-            model = self.model
-            if model.section != cmd.model.section: return
-
-            if undo:
-                model.row_deleted(cmd.path)
-            else:
-                cmd.path = model.odml_path_to_model_path(prop.to_path(model.section))
-                model.row_inserted(cmd.path, model.get_iter(cmd.path))
-
-        #cmd.on_action = cmd_action
         self.execute(cmd)

@@ -167,3 +167,18 @@ class MoveObject(CopyObject):
             self.parent.insert(self.index, self.obj)
         except:
             self.parent.append(self.obj)
+
+class CopyOrMoveObject(Command):
+    """
+    CopyOrMoveObject(obj=, dst=, copy=True/False)                            tv=TreeView,)
+    """
+    def __init__(self, *args, **kwargs):
+        super(CopyOrMoveObject, self).__init__(*args, **kwargs)
+        cmd_class = CopyObject if self.copy else MoveObject
+        self.cmd = cmd_class(obj=self.obj, dst=self.dst)
+
+    def _execute(self):
+        self.cmd()
+
+    def _undo(self):
+        self.cmd.undo()
