@@ -2,7 +2,7 @@
 """
 collects common base functionality
 """
-import os.path
+import posixpath
 
 class baseobject(object):
     _terminology_mapping = None
@@ -228,14 +228,14 @@ class sectionable(baseobject):
         """
         a += "/"
         b += "/"
-        parent = os.path.dirname(os.path.commonprefix([a,b]))
+        parent = posixpath.dirname(posixpath.commonprefix([a,b]))
         if parent == "/": return b[:-1]
 
-        a = os.path.relpath(a, parent)
-        b = os.path.relpath(b, parent)
+        a = posixpath.relpath(a, parent)
+        b = posixpath.relpath(b, parent)
         if a == ".": return b
 
-        return os.path.normpath("../" * (a.count("/")+1) + b)
+        return posixpath.normpath("../" * (a.count("/")+1) + b)
 
     def get_relative_path(self, section):
         """
