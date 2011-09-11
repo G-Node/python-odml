@@ -10,7 +10,6 @@ def main(filename=None):
     gtk.main()
 
 if __name__ == '__main__':
-    print __file__
     try: # this works only on linux
         from ctypes import *
         libc = cdll.LoadLibrary("libc.so.6")
