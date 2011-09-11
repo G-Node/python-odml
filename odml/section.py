@@ -208,6 +208,13 @@ class Section(base.sectionable):
                 mine.unmerge(obj)
         for obj in removals:
             self.remove(obj)
+
+        # the path may not be valid anymore, so make sure to update it
+        # however this does not reflect changes happening while the section
+        # is unmerged
+        if self._link is not None:
+            self._link = self.get_relative_path(section)
+
         self._merged = None
 
 BaseSection = Section
