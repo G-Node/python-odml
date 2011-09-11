@@ -134,6 +134,36 @@ class CopyTest(unittest.TestCase):
 
         #self.assertUn
 
+class MiscTest(unittest.TestCase):
+    def setUp(self):
+        self.doc = SampleFileCreator().create_document()
+
+    def test_paths(self):
+        sec = odml.Section("bar")
+        self.assertEqual(sec._get_relative_path("/a", "/b"), "/b")
+        self.assertEqual(sec._get_relative_path("/a", "/a/b"), "b")
+        self.assertEqual(sec._get_relative_path("/a/b", "/a/c"), "../c")
+        self.assertEqual(sec._get_relative_path("/a/b/c", "/a"), "../..")
+        self.assertEqual(sec._get_relative_path("/a/b", "/a"), "..")
+
+    def test_section_path(self):
+        sec1 = self.doc.sections[1]
+        sec10 = sec1.sections[0]
+        sec11 = sec1.sections[1]
+        path = sec10.get_path()
+        self.assertEqual(path, "/%s/%s" % (sec1.name, sec10.name))
+        self.assertEqual(self.doc.get_path(), "/")
+        self.assertEqual(sec10.get_relative_path(sec1), "..")
+
+        path_to_sec10 = sec1.get_relative_path(sec10)
+        self.assertEqual(path_to_sec10, sec10.name)
+        self.assertIs(sec1.find_by_path(path_to_sec10), sec10)
+
+        path_to_sec11 = sec10.get_relative_path(sec11)
+        self.assertEqual(path_to_sec11, "../" + sec11.name)
+        self.assertIs(sec10.find_by_path(path_to_sec11), sec11)
+
+
 if __name__ == '__main__':
     unittest.main()
 

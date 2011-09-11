@@ -2,6 +2,7 @@
 """
 collects common base functionality
 """
+import os.path
 
 class baseobject(object):
     _terminology_mapping = None
@@ -163,7 +164,7 @@ class sectionable(baseobject):
         for i in path:
             if i == "." or i == "": continue
             if i == "..":
-                cur = self.parent
+                cur = cur.parent
                 continue
             cur = cur[i]
         return cur
@@ -192,6 +193,7 @@ class sectionable(baseobject):
                     obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive)
                 if obj is not None: return obj
 
+        # docs have no parent attribute # TODO should use _parent instead of parent?
         if siblings and hasattr(self, "parent"):
             obj = self.parent.find(key, type)
             if obj is not None: return obj
@@ -205,6 +207,45 @@ class sectionable(baseobject):
                 if not recursive: break
 
         return None
+
+    def get_path(self):
+        """
+        returns the absolute path of this section
+        """
+        node = self
+        path = []
+        while hasattr(node, "_parent"):
+            path.insert(0, node.name)
+            node = node._parent
+        return "/" + "/".join(path)
+
+    @staticmethod
+    def _get_relative_path(a, b):
+        """
+        returns a relative path for navigation from dir *a* to dir *b*
+
+        if the common parent of both is "/", return an absolute path
+        """
+        a += "/"
+        b += "/"
+        parent = os.path.dirname(os.path.commonprefix([a,b]))
+        if parent == "/": return b[:-1]
+
+        a = os.path.relpath(a, parent)
+        b = os.path.relpath(b, parent)
+        if a == ".": return b
+
+        return os.path.normpath("../" * (a.count("/")+1) + b)
+
+    def get_relative_path(self, section):
+        """
+        returns a relative (file)path to point to section (e.g. ../other_section)
+
+        if the common parent of both sections is the document (i.e. /), return an absolute path
+        """
+        a = self.get_path()
+        b = section.get_path()
+        return self._get_relative_path(a,b)
 
     def clean(self):
         for i in self:
