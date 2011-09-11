@@ -12,9 +12,30 @@ class SectionDragProvider(DragProvider):
             return model.get_string_from_iter(iter) #':'.join(map(str, obj.to_path()))
         return unicode(xmlparser.XMLWriter(obj))
 
-    def can_handle_data(self, mime_types):
-        print ":can_handle_data", mime_types
-        return True
+    def can_handle_data(self, widget, context, time):
+        print "sec:can_handle_data", widget.get_model(), context.targets
+        if not super(SectionDragProvider, self).can_handle_data(widget, context, time):
+            return False
+
+        if "odml/property-path" in context.targets:
+            if context.suggested_action == gtk.gdk.ACTION_LINK:
+                # cannot link to properties
+                context.drag_status(gtk.gdk.ACTION_MOVE, time)
+            return True
+
+        if "odml/section-path" in context.targets:
+            return True
+
+        if "TEXT" in context.targets:
+            def preview(context, data, time):
+                # TODO try to parse xml
+                # TODO might require xml-parser-rewrite first?
+                print "text data: ", data
+                return False
+
+            self.preview(widget, context, "TEXT", preview, time)
+
+        return False
 
     def receive_data(self, mime, action, data, model, iter, position):
         print ":receive_data(%s)" % mime
@@ -23,6 +44,7 @@ class SectionDragProvider(DragProvider):
         dest = model.get_object(iter)
 
         copy = action == gtk.gdk.ACTION_COPY
+        link = action == gtk.gdk.ACTION_LINK
 
         if mime == "odml/property-path":
             model = self.context.get_source_widget().get_model()
@@ -42,15 +64,23 @@ class SectionDragProvider(DragProvider):
             else: # if position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
                 pass
 
-            cmd = commands.CopyOrMoveObject(
-                     obj=data,
-                     dst=dest,
-                     copy=copy)
+            if link:
+                cmd = commands.ChangeValue(
+                        object=dest,
+                        attr="link",
+                        new_value=dest.get_relative_path(data))
+            else:
+                cmd = commands.CopyOrMoveObject(
+                         obj=data,
+                         dst=dest,
+                         copy=copy)
         else:
             print "unimplemented (from xml)", data
             raise NotImplementedError
 
         self.execute(cmd)
+
+
 
 class SectionView(TreeView):
     """

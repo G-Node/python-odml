@@ -1,41 +1,48 @@
 import gtk
 
+#TODO build a GenericDragProvider and a TreeDragProvider
 class DragProvider(object):
-    drag_targets = []
-    drop_targets = []
     DROP_TARGET_MODIFIER = 0x800000
+    inspector = None
+
+    SOURCE_ACTIONS = gtk.gdk.ACTION_COPY | gtk.gdk.ACTION_MOVE | gtk.gdk.ACTION_LINK
+    DEST_ACTIONS = gtk.gdk.ACTION_COPY | gtk.gdk.ACTION_MOVE | gtk.gdk.ACTION_LINK
 
     def __init__(self, widget):
         self.widget = widget
+        self.drag_targets = []
+        self.drop_targets = []
         self.connect()
+	tv = widget
+        #tv.connect("drag_begin", self.drag_begin)
+        tv.connect("drag-data-get", self._on_drag_get_data)
+        tv.connect("drag-data-received", self._on_drag_received_data)
+        tv.connect("drag-data-delete", self._on_drag_delete_data)
+        tv.connect('drag_motion', self._on_drag_motion)
+        tv.connect('drag_drop', self._on_drag_drop)
         # TODO params to allow copy and move
 
     def connect(self):
         tv = self.widget
         # TODO make this customizeable, allow LINK action
-        SOURCE_ACTIONS = gtk.gdk.ACTION_COPY | gtk.gdk.ACTION_MOVE | gtk.gdk.ACTION_DEFAULT
-        DEST_ACTIONS = gtk.gdk.ACTION_COPY | gtk.gdk.ACTION_MOVE | gtk.gdk.ACTION_DEFAULT
+
+        # stuff that gtk shall do automatically
+        GTK_HANDLERS = gtk.DEST_DEFAULT_HIGHLIGHT | gtk.DEST_DEFAULT_DROP
 
         # first enable tree model drag/drop (to get the actual row as drag_icon)
         # however this alone will only work for TreeStore/ListStore,
         # so we need to manage drag and drop by hand due to the GenericTreeModel
         tv.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,
                                     self.drag_targets,
-                                    SOURCE_ACTIONS)
+                                    self.SOURCE_ACTIONS)
         tv.drag_source_set(gtk.gdk.BUTTON1_MASK,
                                     self.drag_targets,
-                                    SOURCE_ACTIONS)
-        tv.enable_model_drag_dest(self.drop_targets, DEST_ACTIONS)
-        tv.drag_dest_set(gtk.DEST_DEFAULT_ALL,
+                                    self.SOURCE_ACTIONS)
+        tv.enable_model_drag_dest(self.drop_targets, self.DEST_ACTIONS)
+        tv.drag_dest_set(0, # gtk.DEST_DEFAULT_ALL, # if DEFAULT_ALL is set, data preview won't work
                          self.drop_targets,
-                         DEST_ACTIONS)
+                         self.DEST_ACTIONS)
 
-        #tv.connect("drag_begin", self.drag_begin)
-        tv.connect("drag-data-get", self._on_drag_get_data)
-        tv.connect("drag-data-received", self._on_drag_received_data)
-        tv.connect("drag-data-delete", self._on_drag_delete_data)
-        #tv.connect('drag_motion', self._on_drag_motion)
-        tv.connect('drag_drop', self._on_drag_drop)
 
     def add_mime_type(self, string, flags=0, allow_drag=True, allow_drop=True):
         """
@@ -71,20 +78,40 @@ class DragProvider(object):
         action = context.suggested_action
         mime = self.get_mime_type(target_id)
         data = self.get_data(mime, model, iter)
-        print action, "setting data", data
         if mime == "TEXT": # so type will be COMPOUND_TEXT whatever foo?
             selection.set_text(data, -1)
         else:
             selection.set(selection.target, 8, data)
         return True
 
-    def can_handle_data(self, mime_types):
+    def get_suiting_target(self, context, widget):
+        for (target, flags, id) in self.drop_targets:
+            if target in context.targets:
+                same_app = context.get_source_widget() is not None
+                if flags & gtk.TARGET_SAME_APP != 0 and not same_app:
+                    continue
+                same_widget = context.get_source_widget() is widget
+                if flags & gtk.TARGET_SAME_WIDGET != 0 and not same_widget:
+                    continue
+                # other flags? gtk.TARGET_OTHER_APP?
+                return (target, flags)
+        return None, 0
+
+    def can_handle_data(self, widget, context, time):
         """
-        Returns True if the widget accepts this mime_type
-        and False otherwise
+        Returns True if the widget accepts this drag and False
+        otherwise. Uses context.drag_status(action, time) to force
+        a certain action
         """
-        # TODO this should also have the data, so it can actually
-        # be checked, whether its text makes some sense
+        target, flags = self.get_suiting_target(context, widget)
+        if target is None:
+            return False
+
+        if context.suggested_action & self.DEST_ACTIONS != 0:
+            context.drag_status(context.suggested_action, time)
+        else:
+            # TODO or do i have to select one explicitly?
+            context.drag_status(self.DEST_ACTIONS, time)
         return True
 
     def receive_data(self, mime, action, data, model, iter, position):
@@ -98,16 +125,38 @@ class DragProvider(object):
         """
         return False
 
+    def preview(self, widget, context, target, callback, etime):
+        """
+        can be called to retrieve the dragged data in a drag-motion event
+        """
+        def inspector(context, data, time):
+            ret = callback(context, data, time)
+            self.inspector = None
+            return ret
+        self.inspector = inspector
+        # if gtk.DEST_DEFAULT_ALL is set do:
+        # widget.drag_dest_set(0, [], 0)
+        widget.drag_get_data(context, target, etime)
+
     def _on_drag_received_data(self, treeview, context, x, y, selection,
                                 target_id, etime):
         """callback function for received data upon dnd-completion"""
+        data = selection.data
+        treeview.emit_stop_by_name('drag-data-received')
+
+        # if we want to preview the data in the drag-motion handler
+        # we will call drag_get_data there which eventually calls this
+        # method, however the context will not be the actual drop
+        # operation, so we forward this to a callback function
+        # that needs to be set up for this
+        if self.inspector is not None:
+            return self.inspector(context, data, etime)
+
         self.context = context
         model = treeview.get_model()
-        data = selection.data
         mime = self.get_mime_type(target_id)
         action = context.action
         drop_info = treeview.get_dest_row_at_pos(x, y)
-        treeview.emit_stop_by_name('drag-data-received')
 
         if not drop_info:
             ret = self.receive_data(mime, action, data, model, None, 0)
@@ -126,7 +175,11 @@ class DragProvider(object):
         Determine if drop is allowed?
         """
         widget.emit_stop_by_name('drag-drop')
-        return self.can_handle_data(context.targets)
+        target, flags = self.get_suiting_target(context, widget)
+        if target is None: return False
+
+        widget.drag_get_data(context, target, time)
+        #return self.can_handle_data(context.targets)
         # TODO this is not yet completely understood
         #if 'gaphor/element-id' in context.targets:
         #    self._on_drag_get_data(context, context.targets[-1], time)
@@ -145,14 +198,18 @@ class DragProvider(object):
         self.delete_data(None) # TODO find useful parameters
 
     def _on_drag_motion(self, widget, context, x, y, time):
+        """
+        here
+        """
+        widget.emit_stop_by_name('drag-motion')
+        if not self.can_handle_data(widget, context, time):
+            context.drag_status(0, time)
+            return False
+
+        # do the highlighting
         try:
             path, pos = widget.get_dest_row_at_pos(x, y)
             widget.set_drag_dest_row(path, pos)
         except TypeError:
             widget.set_drag_dest_row(len(widget.get_model()) - 1, gtk.TREE_VIEW_DROP_AFTER)
-
-        kind = gtk.gdk.ACTION_COPY
-
-        context.drag_status(kind, time)
-        return False
-
+        return True

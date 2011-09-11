@@ -27,9 +27,9 @@ class PropertyDragProvider(DragProvider):
 
         return unicode(xmlparser.XMLWriter(obj))
 
-    def can_handle_data(self, mime_types):
-        print ":can_handle_data", mime_types
-        return True
+#    def can_handle_data(self, widget, context, time):
+#        print ":can_handle_data", mime_types
+#        return True
 
     def receive_data(self, mime, action, data, model, iter, position):
         print ":receive_data(%s)" % mime
