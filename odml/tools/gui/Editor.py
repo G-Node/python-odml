@@ -18,6 +18,7 @@ from ScrolledWindow import ScrolledWindow
 from SectionView import SectionView
 from PropertyView import PropertyView
 from ValueView import ValueView
+from NavigationBar import NavigationBar
 
 ui_info = \
 '''<ui>
@@ -133,18 +134,14 @@ class Editor(gtk.Window):
         tool_button.set_label("Open")
         tool_button.set_tooltip_text("Open Files")
 
-        statusbar = gtk.Label()
-        table.attach(statusbar,
+        navigation_bar = NavigationBar()
+        table.attach(navigation_bar,
                      # X direction           Y direction
                      1, 2,                   1, 2,
                      0,                      0,
                      0,                      0)
-        statusbar.show()
-        statusbar.set_use_markup(True)
-        statusbar.set_justify(gtk.JUSTIFY_RIGHT)
-        statusbar.set_alignment(1, 0.9) # all free space left, and most top of widget
-        statusbar.connect("activate-link", self.property_switch)
-        self._property_status = statusbar
+        navigation_bar.on_selection_change = self.on_navigate
+        self._navigation_bar = navigation_bar
 
         hpaned = gtk.HPaned()
         hpaned.show()
@@ -380,7 +377,7 @@ class Editor(gtk.Window):
             model = DocumentModel.DocumentModel(self._document)
 
         self._section_tv.set_model(model)
-        self.set_property_object(self._document)
+        self._navigation_bar.document = self._document
         self._document_model = model
         # TODO select first section
 
@@ -474,46 +471,23 @@ class Editor(gtk.Window):
     # TODO should we save a navigation history here?
     def on_section_change(self, section):
         self._property_tv.section = section
-        self.set_property_object(section)
+        self.set_navigation_object(section)
 
     def on_object_select(self, obj):
         """an object has been selected, now fix the current property_view"""
-        self.set_property_object(obj)
+        self.set_navigation_object(obj)
 
-    def set_property_object(self, cur, obj=None):
+    def set_navigation_object(self, obj):
         """
-        update the property_view to work on object *cur*
-
-        also update the hierarchy view
-
-        if *obj* is set, show the hierarchy for object and make
-        *cur* the selected object (bold)
+        set a new item for the navigation bar
         """
-        self._property_view.set_model(cur)
-        names = []
-        if obj is None:
-            self._current_property_object = cur
-            obj = cur
+        self._navigation_bar.set_model(obj)
 
-        while hasattr(obj, "parent") and obj.parent is not None:
-            names.append(
-                ( ("<b>%s</b>" if obj == cur else "%s") % obj.name,
-                  ":".join([str(i) for i in obj.to_path()])) )
-            obj = obj.parent
-        names.append(("<b>Document</b>" if obj == cur else "Document", ""))
-        self._property_status.set_markup(": ".join(
-            ['<a href="%s">%s</a>' % (path, name) for name, path in names[::-1]]
-            ) + " ")
-
-    def property_switch(self, widget, path):
-        """called if a link in the property_status Label widget is clicked"""
-        if path:
-            path = [int(i) for i in path.split(":")]
-            obj = self._document.from_path(path)
-        else:
-            obj = self._document
-        self.set_property_object(obj, self._current_property_object)
-        return True
+    def on_navigate(self, obj):
+        """
+        update the property_view to work on object *obj*
+        """
+        self._property_view.set_model(obj)
 
     def update_statusbar(self, message, clear_previous=True):
         if clear_previous:

@@ -105,7 +105,6 @@ class ValueView(TreeView):
             return
 
         obj = model.get_object(tree_iter)
-        print "select", obj
         self.on_property_select(obj)
 
     def on_property_select(self, prop):
