@@ -10,6 +10,7 @@ class NavigationBar(gtk.Label):
         self.set_justify(gtk.JUSTIFY_RIGHT)
         self.set_alignment(1, 0.9) # all free space left, and most top of widget
         self.connect("activate-link", self.switch)
+        self.possible_move = None
 
     @property
     def document(self):
@@ -99,3 +100,20 @@ class NavigationBar(gtk.Label):
             for obj in self._current_hierarchy:
                 if context.obj is obj:
                     self.update_display()
+
+        if context.action == "remove" and context.postChange:
+            # an object is removed, two reasons possible:
+            # a) move (an append-action will take care of everything later, however we don't know yet)
+            # b) remove
+            for obj in self._current_hierarchy:
+                if context.val is obj:
+                    self.possible_move = (obj, self.current_object)
+                    self.set_model(context.obj) # set the view to the parent
+
+        if (context.action == "append" or context.action == "insert") and context.postChange:
+            if self.possible_move is None: return
+            obj, cur = self.possible_move
+            if context.val is obj:
+                self.set_model(cur)
+            self.possible_move = None
+
