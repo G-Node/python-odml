@@ -1,4 +1,5 @@
 import gtk
+import commands
 
 class TreeView(object):
     """
@@ -114,6 +115,19 @@ class TerminologyPopupTreeView(TreeView):
         returns a list of gtk.MenuItem to be displayey in a popup menu
         """
         raise NotImplementedError
+
+    def on_delete(self, widget, obj):
+        """
+        called for the popup menu action delete
+        """
+        cmd = commands.DeleteObject(obj=obj)
+        self.execute(cmd)
+
+    def create_popup_menu_del_item(self, obj):
+        item = gtk.MenuItem("Delete %s" % repr(obj))
+        item.connect('activate', self.on_delete, obj)
+        item.show()
+        return item
 
     def create_popup_menu_items(self, add_name, empty_name, obj, func, terminology_func, name_func):
         """

@@ -118,8 +118,13 @@ class SectionView(TerminologyPopupTreeView):
 
     def get_popup_menu_items(self):
         model, path, obj = self.popup_data
-        if obj is None: obj = model.document
-        return self.create_popup_menu_items("Add Section", "Empty Section", obj, self.add_section, lambda sec: sec.sections, lambda sec: "%s [%s]" % (sec.name, sec.type))
+        original_object = obj
+        if obj is None:
+            obj = model.document
+        menu_items = self.create_popup_menu_items("Add Section", "Empty Section", obj, self.add_section, lambda sec: sec.sections, lambda sec: "%s [%s]" % (sec.name, sec.type))
+        if original_object is not None:
+            menu_items.append(self.create_popup_menu_del_item(original_object))
+        return menu_items
 
     def add_section(self, widget, (obj, section)):
         """
