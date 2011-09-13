@@ -7,6 +7,7 @@ import sys
 self = sys.modules[__name__].__dict__
 
 from datetime import datetime, date, time
+import base64
 
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
@@ -36,7 +37,7 @@ def validate(string, dtype):
             if dtype.endswith("-tuple"):
                 count = int(dtype[:-6])
                 #try to parse it
-                get_tuple(string, strict=True, count=count)
+                tuple_get(string, count=count)
                 return True
             return False
         #try to parse it
@@ -50,7 +51,7 @@ def get(string, dtype=None):
     """
     if not dtype: return str_get(string)
     if dtype.endswith("-tuple"): # special case, as the count-number is included in the type-name
-        return get_tuple(string)
+        return tuple_get(string)
     return self.get(dtype+"_get", str_get)(string)
 
 def set(value, dtype=None):
@@ -59,7 +60,7 @@ def set(value, dtype=None):
     """
     if not dtype: return str_set(value)
     if dtype.endswith("-tuple"):
-        return set_tuple(string)
+        return tuple_set(value)
     return self.get(dtype+"_set", str_set)(value)
 
 def int_get(string):
@@ -99,17 +100,42 @@ def datetime_set(value):
     return value.isoformat(' ')
 
 def boolean_get(string):
+    if not string: return None
+    string = string.lower()
     truth = ["true", "t", "1"] # be kind, spec only accepts True / False
     if string in truth: return True
     false = ["false", "f", "0"]
     if string in false: return False
     raise ValueError("Cannot interpret '%s' as boolean" % string)
 
+def boolean_set(value):
+    if value is None: return None
+    return str(value)
+
+def tuple_get(string, count=None):
+    """
+    parse a tuple string like "(1024;768)" and return strings of the elements
+    """
+    if not string: return None
+    string = string.strip()
+    assert string.startswith("(") and string.endswith(")")
+    string = string[1:-1]
+    res = string.split(";")
+    if count is not None: # be strict
+        assert len(res) == count
+    return res
+
+def tuple_set(value):
+    if not value: return None
+    return "(%s)" % ";".join(value)
+
 def binary_get(string):
     "base64decode the data"
+    if not string: return None
     return base64.b64decode(string)
 
 def binary_set(value):
     "base64encode the data"
-    return base64.b64encode(string)
+    if not value: return None
+    return base64.b64encode(value)
 
