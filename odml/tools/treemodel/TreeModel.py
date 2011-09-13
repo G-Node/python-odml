@@ -140,6 +140,11 @@ class TreeModel(gtk.GenericTreeModel):
             self.row_has_child_toggled(self.get_path(iter), iter)
 
     def event_remove(self, context):
+        """
+        handles action="remove" events and notifies the model about
+        occured changes. Be sure to call this method for both preChange
+        and postChange events.
+        """
         if context.preChange:
             context.path = self.get_node_path(context.val)
             context.parent = context.val.parent
@@ -147,3 +152,11 @@ class TreeModel(gtk.GenericTreeModel):
             if hasattr(context, "path"):
                 print "row deleted", context.path
                 self.post_delete(context.parent, context.path)
+
+    def event_insert(self, context):
+        """
+        handles action="append" and action="insert" events and notifies the
+        model about occured changes.
+        """
+        if context.postChange:
+            self.post_insert(context.val)

@@ -68,10 +68,11 @@ class DocumentModel(TreeModel):
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
-        print "CHANGE event: ", context
+        print "change event(section): ", context
 
         # we are only interested in changes on sections
         if not isinstance(context.obj, odml.base.sectionable): return
+        if not context.cur.document is self.document: return
 
         if context.action == "set" and context.postChange:
             name, value = context.val
@@ -86,5 +87,4 @@ class DocumentModel(TreeModel):
             self.event_remove(context)
 
         if (context.action == "append" or context.action == "insert") and context.postChange:
-            print "row inserted", obj
-            self.post_insert(obj)
+            self.event_insert(context)

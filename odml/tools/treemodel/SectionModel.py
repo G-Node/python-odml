@@ -52,12 +52,31 @@ class SectionModel(TreeModel):
             return ValueIter(node)
         return PropIter(node)
 
+    def post_delete(self, parent, old_path):
+        super(SectionModel, self).post_delete(parent, old_path)
+        if isinstance(parent, odmlproperty.BaseProperty):
+            # a value was deleted
+            if len(parent) == 1:
+                # the last child row is also not present anymore,
+                # the value is now displayed inline
+                path = self.get_node_path(parent)
+                print "row deleted", path + (0,)
+                self.row_deleted(path + (0,)) # first child
+                self.row_has_child_toggled(path, self.get_iter(path))
+
+    def post_insert(self, node):
+        # this actually already works fine, since the subtree will always start
+        # collapsed, however in fact we would need to insert an additional row
+        # if the property switched from one value to two values
+        # (the first was displayed inline, but now gets its own row)
+        super(SectionModel, self).post_insert(node)
+
     def on_section_changed(self, context):
         """
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
-        print "change event: ", context
+        print "change event(property): ", context
 
         # we are only interested in changes going up to the section level,
         # but not those dealing with subsections of ours
@@ -71,20 +90,20 @@ class SectionModel(TreeModel):
             iter = self.get_iter(path)
             self.row_changed(path, iter)
 
-        if not context.obj is self._section:
-            return
+        # there was some reason we did this, however context.obj can
+        # also be a property of the current section
+        #if not context.obj is self._section:
+        #    return
 
         if context.action == "remove":
             self.event_remove(context)
 
         if (context.action == "append" or context.action == "insert") and context.postChange:
-            print "row inserted", context.val
-            self.post_insert(context.val)
-
-
+            self.event_insert(context)
 
     def destroy(self):
         self._section._Changed -= self.on_section_changed
+
 
     @property
     def section(self):
