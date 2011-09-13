@@ -7,6 +7,26 @@ import tools.xmlparser
 import urllib
 import threading
 
+import os, tempfile, md5, datetime
+
+CACHE_AGE = datetime.timedelta(days=1)
+def cache_load(url):
+    """
+    load the url and store it in a temporary cache directory
+    subsequent requests for this url will use the cached version
+    """
+    filename = md5.new(url).hexdigest() + '.' + os.path.basename(url)
+    cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+    cache_file = os.path.join(cache_dir, filename)
+    if not os.path.exists(cache_file) \
+        or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < datetime.datetime.now() - CACHE_AGE:
+            fp = open(cache_file, "w")
+            fp.write(urllib.urlopen(url).read())
+            fp.close()
+    return open(cache_file)
+
 class Terminologies(dict):
     loading = {}
 
@@ -29,8 +49,12 @@ class Terminologies(dict):
     def _load(self, url):
         # TODO also cache the data locally on disk
         # if url.startswith("http"): return None
-        fp = urllib.urlopen(url)
-        term = tools.xmlparser.parseXML(fp)
+        fp = cache_load(url)
+        try:
+            term = tools.xmlparser.parseXML(fp)
+        except tools.xmlparser.ParserException:
+            print "Failed to load %s due to parser errors" % url
+            raise
         self[url] = term
         return term
 
