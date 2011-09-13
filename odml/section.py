@@ -3,7 +3,6 @@ import base
 import format
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
-import doc
 
 class Section(base.sectionable):
     """A odML Section"""
@@ -89,17 +88,6 @@ class Section(base.sectionable):
     @property
     def parent(self):
         return self._parent
-
-    @property
-    def document(self):
-        """
-        returns the parent-most node (if its a document instance) or None
-        """
-        p = self
-        while p.parent:
-            p = p.parent
-        if isinstance(p, doc.Document):
-            return p
 
     def append(self, obj):
         """append a Section or Property"""

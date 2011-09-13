@@ -2,6 +2,7 @@
 """
 collects common base functionality
 """
+import doc
 import posixpath
 
 class baseobject(object):
@@ -102,6 +103,17 @@ class sectionable(baseobject):
         self._sections = SmartList()
 
     @property
+    def document(self):
+        """
+        returns the parent-most node (if its a document instance) or None
+        """
+        p = self
+        while p.parent:
+            p = p.parent
+        if isinstance(p, doc.Document):
+            return p
+
+    @property
     def sections(self):
         return self._sections
 
@@ -194,14 +206,13 @@ class sectionable(baseobject):
                     obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive)
                 if obj is not None: return obj
 
-        # docs have no parent attribute # TODO should use _parent instead of parent?
-        if siblings and hasattr(self, "parent"):
+        if siblings and self.parent is not None:
             obj = self.parent.find(key, type)
             if obj is not None: return obj
 
         if parents:
             obj = self
-            while hasattr(obj, "parent"):
+            while obj.parent is not None:
                 obj = obj.parent
                 if self._matches(obj, key, type):
                     return obj
@@ -215,9 +226,9 @@ class sectionable(baseobject):
         """
         node = self
         path = []
-        while hasattr(node, "_parent"):
+        while node.parent is not None:
             path.insert(0, node.name)
-            node = node._parent
+            node = node.parent
         return "/" + "/".join(path)
 
     @staticmethod
