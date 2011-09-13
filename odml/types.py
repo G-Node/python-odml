@@ -6,7 +6,7 @@ for odml
 import sys
 self = sys.modules[__name__].__dict__
 
-from datetime import date
+from datetime import datetime, date, time
 
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
@@ -77,23 +77,26 @@ def str_set(value):
     return unicode(value)
 
 def time_get(string):
-    raise Exception("Not implemented")
-    return "TODO" #TODO read spec
+    if not string: return None
+    return datetime.strptime(string, '%H:%M:%S').time()
 
 def time_set(value):
-    raise Exception("Not implemented")
-    return "TODO" #TODO read spec
-
-def date_get(string):
-    if not string: return None
-    return date(*[int(i) for i in string.split('-')])
-
-def date_set(value):
     if not value: return None
     return value.isoformat()
 
-datetime_get = time_get
-datetime_set = datetime_get
+def date_get(string):
+    if not string: return None
+    return datetime.strptime(string, '%Y-%m-%d').date()
+
+date_set = time_set
+
+def datetime_get(string):
+    if not string: return None
+    return datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+
+def datetime_set(value):
+    if not value: return None
+    return value.isoformat(' ')
 
 def boolean_get(string):
     truth = ["true", "t", "1"] # be kind, spec only accepts True / False
