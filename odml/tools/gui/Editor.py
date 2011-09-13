@@ -259,9 +259,11 @@ class Editor(gtk.Window):
         return action_group
 
     def _setup_file_filter(self, filter):
-        filter.set_name("XML")
+        filter.set_name("odML documents (*.xml, *.odml)")
         filter.add_mime_type("application/xml")
         filter.add_mime_type("text/xml")
+        filter.add_pattern('*.xml')
+        filter.add_pattern('*.odml')
 
     def activate_action(self, action):
         logo = self.render_icon("odml-logo", gtk.ICON_SIZE_DIALOG)
@@ -305,13 +307,14 @@ class Editor(gtk.Window):
                                         action=default_action)
         file_filter = gtk.FileFilter()
         self._setup_file_filter(file_filter)
-
-        all_files = gtk.FileFilter()
-        all_files.set_name ("All Files");
-        all_files.add_pattern ("*");
-
         chooser.add_filter (file_filter)
-        chooser.add_filter (all_files)
+
+        if not save:
+            all_files = gtk.FileFilter()
+            all_files.set_name ("All Files")
+            all_files.add_pattern("*")
+            chooser.add_filter (all_files)
+
         chooser.connect("response", callback)
         chooser.show()
 
@@ -402,7 +405,11 @@ class Editor(gtk.Window):
 
     def on_file_save(self, chooser, response_id):
         if response_id == gtk.RESPONSE_OK:
-            self.file_uri = chooser.get_uri()
+            uri = chooser.get_uri()
+            if not uri.lower().endswith('.odml') and \
+                not uri.lower().endswith('.xml'):
+                    uri += ".xml"
+            self.file_uri = uri
             self.save_file(self.file_uri)
             self.set_status_filename()
         chooser.destroy()
