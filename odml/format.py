@@ -6,11 +6,11 @@ and mappings of xml-attributes to their python class equivalents
 class Format(object):
     _map = {}
     _rev_map = None
-    
+
     def map(self, name):
         """maps an odml name to a python name"""
         return self._map.get(name, name)
-    
+
     def revmap(self, name):
         """maps a python name to an odml name"""
         if self._rev_map is None:
@@ -19,7 +19,7 @@ class Format(object):
             for k,v in self._map.iteritems():
                 self._rev_map[v] = k
         return self._rev_map.get(name, name)
-    
+
     def __iter__(self):
         """iterates each python property name"""
         for k in self._args:
@@ -38,7 +38,7 @@ class Value(Format):
         }
     _map = {'type': 'dtype',
             'defaultFileName': 'default_filename'}
-    
+
 class Property(Format):
     _name = "property"
     _args = {
@@ -63,6 +63,7 @@ class Section(Format):
         'repository': 0,
         'mapping': 0,
         'section': 0,
+        'include': 0,
         'property': 0
         }
     _map = {
@@ -86,6 +87,6 @@ class Document(Format):
 Document = Document()
 Section  = Section()
 Value    = Value()
-Property = Property()    
+Property = Property()
 
 __all__ = [Document, Section, Property, Value]
