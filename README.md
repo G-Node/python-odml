@@ -6,7 +6,13 @@ Installation
 
 To install the package simply run:
 
-   `$ sudo python setup.py install --prefix /usr`
+    $ sudo python setup.py install --prefix /usr
+
+If you just want to try out, tell python where to find the library
+and start either the gui or a python shell:
+
+    $ PYTHONPATH=. ./odml-gui
+    $ PYTHONPATH=. python
 
 ### Windows
 
@@ -26,3 +32,13 @@ To build the windows package from source, follow these instructions:
 3. Compile
 
    `$ python.exe setup.py py2exe`
+
+Bugs & Questions
+----------------
+
+Should you find a behaviour that is likely a bug, please file
+a bug report at [the github bug tracker](https://github.com/G-Node/python-odml/issues).
+
+If you have questions regarding the use of the library or the editor, ask
+the question on [Stack Overflow](http://stackoverflow.com/), be sure to tag
+it with `odml` and we'll do our best to quickly solve the problem.
