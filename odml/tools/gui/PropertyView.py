@@ -66,4 +66,4 @@ class PropertyView(TreeView):
         and updates the GUI elements upon relevant change events
         """
         if context.cur is self._model and context.postChange:
-                self.fill()
+            self.fill()

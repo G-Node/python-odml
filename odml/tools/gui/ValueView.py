@@ -2,7 +2,7 @@ import gtk
 import odml
 from ... import format
 import commands
-from TreeView import TreeView
+from TreeView import TerminologyPopupTreeView
 from odml.tools.treemodel import SectionModel
 from DragProvider import DragProvider
 from .. import xmlparser
@@ -48,7 +48,7 @@ class PropertyDragProvider(DragProvider):
         print "unimplemented (from xml)", data
         raise NotImplementedError
 
-class ValueView(TreeView):
+class ValueView(TerminologyPopupTreeView):
     """
     The Main treeview for editing properties and their value-attributes
     """
@@ -159,36 +159,68 @@ class ValueView(TreeView):
         if cmd:
             self.execute(cmd)
 
-    def add_value(self, action):
+    def get_popup_menu_items(self):
+        model, path, obj = self.popup_data
+        menu_items = self.create_popup_menu_items("Add Property", "Empty Property", model.section, self.add_property, lambda sec: sec.properties, lambda prop: prop.name)
+        if obj is not None: # can also add value
+            if hasattr(obj, "_property"): # we care about the properties only
+                obj = obj._property
+            value_filter = lambda prop: [val for val in prop.values if val.value is not None and val.value != ""]
+            for item in self.create_popup_menu_items("Add Value", "Empty Value", obj, self.add_value, value_filter, lambda val: val.value):
+                menu_items.append(item)
+            for item in self.create_popup_menu_items("Set Value", "Empty Value", obj, self.set_value, value_filter, lambda val: val.value):
+                menu_items.append(item)
+        return menu_items
+
+    def set_value(self, widget, (prop, val)):
+        """
+        popup menu action: set value
+
+        set the curr
+        """
+        model, path, obj = self.popup_data
+        if val is None:
+            val = odml.Value("")
+        else:
+            val = val.clone()
+
+        if obj is prop:
+            obj = prop.values[0]
+
+        prop = obj._property
+
+        # first append, then remove to keep the constraint that a property
+        # will always hold at least one value
+        cmd = commands.Multiple(cmds=[
+                commands.AppendValue(obj=prop, val=val),
+                commands.DeleteObject(obj=obj)
+                ])
+        self.execute(cmd)
+
+    def add_value(self, widget, (obj, val)):
         """
         popup menu action: add value
 
         add a value to the selected property
         """
-        model, path, obj = self.popup_data
-
-        # TODO this can be reached also if no property is selected
-        #      the context-menu item should be disabled in this case?
-        if obj is None:
-            return
-
-        val = odml.Value("")
+        if val is None:
+            val = odml.Value("")
+        else:
+            val = val.clone()
 
         cmd = commands.AppendValue(obj=obj, val=val)
-
         self.execute(cmd)
 
-
-    def add_property(self, action):
+    def add_property(self, widget, (obj, val)):
         """
         popup menu action: add property
 
         add a property to the active section
         """
-        model, path, obj = self.popup_data
-        prop = odml.Property(name="unnamed property", value="")
-        cmd = commands.AppendValue(
-                obj = model.section,
-                val = prop)
+        if val is None:
+            val = odml.Property(name="unnamed property", value="")
+        else:
+            val = val.clone()
 
+        cmd = commands.AppendValue(obj=obj, val=val)
         self.execute(cmd)

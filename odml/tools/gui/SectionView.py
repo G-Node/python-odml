@@ -1,6 +1,7 @@
 import gtk
 import commands
-from TreeView import TreeView
+import odml
+from TreeView import TerminologyPopupTreeView
 from DragProvider import DragProvider
 from .. import xmlparser
 
@@ -82,7 +83,7 @@ class SectionDragProvider(DragProvider):
 
 
 
-class SectionView(TreeView):
+class SectionView(TerminologyPopupTreeView):
     """
     A key-value ListStore based TreeView
 
@@ -112,6 +113,27 @@ class SectionView(TreeView):
             object    = section,
             attr      = "name",
             new_value = new_value)
+
+        self.execute(cmd)
+
+    def get_popup_menu_items(self):
+        model, path, obj = self.popup_data
+        if obj is None: obj = model.document
+        return self.create_popup_menu_items("Add Section", "Empty Section", obj, self.add_section, lambda sec: sec.sections, lambda sec: "%s [%s]" % (sec.name, sec.type))
+
+    def add_section(self, widget, (obj, section)):
+        """
+        popup menu action: add section
+
+        add a section to the selected section (or document if None selected)
+        """
+        print "add section", widget, obj, section
+
+        if section is None:
+            section = odml.Section(name="unnamed section")
+        else:
+            section = section.clone()
+        cmd = commands.AppendValue(obj=obj, val=section)
 
         self.execute(cmd)
 

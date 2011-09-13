@@ -46,13 +46,6 @@ ui_info = \
     <toolitem name='Undo' action='Undo' />
     <toolitem name='Redo' action='Redo' />
   </toolbar>
-  <popup name='SectionPopupMenu'>
-    <menuitem name='NewSection' action='AddSection'/>
-  </popup>
-  <popup name='PropertyPopupMenu'>
-    <menuitem name='NewProperty' action='AddProperty'/>
-    <menuitem name='NewValue' action='AddValue'/>
-  </popup>
 </ui>'''
 
 
@@ -158,7 +151,6 @@ class Editor(gtk.Window):
         section_tv = SectionView()
         section_tv.execute = cmdm.execute
         section_tv.on_section_change = self.on_section_change
-        section_tv.popup = merge.get_widget("/SectionPopupMenu")
         section_view = gtk.VBox(homogeneous=False, spacing=0)
         section_view.pack_start(ScrolledWindow(section_tv._treeview), True, True, 1)
         section_view.show()
@@ -166,7 +158,6 @@ class Editor(gtk.Window):
 
         property_tv = ValueView(self.command_manager.execute)
         property_tv.execute = cmdm.execute
-        property_tv.popup = merge.get_widget("/PropertyPopupMenu")
         property_tv.on_property_select = self.on_object_select
 
         #property_tv.get_selection().connect("changed", self.on_property_selected)
@@ -246,18 +237,6 @@ class Editor(gtk.Window):
                 "Visit Homepage", "",                      # label, accelerator */
                 "Go to the odML Homepage",                 # tooltip */
                 self.on_visit_homepage ),
-              ( "AddSection", None,
-                "Add a Section", "",
-                "Insert a new section",
-                self.add_section ),
-              ( "AddProperty", None,
-                "Add a Property", "",
-                "Insert a new property",
-                self.add_property ),
-              ( "AddValue", None,
-                "Add a Value", "",
-                "Insert an additional value to the property",
-                self.add_value ),
               )
 
         recent_action = gtk.RecentAction ("OpenRecent",
@@ -445,30 +424,6 @@ class Editor(gtk.Window):
         if not self.save_if_changed(): return True # the event is handled and
                                                    # won't be passed to the window
         gtk.main_quit()
-
-    def add_section(self, action):
-#        """
-#        popup menu action: add section
-#
-#        adds a section to the selected section or to the root document
-#        """
-        self._section_tv.add_section(action)
-
-    def add_property(self, action):
-#        """
-#        popup menu action: add property
-#
-#        add a property to the active section
-#        """
-        self._property_tv.add_property(action)
-
-    def add_value(self, action):
-        """
-        popup menu action: add value
-
-        add a value to the selected property
-        """
-        self._property_tv.add_value(action)
 
     # TODO should we save a navigation history here?
     def on_section_change(self, section):

@@ -37,6 +37,9 @@ class TreeView(object):
         self._treeview.append_column(column)
         return column
 
+    def get_popup_menu(self):
+        return None
+
     def on_button_press(self, widget, event):
         if event.button == 3: # right-click
             x = int(event.x)
@@ -53,11 +56,10 @@ class TreeView(object):
             if path:
                 obj = model.on_get_iter(path)._obj
 
-            if self.popup is None:
-                return
-
             self.popup_data = (model, path, obj)
-            self.popup.popup(None, None, None, event.button, event.time)
+            popup = self.get_popup_menu()
+            if popup is not None:
+                popup.popup(None, None, None, event.button, event.time)
 
     def on_edited(self, widget, path, new_value, data):
         """
@@ -74,3 +76,76 @@ class TreeView(object):
         cmd()
 
     on_selection_change = None
+
+class TerminologyPopupTreeView(TreeView):
+    def get_terminology_suggestions(self, obj, func):
+        """
+        return a list of objects
+
+        return func(obj.terminology_equivalent())
+
+        however if any result is None, return []
+        """
+        if obj is None: return []
+        term = obj.get_terminology_equivalent()
+        print "get term", obj, term
+        if term is None: return []
+        return func(term)
+
+    def get_popup_menu(self):
+        """
+        create the popup menu for this object
+
+        calls *get_popup_menu_items* to retrieve the actual
+        items for the menu
+        """
+        print "term popup: get popup menu"
+        popup = gtk.Menu()
+        for i in self.get_popup_menu_items():
+            popup.append(i)
+            i.show()
+        popup.show()
+        return popup
+
+    def get_popup_menu_items(self):
+        """
+        to be implemented by a concrete TreeView
+
+        returns a list of gtk.MenuItem to be displayey in a popup menu
+        """
+        raise NotImplementedError
+
+    def create_popup_menu_items(self, add_name, empty_name, obj, func, terminology_func, name_func):
+        """
+        create menu items for a popup menu
+
+        * *add_name* is a menu item text e.g. ("Add Section")
+        * *empty_name* is a menu item text e.g. ("Empty Section")
+        * *obj* is the parent object to which to add the data
+        * *func* is the target function that is called upon click action:
+            func(widget, (obj, val)) where *val* is the template value or None
+        * *terminology_func* is passed to *get_terminology_suggestions* and used to extract the relevant
+          suggestions of a terminology object (e.g. lambda section: section.properties)
+        * *name_func* is a function the create a menu-item label from an object (e.g. lambda prop: prop.name)
+
+        returns an array of gtk.MenuItem
+        """
+        add_section = gtk.MenuItem(add_name)
+        add_section.show()
+
+        terms = self.get_terminology_suggestions(obj, terminology_func)
+        if len(terms) == 0:
+            add_section.connect('activate', func, (obj, None))
+            return [add_section]
+
+        menu = gtk.Menu()
+        terms = [(name_func(sec), sec) for sec in terms]
+        for name, val in [(empty_name, None), (None, None)] + terms:
+            item = gtk.MenuItem(name)
+            item.connect('activate', func, (obj, val))
+            item.show()
+            menu.append(item)
+
+        menu.show()
+        add_section.set_submenu(menu)
+        return [add_section]
