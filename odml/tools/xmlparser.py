@@ -8,7 +8,7 @@ Parses odML files. Can be invoked standalone:
 """
 #TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 
-from .. import Document, Section, Property, Value
+import odml
 from .. import format
 from dumper import dumpSection
 from lxml import etree as ET
@@ -132,7 +132,7 @@ def parseValue(node):
 
     if text == "":
         warn("empty value", node)
-    return Value(text, **args)
+    return odml.Value(text, **args)
 
 def parseProperty(node):
     """
@@ -163,7 +163,7 @@ def parseProperty(node):
     # kind of violating the format description
     del args['values']
 
-    return Property(**args)
+    return odml.Property(**args)
 
 def parseSection(node):
     name = node.get("name") # property name= overrides
@@ -174,7 +174,7 @@ def parseSection(node):
     if name is None:
         return error("Missing name element in <section>", node)
 
-    section = Section(name)
+    section = odml.Section(name)
     args = {}
 
     for child in node:
@@ -212,9 +212,10 @@ def parseXML(xml_file):
     returns an odML-Document
     """
     tree = ET.ElementTree()
-    root = tree.parse(xml_file)
+    parser = ET.XMLParser(remove_comments=True)
+    root = tree.parse(xml_file, parser)
 
-    doc = Document()
+    doc = odml.Document()
     for node in root:
         if node.tag in format.Document._args:
             if node.tag == "section":
@@ -223,6 +224,7 @@ def parseXML(xml_file):
                     doc.append(section)
             else:
                 setattr(doc, format.Document.map(node.tag), node.text.strip() if node.text else None)
+                print "setting", format.Document.map(node.tag), node.text
         else:
             error("Invalid element <%s> in odML document" % node.tag, node)
 
