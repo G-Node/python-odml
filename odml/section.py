@@ -1,6 +1,7 @@
 #-*- coding: utf-8
 import base
 import format
+import terminology
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
 
@@ -9,7 +10,7 @@ class Section(base.sectionable):
     type       = None
     id         = None
     _link      = None
-    repository = None
+    include    = None
     mapping    = None
     reference  = None # the *import* property
 
@@ -88,6 +89,18 @@ class Section(base.sectionable):
     @property
     def parent(self):
         return self._parent
+
+    @property
+    def repository(self):
+        if self._repository is None:
+            return self.parent.repository
+        return super(BaseSection, self).repository
+
+    def get_terminology_equivalent(self):
+        if self.repository is None: return None
+        term = terminology.load(self.repository)
+        print "term-sec", term, self.type
+        return term.find_related(type=self.type)
 
     def append(self, obj):
         """append a Section or Property"""

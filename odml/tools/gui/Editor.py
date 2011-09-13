@@ -20,6 +20,8 @@ from PropertyView import PropertyView
 from ValueView import ValueView
 from NavigationBar import NavigationBar
 
+gtk.gdk.threads_init()
+
 ui_info = \
 '''<ui>
   <menubar name='MenuBar'>

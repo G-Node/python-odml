@@ -2,11 +2,10 @@
 import types
 import base
 import format
+import terminology
 
 class Document(base.sectionable):
     """A represenation of an odML document in memory"""
-
-    repository = None
 
     _format = format.Document
 
@@ -58,5 +57,10 @@ class Document(base.sectionable):
         for sec in self.itersections(recursive=True):
             if sec._link is not None:
                 sec.link = sec._link
+
+    def get_terminology_equivalent(self):
+        if self.repository is None: return None
+        term = terminology.load(self.repository)
+        return term
 
 BaseDocument = Document

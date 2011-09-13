@@ -1,87 +1,47 @@
 """
-Handles loading of terminology data for odML documents
+Handles (deferred) loading of terminology data and access to it
+for odML documents
 """
-import urllib
 import tools.xmlparser
-import format
 
-def load(obj, url):
-    """
-    imports a terminology into a section or document
+import urllib
+import threading
 
-    currently just loads the terminology and fills the section with it
-    """
+class Terminologies(dict):
+    loading = {}
 
-    fp = urllib.urlopen(url)
-    doc = tools.xmlparser.parseXML(fp)
+    def load(self, url):
+        """
+        load and cache a terminology-url
 
-    assert len(doc.sections) > 0
-    _store_self_mapping(doc)
-    map_sections(doc, obj)
+        returns the odml-document for the url
+        """
+        if url in self:
+            return self[url]
 
-def _store_self_mapping(term):
-    """
-    install the _terminology_mapping field for all elements in *term*
+        if url in self.loading:
+            self.loading[url].join()
+            del self.loading[url]
+            return self.load(url)
 
-    this is needed, because it gets copied by either clone() or map_attributes()
-    """
-    try:
-        iterator = iter(term)
-    except TypeError:
-        return
-    
-    for obj in iterator:
-        obj._terminology_mapping = obj
-        _store_self_mapping(obj)
+        return self._load(url)
 
-def map_attributes(term, obj, fmt):
-    """
-    maps class attributes from a terminology template *term* to an odml object *obj*
-    using format information of format-class instance *fmt*
-    """
-    obj._terminology_mapping = term._terminology_mapping
+    def _load(self, url):
+        # TODO also cache the data locally on disk
+        # if url.startswith("http"): return None
+        fp = urllib.urlopen(url)
+        term = tools.xmlparser.parseXML(fp)
+        self[url] = term
+        return term
 
-    for key in fmt:
-        if not hasattr(obj, key) or getattr(obj, key) is None:
-            setattr(obj, key, getattr(term, key))
+    def deferred_load(self, url):
+        """
+        start a thread to load the terminology in background
+        """
+        if url in self or url in self.loading: return
+        self.loading[url] = threading.Thread(target=self._load, args=(url,))
+        self.loading[url].start()
 
-def map_sections(term, obj):
-    """
-    maps each section of a terminology document *term* to a corresponding section
-    in the odml *obj* or creates one
-    """
-    # recursively map subsections
-    for sec in term.sections:
-        try:
-            map_section(sec, obj.sections[sec.name])
-        except KeyError:
-            obj.append(sec.clone())
-
-def map_section(term, section):
-    """
-    maps a terminology section *term* to an odml document section *section*
-    """
-
-    # map all section attributes
-    map_attributes(term, section, format.Section)
-    map_sections(term, section)
-
-    # map all properties
-    for prop in term.properties:
-        try:
-            map_property(prop, section.properties[prop.name])
-        except KeyError:
-            section.append(prop.clone())
-
-def map_property(term, prop):
-    """
-    maps a terminology property *term* to an odml document property *prop*
-    """
-
-    # map all property attributes
-    map_attributes(term, prop, format.Property)
-
-    # now map values if applicable
-    if len(term.values) == len(prop.values):
-        for i in xrange(0, len(term.values)):
-            map_attributes(term.values[i], prop.values[i], format.Value)
+terminologies = Terminologies()
+load = terminologies.load
+deferred_load = terminologies.deferred_load

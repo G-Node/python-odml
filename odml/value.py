@@ -184,4 +184,12 @@ class Value(base.baseobject):
         obj._property = None
         return obj
 
+    def get_terminology_equivalent(self):
+        prop = self._property.get_terminology_equivalent()
+        if prop is None: return None
+        for val in prop:
+            if val == self:
+                return val
+        return None
+
 BaseValue = Value

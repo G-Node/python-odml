@@ -157,4 +157,13 @@ class Property(base.baseobject):
     def unmerge(self, property):
         pass
 
+    def get_terminology_equivalent(self):
+        sec = self._section.get_terminology_equivalent()
+        print "term-prop(sec)", self, sec
+        if sec is None: return None
+        try:
+            return sec.properties[self.name]
+        except KeyError:
+            return None
+
 BaseProperty = Property

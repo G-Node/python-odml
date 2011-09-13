@@ -4,42 +4,13 @@ collects common base functionality
 """
 import doc
 import posixpath
+import terminology
 
 class baseobject(object):
-    _terminology_mapping = None
     _format = None
 
-    def is_terminology_default(self, attribute=None, recursive=True):
-        """
-        returns whether this object is equal to its default terminology
-
-        returns False if the object has no terminology associated
-
-        by providing an *attribute* name, only this attribute is checked
-
-        if *recursive* is False, no sub-objects (e.g. sections, properties or values)
-        will be checked
-        """
-
-        term = self._terminology_mapping
-        if term is None: return False
-
-        fields = self._format
-
-        if attribute is not None:
-            fields = [attribute]
-
-        for key in fields:
-            val = getattr(self, key)
-            if isinstance(val, list):
-                if recursive:
-                    for obj in val:
-                        if not obj.is_terminology_default(attribute, recursive):
-                            return False
-            elif val != getattr(term, key):
-                return False
-
-        return True
+    def get_terminology_equivalent(self):
+        return None
 
     def __eq__(self, obj):
         """
@@ -101,6 +72,7 @@ class SmartList(SafeList):
 class sectionable(baseobject):
     def __init__(self):
         self._sections = SmartList()
+        self._repository = None
 
     @property
     def document(self):
@@ -275,3 +247,12 @@ class sectionable(baseobject):
             obj.append(s.clone())
 
         return obj
+
+    @property
+    def repository(self):
+        return self._repository
+
+    @repository.setter
+    def repository(self, url):
+        self._repository = url
+        terminology.deferred_load(url)
