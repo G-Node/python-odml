@@ -57,6 +57,8 @@ class Document(base.sectionable):
         for sec in self.itersections(recursive=True):
             if sec._link is not None:
                 sec.link = sec._link
+            if sec._include is not None:
+                sec.include = sec._include
 
     def get_terminology_equivalent(self):
         if self.repository is None: return None

@@ -10,7 +10,7 @@ class Section(base.sectionable):
     type       = None
     id         = None
     _link      = None
-    include    = None
+    _include    = None
     mapping    = None
     reference  = None # the *import* property
 
@@ -38,16 +38,52 @@ class Section(base.sectionable):
         self._name = new_value
 
     @property
+    def include(self):
+        return self._include
+
+    @include.setter
+    def include(self, new_value):
+        print "set include", repr(self), new_value
+        if self._link is not None:
+            raise TypeError("%s.include: You can either set link or include, but not both." % repr(self))
+
+        if not new_value:
+            self._include = None
+            self.clean()
+
+        if '#' in new_value:
+            url, path = new_value.split('#', 1)
+        else:
+            url, path = new_value, None
+
+        terminology.deferred_load(url)
+
+        if self.parent is None:
+            self._include = new_value
+            return
+
+        term = terminology.load(url)
+        new_section = term.find_by_path(path) if path is not None else term.sections[0]
+
+        if self._include is not None:
+            self.clean()
+        self._include = new_value
+        self.merge(new_section)
+
+    @property
     def link(self):
         return self._link
 
     @link.setter
     def link(self, new_value):
+        if self._link is not None:
+            raise TypeError("%s.link: You can either set link or include, but not both." % repr(self))
+
         if self.parent is None: # we cannot possibly know where the link is going
             self._link = new_value
             return
 
-        if new_value is None or new_value == '':
+        if not new_value:
             self._link = None
             self.clean()
             return
