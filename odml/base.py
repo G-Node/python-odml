@@ -67,7 +67,20 @@ class baseobject(object):
         obj = copy.copy(self)
         return obj
 
-class SmartList(list):
+class SafeList(list):
+    def remove(self, obj):
+        """
+        remove an element from this list
+
+        be sure to use "is" based comparison (instead of __cmp__ / ==)
+        """
+        for i, e in enumerate(self):
+            if e is obj:
+                del self[i]
+                return
+        raise ValueError("remove: %s not in list" % repr(obj))
+
+class SmartList(SafeList):
     def __getitem__(self, key):
         """
         provides element index also by searching for an element with a given name
@@ -83,18 +96,6 @@ class SmartList(list):
 
         # and fail eventually
         raise KeyError(key)
-
-    def remove(self, obj):
-        """
-        remove an element from this list
-
-        be sure to use "is" based comparison (instead of __cmp__ / ==)
-        """
-        for i, e in enumerate(self):
-            if e is obj:
-                del self[i]
-                return
-        raise ValueError("remove: %s not in list" % repr(obj))
 
 class sectionable(baseobject):
     def __init__(self):

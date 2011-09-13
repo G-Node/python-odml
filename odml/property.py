@@ -46,7 +46,7 @@ class Property(base.baseobject):
         #TODO validate arguments
         self._name = name
         self._section = section
-        self._values = []
+        self._values = base.SafeList()
 
         if isinstance(value, list):
             for v in value:
@@ -82,7 +82,8 @@ class Property(base.baseobject):
 
     @values.setter
     def values(self, new_values):
-        self._values = []
+        # TODO for consistency this actually needs to manually remove each existing value
+        self._values = base.SafeList()
         for i in new_values:
             self.append(i)
 
@@ -100,7 +101,7 @@ class Property(base.baseobject):
 
     @value.setter
     def value(self, new_value):
-        self._values = []
+        self._values = base.SafeList()
         self.append(new_value)
 
     def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
@@ -125,6 +126,8 @@ class Property(base.baseobject):
         value._property = self
 
     def remove(self, value):
+        if len(self._values) == 1:
+            raise TypeError("Cannot remove %s from %s. A property must always have at least one value." % (repr(value), repr(self)))
         self._values.remove(value)
         value._property = None
 
@@ -142,7 +145,7 @@ class Property(base.baseobject):
         obj = super(BaseProperty, self).clone()
         obj._section = None
 
-        obj._values = []
+        obj._values = base.SafeList()
         for v in self._values:
             obj.append(v.clone())
 
