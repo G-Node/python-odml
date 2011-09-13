@@ -46,7 +46,7 @@ class Section(base.sectionable):
             self._link = new_value
             return
 
-        if new_value == '':
+        if new_value is None or new_value == '':
             self._link = None
             self.clean()
             return
