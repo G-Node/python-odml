@@ -183,7 +183,8 @@ class XMLReader(object):
                 else:
                     tag = fmt.map(node.tag)
                     if tag in args:
-                        self.error("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
+                        # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
+                        self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
                     args[tag] = node.text.strip() if node.text else None
             else:
                 self.error("Invalid element <%s> in odML document section <%s>" % (node.tag, root.tag), node)
