@@ -10,7 +10,7 @@ import odml.tools.treemodel.mixin
 import commands
 
 from odml.tools.treemodel import SectionModel, DocumentModel
-from odml.tools.xmlparser import XMLWriter, parseXML
+from odml.tools.xmlparser import XMLWriter, XMLReader
 
 from InfoBar import EditorInfoBar
 from CommandManager import CommandManager
@@ -338,7 +338,8 @@ class Editor(gtk.Window):
     def load_document(self, uri):
         self.file_uri = uri
         xml_file = gio.File(uri)
-        self._document = parseXML(xml_file.read())
+        self._document = XMLReader(ignore_errors=True).fromFile(xml_file.read())
+        self._document.finalize()
         self._info_bar.show_info("Loading of %s done!" % (xml_file.get_basename()))
         self.set_status_filename()
         self.update_model()

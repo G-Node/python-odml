@@ -90,153 +90,154 @@ class XMLWriter:
         f.write(unicode(self))
         f.close()
 
+def load(filename):
+    """
+    shortcut function for XMLReader().fromFile(open(filename))
+    """
+    return XMLReader().fromFile(open(filename))
 
 class ParserException(Exception): pass
 
-def check_mandatory_arguments(data, ArgClass, tag_name, node):
-    for k, v in ArgClass._args.iteritems():
-        if v != 0 and not ArgClass.map(k) in data:
-            error("missing element <%s> within <%s> tag" % (k, tag_name), node)
-
-def is_valid_argument(child, ArgClass, tag_name):
-     if not child.tag in ArgClass._args:
-        error("Invalid element <%s> inside <%s> tag" % (child.tag, tag_name), child)
-
-def error(msg, elem):
-    if not elem is None:
-        msg += " (line %d)" % elem.sourceline
-    raise ParserException(msg)
-
-def warn(msg, elem):
-    if not elem is None:
-        msg = "warning[<%s>:%d]: %s\n" % (elem.tag, elem.sourceline, msg)
-    else:
-        msg = "warning: %s\n" % msg
-    sys.stderr.write(msg)
-
-def parseValue(node):
+class XMLReader(object):
     """
-    parse a <value>-tag *node*
+    A reader to parse xml-files or strings into odml data structures
 
-    reads all sub-nodes and constructs corresponding attributes from which
-    a Value object is created and returned
+    Usage:
+
+        >>> doc = XMLReader().fromFile(open("file.odml"))
     """
-    text = node.text.strip() if node.text else ""
-    args = {}
-    for child in node:
-        is_valid_argument(child, format.Value, "value")
-        if child.tag in args:
-            error("Element <%s> is given multiple times in <value> tag" % child.tag, child)
-        args[format.Value.map(child.tag)] = child.text.strip() if child.text else None
-        text += child.tail.strip() if child.tail else ""
+    def __init__(self, ignore_errors=False, filename=None):
+        self.parser = ET.XMLParser(remove_comments=True)
+        self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
+        self.ignore_errors = ignore_errors
+        self.filename = filename
 
-    if text == "":
-        warn("empty value", node)
-    return odml.Value(text, **args)
+    def fromFile(self, xml_file):
+        """
+        parse the datastream from a file like object *xml_file*
+        and return an odml data structure
+        """
+        root = ET.parse(xml_file, self.parser).getroot()
+        return self.parse_element(root)
 
-def parseProperty(node):
-    """
-    parse a <property>-tag *node*
+    def fromString(self, string):
+        root = ET.XML(string, self.parser)
+        return self.parse_element(root)
 
-    reads all sub-nodes and constructs corresponding attributes from which
-    a Property object is created and returned
-    all <value>-tags within this node will be parsed by `parseValue` and added to the
-    list of this properties' values
-    """
-    args = {}
-    values = []
-    for child in node:
-        is_valid_argument(child, format.Property, "property")
-        #TODO check if tags occur multiple times?
-        if child.tag == "value":
-            values.append(parseValue(child))
-        args[format.Property.map(child.tag)] = child.text.strip() if child.text else None
+    def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
+        for k, v in ArgClass._args.iteritems():
+            if v != 0 and not ArgClass.map(k) in data:
+                self.error("missing element <%s> within <%s> tag" % (k, tag_name) + repr(data), node)
 
-    if values:
-        # set this, because the constructor users the value property even for multiple values
-        # (and also so that the mandatory arguments-checker is fine)
-        args['value'] = values
+    def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
+         if not tag_name in ArgClass._args:
+            self.error("Invalid element <%s> inside <%s> tag" % (tag_name, parent_node.tag), parent_node if child is None else child)
 
-    check_mandatory_arguments(args, format.Property, "property", node)
+    def error(self, msg, elem):
+        if not elem is None:
+            msg += " (line %d)" % elem.sourceline
+        if self.ignore_errors:
+            return self.warn(msg, elem)
+        raise ParserException(msg)
 
-    # same hack as above: Property constructor takes a value argument
-    # kind of violating the format description
-    del args['values']
-
-    return odml.Property(**args)
-
-def parseSection(node):
-    name = node.get("name") # property name= overrides
-    if name is None:        # the element
-        name = node.find("name")
-        if name is not None: name = name.text
-
-    if name is None:
-        return error("Missing name element in <section>", node)
-
-    section = odml.Section(name)
-    args = {}
-
-    for child in node:
-        is_valid_argument(child, format.Section, "section")
-        tag = format.Section.map(child.tag)
-        if child.tag == "section":
-            subsection = parseSection(child)
-            if subsection is not None:
-                section.append(subsection)
-        elif child.tag == "property":
-            prop = parseProperty(child)
-            if prop is not None:
-                section.append(prop)
+    def warn(self, msg, elem):
+        if not elem is None:
+            msg = "warning[%s:%d:<%s>]: %s\n" % (self.filename, elem.sourceline, elem.tag, msg)
         else:
-            args[tag] = child.text.strip() if child.text else None
+            msg = "warning: %s\n" % msg
+        sys.stderr.write(msg)
 
-    check_mandatory_arguments(args, format.Section, "section", node)
+    def parse_element(self, node):
+        if not node.tag in self.tags:
+            self.error("Invalid element <%s>" % node.tag, node)
+            return None # won't be able to parse this one
+        return getattr(self, "parse_" + node.tag)(node, self.tags[node.tag])
 
-    if 'name' in args: #don't want to overwrite it
-        del args['name']
-    if 'import' in args: # import is a reserved name in python
-        args['reference'] = args['import']
-        del args['import']
+    def parse_odML(self, root, fmt, insert_children=True, create=None):
+        """
+        parse an odml node based on the format description *fmt*
+        and a function *create* to instantiate a corresponding object
+        """
+        args = {}
+        extra_args = {}
+        children = []
+        text = []
 
-    for k, v in args.iteritems():
-        if hasattr(section, k):
-            setattr(section, k, v)
-    return section
+        if root.text: text.append(root.text.strip())
 
-def parseXML(xml_file):
-    """parses an xml-file
-
-    *xml_file* is a file-object
-
-    returns an odML-Document
-    """
-    tree = ET.ElementTree()
-    parser = ET.XMLParser(remove_comments=True)
-    root = tree.parse(xml_file, parser)
-
-    doc = odml.Document()
-    for node in root:
-        if node.tag in format.Document._args:
-            if node.tag == "section":
-                section = parseSection(node)
-                if section is not None:
-                    doc.append(section)
+        for k, v in root.attrib.iteritems():
+            self.is_valid_argument(k, fmt, root)
+            if k not in fmt._xml_attributes:
+                self.error("<%s %s=...>: is not a valid attribute for %s" % (root.tag, k, root.tag), root)
             else:
-                setattr(doc, format.Document.map(node.tag), node.text.strip() if node.text else None)
-                print "setting", format.Document.map(node.tag), node.text
+                args[k] = v
+
+        for node in root:
+            self.is_valid_argument(node.tag, fmt, root, node)
+            if node.tag in fmt._args:
+                if node.tag in self.tags and node.tag in fmt._map: # this is a heuristic, but works for now
+                    sub_obj = self.parse_element(node)
+                    if sub_obj is not None:
+                        extra_args[fmt.map(node.tag)] = sub_obj
+                        children.append(sub_obj)
+                else:
+                    tag = fmt.map(node.tag)
+                    if tag in args:
+                        self.error("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
+                    args[tag] = node.text.strip() if node.text else None
+            else:
+                self.error("Invalid element <%s> in odML document section <%s>" % (node.tag, root.tag), node)
+            if node.tail: text.append(node.tail.strip())
+
+        if create is None:
+            obj = fmt.create()
         else:
-            error("Invalid element <%s> in odML document" % node.tag, node)
+            obj = create(args=args, text=''.join(text), children=children)
 
-    doc.finalize()
+        self.check_mandatory_arguments(dict(args.items() + extra_args.items())
+, fmt, root.tag, root)
 
-    for sec in doc.sections:
-        dumpSection(sec)
+        for k, v in args.iteritems():
+            if hasattr(obj, k):
+                try:
+                    setattr(obj, k, v)
+                except Exception, e:
+                    self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
+                    if not self.ignore_errors:
+                        raise
 
-    return doc
+        if insert_children:
+            for child in children:
+                obj.append(child)
+
+        return obj
+
+    def parse_section(self, root, fmt):
+        name = root.get("name") # property name= overrides
+        if name is None:        # the element
+            name_node = root.find("name")
+            if name_node is not None:
+                name = name_node.text
+                root.remove(name_node)
+                # delete the name_node so its value won't
+                # be used to overwrite the already set name-attribute
+
+        if name is None:
+            self.error("Missing name element in <section>", node)
+
+        return self.parse_odML(root, fmt, create=lambda **kargs: fmt.create(name))
+
+    def parse_property(self, root, fmt):
+        create = lambda children, args, **kargs: fmt.create(value=children, **args)
+        return self.parse_odML(root, fmt, insert_children=False, create=create)
+
+    def parse_value(self, root, fmt):
+        create = lambda text, args, **kargs: fmt.create(text, **args)
+        return self.parse_odML(root, fmt, create=create)
 
 if __name__ == '__main__':
     from optparse import OptionParser
+    import dumper
 
     parser = OptionParser()
     (options, args) = parser.parse_args()
@@ -244,5 +245,7 @@ if __name__ == '__main__':
     if len(args) < 1:
         parser.print_help()
     else:
-        doc = parseXML(open(args[0]))
+        doc = load(args[0])
+        for sec in doc:
+            dumper.dumpSection(sec)
 

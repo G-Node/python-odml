@@ -1,3 +1,4 @@
+import odml
 """
 A module providing general format information
 and mappings of xml-attributes to their python class equivalents
@@ -24,6 +25,9 @@ class Format(object):
         """iterates each python property name"""
         for k in self._args:
             yield self.map(k)
+
+    def create(self, *args, **kargs):
+        return getattr(odml, self.__class__.__name__)(*args, **kargs)
 
 class Value(Format):
     _name = "value"

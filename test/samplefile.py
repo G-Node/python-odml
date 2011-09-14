@@ -81,7 +81,7 @@ class SampleFileOperationTest(unittest.TestCase):
         import StringIO
         doc = xmlparser.XMLWriter(self.doc)
         doc = StringIO.StringIO(unicode(doc))
-        doc = xmlparser.parseXML(doc)
+        doc = xmlparser.XMLReader().fromFile(doc)
         self.assertEqual(doc, self.doc)
 #        for a,b in zip(doc.sections, self.doc.sections):
 #            print "sec cmp", a, b

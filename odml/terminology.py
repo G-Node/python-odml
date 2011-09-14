@@ -51,7 +51,8 @@ class Terminologies(dict):
         # if url.startswith("http"): return None
         fp = cache_load(url)
         try:
-            term = tools.xmlparser.parseXML(fp)
+            term = tools.xmlparser.XMLReader(filename=url, ignore_errors=True).fromFile(fp)
+            term.finalize()
         except tools.xmlparser.ParserException:
             print "Failed to load %s due to parser errors" % url
             raise
