@@ -71,7 +71,11 @@ def set(value, dtype=None, encoding=None):
 
 def int_get(string):
     if not string: return 0
-    return int(float(string))
+    try:
+        return int(string)
+    except ValueError:
+        # convert to float first and then cast to int
+        return int(float(string))
 
 def float_get(string):
     if not string: return 0.0

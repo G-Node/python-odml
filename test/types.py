@@ -71,5 +71,14 @@ class TestTypes(unittest.TestCase):
         self.assertIsNone(v.checksum)
         self.assertEqual(v.value, data[:127])
 
+    def test_int(self):
+        v = odml.Value("123456789012345678901", dtype="int")
+        self.assertEqual(v.data, 123456789012345678901)
+        self.assertEqual(v.value, "123456789012345678901")
+        v = odml.Value("-123456789012345678901", dtype="int")
+        self.assertEqual(v.data, -123456789012345678901)
+        v = odml.Value("123.45", dtype="int")
+        self.assertEqual(v.data, 123)
+
 if __name__ == '__main__':
     unittest.main()
