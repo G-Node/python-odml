@@ -43,7 +43,6 @@ class Section(base.sectionable):
 
     @include.setter
     def include(self, new_value):
-        print "set include", repr(self), new_value
         if self._link is not None:
             raise TypeError("%s.include: You can either set link or include, but not both." % repr(self))
 
@@ -126,16 +125,15 @@ class Section(base.sectionable):
     def parent(self):
         return self._parent
 
-    @property
-    def repository(self):
+    def get_repository(self):
         if self._repository is None:
-            return self.parent.repository
+            return self.parent.get_repository()
         return super(BaseSection, self).repository
 
     def get_terminology_equivalent(self):
-        if self.repository is None: return None
-        term = terminology.load(self.repository)
-        print "term-sec", term, self.type
+        repo = self.get_repository()
+        if repo is None: return None
+        term = terminology.load(repo)
         return term.find_related(type=self.type)
 
     def append(self, obj):
@@ -250,6 +248,7 @@ class Section(base.sectionable):
         # however this does not reflect changes happening while the section
         # is unmerged
         if self._link is not None:
+            # TODO get_absolute_path, # TODO don't change if the section can still be reached using the old link
             self._link = self.get_relative_path(section)
 
         self._merged = None
