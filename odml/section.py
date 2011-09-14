@@ -49,6 +49,7 @@ class Section(base.sectionable):
         if not new_value:
             self._include = None
             self.clean()
+            return
 
         if '#' in new_value:
             url, path = new_value.split('#', 1)
