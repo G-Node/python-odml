@@ -22,7 +22,7 @@ class Value(base.baseobject):
     dtype (optional)
         the data type of the value
 
-    id (optional)
+    reference (optional)
         an external reference number (e.g. entry in a database)
 
     filename (optional)
@@ -46,7 +46,7 @@ class Value(base.baseobject):
 
     _format = format.Value
 
-    def __init__(self, value=None, data=None, uncertainty=None, unit=None, dtype=None, definition=None, id=None, filename=None, encoder=None, checksum=None, comment=None):
+    def __init__(self, value=None, data=None, uncertainty=None, unit=None, dtype=None, definition=None, reference=None, filename=None, encoder=None, checksum=None, comment=None):
         if data is None and value is None:
             raise TypeError("either data or value has to be set")
         if data is not None and value is not None:
@@ -58,7 +58,7 @@ class Value(base.baseobject):
         self._uncertainty = uncertainty
         self._dtype = dtype
         self._definition = definition
-        self._id = id
+        self._reference = reference
         self._filename = filename
         self._comment = comment
 
@@ -187,12 +187,12 @@ class Value(base.baseobject):
         self._unit = new_value
 
     @property
-    def id(self):
-        return self._id
+    def reference(self):
+        return self._reference
 
-    @id.setter
-    def id(self, new_value):
-        self._id = new_value
+    @reference.setter
+    def reference(self, new_value):
+        self._reference = new_value
 
     @property
     def definition(self):

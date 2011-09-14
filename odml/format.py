@@ -33,7 +33,7 @@ class Value(Format):
         'unit': 0,
         'type': 0,
         'definition': 0,
-        'id': 0,
+        'reference': 0,
         'filename': 0,
         'checksum': 0,
         'encoder': 0
