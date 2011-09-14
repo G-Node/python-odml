@@ -7,7 +7,8 @@ import sys
 self = sys.modules[__name__].__dict__
 
 from datetime import datetime, date, time
-import base64
+import binascii
+import md5
 
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
@@ -25,6 +26,7 @@ def valid_type(dtype):
             pass
     return False
 
+# TODO also take encoding into account
 def validate(string, dtype):
     """
     checks if:
@@ -45,22 +47,26 @@ def validate(string, dtype):
     except: #any error, this type ain't valid
         return False
 
-def get(string, dtype=None):
+def get(string, dtype=None, encoding=None):
     """
     convert *string* to the corresponding *dtype*
     """
     if not dtype: return str_get(string)
     if dtype.endswith("-tuple"): # special case, as the count-number is included in the type-name
         return tuple_get(string)
+    if dtype == "binary":
+        return binary_get(string, encoding)
     return self.get(dtype+"_get", str_get)(string)
 
-def set(value, dtype=None):
+def set(value, dtype=None, encoding=None):
     """
     serialize a *value* of type *dtype* to a unicode string
     """
     if not dtype: return str_set(value)
     if dtype.endswith("-tuple"):
         return tuple_set(value)
+    if dtype == "binary":
+        return binary_set(value, encoding)
     return self.get(dtype+"_set", str_set)(value)
 
 def int_get(string):
@@ -129,13 +135,52 @@ def tuple_set(value):
     if not value: return None
     return "(%s)" % ";".join(value)
 
-def binary_get(string):
-    "base64decode the data"
+###############################################################################
+# Binary Encoding Stuff
+###############################################################################
+
+class Encoder(object):
+    def __init__(self, encode, decode):
+        self._encode = encode
+        self._decode = decode
+    def encode(self, data):
+        return self._encode(data)
+    def decode(self, string):
+        return self._decode(string)
+
+encodings = {
+    'base64': Encoder(binascii.b2a_base64, binascii.a2b_base64),
+    'quoted-printable': Encoder(binascii.b2a_qp, binascii.a2b_qp),
+    'hexadecimal': Encoder(binascii.b2a_hex, binascii.a2b_hex),
+    None: Encoder(lambda x: x, lambda x: x), #identity encoder
+}
+
+def valid_encoding(encoding):
+    return encoding in encodings
+
+def binary_get(string, encoding=None):
+    "binary decode the *string* according to *encoding*"
     if not string: return None
-    return base64.b64decode(string)
+    return encodings[encoding].decode(string)
 
-def binary_set(value):
-    "base64encode the data"
+def binary_set(value, encoding=None):
+    "binary encode the *value* according to *encoding*"
     if not value: return None
-    return base64.b64encode(value)
+    return encodings[encoding].encode(value)
 
+def calculate_crc32_checksum(data):
+    return "%08x" % (binascii.crc32(data) & 0xffffffff)
+
+def calculate_md5_checksum(data):
+    return md5.md5(data).hexdigest()
+
+checksums = {
+    'crc32': calculate_crc32_checksum,
+    'md5': calculate_md5_checksum,
+}
+def valid_checksum_type(checksum_type):
+    return checksum_type in checksums
+
+def calculate_checksum(data, checksum_type):
+    if data is None: data = ''
+    return checksums[checksum_type](data)

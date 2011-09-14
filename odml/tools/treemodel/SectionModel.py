@@ -13,7 +13,9 @@ ColMapper = ColumnMapper({"Name"        : (0, "name"),
                          "Type"        : (3, "dtype"),
                          "Unit"        : (4, "unit"),
                          "Comment"     : (5, "comment"),
-                         "Id"          : (6, "id")})
+                         "Endcoder"    : (6, "encoder"),
+                         "Checksum"    : (7, "checksum"),
+                         "Id"          : (8, "id")})
 
 class SectionModel(TreeModel):
     def __init__(self, section):

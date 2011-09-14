@@ -1,4 +1,5 @@
 import GenericIter
+import string
 
 class PropIter(GenericIter.GenericIter):
     """
@@ -55,6 +56,13 @@ class ValueIter(GenericIter.GenericIter):
     def get_value(self, attr):
         if attr == "name":
             return
+        if attr == "value":
+            if self._obj.dtype == "binary":
+                # fix how binary context is displayed here
+                data = self._obj.data
+                unprintable = filter(lambda x: x not in string.printable, data)
+                if len(data) > 15 or len(unprintable) > 0:
+                    return "(%d bytes binary content)" % len(data)
         return super(ValueIter, self).get_value(attr)
 
 class SectionIter(GenericIter.GenericIter):

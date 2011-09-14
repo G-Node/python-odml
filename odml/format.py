@@ -34,17 +34,17 @@ class Value(Format):
         'type': 0,
         'definition': 0,
         'id': 0,
-        'defaultFileName': 0
+        'filename': 0,
+        'checksum': 0,
+        'encoder': 0
         }
-    _map = {'type': 'dtype',
-            'defaultFileName': 'default_filename'}
+    _map = {'type': 'dtype'}
 
 class Property(Format):
     _name = "property"
     _args = {
         'name': 1,
         'value': 1,
-        'synonym': 0,
         'definition': 0,
         'mapping': 0,
         'dependency': 0,

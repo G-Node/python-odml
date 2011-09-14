@@ -5,48 +5,46 @@ import value as odml_value
 
 class Property(base.baseobject):
     """An odML Property"""
-    definition = None
-    synonym    = None
-    dependency = None
-    dependencyValue = None
-    mapping    = None
-
     _format = format.Property
 
     def __init__(self, name, value, section=None,
-        synonym=None, definition=None, dependency=None, dependencyValue=None, mapping=None,
+        definition=None, dependency=None, dependencyValue=None, mapping=None,
         unit=None, dtype=None, uncertainty=None):
-    	"""
-    	create a new Property
+        """
+        create a new Property
 
-    	*value*
-    	    specifies a direct value that shall be assigned as a first value
-    	    if *value* is a list, the whole list of values will be assigned.
-    	    Further info
+        *value*
+            specifies a direct value that shall be assigned as a first value
+            if *value* is a list, the whole list of values will be assigned.
+            Further info
 
-	    	*unit*
-	            the unit of the value(s)
+                    *unit*
+                    the unit of the value(s)
 
-	        *dtype*
-	            the data type of the value(s)
+                *dtype*
+                    the data type of the value(s)
 
-	        *uncertainty*
-	            an estimation of uncertainty of the value(s)
+                *uncertainty*
+                    an estimation of uncertainty of the value(s)
 
-    	*section*
-    	    the parent section to which this property belongs
+        *section*
+            the parent section to which this property belongs
 
-
-	 * @param definition {@link String}
-	 * @param dependency {@link String}
-	 * @param dependencyValue {@link String}
-	 * @param mapping {@link URL}
-    	"""
+         * @param definition {@link String}
+         * @param dependency {@link String}
+         * @param dependencyValue {@link String}
+         * @param mapping {@link URL}
+        """
         #TODO doc description for arguments
         #TODO validate arguments
         self._name = name
         self._section = section
         self._values = base.SafeList()
+
+        self.definition = definition
+        self.dependency = dependency
+        self.dependencyValue = dependencyValue
+        self.mapping = mapping
 
         if isinstance(value, list):
             for v in value:
