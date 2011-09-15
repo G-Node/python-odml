@@ -124,7 +124,20 @@ class SectionView(TerminologyPopupTreeView):
         menu_items = self.create_popup_menu_items("Add Section", "Empty Section", obj, self.add_section, lambda sec: sec.sections, lambda sec: "%s [%s]" % (sec.name, sec.type))
         if original_object is not None:
             menu_items.append(self.create_popup_menu_del_item(original_object))
+            if original_object.is_merged:
+                menu_items.append(self.create_menu_item("Unresolve links (collapse)", self.on_expand, original_object))
+            elif original_object.can_be_merged:
+                menu_items.append(self.create_menu_item("Resolve links (expand)", self.on_expand, original_object))
         return menu_items
+
+    def on_expand(self, widget, obj):
+        """
+        called when the user requests an object to be expanded/collapsed
+        """
+        if obj.is_merged:
+            obj.clean()
+        else:
+            obj.merge()
 
     def add_section(self, widget, (obj, section)):
         """

@@ -211,7 +211,21 @@ class Section(base.sectionable):
             return self.document._find_by_path(path[1:])
         return super(BaseSection, self)._find_by_path(path)
 
-    def merge(self, section):
+    def merge(self, section=None):
+        """
+        merges this section with another *section*
+
+        if section is none, sets the link/include attribute causing
+        the section to be automatically merged
+        """
+        if section is None:
+            # for the high level interface
+            if self._link is not None:
+                self.link = self._link
+            elif self._include is not None:
+                self.include = self._include
+            return
+
         for obj in section:
             mine = self.contains(obj)
             if mine is not None:
@@ -253,5 +267,13 @@ class Section(base.sectionable):
             self._link = self.get_relative_path(section)
 
         self._merged = None
+
+    @property
+    def is_merged(self):
+        return self._merged is not None
+
+    @property
+    def can_be_merged(self):
+        return self._link is not None or self._include is not None
 
 BaseSection = Section

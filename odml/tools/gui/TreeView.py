@@ -124,8 +124,11 @@ class TerminologyPopupTreeView(TreeView):
         self.execute(cmd)
 
     def create_popup_menu_del_item(self, obj):
-        item = gtk.MenuItem("Delete %s" % repr(obj))
-        item.connect('activate', self.on_delete, obj)
+        return self.create_menu_item("Delete %s" % repr(obj), self.on_delete, obj)
+
+    def create_menu_item(self, name, func, data):
+        item = gtk.MenuItem(name)
+        item.connect('activate', func, data)
         item.show()
         return item
 
@@ -155,10 +158,7 @@ class TerminologyPopupTreeView(TreeView):
         menu = gtk.Menu()
         terms = [(name_func(sec), sec) for sec in terms]
         for name, val in [(empty_name, None), (None, None)] + terms:
-            item = gtk.MenuItem(name)
-            item.connect('activate', func, (obj, val))
-            item.show()
-            menu.append(item)
+            menu.append(self.create_menu_item(name, func, (obj, val)))
 
         menu.show()
         add_section.set_submenu(menu)
