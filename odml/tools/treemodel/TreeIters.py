@@ -61,7 +61,7 @@ class ValueIter(GenericIter.GenericIter):
                 # fix how binary context is displayed here
                 data = self._obj.data
                 unprintable = filter(lambda x: x not in string.printable, data)
-                if len(data) > 15 or len(unprintable) > 0:
+                if len(data) > 15 or (self._obj._encoding is None and len(unprintable) > 0):
                     return "(%d bytes binary content)" % len(data)
         return super(ValueIter, self).get_value(attr)
 
