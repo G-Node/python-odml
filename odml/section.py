@@ -76,7 +76,7 @@ class Section(base.sectionable):
 
     @link.setter
     def link(self, new_value):
-        if self._link is not None:
+        if self._include is not None:
             raise TypeError("%s.link: You can either set link or include, but not both." % repr(self))
 
         if self.parent is None: # we cannot possibly know where the link is going
