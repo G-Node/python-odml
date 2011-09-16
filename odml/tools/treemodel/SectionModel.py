@@ -24,13 +24,17 @@ class SectionModel(TreeModel):
         self._section._Changed += self.on_section_changed
         self.offset = len(section.to_path())
 
-    @staticmethod
-    def model_path_to_odml_path(path):
+    def model_path_to_odml_path(self, path):
         # (n, ...) -> (1, ...)
+        # this can only go wrong sometimes because properties
+        # with only one value share a common path
         return (1,) + path # we consider properties only
 
-    @staticmethod
-    def odml_path_to_model_path(path):
+    def odml_path_to_model_path(self, path):
+        if len(path) == 3: # 1, prop, val
+            # if only one child, return property row
+            if len(self._section.from_path(path[:2])) == 1:
+                return path[1:2]
         return path[1:]
 
     def on_get_iter(self, path):
@@ -88,6 +92,7 @@ class SectionModel(TreeModel):
 
         if context.action == "set" and context.postChange:
             path = self.get_node_path(context.obj)
+            print "set path", path
             if not path: return # probably the section changed
             iter = self.get_iter(path)
             self.row_changed(path, iter)
