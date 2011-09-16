@@ -170,6 +170,7 @@ class ValueView(TerminologyPopupTreeView):
             for item in self.create_popup_menu_items("Add Value", "Empty Value", obj, self.add_value, value_filter, lambda val: val.value):
                 menu_items.append(item)
             for item in self.create_popup_menu_items("Set Value", "Empty Value", obj, self.set_value, value_filter, lambda val: val.value):
+                if item.get_submenu() is None: continue # don't want a sole Set Value item
                 menu_items.append(item)
             menu_items.append(self.create_popup_menu_del_item(original_object))
         return menu_items
