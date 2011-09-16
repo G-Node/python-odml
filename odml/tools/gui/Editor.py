@@ -86,7 +86,7 @@ class Editor(gtk.Window):
             self.connect('delete-event', self.quit)
 
         self.set_title("odML Editor")
-        self.set_default_size(800, 500)
+        self.set_default_size(800, 600)
 
         icons = load_icon_pixbufs()
         self.set_icon_list(*icons)
@@ -130,23 +130,32 @@ class Editor(gtk.Window):
         tool_button.set_tooltip_text("Open Files")
 
         navigation_bar = NavigationBar()
-        table.attach(navigation_bar,
-                     # X direction           Y direction
-                     1, 2,                   1, 2,
-                     0,                      0,
-                     0,                      0)
+#        table.attach(navigation_bar,
+#                     # X direction           Y direction
+#                     1, 2,                   1, 2,
+#                     0,                      0,
+#                     0,                      0)
         navigation_bar.on_selection_change = self.on_navigate
         self._navigation_bar = navigation_bar
 
+        # schematic organization
+        #  -vpaned---------------------------
+        # | -hpaned-----+-------------------
+        # ||            | -property_view(vbox)
+        # || scrolled:  | | info_bar
+        # ||  section_tv| +----------------
+        # ||            | | scrolled: property_tv
+        # ||            | \----------------
+        # |\------------+-------------------
+        # +----------------------------------
+        # |  --frame: navigation bar -------
+        # | +-------------------------------
+        # | | scrolled: _property_view
+        # | \-------------------------------
+        # \----------------------------------
         hpaned = gtk.HPaned()
         hpaned.show()
         hpaned.set_position(150)
-        table.attach (hpaned,
-                      # X direction           Y direction
-                      0, 2,                   3, 4,
-                      gtk.EXPAND | gtk.FILL,  gtk.EXPAND | gtk.FILL,
-                      0,                      0);
-
 
         section_tv = SectionView()
         section_tv.execute = cmdm.execute
@@ -159,10 +168,6 @@ class Editor(gtk.Window):
         property_tv = ValueView(self.command_manager.execute)
         property_tv.execute = cmdm.execute
         property_tv.on_property_select = self.on_object_select
-
-        #property_tv.get_selection().connect("changed", self.on_property_selected)
-        #property_tv.connect("button_press_event", self.on_button_press)
-
         property_view = gtk.VBox(homogeneous=False, spacing=0)
 
         info_bar = EditorInfoBar ()
@@ -170,6 +175,8 @@ class Editor(gtk.Window):
         property_view.pack_start(info_bar, False, False, 1)
 
         property_view.pack_start(ScrolledWindow(property_tv._treeview), True, True, 1)
+        hpaned.add2(property_view)
+
         self._property_tv = property_tv
         self._section_tv = section_tv
 
@@ -177,12 +184,22 @@ class Editor(gtk.Window):
 
         # to edit properties of Document, Section or Property:
         self._property_view = PropertyView(self.command_manager.execute)
-        hp = gtk.HPaned()
-        hp.add1(property_view)
-        hp.add2(ScrolledWindow(self._property_view._treeview))
-        hp.set_position(450)
-        hp.show()
-        hpaned.add2(hp)
+        frame = gtk.Frame()
+        frame.set_label_widget(navigation_bar)
+        frame.add(ScrolledWindow(self._property_view._treeview))
+        frame.show()
+
+        vpaned = gtk.VPaned()
+        vpaned.show()
+        vpaned.set_position(350)
+        vpaned.pack1(hpaned, resize=True, shrink=False)
+        vpaned.pack2(frame, resize=False, shrink=True)
+
+        table.attach (vpaned,
+                      # X direction           Y direction
+                      0, 2,                   3, 4,
+                      gtk.EXPAND | gtk.FILL,  gtk.EXPAND | gtk.FILL,
+                      0,                      0)
 
         statusbar = gtk.Statusbar()
         table.attach(statusbar,
