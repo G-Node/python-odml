@@ -138,7 +138,8 @@ class CopyObject(Command):
         remove the clone from its parent
         """
         parent = self.new_obj.parent
-        parent.remove(self.new_obj)
+        if parent is not None:
+            parent.remove(self.new_obj)
 
 class MoveObject(CopyObject):
     """
@@ -167,6 +168,23 @@ class MoveObject(CopyObject):
             self.parent.insert(self.index, self.obj)
         except:
             self.parent.append(self.obj)
+
+class ReplaceObject(MoveObject):
+    """
+    ReplaceObject(obj=, repl=)
+
+    removes *obj* from *obj.parent* and appends *repl* to its *obj.parent*
+    however, does not previously remove *repl* from its parent!
+    so only use this with repl=obj.clone()
+    """
+    def _execute(self):
+        self.new_obj = self.get_new_object()
+        self.obj = self.repl
+        self.repl = self.new_obj
+        super(ReplaceObject, self)._undo() # insert self.obj (=repl) into self.parent (=obj.parent)
+
+    def _undo(self):
+        self._execute() # exchange the objects again and execute in reverse
 
 class CopyOrMoveObject(Command):
     """

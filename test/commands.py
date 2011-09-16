@@ -94,6 +94,26 @@ class TestCommands(unittest.TestCase):
         self.assertIn(src, parent)
         self.assertIs(parent, src.parent)
 
+    def test_replace_object(self):
+        src = self.doc.sections[1].properties[1]
+        dst = self.doc.sections[2].sections[1].properties[2].clone()
+        parent = src.parent
+        position = src.position
+
+        cmd = commands.ReplaceObject(obj=src, repl=dst)
+        cmd()
+
+        self.assertNotIn(src, parent)
+        self.assertIsNone(src.parent)
+        self.assertIs(dst.parent, parent)
+        self.assertIs(parent.properties[position], dst)
+
+        cmd._undo()
+        self.assertIn(src, parent)
+        self.assertIs(src.parent, parent)
+        self.assertIsNone(dst.parent)
+        self.assertIs(parent.properties[position], src)
+
     def test_value_move(self):
         """not yet needed"""
         pass
