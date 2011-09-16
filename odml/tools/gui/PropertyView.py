@@ -21,7 +21,7 @@ class PropertyView(TreeView):
 
         super(PropertyView, self).__init__(self._store)
 
-        for i, name in ((COL_KEY, "Property"), (COL_VALUE, "Value")):
+        for i, name in ((COL_KEY, "Attribute"), (COL_VALUE, "Value")):
             self.add_column(
                 name=name,
                 edit_func=self.on_edited if i == COL_VALUE else None,
