@@ -26,6 +26,12 @@ class baseobject(object):
 
         return True
 
+    def __ne__(self, obj):
+        """
+        use the __eq__ function to determine if both objects are equal
+        """
+        return not self == obj
+
     def clean(self):
         pass
 
