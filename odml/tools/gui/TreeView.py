@@ -35,6 +35,7 @@ class TreeView(object):
             renderer.connect("edited", edit_func, data)
 
         column = gtk.TreeViewColumn(name, renderer, text=id)
+        column.set_resizable(True)
         self._treeview.append_column(column)
         return column
 
