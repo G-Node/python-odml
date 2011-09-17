@@ -49,6 +49,16 @@ class DocumentModel(TreeModel):
         debug("-on_get_iter: %s" % (section))
         return SectionIter(section)
 
+    def on_get_value(self, tree_iter, column):
+        """
+        add some coloring to the value in certain cases
+        """
+        v = super(DocumentModel, self).on_get_value(tree_iter, column)
+        if v is None: return v
+
+        obj = tree_iter._obj
+        return self.highlight(obj, v, column)
+
     def on_iter_nth_child(self, tree_iter, n):
         if tree_iter == None:
             return SectionIter(self._section.sections[n])

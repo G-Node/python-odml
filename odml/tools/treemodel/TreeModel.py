@@ -47,6 +47,27 @@ class TreeModel(gtk.GenericTreeModel):
         tree_iter = self.on_get_iter(path)
         return tree_iter._obj
 
+    def highlight(self, obj, value, column=0):
+        """
+        highlights value depending on whether obj is merged
+        or a terminology default etc.
+        """
+        color = None
+        italics = False
+        merged = obj.get_merged_equivalent()
+        if merged is not None:
+            if column == 0: color = "darkgrey"
+            if merged == obj: color = "grey"
+
+        merged = obj.get_terminology_equivalent()
+        if column == 0 and merged is not None:
+            italics = True
+
+        if italics:
+            value = "<i>%s</i>" % value
+        if color is None: return value
+        return "<span foreground='%s'>%s</span>" % (color, value)
+
     def on_get_flags(self):
         return 0
 

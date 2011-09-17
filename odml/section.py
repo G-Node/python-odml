@@ -137,6 +137,12 @@ class Section(base.sectionable):
         term = terminology.load(repo)
         return term.find_related(type=self.type)
 
+    def get_merged_equivalent(self):
+        """
+        return the merged object or None
+        """
+        return self._merged
+
     def append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
@@ -231,7 +237,9 @@ class Section(base.sectionable):
             if mine is not None:
                 mine.merge(obj)
             else:
-                self.append(obj.clone())
+                mine = obj.clone()
+                mine._merged = obj
+                self.append(mine)
         self._merged = section
 
     def clean(self):
