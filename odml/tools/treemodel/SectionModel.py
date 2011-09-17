@@ -46,6 +46,23 @@ class SectionModel(TreeModel):
         node = self._section.from_path(path)
         return self._get_node_iter(node)
 
+    def on_get_value(self, tree_iter, column):
+        v = super(SectionModel, self).on_get_value(tree_iter, column)
+        if v is None: return v
+
+        obj = tree_iter._obj
+        if isinstance(tree_iter, ValueIter):
+            obj = obj._property
+
+        color = None
+        merged = obj.get_merged_equivalent()
+        if merged is not None:
+            if column == 0: color = "darkgrey"
+            if merged == obj: color = "grey"
+
+        if color is None: return v
+        return "<span foreground='%s'>%s</span>" % (color, v)
+
     def on_iter_nth_child(self, tree_iter, n):
         debug(":on_iter_nth_child [%d]: %s " % (n, tree_iter))
         if tree_iter == None:

@@ -172,8 +172,23 @@ class ValueView(TerminologyPopupTreeView):
             for item in self.create_popup_menu_items("Set Value", "Empty Value", obj, self.set_value, value_filter, lambda val: val.value):
                 if item.get_submenu() is None: continue # don't want a sole Set Value item
                 menu_items.append(item)
-            menu_items.append(self.create_popup_menu_del_item(original_object))
+
+            # cannot delete properties that are linked (they'd be override on next load), instead allow to reset them
+            merged = obj.get_merged_equivalent()
+            if original_object is obj and merged is not None:
+                if merged != obj:
+                    menu_items.append(self.create_menu_item("Reset to merged default", self.reset_property, obj))
+            else:
+                menu_items.append(self.create_popup_menu_del_item(original_object))
         return menu_items
+
+    def reset_property(self, widget, prop):
+        """
+        popup menu action: reset property
+        """
+        dst = prop.get_merged_equivalent().clone()
+        cmd = commands.ReplaceObject(obj=prop, repl=dst)
+        self.execute(cmd)
 
     def set_value(self, widget, (prop, val)):
         """

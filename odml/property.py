@@ -155,6 +155,14 @@ class Property(base.baseobject):
     def unmerge(self, property):
         pass
 
+    def get_merged_equivalent(self):
+        """
+        return the merged object (i.e. if the section is linked to another one,
+        return the corresponding property of the linked section) or None
+        """
+        if self._section._merged is None: return None
+        return self._section._merged.contains(self)
+
     def get_terminology_equivalent(self):
         sec = self._section.get_terminology_equivalent()
         print "term-prop(sec)", self, sec
