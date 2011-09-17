@@ -14,7 +14,7 @@ class PropIter(GenericIter.GenericIter):
 
     def get_value(self, attr):
         if attr == "name":
-            return self._obj.name
+            return self.escape(self._obj.name)
 
         if self.has_child:
             return self.get_mulitvalue(attr)
@@ -25,7 +25,7 @@ class PropIter(GenericIter.GenericIter):
         #Most of the stuff is empty and handled by the
         #value
         if name == "value":
-                return "<multi>"
+                return self.escape("<multi>")
         return ""
 
     def get_singlevalue(self, name):
@@ -34,7 +34,7 @@ class PropIter(GenericIter.GenericIter):
             return ""
 
         prop = self._obj.values[0]
-        return getattr(prop, name)
+        return self.escape(getattr(prop, name))
 
     @property
     def has_child(self):

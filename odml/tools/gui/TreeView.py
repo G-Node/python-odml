@@ -34,8 +34,9 @@ class TreeView(object):
             renderer.set_property("editable", True)
             renderer.connect("edited", edit_func, data)
 
-        column = gtk.TreeViewColumn(name, renderer, text=id)
+        column = gtk.TreeViewColumn(name, renderer, markup=id)
         column.set_resizable(True)
+        column.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
         self._treeview.append_column(column)
         return column
 
@@ -128,6 +129,9 @@ class TerminologyPopupTreeView(TreeView):
         return self.create_menu_item("Delete %s" % repr(obj), self.on_delete, obj)
 
     def create_menu_item(self, name, func, data):
+        """
+        Creates a single menu item
+        """
         item = gtk.MenuItem(name)
         item.connect('activate', func, data)
         item.show()

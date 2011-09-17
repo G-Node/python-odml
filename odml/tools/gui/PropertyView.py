@@ -1,4 +1,5 @@
 import gtk
+import cgi
 from ... import format
 import commands
 from TreeView import TreeView
@@ -46,6 +47,8 @@ class PropertyView(TreeView):
         for k in self._fmt._args:
             v = getattr(self._model, self._fmt.map(k))
             if not isinstance(v, list):
+                if v is not None:
+                    v = cgi.escape(v)
                 self._store.append([k, v])
 
     def on_edited(self, widget, row, new_value, col):

@@ -1,3 +1,5 @@
+import cgi
+
 class GenericIter(object):
     """
     A generic TreeIter mapper for objects.
@@ -20,8 +22,13 @@ class GenericIter(object):
             return obj.IterClass(obj)
         return self.__class__(obj)
 
+    @staticmethod
+    def escape(value):
+        """escape html for use in marked up cellrenderers"""
+        return cgi.escape(value) if value is not None else None
+
     def get_value(self, attr):
-        return getattr(self._obj, attr)
+        return self.escape(getattr(self._obj, attr))
 
     def to_path(self):
         """
