@@ -31,8 +31,7 @@ class Event (object):
         """
         pass
 
-    @property
-    def n_handler(self):
+    def __len__(self):
         return len(self.handlers)
 
     def __repr__(self):
@@ -41,7 +40,6 @@ class Event (object):
     __iadd__ = add_handler
     __isub__ = remove_handler
     __call__ = fire
-    __len__  = n_handler
 
 class ChangeContext(object):
     """
