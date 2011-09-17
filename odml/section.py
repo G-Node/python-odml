@@ -127,6 +127,11 @@ class Section(base.sectionable):
         return self._parent
 
     def get_repository(self):
+        """
+        returns the repository responsible for this section,
+        which might not be the *repository* attribute, but may
+        be inherited from a parent section / the document
+        """
         if self._repository is None:
             return self.parent.get_repository()
         return super(BaseSection, self).repository

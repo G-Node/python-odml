@@ -260,8 +260,10 @@ class sectionable(baseobject):
 
     @repository.setter
     def repository(self, url):
+        if not url: url = None
         self._repository = url
-        terminology.deferred_load(url)
+        if url:
+            terminology.deferred_load(url)
 
     def get_repository(self):
         return self._repository
