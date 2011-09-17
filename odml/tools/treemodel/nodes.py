@@ -145,27 +145,6 @@ class Value(event.Value, ValueNode): pass
 class Property(event.Property, PropertyNode): pass
 class Section(event.Section, SectionNode): pass
 
-def pass_on_change(context):
-    """
-    pass the change event to the parent node
-    """
-    parent = context.cur.parent
-    if parent is not None:
-        context.passOn(parent)
-
-def pass_on_change_section(context):
-    """
-    pass the change event directly to the document in question
-    don't go through all parents
-    """
-    document = context.cur.document
-    if document is not None:
-        context.passOn(document)
-
-Value._Changed.finish    = pass_on_change
-Property._Changed.finish = pass_on_change
-Section._Changed.finish  = pass_on_change_section
-
 # TODO this should probably be mixed in somewhere else too
 import TreeIters
 Section.IterClass  = TreeIters.SectionIter

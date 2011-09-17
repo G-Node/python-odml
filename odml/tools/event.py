@@ -14,7 +14,7 @@ class Event (object):
         try:
             self.handlers.remove(handler)
         except:
-            raise ValueError("No such handler.")
+            raise ValueError("No such handler: %s" % repr(handler))
         return self
 
     def fire(self, *args, **kargs):
@@ -71,8 +71,8 @@ class ChangeContext(object):
     The hidden attribute *_obj* holds the complete pass stack, where
     obj is obj[0] and cur is _obj[-1]
     """
-    def __init__(self, obj, val):
-        self._obj = [obj]
+    def __init__(self, val):
+        self._obj = []
         self.val = val
         self.action = None
         self.when = None
@@ -125,11 +125,13 @@ class ChangeContext(object):
         after handling obj is removed from the stack again
         """
         self._obj.append(obj)
+        if hasattr(obj, "_change_handler"):
+            obj._change_handler(self)
         obj._Changed(self)
         self._obj.remove(obj)
 
     def reset(self):
-        self._obj = [self.obj]
+        self._obj = []
 
     def __repr__(self):
         v = ""
@@ -168,14 +170,14 @@ class ModificationNotifier(object):
         * call func
         * fire a postChange-event
         """
-        c = ChangeContext(self, obj)
+        c = ChangeContext(obj)
         c.action = action
         c.preChange = True
-        self._Changed(c)
+        c.passOn(self)
         func()
         c.reset()
         c.postChange = True
-        self._Changed(c)
+        c.passOn(self)
 
     def append(self, obj):
         func = lambda: super(ModificationNotifier, self).append(obj)
@@ -189,7 +191,17 @@ class ModificationNotifier(object):
         func = lambda: super(ModificationNotifier, self).insert(position, obj)
         self.__fireChange("insert", obj, func)
 
-# create a seperate Event listener for each class
+    def add_change_handler(self, func):
+        if not hasattr(self, "_change_handler"):
+            self._change_handler = Event(self.__class__.__name__)
+        self._change_handler += func
+
+    def remove_change_handler(self, func):
+        self._change_handler -= func
+        if len(self._change_handler) == 0:
+            del self._change_handler
+
+# create a seperate global Event listeners for each class
 # and provide ModificationNotifier Capabilities
 class Value(ModificationNotifier, value.Value):
     _Changed = Event("value")
@@ -203,3 +215,23 @@ class Section(ModificationNotifier, section.Section):
 class Document(ModificationNotifier, doc.Document):
     _Changed = Event("doc")
 
+def pass_on_change(context):
+    """
+    pass the change event to the parent node
+    """
+    parent = context.cur.parent
+    if parent is not None:
+        context.passOn(parent)
+
+def pass_on_change_section(context):
+    """
+    pass the change event directly to the document in question
+    don't go through all parents
+    """
+    document = context.cur.document
+    if document is not None:
+        context.passOn(document)
+
+Value._Changed.finish    = pass_on_change
+Property._Changed.finish = pass_on_change
+Section._Changed.finish  = pass_on_change_section

@@ -19,7 +19,7 @@ class DocumentModel(TreeModel):
         assert isinstance(odml_document, odml.doc.Document)
 
         self._section = odml_document
-        self._section._Changed += self.on_section_changed
+        self._section.add_change_handler(self.on_section_changed)
 
     @property
     def document(self):
@@ -68,7 +68,7 @@ class DocumentModel(TreeModel):
         return SectionIter(node)
 
     def destroy(self):
-        self._section._Changed -= self.on_section_changed
+        self._section.remove_change_handler(self.on_section_changed)
 
     def on_section_changed(self, context): # document=None, section=None, prop=None, value=None,
        # prop_pos=None, value_pos=None,

@@ -19,11 +19,11 @@ class NavigationBar(gtk.Label):
     @document.setter
     def document(self, doc):
         if self._document is not None:
-            self._document._Changed -= self.on_section_changed
+            self._document.remove_change_handler(self.on_section_changed)
 
         self._document = doc
         self.set_model(doc)
-        doc._Changed += self.on_section_changed
+        doc.add_change_handler(self.on_section_changed)
 
     @property
     def current_object(self):

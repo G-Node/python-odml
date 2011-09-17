@@ -21,7 +21,7 @@ class SectionModel(TreeModel):
     def __init__(self, section):
         super(SectionModel, self).__init__(ColMapper)
         self._section = section
-        self._section._Changed += self.on_section_changed
+        self._section.add_change_handler(self.on_section_changed)
         self.offset = len(section.to_path())
 
     def model_path_to_odml_path(self, path):
@@ -123,7 +123,7 @@ class SectionModel(TreeModel):
             self.event_insert(context)
 
     def destroy(self):
-        self._section._Changed -= self.on_section_changed
+        self._section.remove_change_handler(self.on_section_changed)
 
 
     @property

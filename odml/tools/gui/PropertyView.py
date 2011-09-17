@@ -33,9 +33,9 @@ class PropertyView(TreeView):
         tv.show()
 
     def set_model(self, obj):
-        if self._model:
-            self._model._Changed -= self.on_object_change
-        obj._Changed += self.on_object_change
+        if self._model is not None:
+            self._model.remove_change_handler(self.on_object_change)
+        obj.add_change_handler(self.on_object_change)
 
         self._model = obj
         self._fmt   = obj._format
