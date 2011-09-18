@@ -405,9 +405,14 @@ class Editor(gtk.Window):
         self._document.clean()
         doc = XMLWriter(self._document)
         gf = gio.File(uri)
+        try:
+            data = unicode(doc)
+        except Exception, e:
+            self._info_bar.show_info("Save failed: %s" % e.message)
+            return
         xml_file = gf.replace(etag='', make_backup=False) # TODO make backup?
         xml_file.write(doc.header)
-        xml_file.write(unicode(doc))
+        xml_file.write(data)
         xml_file.close()
         self._document.finalize() # undo the clean
         self._info_bar.show_info("%s was saved" % (gf.get_basename()))

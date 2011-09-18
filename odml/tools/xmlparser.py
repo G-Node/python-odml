@@ -85,9 +85,12 @@ class XMLWriter:
         return ET.tounicode(self.save_element(self.doc), pretty_print=True)
 
     def write_file(self, filename):
+        # calculate the data before opening the file in case we get any
+        # exception
+        data = unicode(self)
         f = open(filename, "w")
         f.write(self.header)
-        f.write(unicode(self))
+        f.write(data)
         f.close()
 
 def load(filename):
