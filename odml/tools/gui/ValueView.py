@@ -1,10 +1,13 @@
 import gtk
+import gio
+
 import odml
 from ... import format
 import commands
 from TreeView import TerminologyPopupTreeView
-from odml.tools.treemodel import SectionModel
+from ..treemodel import SectionModel
 from DragProvider import DragProvider
+from ChooserDialog import ChooserDialog
 from .. import xmlparser
 
 COL_KEY = 0
@@ -163,24 +166,65 @@ class ValueView(TerminologyPopupTreeView):
         model, path, obj = self.popup_data
         menu_items = self.create_popup_menu_items("Add Property", "Empty Property", model.section, self.add_property, lambda sec: sec.properties, lambda prop: prop.name)
         if obj is not None: # can also add value
-            original_object = obj
+            prop = obj
             if hasattr(obj, "_property"): # we care about the properties only
-                obj = obj._property
+                prop = obj._property
+
             value_filter = lambda prop: [val for val in prop.values if val.value is not None and val.value != ""]
-            for item in self.create_popup_menu_items("Add Value", "Empty Value", obj, self.add_value, value_filter, lambda val: val.value):
+            for item in self.create_popup_menu_items("Add Value", "Empty Value", prop, self.add_value, value_filter, lambda val: val.value):
                 menu_items.append(item)
-            for item in self.create_popup_menu_items("Set Value", "Empty Value", obj, self.set_value, value_filter, lambda val: val.value):
+            for item in self.create_popup_menu_items("Set Value", "Empty Value", prop, self.set_value, value_filter, lambda val: val.value):
                 if item.get_submenu() is None: continue # don't want a sole Set Value item
                 menu_items.append(item)
 
+            # conditionally allow to store / load binary content
+            val = obj
+            if prop is obj:
+                val = obj.value if len(obj) == 1 else None
+
+            if val is not None and val.dtype == "binary":
+                menu_items.append(self.create_menu_item("Load binary content", self.binary_load, val))
+                if val.data is not None:
+                    menu_items.append(self.create_menu_item("Save binary content", self.binary_save, val))
+
             # cannot delete properties that are linked (they'd be override on next load), instead allow to reset them
-            merged = obj.get_merged_equivalent()
-            if original_object is obj and merged is not None:
+            merged = prop.get_merged_equivalent()
+            if prop is obj and merged is not None:
                 if merged != obj:
                     menu_items.append(self.create_menu_item("Reset to merged default", self.reset_property, obj))
             else:
-                menu_items.append(self.create_popup_menu_del_item(original_object))
+                menu_items.append(self.create_popup_menu_del_item(obj))
         return menu_items
+
+    def binary_load(self, widget, val):
+        """
+        popup menu action: load binary content
+        """
+        print "load binary content for", val
+        chooser = ChooserDialog(title="Open binary file", save=False)
+        chooser.show()
+
+        def binary_load_file(uri):
+            if val._encoder is None:
+                val.encoder = "base64"
+            val.data = gio.File(uri).read().read()
+
+        chooser.on_accept = binary_load_file
+
+    def binary_save(self, widget, val):
+        """
+        popup menu action: load binary content
+        """
+        print "save binary content for", val
+        chooser = ChooserDialog(title="Save binary file", save=True)
+        chooser.show()
+
+        def binary_save_file(uri):
+            fp = gio.File(uri).replace(etag='', make_backup=False)
+            fp.write(val.data)
+            fp.close()
+
+        chooser.on_accept = binary_save_file
 
     def reset_property(self, widget, prop):
         """
