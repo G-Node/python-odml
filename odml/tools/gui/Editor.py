@@ -19,6 +19,7 @@ from SectionView import SectionView
 from PropertyView import PropertyView
 from ValueView import ValueView
 from NavigationBar import NavigationBar
+from ChooserDialog import odMLChooserDialog
 
 gtk.gdk.threads_init()
 
@@ -263,7 +264,7 @@ class Editor(gtk.Window):
         recent_action.connect ("item-activated", self.open_recent)
 
         recent_filter = gtk.RecentFilter()
-        self._setup_file_filter (recent_filter)
+        odMLChooserDialog._setup_file_filter(recent_filter)
 
         recent_action.set_sort_type (gtk.RECENT_SORT_MRU)
         recent_action.add_filter (recent_filter)
@@ -274,13 +275,6 @@ class Editor(gtk.Window):
         action_group.add_actions(entries)
         action_group.add_action(recent_action)
         return action_group
-
-    def _setup_file_filter(self, filter):
-        filter.set_name("odML documents (*.xml, *.odml)")
-        filter.add_mime_type("application/xml")
-        filter.add_mime_type("text/xml")
-        filter.add_pattern('*.xml')
-        filter.add_pattern('*.odml')
 
     def activate_action(self, action):
         logo = self.render_icon("odml-logo", gtk.ICON_SIZE_DIALOG)
@@ -315,42 +309,20 @@ class Editor(gtk.Window):
         self.edited = False
 
     def chooser_dialog(self, title, callback, save=False):
-        default_button = gtk.STOCK_SAVE if save else gtk.STOCK_OPEN
-        default_action = gtk.FILE_CHOOSER_ACTION_OPEN if save else gtk.FILE_CHOOSER_ACTION_SAVE
-        chooser = gtk.FileChooserDialog(title="Open Document",
-                                        parent=self,
-                                        buttons=(default_button, gtk.RESPONSE_OK,
-                                                 gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
-                                        action=default_action)
-        file_filter = gtk.FileFilter()
-        self._setup_file_filter(file_filter)
-        chooser.add_filter (file_filter)
-
-        if not save:
-            all_files = gtk.FileFilter()
-            all_files.set_name ("All Files")
-            all_files.add_pattern("*")
-            chooser.add_filter (all_files)
-
-        chooser.connect("response", callback)
+        chooser = odMLChooserDialog(title=title, save=save)
+        chooser.on_accept = callback
         chooser.show()
 
     def open_file(self, action):
         """called to show the open file dialog"""
         if not self.save_if_changed():
             return False
-        self.chooser_dialog(title="Open Document", callback=self.on_file_open)
-
-    def on_file_open(self, chooser, response_id):
-        if response_id == gtk.RESPONSE_OK:
-            uri = chooser.get_uri()
-            self.load_document(uri)
-        chooser.destroy()
+        self.chooser_dialog(title="Open Document", callback=self.load_document)
 
     def open_recent(self, recent_action):
         uri = recent_action.get_current_uri ()
         print 'open recent %s' % (uri)
-        self.load_document (uri)
+        self.load_document(uri)
 
     def load_document(self, uri):
         self.file_uri = uri
@@ -421,16 +393,13 @@ class Editor(gtk.Window):
                      #      repeat the action, once the document was saved and the
                      #      edited flag was cleared
 
-    def on_file_save(self, chooser, response_id):
-        if response_id == gtk.RESPONSE_OK:
-            uri = chooser.get_uri()
-            if not uri.lower().endswith('.odml') and \
-                not uri.lower().endswith('.xml'):
-                    uri += ".xml"
-            self.file_uri = uri
-            self.save_file(self.file_uri)
-            self.set_status_filename()
-        chooser.destroy()
+    def on_file_save(self, uri):
+        if not uri.lower().endswith('.odml') and \
+            not uri.lower().endswith('.xml'):
+                uri += ".xml"
+        self.file_uri = uri
+        self.save_file(self.file_uri)
+        self.set_status_filename()
 
     def save_file(self, uri):
         self._document.clean()
