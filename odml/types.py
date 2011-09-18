@@ -153,7 +153,7 @@ class Encoder(object):
         return self._decode(string)
 
 encodings = {
-    'base64': Encoder(binascii.b2a_base64, binascii.a2b_base64),
+    'base64': Encoder(lambda x: binascii.b2a_base64(x).strip(), binascii.a2b_base64),
     'quoted-printable': Encoder(binascii.b2a_qp, binascii.a2b_qp),
     'hexadecimal': Encoder(binascii.b2a_hex, binascii.a2b_hex),
     None: Encoder(lambda x: x, lambda x: x), #identity encoder

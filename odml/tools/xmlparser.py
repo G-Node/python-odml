@@ -49,7 +49,9 @@ class XMLWriter:
         """
         fmt = e._format
         if hasattr(fmt, "_xml_content"):
-            cur = E(fmt._name, getattr(e, fmt.map(fmt._xml_content)))
+            val = getattr(e, fmt.map(fmt._xml_content))
+            if val is None: val = ''
+            cur = E(fmt._name, val)
         else:
             cur = E(fmt._name)
 

@@ -33,8 +33,7 @@ class PropIter(GenericIter.GenericIter):
         if len(self._obj._values) == 0:
             return ""
 
-        prop = self._obj.values[0]
-        return self.escape(getattr(prop, name))
+        return ValueIter(self._obj.values[0]).get_value(name)
 
     @property
     def has_child(self):
@@ -52,7 +51,6 @@ class ValueIter(GenericIter.GenericIter):
     """
     An iterator for a Value object
     """
-
     def get_value(self, attr):
         if attr == "name":
             return
@@ -60,9 +58,10 @@ class ValueIter(GenericIter.GenericIter):
             if self._obj.dtype == "binary":
                 # fix how binary context is displayed here
                 data = self._obj.data
-                unprintable = filter(lambda x: x not in string.printable, data)
-                if len(data) > 15 or (self._obj._encoding is None and len(unprintable) > 0):
-                    return "(%d bytes binary content)" % len(data)
+                if data is not None:
+                    unprintable = filter(lambda x: x not in string.printable, data)
+                    if len(data) > 15 or (self._obj._encoder is None and len(unprintable) > 0):
+                        return "(%d bytes binary content)" % len(data)
         return super(ValueIter, self).get_value(attr)
 
 class SectionIter(GenericIter.GenericIter):

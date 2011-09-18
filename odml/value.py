@@ -61,14 +61,14 @@ class Value(base.baseobject):
         self._reference = reference
         self._filename = filename
         self._comment = comment
+        self._encoder = encoder
 
         if value is not None:
             # assign value directly (through property would raise a change-event)
-            self._value  = types.get(value, self._dtype)
+            self._value  = types.get(value, self._dtype, self._encoder)
         elif data is not None:
             self._value = data
 
-        self._encoder = encoder
         self._checksum_type = None
         if checksum is not None:
             self.checksum = checksum
@@ -144,8 +144,6 @@ class Value(base.baseobject):
                 raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
         self._value = new_value
         self._dtype = new_type
-        if old_type == "binary" and new_type != "binary":
-            self._encoder = None
 
     @property
     def encoder(self):
@@ -154,7 +152,9 @@ class Value(base.baseobject):
 
         changing the encoding also converts the data
         """
-        return self._encoder
+        if self._dtype == "binary":
+            return self._encoder
+        return None
 
     @encoder.setter
     def encoder(self, encoding):
