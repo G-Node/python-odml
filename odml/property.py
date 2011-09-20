@@ -135,17 +135,18 @@ class Property(base.baseobject):
     def __iter__(self):
         return self._values.__iter__()
 
-    def clone(self):
+    def clone(self, children=True):
         """
         clone this object recursively allowing to copy it independently
         to another document
         """
-        obj = super(BaseProperty, self).clone()
+        obj = super(BaseProperty, self).clone(children)
         obj._section = None
 
         obj._values = base.SafeList()
-        for v in self._values:
-            obj.append(v.clone())
+        if children:
+            for v in self._values:
+                obj.append(v.clone())
 
         return obj
 

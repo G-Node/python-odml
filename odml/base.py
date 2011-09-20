@@ -35,10 +35,11 @@ class baseobject(object):
     def clean(self):
         pass
 
-    def clone(self):
+    def clone(self, children=True):
         """
-        clone this object recursively allowing to copy it independently
-        to another document
+        clone this object recursively (if children is True) allowing to copy it independently
+        to another document. If children is False, this acts as a template cloner, creating
+        a copy of the object without any children
         """
         # TODO don't we need some recursion / deepcopy here?
         import copy
@@ -165,7 +166,7 @@ class sectionable(baseobject):
         for s in self._sections:
             if self._matches(s, key, type): return s
 
-    def find_related(self, key=None, type=None, children=True, siblings=True, parents=True, recursive=True):
+    def find_related(self, key=None, type=None, children=True, siblings=True, parents=True, recursive=True, findAll=False):
         """
         finds a related section named *key* and/or *type*
 
@@ -174,28 +175,44 @@ class sectionable(baseobject):
           * by searching its siblings if *siblings* is True
           * by searching the parent element if *parents* is True
             if *recursive* is True all parent nodes until the root are searched
+          * if *findAll* is True, returns a list of all matching objects
         """
+        ret = []
+
         if children:
             for section in self._sections:
                 if self._matches(section, key, type):
                     return section
 
                 if recursive:
-                    obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive)
-                if obj is not None: return obj
+                    obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive, findAll=findAll)
+                if obj is not None:
+                    if findAll:
+                        ret += obj
+                    else:
+                        return obj
 
         if siblings and self.parent is not None:
             obj = self.parent.find(key, type)
-            if obj is not None: return obj
+            if obj is not None:
+                if findAll:
+                    ret.append(obj)
+                else:
+                    return obj
 
         if parents:
             obj = self
             while obj.parent is not None:
                 obj = obj.parent
                 if self._matches(obj, key, type):
-                    return obj
+                    if findAll:
+                        ret.append(obj)
+                    else:
+                        return obj
                 if not recursive: break
 
+        if ret:
+            return ret
         return None
 
     def get_path(self):
@@ -241,16 +258,17 @@ class sectionable(baseobject):
         for i in self:
             i.clean()
 
-    def clone(self):
+    def clone(self, children=True):
         """
         clone this object recursively allowing to copy it independently
         to another document
         """
-        obj = super(sectionable, self).clone()
+        obj = super(sectionable, self).clone(children)
         obj._parent = None
         obj._sections = SmartList()
-        for s in self._sections:
-            obj.append(s.clone())
+        if children:
+            for s in self._sections:
+                obj.append(s.clone())
 
         return obj
 

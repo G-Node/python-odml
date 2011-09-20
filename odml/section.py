@@ -192,16 +192,17 @@ class Section(base.sectionable):
         """number of children (sections AND properties)"""
         return len(self._sections) + len(self._props)
 
-    def clone(self):
+    def clone(self, children=True):
         """
         clone this object recursively allowing to copy it independently
         to another document
         """
-        obj = super(BaseSection, self).clone()
+        obj = super(BaseSection, self).clone(children)
 
         obj._props = base.SmartList()
-        for p in self._props:
-            obj.append(p.clone())
+        if children:
+            for p in self._props:
+                obj.append(p.clone())
 
         return obj
 
