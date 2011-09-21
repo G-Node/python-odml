@@ -161,10 +161,17 @@ class sectionable(baseobject):
             cur = cur[i]
         return cur
 
-    def find(self, key=None, type=None):
+    def find(self, key=None, type=None, findAll=False):
         """return the first subsection named *key* of type *type*"""
+        ret = []
         for s in self._sections:
-            if self._matches(s, key, type): return s
+            if self._matches(s, key, type):
+                if findAll:
+                    ret.append(s)
+                else:
+                    return s
+        if ret:
+            return ret
 
     def find_related(self, key=None, type=None, children=True, siblings=True, parents=True, recursive=True, findAll=False):
         """
@@ -182,21 +189,24 @@ class sectionable(baseobject):
         if children:
             for section in self._sections:
                 if self._matches(section, key, type):
-                    return section
+                    if findAll:
+                        ret.append(section)
+                    else:
+                        return section
 
                 if recursive:
                     obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive, findAll=findAll)
-                if obj is not None:
-                    if findAll:
-                        ret += obj
-                    else:
-                        return obj
+                    if obj is not None:
+                        if findAll:
+                            ret += obj
+                        else:
+                            return obj
 
         if siblings and self.parent is not None:
-            obj = self.parent.find(key, type)
+            obj = self.parent.find(key, type, findAll)
             if obj is not None:
                 if findAll:
-                    ret.append(obj)
+                    ret += obj
                 else:
                     return obj
 
