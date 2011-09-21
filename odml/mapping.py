@@ -98,11 +98,12 @@ def apply_mapping(doc):
             sec.repository = obj.get_repository()
 
     for sec in doc.itersections(recursive=True):
-        for prop in sec.properties:
+        for prop in sec.properties[:]:
             mapping = prop.mapped_object
             if mapping is None: continue
 
             dst_type = mapping._section.type
+
             # rule 4c: target-type == section-type
             #          copy attributes, keep property
             if dst_type == sec.type:
@@ -119,16 +120,20 @@ def apply_mapping(doc):
                     rel = sibling.find_related(type=sec.type, findAll=True)
                     if len(rel) > 1:
                         # rule 4e2: create a subsection linked to the sibling
-                        child =  mapping._section.clone(children=False)
+                        child =  sibling.clone(children=False)
                         sec.remove(prop)
                         prop.name = mapping.name
+                        prop.mapping = None
                         child.append(prop)
                         sec.append(child)
                         child._link = sibling.get_path()
                         continue
-
                     # rule 4e1: exactly one relation for sibling
-                child = sibling # once we found the target section, the code stays the same
+                    child = sibling # once we found the target section, the code stays the same
+                else:
+                    # rufe 4??: no sibling
+                    child = mapping._section.clone(children=False)
+                    sec.append(child)
             elif len(child) > 1:
                 raise MappingError("""Your data organisation does not make sense,
                 there are %d children of type '%s'. Don't know how to handle.""" % (len(child), dst_type))
@@ -140,13 +145,10 @@ def apply_mapping(doc):
                 child = mapping._section.clone(children=False)
                 sec.parent.append(child)
 
-            if child is not None:
-                sec.remove(prop)
-                child.append(prop)
-                prop.name = mapping.name
-                prop.mapping = None
-                continue
-
+            sec.remove(prop)
+            child.append(prop)
+            prop.name = mapping.name
+            prop.mapping = None
 
 def map_property(doc, prop):
     obj = prop.mapped_obj

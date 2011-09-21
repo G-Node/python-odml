@@ -257,7 +257,7 @@ class TestMapping(unittest.TestCase):
         """)
         dst = parse("""
         s1[t1]
-        - S2[T2] linked to /s2
+        - s2[T2] linked to /s2
           - P1
         s2[T2]
         s3[t1]
@@ -273,7 +273,7 @@ class TestMapping(unittest.TestCase):
         """)
         dst = parse("""
         s1[t1]
-        - S2[T2] linked to /s2
+        - s2[T2] linked to /s2
           - P1
         s2[T2]
         - s3[t1]
@@ -294,8 +294,8 @@ class TestMapping(unittest.TestCase):
         """)
         dst = parse("""
         s1[t1]
-        S2[T2]
-        - P1
+        - S2[T2]
+          - P1
         """)
         self.check(src, dst)
 
@@ -307,13 +307,13 @@ class TestMapping(unittest.TestCase):
         """)
         dst = parse("""
         s1[t1]
+        - S2[T2]
+          - P1
         s2[t1]
-        S2[T2]
-        - P1
         """)
         self.check(src, dst)
 
-    def notest_multiple(self):
+    def test_multiple(self):
         self.map_rule4()
         src = parse("""
 s1[t1] mapping [T1]
@@ -322,7 +322,7 @@ s1[t1] mapping [T1]
 - p3
 - p4 mapping [T3:P1]
 s2[t1] mapping [T1]
-- p1 mapping  [T2:P1]
+- p1 mapping [T2:P1]
 - p2 mapping [T1:P2]
 - p3
 - p4 mapping [T3:P1]
@@ -334,14 +334,14 @@ s3[t3] mapping [T3]
 s1[T1]
 - P2
 - p3
-- s2[T2]
+- S2[T2]
   - P1
 - s3[T3] linked to /s3
   - P1
 s2[T1]
 - P2
 - p3
-- s2[T2]
+- S2[T2]
   - P1
 - s3[T3] linked to /s3
   - P1
