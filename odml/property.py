@@ -1,9 +1,10 @@
 #-*- coding: utf-8
 import base
 import format
+import mapping
 import value as odml_value
 
-class Property(base.baseobject):
+class Property(base.baseobject, mapping.mapable):
     """An odML Property"""
     _format = format.Property
 
@@ -44,7 +45,7 @@ class Property(base.baseobject):
         self.definition = definition
         self.dependency = dependency
         self.dependencyValue = dependencyValue
-        self.mapping = mapping
+        self._mapping = mapping
 
         if isinstance(value, list):
             for v in value:
@@ -73,6 +74,10 @@ class Property(base.baseobject):
     # API (public)
     #
     #  properties
+    @property
+    def parent(self):
+        return self._section
+
     @property
     def values(self):
         """returns the list of values for this property"""
@@ -165,8 +170,8 @@ class Property(base.baseobject):
         return self._section._merged.contains(self)
 
     def get_terminology_equivalent(self):
+        if self._section is None: return None
         sec = self._section.get_terminology_equivalent()
-        print "term-prop(sec)", self, sec
         if sec is None: return None
         try:
             return sec.properties[self.name]
