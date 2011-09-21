@@ -2,6 +2,8 @@ import odml
 import unittest
 import os
 from odml.tools import xmlparser
+from odml.tools import dumper
+import mapping
 
 def dump(doc, filename):
     """
@@ -17,7 +19,7 @@ class SampleFileCreator:
         return doc
 
     def create_section(self, name, depth=0):
-        s = odml.Section(name=name)
+        s = odml.Section(name=name, type=name.replace("sec", "type"))
         if depth < 1:
             for i in xrange(2):
                 s.append(self.create_section("%s,%d" % (name, i), depth=depth+1))
@@ -38,8 +40,7 @@ class SampleFileCreator:
 class SampleFileCreatorTest(unittest.TestCase):
     def test_samplefile(self):
         doc = SampleFileCreator().create_document()
-        for sec in doc.sections:
-            xmlparser.dumpSection(sec)
+        #dumper.dumpDoc(doc)
 
 class SampleFileOperationTest(unittest.TestCase):
     def setUp(self):
@@ -163,7 +164,26 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(path_to_sec11, "../" + sec11.name)
         self.assertIs(sec10.find_by_path(path_to_sec11), sec11)
 
+    def test_findall_related(self):
+        doc = mapping.parse("""
+        s1[T1]
+        - s2[T1]
+        """)
+        self.assertEqual(len(doc.find_related(type="T1", findAll=True)), 2)
+
+        doc = mapping.parse("""
+        s0[T1]
+        - s00[T2]
+        s1[T2]
+        s2[T1]
+        """)
+        self.assertEqual(len(doc.sections[1].find_related(type="T1", findAll=True)), 2)
+
 
 if __name__ == '__main__':
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--dump":
+        dump(SampleFileCreator().create_document(), sys.argv[2])
+        sys.exit(0)
     unittest.main()
 
