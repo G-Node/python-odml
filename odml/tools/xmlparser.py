@@ -122,11 +122,17 @@ class XMLReader(object):
         parse the datastream from a file like object *xml_file*
         and return an odml data structure
         """
-        root = ET.parse(xml_file, self.parser).getroot()
+        try:
+            root = ET.parse(xml_file, self.parser).getroot()
+        except ET.XMLSyntaxError, e:
+            raise ParserException(e.message)
         return self.parse_element(root)
 
     def fromString(self, string):
-        root = ET.XML(string, self.parser)
+        try:
+            root = ET.XML(string, self.parser)
+        except ET.XMLSyntaxError, e:
+            raise ParserException(e.message)
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):

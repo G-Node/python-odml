@@ -140,6 +140,7 @@ class Section(base.sectionable):
         repo = self.get_repository()
         if repo is None: return None
         term = terminology.load(repo)
+        if term is None: return None
         return term.find_related(type=self.type)
 
     def get_merged_equivalent(self):
