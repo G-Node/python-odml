@@ -310,6 +310,7 @@ class EditorWindow(gtk.Window):
         tab.new()
         self.append_tab(tab)
         self.select_tab(tab)
+        return tab
 
     def load_document(self, uri):
         """open a new tab, load the document into it"""
@@ -317,6 +318,7 @@ class EditorWindow(gtk.Window):
         tab.load(uri)
         self.append_tab(tab)
         self.select_tab(tab)
+        return tab
 
     def select_tab(self, tab):
         """
@@ -454,8 +456,8 @@ class EditorWindow(gtk.Window):
 
         runs a file_chooser dialog if the file_uri is not set
         """
-        if self.file_uri:
-            return self.save_file(self.file_uri)
+        if self._current_tab.file_uri:
+            return self._current_tab.save(self._current_tab.file_uri)
         self.chooser_dialog(title="Save Document", callback=self.on_file_save, save=True)
         return False # TODO this signals that file saving was not successful
                      #      because no action should be taken until the chooser
@@ -467,8 +469,8 @@ class EditorWindow(gtk.Window):
         if not uri.lower().endswith('.odml') and \
             not uri.lower().endswith('.xml'):
                 uri += ".xml"
-        self.file_uri = uri
-        self._current_tab.save(self.file_uri)
+        self._current_tab.file_uri = uri
+        self._current_tab.save(uri)
         self.set_status_filename()
 
     def save_if_changed(self):

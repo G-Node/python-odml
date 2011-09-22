@@ -26,8 +26,8 @@ class EditorTab(object):
         """
         initialize a new document
         """
-        doc = odml.doc.Document()
-        sec = odml.section.Section(name="Default Section")
+        doc = odml.Document()
+        sec = odml.Section(name="Default Section")
         doc.append(sec)
 
         self.document = doc
