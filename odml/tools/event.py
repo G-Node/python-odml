@@ -150,7 +150,24 @@ class EventHandler(object):
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
 
-class ModificationNotifier(object):
+class ChangeHandlable(object):
+    """
+    For objects that support the add_change_handler
+    and remove_change_handler functions.
+    """
+    _change_handler = None
+
+    def add_change_handler(self, func):
+        if self._change_handler is None:
+            self._change_handler = Event(self.__class__.__name__)
+        self._change_handler += func
+
+    def remove_change_handler(self, func):
+        self._change_handler -= func
+        if len(self._change_handler) == 0:
+            del self._change_handler
+
+class ModificationNotifier(ChangeHandlable):
     """
     Override some methods, to get notification on their calls
     """
@@ -190,16 +207,6 @@ class ModificationNotifier(object):
     def insert(self, position, obj):
         func = lambda: super(ModificationNotifier, self).insert(position, obj)
         self.__fireChange("insert", obj, func)
-
-    def add_change_handler(self, func):
-        if not hasattr(self, "_change_handler"):
-            self._change_handler = Event(self.__class__.__name__)
-        self._change_handler += func
-
-    def remove_change_handler(self, func):
-        self._change_handler -= func
-        if len(self._change_handler) == 0:
-            del self._change_handler
 
 # create a seperate global Event listeners for each class
 # and provide ModificationNotifier Capabilities
