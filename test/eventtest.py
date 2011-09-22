@@ -56,7 +56,7 @@ class TestEvents(unittest.TestCase):
         #TODO integrate Document
 
     def test_change_context_getStack(self):
-        c = odml.tools.event.ChangeContext(1, None)
+        c = odml.tools.event.ChangeContext(1)
         c._obj = [1]
         self.assertEqual(c.getStack(2), [None, 1])
         c._obj = [1, 2]
