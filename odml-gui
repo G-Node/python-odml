@@ -6,7 +6,11 @@ from odml.tools.gui import Editor
 
 def main(filename=None):
     Editor.register_stock_icons()
-    editor = Editor.Editor(filename=filename)
+    editor = Editor.EditorWindow()
+    if filename is None:
+        editor.new_file()
+    else:
+        editor.load_document(filename)
     gtk.main()
 
 if __name__ == '__main__':
