@@ -2,8 +2,12 @@
 import base
 import format
 import value as odml_value
+import odml
 
-class Property(base.baseobject):
+class Property(object):
+    pass
+
+class BaseProperty(base.baseobject, Property):
     """An odML Property"""
     _format = format.Property
 
@@ -49,7 +53,7 @@ class Property(base.baseobject):
         if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
-                    v = odml_value.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
+                    v = odml.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
                 self.append(v)
         elif not value is None:
             self.append(value)
@@ -119,7 +123,7 @@ class Property(base.baseobject):
                 if unit is None: unit = self._values[-1].unit
                 if type is None: dtype = self._values[-1].dtype
                 if uncertainty is None: uncertainty = self._values[-1].uncertainty
-            value = odml_value.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            value = odml.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
         value._property = self
 
@@ -172,5 +176,3 @@ class Property(base.baseobject):
             return sec.properties[self.name]
         except KeyError:
             return None
-
-BaseProperty = Property

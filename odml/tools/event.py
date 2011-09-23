@@ -1,5 +1,4 @@
-from .. import doc, section, value
-from .. import property as prop
+import odml
 
 class Event (object):
     def __init__(self, name):
@@ -125,7 +124,7 @@ class ChangeContext(object):
         after handling obj is removed from the stack again
         """
         self._obj.append(obj)
-        if hasattr(obj, "_change_handler"):
+        if obj._change_handler is not None: #hasattr(obj, "_change_handler"):
             obj._change_handler(self)
         obj._Changed(self)
         self._obj.remove(obj)
@@ -210,16 +209,16 @@ class ModificationNotifier(ChangeHandlable):
 
 # create a seperate global Event listeners for each class
 # and provide ModificationNotifier Capabilities
-class Value(ModificationNotifier, value.Value):
+class Value(ModificationNotifier, odml.getImplementation().Value):
     _Changed = Event("value")
 
-class Property(ModificationNotifier, prop.Property):
+class Property(ModificationNotifier, odml.getImplementation().Property):
     _Changed = Event("prop")
 
-class Section(ModificationNotifier, section.Section):
+class Section(ModificationNotifier, odml.getImplementation().Section):
     _Changed = Event("sec")
 
-class Document(ModificationNotifier, doc.Document):
+class Document(ModificationNotifier, odml.getImplementation().Document):
     _Changed = Event("doc")
 
 def pass_on_change(context):
@@ -242,3 +241,6 @@ def pass_on_change_section(context):
 Value._Changed.finish    = pass_on_change
 Property._Changed.finish = pass_on_change
 Section._Changed.finish  = pass_on_change_section
+
+import sys
+odml.addImplementation('event', sys.modules[__name__])

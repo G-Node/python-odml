@@ -5,7 +5,10 @@ import terminology
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
 
-class Section(base.sectionable):
+class Section(object):
+    pass
+
+class BaseSection(base.sectionable, Section):
     """A odML Section"""
     type       = None
     id         = None
@@ -290,5 +293,3 @@ class Section(base.sectionable):
     @property
     def can_be_merged(self):
         return self._link is not None or self._include is not None
-
-BaseSection = Section

@@ -2,7 +2,10 @@ import types
 import base
 import format
 
-class Value(base.baseobject):
+class Value(object):
+    pass
+
+class BaseValue(base.baseobject, Value):
     """
     An odML value
 
@@ -252,5 +255,3 @@ class Value(base.baseobject):
             if val == self:
                 return val
         return None
-
-BaseValue = Value

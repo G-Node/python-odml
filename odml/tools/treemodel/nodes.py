@@ -150,3 +150,6 @@ import TreeIters
 Section.IterClass  = TreeIters.SectionIter
 Property.IterClass = TreeIters.PropIter
 Value.IterClass    = TreeIters.ValueIter
+
+import sys, odml
+odml.addImplementation('nodes', sys.modules[__name__])
