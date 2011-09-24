@@ -27,7 +27,7 @@ class Section(base.sectionable):
         self.type = type
 
     def __repr__(self):
-        return "<Section %s (%d)>" % (self._name, len(self._sections))
+        return "<Section %s[%s] (%d)>" % (self._name, self.type, len(self._sections))
 
     @property
     def name(self):
