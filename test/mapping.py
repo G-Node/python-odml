@@ -52,12 +52,13 @@ def parse(data):
 class TestMapping(unittest.TestCase):
 
     def check(self, src, dst):
-        mapping.apply_mapping(src)
-        if src != dst:
-            dumper.dumpDoc(src)
+        map = mapping.create_mapping(src)
+        if map != dst:
+            dumper.dumpDoc(map)
             print "---- vs ----"
             dumper.dumpDoc(dst)
-        self.assertEqual(src, dst)
+        self.assertEqual(map, dst)
+        self.assertEqual(dst, map) # do the vice versa test too
 
     def test_parse(self):
         s = """

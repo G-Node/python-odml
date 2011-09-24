@@ -1,3 +1,4 @@
+import odml
 import terminology
 
 class mapable(object):
@@ -85,23 +86,29 @@ class MappingError(TypeError):
     pass
 
 def create_mapping(doc):
+    global proxy # we install the proxy only late time
     import tools.proxy as proxy
-    mdoc = odml.Document() # TODO might need to proxy this too
+    mdoc = doc.clone(children=False) # TODO might need to proxy this too
+    doc._active_mapping = mdoc
 
     # iterate each section and property
     # take the mapped object and try to put it at a meaningful place
     for sec in doc.itersections(recursive=True):
-        create_section_mapping(mdoc, sec)
+        create_section_mapping(sec)
 
     for sec in doc.itersections(recursive=True):
         for prop in sec.properties[:]:
             create_property_mapping(sec, prop)
 
-def create_section_mapping(mdoc, sec)
+    return mdoc
+
+def create_section_mapping(sec):
     obj = sec.mapped_object
     msec = proxy.MappedSection(sec, template=obj)
     sec._active_mapping = msec
-    mdoc.append(msec)
+    sec.parent._active_mapping.append(msec)
+    assert msec in sec.parent._active_mapping
+    assert msec.parent is sec.parent._active_mapping
 
     if obj:
         term = obj.get_repository()
@@ -110,42 +117,50 @@ def create_section_mapping(mdoc, sec)
 
 def create_property_mapping(sec, prop):
     msec = sec._active_mapping
+    mprop = proxy.PropertyProxy(prop)
+    prop._active_mapping = prop
 
     mapping = prop.mapped_object
-    if mapping is None: continue
+    if mapping is None: # easy case: just proxy the property
+        msec.append(mprop)
+        return
+
+    mprop.name = mapping.name
 
     dst_type = mapping._section.type
 
     # rule 4c: target-type == section-type
     #          copy attributes, keep property
-    if dst_type == sec.type:
-        prop.name = mapping.name
-        prop.mapping = None
-        continue
+    if dst_type == msec.type:
+        msec.append(mprop)
+        return
 
     # rule 4d: one child has the type
-    child = sec.find_related(type=dst_type, siblings=False, parents=False, findAll=True)
+    child = msec.find_related(type=dst_type, siblings=False, parents=False, findAll=True)
     if child is None:
         # rule 4e: a sibling has the type
-        sibling = sec.find_related(type=dst_type, children=False, parents=False)
+        sibling = msec.find_related(type=dst_type, children=False, parents=False)
         if sibling is not None:
-            rel = sibling.find_related(type=sec.type, findAll=True)
+            rel = sibling.find_related(type=msec.type, findAll=True)
             if len(rel) > 1:
                 # rule 4e2: create a subsection linked to the sibling
-                child =  sibling.clone(children=False)
-                sec.remove(prop)
-                prop.name = mapping.name
-                prop.mapping = None
-                child.append(prop)
-                sec.append(child)
+                # TODO set repository and other attributes?
+                child = proxy.NonexistantSection(sibling.name, sibling.type)
+                child.append(mprop)
+                msec.append(child)
+
+                # TODO the link will have trouble to be resolved, as the
+                # nonexistant section does not allow to create any attributes in it
+                # as it cannot be proxied
                 child._link = sibling.get_path()
-                continue
+                return
             # rule 4e1: exactly one relation for sibling
             child = sibling # once we found the target section, the code stays the same
         else:
-            # rufe 4??: no sibling
-            child = mapping._section.clone(children=False)
-            sec.append(child)
+            # rule 4??: no sibling, create a new section
+            # TODO set repository and other attributes?
+            child = proxy.NonexistantSection(mapping._section.name, dst_type)
+            msec.append(child)
     elif len(child) > 1:
         raise MappingError("""Your data organisation does not make sense,
         there are %d children of type '%s'. Don't know how to handle.""" % (len(child), dst_type))
@@ -153,14 +168,15 @@ def create_property_mapping(sec, prop):
         child = child[0]
 
     if child is None:
+        assert False, "should be unreachable code"
+        # this can't happen, right?
+        # is rather handled already by rule 4??
+
         # rule 4f: need to add a section
         child = mapping._section.clone(children=False)
         sec.parent.append(child)
 
-    sec.remove(prop)
-    child.append(prop)
-    prop.name = mapping.name
-    prop.mapping = None
+    child.append(mprop)
 
 def map_property(doc, prop):
     obj = prop.mapped_obj
