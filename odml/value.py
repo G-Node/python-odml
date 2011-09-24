@@ -2,7 +2,7 @@ import types
 import base
 import format
 
-class Value(object):
+class Value(base._baseobj):
     pass
 
 class BaseValue(base.baseobject, Value):

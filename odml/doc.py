@@ -4,7 +4,7 @@ import base
 import format
 import terminology
 
-class Document(object):
+class Document(base._baseobj):
     pass
 
 class BaseDocument(base.sectionable, Document):

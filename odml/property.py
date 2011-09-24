@@ -4,7 +4,7 @@ import format
 import value as odml_value
 import odml
 
-class Property(object):
+class Property(base._baseobj):
     pass
 
 class BaseProperty(base.baseobject, Property):

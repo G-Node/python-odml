@@ -5,7 +5,7 @@ import terminology
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
 
-class Section(object):
+class Section(base._baseobj):
     pass
 
 class BaseSection(base.sectionable, Section):
