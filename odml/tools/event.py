@@ -1,5 +1,4 @@
-from .. import doc, section, value
-from .. import property as prop
+import odml
 
 class Event (object):
     def __init__(self, name):
@@ -125,7 +124,7 @@ class ChangeContext(object):
         after handling obj is removed from the stack again
         """
         self._obj.append(obj)
-        if hasattr(obj, "_change_handler"):
+        if obj._change_handler is not None: #hasattr(obj, "_change_handler"):
             obj._change_handler(self)
         obj._Changed(self)
         self._obj.remove(obj)
@@ -150,7 +149,24 @@ class EventHandler(object):
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
 
-class ModificationNotifier(object):
+class ChangeHandlable(object):
+    """
+    For objects that support the add_change_handler
+    and remove_change_handler functions.
+    """
+    _change_handler = None
+
+    def add_change_handler(self, func):
+        if self._change_handler is None:
+            self._change_handler = Event(self.__class__.__name__)
+        self._change_handler += func
+
+    def remove_change_handler(self, func):
+        self._change_handler -= func
+        if len(self._change_handler) == 0:
+            del self._change_handler
+
+class ModificationNotifier(ChangeHandlable):
     """
     Override some methods, to get notification on their calls
     """
@@ -191,28 +207,18 @@ class ModificationNotifier(object):
         func = lambda: super(ModificationNotifier, self).insert(position, obj)
         self.__fireChange("insert", obj, func)
 
-    def add_change_handler(self, func):
-        if not hasattr(self, "_change_handler"):
-            self._change_handler = Event(self.__class__.__name__)
-        self._change_handler += func
-
-    def remove_change_handler(self, func):
-        self._change_handler -= func
-        if len(self._change_handler) == 0:
-            del self._change_handler
-
 # create a seperate global Event listeners for each class
 # and provide ModificationNotifier Capabilities
-class Value(ModificationNotifier, value.Value):
+class Value(ModificationNotifier, odml.getImplementation().Value):
     _Changed = Event("value")
 
-class Property(ModificationNotifier, prop.Property):
+class Property(ModificationNotifier, odml.getImplementation().Property):
     _Changed = Event("prop")
 
-class Section(ModificationNotifier, section.Section):
+class Section(ModificationNotifier, odml.getImplementation().Section):
     _Changed = Event("sec")
 
-class Document(ModificationNotifier, doc.Document):
+class Document(ModificationNotifier, odml.getImplementation().Document):
     _Changed = Event("doc")
 
 def pass_on_change(context):
@@ -235,3 +241,6 @@ def pass_on_change_section(context):
 Value._Changed.finish    = pass_on_change
 Property._Changed.finish = pass_on_change
 Section._Changed.finish  = pass_on_change_section
+
+import sys
+odml.addImplementation('event', sys.modules[__name__])

@@ -4,7 +4,7 @@ for odML documents
 """
 import tools.xmlparser
 
-import urllib
+import urllib2
 import threading
 
 import os, tempfile, md5, datetime
@@ -18,12 +18,21 @@ def cache_load(url):
     filename = md5.new(url).hexdigest() + '.' + os.path.basename(url)
     cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
     if not os.path.exists(cache_dir):
-        os.makedirs(cache_dir)
+        try:
+            os.makedirs(cache_dir)
+        except OSError: # might happen due to concurrency
+            if not os.path.exists(cache_dir):
+                raise
     cache_file = os.path.join(cache_dir, filename)
     if not os.path.exists(cache_file) \
         or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < datetime.datetime.now() - CACHE_AGE:
+            try:
+                data = urllib2.urlopen(url).read() # read data first, so we don't have empty files on error
+            except Exception, e:
+                print "failed loading '%s': %s" % (url, e.message)
+                return
             fp = open(cache_file, "w")
-            fp.write(urllib.urlopen(url).read())
+            fp.write(data)
             fp.close()
     return open(cache_file)
 
@@ -50,12 +59,16 @@ class Terminologies(dict):
         # TODO also cache the data locally on disk
         # if url.startswith("http"): return None
         fp = cache_load(url)
+        if fp is None:
+            print "did not successfully load '%s'" % url
+            return
         try:
             term = tools.xmlparser.XMLReader(filename=url, ignore_errors=True).fromFile(fp)
             term.finalize()
-        except tools.xmlparser.ParserException:
+        except tools.xmlparser.ParserException, e:
             print "Failed to load %s due to parser errors" % url
-            raise
+            print ' "%s"' % e.message
+            term = None
         self[url] = term
         return term
 

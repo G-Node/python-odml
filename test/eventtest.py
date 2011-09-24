@@ -2,16 +2,18 @@ import odml.tools.treemodel.mixin #this also provides event functionality, and w
 import odml.tools.event
 import unittest
 import samplefile
-from odml import doc, section, property, value
+import odml
 
 class TestEvents(unittest.TestCase):
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        for obj in [value.Value, property.Property, section.Section, doc.Document]:
+        impl = odml.getImplementation()
+        for obj in [impl.Value, impl.Property, impl.Section, impl.Document]:
             obj._Changed += self.event_success
 
     def tearDown(self):
-        for obj in [value.Value, property.Property, section.Section, doc.Document]:
+        impl = odml.getImplementation()
+        for obj in [impl.Value, impl.Property, impl.Section, impl.Document]:
             obj._Changed -= self.event_success
 
     def event_success(self, context):
@@ -20,7 +22,7 @@ class TestEvents(unittest.TestCase):
         context.cur._context  = context
 
     def test_simple_events(self):
-        a = value.Value(1)
+        a = odml.Value(1)
         a._value = 2
         self.assertEqual(a.data, 2)
         # modifying a protected attribute should not make a call,
@@ -36,16 +38,16 @@ class TestEvents(unittest.TestCase):
     def test_pre_post_change(self):
         res = []
         func = lambda context: res.append((context.preChange, context.postChange))
-        value.Value._Changed += func
-        a = value.Value(1)
+        odml.getImplementation().Value._Changed += func
+        a = odml.Value(1)
         a.value = 2
-        value.Value._Changed -= func
+        odml.getImplementation().Value._Changed -= func
         self.assertEqual(res, [(True, False), (False, True)])
 
     def test_event_passing(self):
-        s = section.Section(name="section")
-        v = value.Value(1)
-        p = property.Property(name="prop", value=v)
+        s = odml.Section(name="section")
+        v = odml.Value(1)
+        p = odml.Property(name="prop", value=v)
         s.append(p)
 
         v.data = 4
@@ -56,7 +58,7 @@ class TestEvents(unittest.TestCase):
         #TODO integrate Document
 
     def test_change_context_getStack(self):
-        c = odml.tools.event.ChangeContext(1, None)
+        c = odml.tools.event.ChangeContext(1)
         c._obj = [1]
         self.assertEqual(c.getStack(2), [None, 1])
         c._obj = [1, 2]

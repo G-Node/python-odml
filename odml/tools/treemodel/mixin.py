@@ -12,14 +12,17 @@ classes manually::
     >>> import odml.tools.treemodel.nodes as odml
     >>> s = odml.Section("sample section")
 
+Or get the implementation once it is registered::
+
+    >>> import odml
+    >>> import odml.tools.treemodel.nodes
+    >>> odml.getImplementation('nodes').Section("sample section")
+
 """
 #Please note: tree-functionality is already based on event-functionality.
 #Therefore mixin in odml.tools.events will be troublesome / not work.
 
+import odml
 import nodes
-from ... import doc, section, property, value
+odml.setDefaultImplementation('nodes')
 
-doc.Document      = nodes.Document
-section.Section   = nodes.Section
-property.Property = nodes.Property
-value.Value       = nodes.Value

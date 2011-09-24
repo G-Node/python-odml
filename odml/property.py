@@ -3,8 +3,12 @@ import base
 import format
 import mapping
 import value as odml_value
+import odml
 
-class Property(base.baseobject, mapping.mapable):
+class Property(base._baseobj):
+    pass
+
+class BaseProperty(base.baseobject, mapping.mapable, Property):
     """An odML Property"""
     _format = format.Property
 
@@ -50,7 +54,7 @@ class Property(base.baseobject, mapping.mapable):
         if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
-                    v = odml_value.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
+                    v = odml.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
                 self.append(v)
         elif not value is None:
             self.append(value)
@@ -124,7 +128,7 @@ class Property(base.baseobject, mapping.mapable):
                 if unit is None: unit = self._values[-1].unit
                 if type is None: dtype = self._values[-1].dtype
                 if uncertainty is None: uncertainty = self._values[-1].uncertainty
-            value = odml_value.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            value = odml.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
         value._property = self
 
@@ -177,5 +181,3 @@ class Property(base.baseobject, mapping.mapable):
             return sec.properties[self.name]
         except KeyError:
             return None
-
-BaseProperty = Property

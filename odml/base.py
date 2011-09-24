@@ -6,7 +6,10 @@ import doc
 import posixpath
 import terminology
 
-class baseobject(object):
+class _baseobj(object):
+    pass
+
+class baseobject(_baseobj):
     _format = None
 
     def get_terminology_equivalent(self):
@@ -17,8 +20,11 @@ class baseobject(object):
         do a deep comparison of this object and its odml properties
         """
         # cannot compare totally different stuff
-        if not isinstance(obj, baseobject): return False
-        if not isinstance(self, obj.__class__ ): return False
+        if not isinstance(obj, _baseobj):
+            return False
+
+        if not isinstance(self, obj.__class__):
+            return False
 
         for key in self._format:
             if getattr(self, key) != getattr(obj, key):

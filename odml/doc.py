@@ -4,7 +4,10 @@ import base
 import format
 import terminology
 
-class Document(base.sectionable):
+class Document(base._baseobj):
+    pass
+
+class BaseDocument(base.sectionable, Document):
     """A represenation of an odML document in memory"""
 
     _format = format.Document
@@ -64,5 +67,3 @@ class Document(base.sectionable):
         if self.repository is None: return None
         term = terminology.load(self.repository)
         return term
-
-BaseDocument = Document

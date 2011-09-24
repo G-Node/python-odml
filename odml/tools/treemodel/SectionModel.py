@@ -2,6 +2,7 @@ import gtk, gobject
 from TreeIters import PropIter, ValueIter
 from TreeModel import TreeModel, ColumnMapper
 import sys
+import odml
 from ... import value, property as odmlproperty
 debug = lambda x: sys.stderr.write(x+"\n")
 debug = lambda x: 0
@@ -74,7 +75,7 @@ class SectionModel(TreeModel):
 
     def post_delete(self, parent, old_path):
         super(SectionModel, self).post_delete(parent, old_path)
-        if isinstance(parent, odmlproperty.BaseProperty):
+        if isinstance(parent, odmlproperty.Property):
             # a value was deleted
             if len(parent) == 1:
                 # the last child row is also not present anymore,
@@ -101,7 +102,7 @@ class SectionModel(TreeModel):
         # we are only interested in changes going up to the section level,
         # but not those dealing with subsections of ours
         if not context.cur is self._section or \
-                isinstance(context.val, self._section.__class__):
+                isinstance(context.val, odml.section.Section):
             return
 
         if context.action == "set" and context.postChange:

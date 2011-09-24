@@ -6,7 +6,10 @@ import mapping
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
 
-class Section(base.sectionable, mapping.mapable):
+class Section(base._baseobj):
+    pass
+
+class BaseSection(base.sectionable, mapping.mapable, Section):
     """A odML Section"""
     type       = None
     id         = None
@@ -142,6 +145,7 @@ class Section(base.sectionable, mapping.mapable):
         repo = self.get_repository()
         if repo is None: return None
         term = terminology.load(repo)
+        if term is None: return None
         return term.find_related(type=self.type)
 
     def get_merged_equivalent(self):
@@ -291,5 +295,3 @@ class Section(base.sectionable, mapping.mapable):
     @property
     def can_be_merged(self):
         return self._link is not None or self._include is not None
-
-BaseSection = Section
