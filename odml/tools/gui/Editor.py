@@ -3,23 +3,21 @@ import sys
 
 import gtk
 import gobject
-import gio
 
 import odml
 import odml.tools.treemodel.mixin
 import commands
 
 from odml.tools.treemodel import SectionModel, DocumentModel
-from odml.tools.xmlparser import XMLWriter, XMLReader
 
 from InfoBar import EditorInfoBar
-from CommandManager import CommandManager
 from ScrolledWindow import ScrolledWindow
 from SectionView import SectionView
 from PropertyView import PropertyView
 from ValueView import ValueView
 from NavigationBar import NavigationBar
 from ChooserDialog import odMLChooserDialog
+from EditorTab import EditorTab
 
 gtk.gdk.threads_init()
 
@@ -66,20 +64,11 @@ License along with the Gnome Library; see the file COPYING.LIB.  If not,
 write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.\n'''
 
-class Editor(gtk.Window):
+class EditorWindow(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
-    file_uri = None
-    _prop_model = None
-    _current_property_object = None
-    edited = False
 
-    def __init__(self, filename=None, parent=None):
-        cmdm = CommandManager()
-        cmdm.enable_undo = self.enable_undo
-        cmdm.enable_redo = self.enable_redo
-        cmdm.error_func  = self.command_error
-        self.command_manager = cmdm
 
+    def __init__(self, parent=None):
         gtk.Window.__init__(self)
         try:
             self.set_screen(parent.get_screen())
@@ -96,8 +85,6 @@ class Editor(gtk.Window):
         self.set_data("ui-manager", merge)
         merge.insert_action_group(self.__create_action_group(), 0)
         self.add_accel_group(merge.get_accel_group())
-
-        self.reset_editor()
 
         try:
             mergeid = merge.add_ui_from_string(ui_info)
@@ -120,7 +107,7 @@ class Editor(gtk.Window):
         bar.show()
         table.attach(bar,
                      # X direction #       # Y direction
-                     0, 1,                   1, 2,
+                     0, 2,                   1, 2,
                      gtk.EXPAND | gtk.FILL,  0,
                      0,                      0)
 
@@ -159,23 +146,23 @@ class Editor(gtk.Window):
         hpaned.set_position(150)
 
         section_tv = SectionView()
-        section_tv.execute = cmdm.execute
+        section_tv.execute = self.execute
         section_tv.on_section_change = self.on_section_change
         section_view = gtk.VBox(homogeneous=False, spacing=0)
         section_view.pack_start(ScrolledWindow(section_tv._treeview), True, True, 1)
         section_view.show()
         hpaned.add1(section_view)
 
-        property_tv = ValueView(self.command_manager.execute)
-        property_tv.execute = cmdm.execute
+        property_tv = ValueView(self.execute)
+        property_tv.execute = self.execute
         property_tv.on_property_select = self.on_object_select
         property_view = gtk.VBox(homogeneous=False, spacing=0)
 
         info_bar = EditorInfoBar ()
         self._info_bar = info_bar
         property_view.pack_start(info_bar, False, False, 1)
-
         property_view.pack_start(ScrolledWindow(property_tv._treeview), True, True, 1)
+        property_view.show()
         hpaned.add2(property_view)
 
         self._property_tv = property_tv
@@ -184,7 +171,7 @@ class Editor(gtk.Window):
         # property_view to edit ODML-Properties
 
         # to edit properties of Document, Section or Property:
-        self._property_view = PropertyView(self.command_manager.execute)
+        self._property_view = PropertyView(self.execute)
         frame = gtk.Frame()
         frame.set_label_widget(navigation_bar)
         frame.add(ScrolledWindow(self._property_view._treeview))
@@ -196,7 +183,20 @@ class Editor(gtk.Window):
         vpaned.pack1(hpaned, resize=True, shrink=False)
         vpaned.pack2(frame, resize=False, shrink=True)
 
-        table.attach (vpaned,
+        class Tab(gtk.HBox):
+            """
+            a tab container
+            """
+            child = vpaned
+
+        self.Tab = Tab
+
+        notebook = gtk.Notebook() # we want tabs
+        notebook.connect("switch-page", self.on_tab_select)
+        notebook.show()
+        self.notebook = notebook
+
+        table.attach (notebook,
                       # X direction           Y direction
                       0, 2,                   3, 4,
                       gtk.EXPAND | gtk.FILL,  gtk.EXPAND | gtk.FILL,
@@ -211,12 +211,21 @@ class Editor(gtk.Window):
         self._statusbar = statusbar
         statusbar.show()
 
-        if not filename is None:
-            self.load_document(filename)
-        else:
-            self._info_bar.show_info("Welcome to the G-Node odML Editor 0.1")
+        self.tabs = []
+        self._current_tab = None
+        #if not filename is None:
+        #    self.load_document(filename)
+        #else:
+        #    self._info_bar.show_info("Welcome to the G-Node odML Editor 0.1")
+        #    self.new_file(None)
 
         self.show_all()
+
+    def mktab(self, tab):
+        t = self.Tab()
+        t.tab = tab
+        t.show()
+        return t
 
     def __create_action_group(self):
         entries = (
@@ -295,18 +304,117 @@ class Editor(gtk.Window):
         dialog.connect("response", lambda d, r: d.destroy())
         dialog.show()
 
-    def new_file(self, action):
-        if not self.save_if_changed():
-            return
-        doc = odml.doc.Document()
-        sec = odml.section.Section(name="Default Section")
-        doc.append(sec)
-        self._document = doc
-        self.file_uri = None
-        self.update_statusbar("<new file>")
+    def new_file(self, action=None):
+        """open a new tab with an empty document"""
+        tab = EditorTab(self)
+        tab.new()
+        self.append_tab(tab)
+        self.select_tab(tab)
+        return tab
+
+    def load_document(self, uri):
+        """open a new tab, load the document into it"""
+        tab = EditorTab(self)
+        tab.load(uri)
+        self.append_tab(tab)
+        self.select_tab(tab)
+        return tab
+
+    def select_tab(self, tab):
+        """
+        activate a new tab, reset the statusbar and models accordingly
+        """
+        ctab = self._current_tab
+        if ctab is tab: return
+
+        if ctab is not None:
+            # save treeviews expanded state, selected rows
+            pass
+
+        self._current_tab = tab
+        self.set_status_filename()
         self.update_model()
-        # TODO self.set_section(sec)
-        self.edited = False
+        self.enable_undo(tab.command_manager.can_undo)
+        self.enable_redo(tab.command_manager.can_redo)
+
+        if self.notebook.get_current_page() != self.tabs.index(tab):
+            self.notebook.set_current_page(self.tabs.index(tab))
+
+        # TODO restore treeviews expanded state, selected rows
+
+    def mk_tab_label(self, title, tab):
+        #hbox will be used to store a label and button, as notebook tab title
+        hbox = gtk.HBox(False, 0)
+        label = gtk.Label(title)
+        hbox.pack_start(label)
+
+        #get a stock close button image
+        close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
+
+        #make the close button
+        btn = gtk.Button()
+        btn.set_relief(gtk.RELIEF_NONE)
+        btn.set_focus_on_click(False)
+        btn.connect('clicked', self.on_tab_close_click, tab)
+        btn.add(close_image)
+        hbox.pack_start(btn, False, False)
+
+        #this reduces the size of the button
+        style = gtk.RcStyle()
+        style.xthickness = 0
+        style.ythickness = 0
+        btn.modify_style(style)
+
+        hbox.show_all()
+        return hbox
+
+    def append_tab(self, tab):
+        """
+        append the tab to our tab list
+
+        may replace the current tab, if its a new file that
+        has not been edited
+        """
+        # don't create a new tab if the default doc is open and unmodified
+        if len(self.tabs) == 1 and self.tabs[0].file_uri is None and not self.tabs[0].is_modified:
+            for page in self.notebook:
+                print page
+                self.notebook.remove_page(0)
+            self.tabs = []
+
+        self.tabs.append(tab)
+        self.notebook.append_page(self.mktab(tab), self.mk_tab_label(str(tab.file_uri), tab))
+        self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
+
+    def close_tab(self, tab):
+        """
+        try to save and then remove the tab from our tab list
+        and remove the tab from the Notebook widget
+        """
+        if not tab.save_if_changed():
+            return # action canceled
+
+        idx = self.tabs.index(tab)
+        if len(self.tabs) == 1:
+            self.new_file() # open a new tab already, so we never get empty
+
+        del self.tabs[idx]
+        self.notebook.remove_page(idx)
+        self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
+
+    def on_tab_select(self, notebook, page, pagenum):
+        """
+        the notebook widget selected a tab
+        """
+        tab = notebook.get_nth_page(pagenum)
+        if tab.child.get_parent() is None:
+            tab.add(tab.child)
+        else:
+            tab.child.reparent(tab)
+        self.select_tab(tab.tab)
+
+    def on_tab_close_click(self, button, tab):
+        self.close_tab(tab)
 
     def chooser_dialog(self, title, callback, save=False):
         chooser = odMLChooserDialog(title=title, save=save)
@@ -315,8 +423,6 @@ class Editor(gtk.Window):
 
     def open_file(self, action):
         """called to show the open file dialog"""
-        if not self.save_if_changed():
-            return False
         self.chooser_dialog(title="Open Document", callback=self.load_document)
 
     def open_recent(self, recent_action):
@@ -324,59 +430,25 @@ class Editor(gtk.Window):
         print 'open recent %s' % (uri)
         self.load_document(uri)
 
-    def load_document(self, uri):
-        self.file_uri = uri
-        xml_file = gio.File(uri)
-        self._document = XMLReader(ignore_errors=True).fromFile(xml_file.read())
-        self._document.finalize()
-        self._info_bar.show_info("Loading of %s done!" % (xml_file.get_basename()))
-        self.set_status_filename()
-        self.update_model()
-        self.reset_editor()
-        # TODO select default section
-
     def set_status_filename(self):
-        self.update_statusbar("%s" % (self.file_uri))
-
-    def reset_editor(self):
-        self.edited = 0 # initialize the edit stack position
-        self.command_manager.reset()
-        self.enable_undo(enable=False)
-        self.enable_redo(enable=False)
+        filename = self._current_tab.file_uri
+        if not filename:
+            filename = "<new file>"
+        self.update_statusbar(filename)
 
     def update_model(self):
-        """updates the models if self._document changed"""
+        """updates the models if a different tab is selected changed"""
+        tab = self._current_tab
         model = None
-        if self._document:
-            model = DocumentModel.DocumentModel(self._document)
+        if tab.document:
+            model = DocumentModel.DocumentModel(tab.document)
 
         self._section_tv.set_model(model)
-        self._navigation_bar.document = self._document
-        self._document_model = model
-        # TODO select first section
+        # TODO restore selection/expansion if known in tab
 
-    def save_if_changed(self):
-        """
-        if the document was modified, ask the user if he or she wants to save the document
-
-        returns false if the user cancelled the action
-        """
-        if not self.edited: return True
-
-        dialog = gtk.MessageDialog(self, gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_INFO, gtk.BUTTONS_YES_NO,
-                                   "%s has been modified. Do you want to save your changes?" % self.file_uri)
-
-        dialog.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-        dialog.set_title("Save changes?")
-        dialog.set_default_response(gtk.RESPONSE_CANCEL)
-
-        response = dialog.run()
-        dialog.destroy()
-
-        if response == gtk.RESPONSE_CANCEL: return False
-        if response == gtk.RESPONSE_NO: return True
-        return self.save(None)
+        self._navigation_bar.document = tab.document
+        # self._property_tv.set_model()
+        # TODO restore selection/expansion if known in tab
 
     def save(self, action):
         """
@@ -384,8 +456,8 @@ class Editor(gtk.Window):
 
         runs a file_chooser dialog if the file_uri is not set
         """
-        if self.file_uri:
-            return self.save_file(self.file_uri)
+        if self._current_tab.file_uri:
+            return self._current_tab.save(self._current_tab.file_uri)
         self.chooser_dialog(title="Save Document", callback=self.on_file_save, save=True)
         return False # TODO this signals that file saving was not successful
                      #      because no action should be taken until the chooser
@@ -397,27 +469,19 @@ class Editor(gtk.Window):
         if not uri.lower().endswith('.odml') and \
             not uri.lower().endswith('.xml'):
                 uri += ".xml"
-        self.file_uri = uri
-        self.save_file(self.file_uri)
+        self._current_tab.file_uri = uri
+        self._current_tab.save(uri)
         self.set_status_filename()
 
-    def save_file(self, uri):
-        self._document.clean()
-        doc = XMLWriter(self._document)
-        gf = gio.File(uri)
-        try:
-            data = unicode(doc)
-        except Exception, e:
-            self._info_bar.show_info("Save failed: %s" % e.message)
-            return
-        xml_file = gf.replace(etag='', make_backup=False) # TODO make backup?
-        xml_file.write(doc.header)
-        xml_file.write(data)
-        xml_file.close()
-        self._document.finalize() # undo the clean
-        self._info_bar.show_info("%s was saved" % (gf.get_basename()))
-        self.edited = 0
-        return True # TODO return false on any error and notify the user
+    def save_if_changed(self):
+        """
+        if any open document was modified, ask the user if he or she wants to save the document
+
+        returns false if the user cancelled the action
+        """
+        for tab in self.tabs:
+            if not tab.save_if_changed(): return False
+        return True
 
     def quit(self, action, extra=None):
         if not self.save_if_changed(): return True # the event is handled and
@@ -469,13 +533,16 @@ class Editor(gtk.Window):
         self.enable_action("Redo", enable)
 
     def undo(self, action):
-        self.command_manager.undo()
+        self._current_tab.command_manager.undo()
 
     def redo(self, action):
-        self.command_manager.redo()
+        self._current_tab.command_manager.redo()
 
     def command_error(self, cmd, error):
         self._info_bar.show_info("Editing failed: %s" % error.message)
+
+    def execute(self, cmd):
+        self._current_tab.command_manager.execute(cmd)
 
 def get_image_path():
     try:
