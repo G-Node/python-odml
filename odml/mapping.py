@@ -84,71 +84,83 @@ class mapable(object):
 class MappingError(TypeError):
     pass
 
-def apply_mapping(doc):
+def create_mapping(doc):
+    import tools.proxy as proxy
+    mdoc = odml.Document() # TODO might need to proxy this too
+
     # iterate each section and property
     # take the mapped object and try to put it at a meaningful place
     for sec in doc.itersections(recursive=True):
-        obj = sec.mapped_object
-        if obj is None: continue
-
-        sec.type = obj.type
-        sec.mapping = None
-        term = obj.get_repository()
-        if sec.get_repository() != term:
-            sec.repository = obj.get_repository()
+        create_section_mapping(mdoc, sec)
 
     for sec in doc.itersections(recursive=True):
         for prop in sec.properties[:]:
-            mapping = prop.mapped_object
-            if mapping is None: continue
+            create_property_mapping(sec, prop)
 
-            dst_type = mapping._section.type
+def create_section_mapping(mdoc, sec)
+    obj = sec.mapped_object
+    msec = proxy.MappedSection(sec, template=obj)
+    sec._active_mapping = msec
+    mdoc.append(msec)
 
-            # rule 4c: target-type == section-type
-            #          copy attributes, keep property
-            if dst_type == sec.type:
+    if obj:
+        term = obj.get_repository()
+        if msec.get_repository() != term:
+            msec.repository = term
+
+def create_property_mapping(sec, prop):
+    msec = sec._active_mapping
+
+    mapping = prop.mapped_object
+    if mapping is None: continue
+
+    dst_type = mapping._section.type
+
+    # rule 4c: target-type == section-type
+    #          copy attributes, keep property
+    if dst_type == sec.type:
+        prop.name = mapping.name
+        prop.mapping = None
+        continue
+
+    # rule 4d: one child has the type
+    child = sec.find_related(type=dst_type, siblings=False, parents=False, findAll=True)
+    if child is None:
+        # rule 4e: a sibling has the type
+        sibling = sec.find_related(type=dst_type, children=False, parents=False)
+        if sibling is not None:
+            rel = sibling.find_related(type=sec.type, findAll=True)
+            if len(rel) > 1:
+                # rule 4e2: create a subsection linked to the sibling
+                child =  sibling.clone(children=False)
+                sec.remove(prop)
                 prop.name = mapping.name
                 prop.mapping = None
+                child.append(prop)
+                sec.append(child)
+                child._link = sibling.get_path()
                 continue
+            # rule 4e1: exactly one relation for sibling
+            child = sibling # once we found the target section, the code stays the same
+        else:
+            # rufe 4??: no sibling
+            child = mapping._section.clone(children=False)
+            sec.append(child)
+    elif len(child) > 1:
+        raise MappingError("""Your data organisation does not make sense,
+        there are %d children of type '%s'. Don't know how to handle.""" % (len(child), dst_type))
+    else: # exactly one child found
+        child = child[0]
 
-            # rule 4d: one child has the type
-            child = sec.find_related(type=dst_type, siblings=False, parents=False, findAll=True)
-            if child is None:
-                # rule 4e: a sibling has the type
-                sibling = sec.find_related(type=dst_type, children=False, parents=False)
-                if sibling is not None:
-                    rel = sibling.find_related(type=sec.type, findAll=True)
-                    if len(rel) > 1:
-                        # rule 4e2: create a subsection linked to the sibling
-                        child =  sibling.clone(children=False)
-                        sec.remove(prop)
-                        prop.name = mapping.name
-                        prop.mapping = None
-                        child.append(prop)
-                        sec.append(child)
-                        child._link = sibling.get_path()
-                        continue
-                    # rule 4e1: exactly one relation for sibling
-                    child = sibling # once we found the target section, the code stays the same
-                else:
-                    # rufe 4??: no sibling
-                    child = mapping._section.clone(children=False)
-                    sec.append(child)
-            elif len(child) > 1:
-                raise MappingError("""Your data organisation does not make sense,
-                there are %d children of type '%s'. Don't know how to handle.""" % (len(child), dst_type))
-            else: # exactly one child found
-                child = child[0]
+    if child is None:
+        # rule 4f: need to add a section
+        child = mapping._section.clone(children=False)
+        sec.parent.append(child)
 
-            if child is None:
-                # rule 4f: need to add a section
-                child = mapping._section.clone(children=False)
-                sec.parent.append(child)
-
-            sec.remove(prop)
-            child.append(prop)
-            prop.name = mapping.name
-            prop.mapping = None
+    sec.remove(prop)
+    child.append(prop)
+    prop.name = mapping.name
+    prop.mapping = None
 
 def map_property(doc, prop):
     obj = prop.mapped_obj
