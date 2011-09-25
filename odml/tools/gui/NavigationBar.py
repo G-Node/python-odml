@@ -70,7 +70,7 @@ class NavigationBar(gtk.Label):
                 name = obj.value
 
             names.append(
-                ( ("<b>%s</b>" if obj == cur else "%s") % name,
+                ( ("<b>%s</b>" if obj is cur else "%s") % name,
                   ":".join([str(i) for i in obj.to_path()])) )
 
         self.set_markup(": ".join(
