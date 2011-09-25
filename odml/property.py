@@ -44,7 +44,7 @@ class BaseProperty(base.baseobject, mapping.mapable, Property):
         #TODO validate arguments
         self._name = name
         self._section = section
-        self._values = base.SafeList()
+        self._reset_values()
 
         self.definition = definition
         self.dependency = dependency
@@ -90,7 +90,7 @@ class BaseProperty(base.baseobject, mapping.mapable, Property):
     @values.setter
     def values(self, new_values):
         # TODO for consistency this actually needs to manually remove each existing value
-        self._values = base.SafeList()
+        self._reset_values()
         for i in new_values:
             self.append(i)
 
@@ -108,7 +108,7 @@ class BaseProperty(base.baseobject, mapping.mapable, Property):
 
     @value.setter
     def value(self, new_value):
-        self._values = base.SafeList()
+        self._reset_values()
         self.append(new_value)
 
     def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
@@ -152,12 +152,18 @@ class BaseProperty(base.baseobject, mapping.mapable, Property):
         obj = super(BaseProperty, self).clone(children)
         obj._section = None
 
-        obj._values = base.SafeList()
+        obj._reset_values()
         if children:
             for v in self._values:
                 obj.append(v.clone())
 
         return obj
+
+    def _reset_values(self):
+        """
+        reinitialize the list of values with an empty list
+        """
+        self._values = base.SafeList()
 
     def merge(self, property):
         pass

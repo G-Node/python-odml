@@ -1,5 +1,7 @@
 import odml
 import event
+import weakmeth, weakref
+import treemodel.nodes as nodes
 
 class Proxy(object):
     # common interface
@@ -73,6 +75,15 @@ class PassProxy(BaseProxy):
     def __len__(self):
         return self._proxy_obj.__len__()
 
+class NotifyingProxy(event.ModificationNotifier, PassProxy):
+    """
+    Hooks the personal attributes to cause change events
+    """
+    def __setattr__(self, name, value):
+        if name in self.personal:
+            return super(NotifyingProxy, self).__setattr__(name, value)
+        return PassProxy.__setattr__(self, name, value)
+
 class HookProxy(BaseProxy):
     """
     A proxy that only intercepts certain attributes
@@ -90,29 +101,139 @@ class HookProxy(BaseProxy):
         else:
             super(HookProxy, self).__setattr__(name, value)
 
-class PropertyProxy(EqualityBaseProxy, PassProxy, event.ChangeHandlable, odml.property.Property):
+class ChangeAbleProxy(NotifyingProxy):
+    personal = set(["_change_handler"])
+    _change_handler = None
+
+    def __init__(self, obj):
+        super(ChangeAbleProxy, self).__init__(obj)
+
+        # use a weak ref and detach at some point
+        weak_change_handler = weakmeth.WeakMethod(self.change_handler)
+        def call(context):
+            if weak_change_handler() is None: return
+            return weak_change_handler()(context)
+
+        self._weak_change_handler = call
+        obj.add_change_handler(call)
+
+    @property
+    def _Changed(self):
+        return self._proxy_obj._Changed
+
+    def change_handler(self, context):
+        """
+        redo the change handler but replace the proxied object
+        with our instance
+        """
+        print "base change handler", self, context
+        cur = context._obj.pop()
+        context.passOn(self)
+        context._obj.append(cur)
+
+    def __del__(self):
+        print "!!! del !!!", object.__repr__(self), self._weak_change_handler
+        self.__fireChange("del", self, lambda: 0)
+        self._weak_change_handler.name = object.__repr__(self)
+        self._proxy_obj.remove_change_handler(self._weak_change_handler)
+
+class PropertyProxyValueList(odml.base.SafeList):
+    """
+    A list the creates proxyObjects on the fly
+    """
+    def __init__(self, parent):
+        self.parent = parent
+
+    def __getitem__(self, key):
+        obj = super(PropertyProxyValueList, self).__getitem__(key)
+        if not isinstance(obj, Proxy) and obj.parent is not self.parent:
+            obj = ValueProxy(obj)
+            obj._property = self.parent
+        return obj
+
+    def remove(self, obj):
+        """
+        remove an element from this list
+
+        be sure to use "is" based comparison, but also compare the corresponding proxy obj
+        """
+        for i, e in enumerate(self):
+            if e is obj or (isinstance(obj, PassProxy) and obj._proxy_obj is e):
+                del self[i]
+                return
+        raise ValueError("remove: %s not in list" % repr(obj))
+
+class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, nodes.PropertyNode):
     """
     A PropertyProxy provides transparent access to a Property,
     blocking only the 'mapping' attribute.
     """
     inaccessable = {"mapping": None}#, "name": PassProxy.PASS_THROUGH}
-    personal = set(["_section", "_change_handler", "name"])
-    forwards = ["__len__", "__repr__"]
+    personal = set(["_section", "name", "_p_values"]) | ChangeAbleProxy.personal
     _Changed = event.Property._Changed
-    _change_handler = None
-
-    def __init__(self, obj):
-        super(PropertyProxy, self).__init__(obj)
-        # TODO memory impairments? GC
-        obj.add_change_handler(self.change_handler)
+    _p_values = []
 
     # TODO make this generic
     @property
     def parent(self):
         return self._section
 
+    @property
+    def values(self):
+        # do some caching
+        if len(self._p_values) == len(self._proxy_obj.values):
+            cached = True
+
+            for i, val in enumerate(self._p_values):
+                if not self._p_values[i]._proxy_obj is self._proxy_obj.values[i]:
+                    cached = False
+                    break
+
+            if cached:
+                return self._p_values
+
+        # transparently create proxy objects
+        self._p_values = map(ValueProxy, self._proxy_obj.values)
+        for i in self._p_values:
+            i._property = self
+        return self._p_values
+
     def change_handler(self, context):
-        context.passOn(self)
+        """
+        we need to fix append/insert/remove notifications
+        so that they deal with ProxyObjects instead
+        """
+        print "change handling", self, context
+        oval = None
+        if isinstance(context.val, odml.value.Value):
+            oval = context.val
+            context.val = ValueProxy(oval)
+            context.val._property = self
+        super(PropertyProxy, self).change_handler(context)
+        if oval is not None:
+            context.val = oval
+
+    def path_to(self, child):
+        """
+        override this, to account for proxy objects
+        """
+        if not isinstance(child, PassProxy):
+            return super(PropertyProxy, self).path_to(child)
+        for (i, obj) in enumerate(self._values):
+            if obj is child._proxy_obj: return (i,)
+        raise ValueError("%s does not contain the item %s" % (repr(self), repr(child)))
+
+class ValueProxy(EqualityBaseProxy, ChangeAbleProxy, odml.value.Value, nodes.ValueNode):
+    """
+    A ValueProxy provides transparent access to a Value
+    """
+    personal = set(["_property"]) | ChangeAbleProxy.personal
+    _Changed = event.Value._Changed
+
+    # TODO make this generic
+    @property
+    def parent(self):
+        return self._property
 
 class ReadOnlyObject(object):
     enable_protection = False
@@ -160,6 +281,9 @@ class NonexistantSection(ReadOnlySection):
         else:
             super(NonexistantSection, self).append(obj)
 
+    def __repr__(self):
+        return super(NonexistantSection, self).__repr__().replace("<Section", "<?Section")
+
 class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
     """
     Like a fake section, but we reference a concrete section
@@ -187,10 +311,12 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
                 #print object.__repr__(obj), object.__repr__(self._props[0])
                 assert obj is not None
                 super(SectionProxy, self).remove(obj)
-                return # don't pass this event further
+                #return # don't pass this event further?
 
         # TODO this could cause conflicts in gui (maybe)
+        cur = context._obj.pop()
         context.passOn(self)
+        context._obj.append(cur)
 
     def mkproxy(self, obj):
         if isinstance(obj, odml.property.Property):
