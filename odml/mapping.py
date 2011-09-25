@@ -157,7 +157,7 @@ def create_property_mapping(sec, prop):
             # rule 4e1: exactly one relation for sibling
             child = sibling # once we found the target section, the code stays the same
         else:
-            # rule 4??: no sibling, create a new section
+            # rule 4f: no sibling, create a new section
             # TODO set repository and other attributes?
             child = proxy.NonexistantSection(mapping._section.name, dst_type)
             msec.append(child)
@@ -167,45 +167,4 @@ def create_property_mapping(sec, prop):
     else: # exactly one child found
         child = child[0]
 
-    if child is None:
-        assert False, "should be unreachable code"
-        # this can't happen, right?
-        # is rather handled already by rule 4??
-
-        # rule 4f: need to add a section
-        child = mapping._section.clone(children=False)
-        sec.parent.append(child)
-
     child.append(mprop)
-
-def map_property(doc, prop):
-    obj = prop.mapped_obj
-    if obj is None: return False
-    insert_to_tree(doc, obj, prop)
-    return True
-
-def section_template(sec):
-    import copy
-    obj = copy.copy(sec)
-    sec._sections = base.SmartList()
-    sec._props = base.SmartList()
-    return sec
-
-def insert_to_tree(doc, obj, val):
-    parents = []
-    cur = obj
-    while cur.parent is not None:
-        cur = cur.parent
-        parents.insert(0, cur)
-
-    cur = doc
-    for node in parents:
-        dst = cur.contains(parents[0])
-        if dst is None:
-            dst = section_template(parents[0])
-            cur.append(dst)
-            #dst.include = parents[0].document.url + "#" + parents[0].type
-        cur = dst
-
-    val = val.clone()
-    val.name = obj.name
