@@ -82,6 +82,10 @@ class BaseValue(base.baseobject, Value):
         return "<%s>" % str(self._value)
 
     @property
+    def parent(self):
+        return self._property
+
+    @property
     def data(self):
         """
         used to access the raw data of the value
