@@ -126,6 +126,8 @@ class SectionModel(TreeModel):
     def destroy(self):
         self._section.remove_change_handler(self.on_section_changed)
 
+    def __repr__(self):
+        return "<SectionModel of %s>" % (self.section)
 
     @property
     def section(self):
