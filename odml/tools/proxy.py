@@ -126,13 +126,11 @@ class ChangeAbleProxy(NotifyingProxy):
         redo the change handler but replace the proxied object
         with our instance
         """
-        print "base change handler", self, context
         cur = context._obj.pop()
         context.passOn(self)
         context._obj.append(cur)
 
     def __del__(self):
-        print "!!! del !!!", object.__repr__(self), self._weak_change_handler
         self._weak_change_handler.name = object.__repr__(self)
         self._proxy_obj.remove_change_handler(self._weak_change_handler)
 
@@ -202,7 +200,6 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
         we need to fix append/insert/remove notifications
         so that they deal with ProxyObjects instead
         """
-        print "change handling", self, context
         oval = None
         if isinstance(context.val, odml.value.Value):
             oval = context.val
@@ -304,7 +301,6 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
         obj.add_change_handler(self.change_handler)
 
     def change_handler(self, context):
-        #print context, context.obj
         if context.postChange and context.obj is context.cur:
             # intercept append and remove actions
             if context.action == "append" or context.action == "insert":
@@ -312,8 +308,6 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
                 return # don't pass this event further
             elif context.action == "remove":
                 obj = self.contains(context.val) # find an equal one
-                #print "remove", obj, "from", self, "vs", context.cur
-                #print object.__repr__(obj), object.__repr__(self._props[0])
                 assert obj is not None
                 super(SectionProxy, self).remove(obj)
                 #return # don't pass this event further?
