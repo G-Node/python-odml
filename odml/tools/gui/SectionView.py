@@ -145,8 +145,6 @@ class SectionView(TerminologyPopupTreeView):
 
         add a section to the selected section (or document if None selected)
         """
-        print "add section", widget, obj, section
-
         if section is None:
             section = odml.Section(name="unnamed section")
         else:

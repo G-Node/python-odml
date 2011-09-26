@@ -378,7 +378,6 @@ class EditorWindow(gtk.Window):
         # don't create a new tab if the default doc is open and unmodified
         if len(self.tabs) == 1 and self.tabs[0].file_uri is None and not self.tabs[0].is_modified:
             for page in self.notebook:
-                print page
                 self.notebook.remove_page(0)
             self.tabs = []
 
@@ -427,7 +426,6 @@ class EditorWindow(gtk.Window):
 
     def open_recent(self, recent_action):
         uri = recent_action.get_current_uri ()
-        print 'open recent %s' % (uri)
         self.load_document(uri)
 
     def set_status_filename(self):

@@ -200,7 +200,6 @@ class ValueView(TerminologyPopupTreeView):
         """
         popup menu action: load binary content
         """
-        print "load binary content for", val
         chooser = ChooserDialog(title="Open binary file", save=False)
         chooser.show()
 
@@ -215,7 +214,6 @@ class ValueView(TerminologyPopupTreeView):
         """
         popup menu action: load binary content
         """
-        print "save binary content for", val
         chooser = ChooserDialog(title="Save binary file", save=True)
         chooser.show()
 

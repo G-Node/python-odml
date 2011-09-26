@@ -41,7 +41,6 @@ class GenericIter(object):
         returns a new Iter object for the next element in this multivalue list
         or None
         """
-        #print ":get_next(%s)" % repr(self._obj)
         obj = self._obj.next()
         if obj is not None:
             return obj.IterClass(obj)
@@ -64,7 +63,6 @@ class GenericIter(object):
 
     @property
     def parent(self):
-        #print ":get_parent(%s)" % repr(self._obj)
         if not hasattr(self._obj, "parent"):
             return None
         obj = self._obj.parent

@@ -174,7 +174,6 @@ class TreeModel(gtk.GenericTreeModel):
             context.parent[self] = context.val.parent
         if context.postChange:
             path = context.path[self]
-            print "row deleted", path
             self.post_delete(context.parent[self], path)
 
     def event_insert(self, context):

@@ -91,7 +91,6 @@ class TerminologyPopupTreeView(TreeView):
         """
         if obj is None: return []
         term = obj.get_terminology_equivalent()
-        print "get term", obj, term
         if term is None: return []
         return func(term)
 
@@ -102,7 +101,6 @@ class TerminologyPopupTreeView(TreeView):
         calls *get_popup_menu_items* to retrieve the actual
         items for the menu
         """
-        print "term popup: get popup menu"
         popup = gtk.Menu()
         for i in self.get_popup_menu_items():
             popup.append(i)

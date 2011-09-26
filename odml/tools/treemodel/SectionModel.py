@@ -81,7 +81,6 @@ class SectionModel(TreeModel):
                 # the last child row is also not present anymore,
                 # the value is now displayed inline
                 path = self.get_node_path(parent)
-                print "row deleted", path + (0,)
                 self.row_deleted(path + (0,)) # first child
                 self.row_has_child_toggled(path, self.get_iter(path))
 
@@ -107,7 +106,6 @@ class SectionModel(TreeModel):
 
         if context.action == "set" and context.postChange:
             path = self.get_node_path(context.obj)
-            print "set path", path
             if not path: return # probably the section changed
             iter = self.get_iter(path)
             self.row_changed(path, iter)
