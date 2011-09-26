@@ -133,7 +133,6 @@ class ChangeAbleProxy(NotifyingProxy):
 
     def __del__(self):
         print "!!! del !!!", object.__repr__(self), self._weak_change_handler
-        self.__fireChange("del", self, lambda: 0)
         self._weak_change_handler.name = object.__repr__(self)
         self._proxy_obj.remove_change_handler(self._weak_change_handler)
 
@@ -207,7 +206,13 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
         oval = None
         if isinstance(context.val, odml.value.Value):
             oval = context.val
-            context.val = ValueProxy(oval)
+            if context.postChange ^ (context.action == "remove"):
+                assert oval.parent is not None
+                i = self.values.index(oval)
+                context.val = self.values[i]
+            else: # the val does not yet/anymore exist
+                assert oval.parent is None
+                context.val = ValueProxy(oval)
             context.val._property = self
         super(PropertyProxy, self).change_handler(context)
         if oval is not None:

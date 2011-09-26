@@ -52,7 +52,6 @@ class TestProxy(unittest.TestCase):
 
         event_log = []
         def record(context):
-            if isinstance(context.obj, proxy.Proxy): return
             event_log.append((context.obj, context.action, context.val))
 
         s.add_change_handler(record)
