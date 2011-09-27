@@ -55,6 +55,7 @@ class ValueView(TerminologyPopupTreeView):
     """
     The Main treeview for editing properties and their value-attributes
     """
+    _section = None
     def __init__(self, execute_func=lambda x: x()):
         self.execute = execute_func
 
@@ -89,6 +90,8 @@ class ValueView(TerminologyPopupTreeView):
 
     @section.setter
     def section(self, section):
+        if self._section is section:
+            return
         self._section = section
         if self.model:
             self.model.destroy()

@@ -93,9 +93,9 @@ class EditorTab(object):
         return True # TODO return false on any error and notify the user
 
     def enable_undo(self, enable=True):
-        if self.window._current_tab is self:
+        if self.window.current_tab is self:
             self.window.enable_undo(enable)
 
     def enable_redo(self, enable=True):
-        if self.window._current_tab is self:
+        if self.window.current_tab is self:
             self.window.enable_redo(enable)

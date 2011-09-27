@@ -166,3 +166,35 @@ class TerminologyPopupTreeView(TreeView):
         menu.show()
         add_section.set_submenu(menu)
         return [add_section]
+
+    def save_state(self):
+        """
+        return the current state (i.e. expanded and selected objects)
+        that can be restored with restore_state later
+        """
+
+        model = self._treeview.get_model()
+        if model is None: return
+        exp_lines = []
+        model.foreach(lambda model, path, iter: exp_lines.append(path) if self._treeview.row_expanded(path) else 0)
+        model, selected_rows = self._treeview.get_selection().get_selected_rows()
+        return exp_lines, selected_rows
+
+    def restore_state(self, state):
+        """
+        restore a state saved by
+        save_state
+        """
+        if state is None: return
+        exp_lines, selected_rows = state
+        model = self._treeview.get_model()
+        selection = self._treeview.get_selection()
+
+        def exp(model, path, iter):
+            if path in exp_lines:
+                self._treeview.expand_row(path, False)
+            if path in selected_rows:
+                selection.select_path(path)
+
+        model.foreach(exp)
+

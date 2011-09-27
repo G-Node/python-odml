@@ -67,7 +67,6 @@ Boston, MA 02111-1307, USA.\n'''
 class EditorWindow(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
 
-
     def __init__(self, parent=None):
         gtk.Window.__init__(self)
         try:
@@ -193,6 +192,7 @@ class EditorWindow(gtk.Window):
 
         notebook = gtk.Notebook() # we want tabs
         notebook.connect("switch-page", self.on_tab_select)
+        notebook.connect("create-window", self.on_new_tab_window)
         notebook.show()
         self.notebook = notebook
 
@@ -211,8 +211,6 @@ class EditorWindow(gtk.Window):
         self._statusbar = statusbar
         statusbar.show()
 
-        self.tabs = []
-        self._current_tab = None
         #if not filename is None:
         #    self.load_document(filename)
         #else:
@@ -309,7 +307,6 @@ class EditorWindow(gtk.Window):
         tab = EditorTab(self)
         tab.new()
         self.append_tab(tab)
-        self.select_tab(tab)
         return tab
 
     def load_document(self, uri):
@@ -317,30 +314,71 @@ class EditorWindow(gtk.Window):
         tab = EditorTab(self)
         tab.load(uri)
         self.append_tab(tab)
-        self.select_tab(tab)
         return tab
 
-    def select_tab(self, tab):
+    def clone_tab(self, tab, document=None):
+        ntab = EditorTab(self, tab.command_manager)
+        ntab.document = tab.document if document is None else document
+        ntab.file_uri = tab.file_uri
+        self.append_tab(ntab)
+        return ntab
+
+    def map_tab(self, tab):
+        mapdoc = mapping.create_mapping(tab.document)
+        ntab = self.clone_tab(tab, mapdoc)
+        ntap.file_uri += ".mapped.odml"
+        return ntab
+
+    def select_tab(self, tab, force_reset=False):
         """
         activate a new tab, reset the statusbar and models accordingly
         """
-        ctab = self._current_tab
-        if ctab is tab: return
+        ctab = self.current_tab
+        if not force_reset and ctab is tab: return
 
         if ctab is not None:
-            # save treeviews expanded state, selected rows
-            pass
+            ctab.state = self.get_tab_state()
 
-        self._current_tab = tab
+        if not force_reset:
+            self.current_tab = tab
+
         self.set_status_filename()
-        self.update_model()
+        self.update_model(tab)
         self.enable_undo(tab.command_manager.can_undo)
         self.enable_redo(tab.command_manager.can_redo)
 
-        if self.notebook.get_current_page() != self.tabs.index(tab):
-            self.notebook.set_current_page(self.tabs.index(tab))
+        if hasattr(tab, "state"):
+            self.set_tab_state(tab.state)
 
-        # TODO restore treeviews expanded state, selected rows
+    @property
+    def current_tab(self):
+        page = self.notebook.get_current_page()
+        child = self.notebook.get_nth_page(page)
+        if child is not None:
+            return child.tab
+
+    @current_tab.setter
+    def current_tab(self, tab):
+        if self.current_tab is tab:
+            return
+        self.notebook.set_current_page(self.get_notebook_page(tab))
+
+    def get_tab_state(self):
+        state = self._section_tv.save_state(), self._property_tv.save_state() #, self._property_view.save_state()
+        return state
+
+    def set_tab_state(self, state):
+        self._section_tv.restore_state(state[0])
+        self._property_tv.restore_state(state[1])
+        #self._property_view.restore_state(state[2])
+
+    def get_notebook_page(self, tab):
+        """
+        returns the index holding *tab*
+        """
+        for i, child in enumerate(self.notebook):
+            if child.tab is tab:
+                return i
 
     def mk_tab_label(self, title, tab):
         #hbox will be used to store a label and button, as notebook tab title
@@ -375,29 +413,24 @@ class EditorWindow(gtk.Window):
         may replace the current tab, if its a new file that
         has not been edited
         """
-        # don't create a new tab if the default doc is open and unmodified
-        if len(self.tabs) == 1 and self.tabs[0].file_uri is None and not self.tabs[0].is_modified:
-            for page in self.notebook:
-                self.notebook.remove_page(0)
-            self.tabs = []
-
-        self.tabs.append(tab)
-        self.notebook.append_page(self.mktab(tab), self.mk_tab_label(str(tab.file_uri), tab))
+        child = self.mktab(tab)
+        self.notebook.append_page(child, self.mk_tab_label(str(tab.file_uri), tab))
+        self.notebook.set_tab_reorderable(child, True)
+        self.notebook.set_tab_detachable(child, True)
         self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
 
-    def close_tab(self, tab):
+    def close_tab(self, tab, save=True):
         """
         try to save and then remove the tab from our tab list
         and remove the tab from the Notebook widget
         """
-        if not tab.save_if_changed():
+        if save and not tab.save_if_changed():
             return # action canceled
 
-        idx = self.tabs.index(tab)
-        if len(self.tabs) == 1:
-            self.new_file() # open a new tab already, so we never get empty
+        idx = self.get_notebook_page(tab)
+        if self.notebook.get_n_pages() == 1:
+            tab = self.new_file() # open a new tab already, so we never get empty
 
-        del self.tabs[idx]
         self.notebook.remove_page(idx)
         self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
 
@@ -405,15 +438,28 @@ class EditorWindow(gtk.Window):
         """
         the notebook widget selected a tab
         """
-        tab = notebook.get_nth_page(pagenum)
-        if tab.child.get_parent() is None:
-            tab.add(tab.child)
+        hbox = notebook.get_nth_page(pagenum)
+        if hbox.child.get_parent() is None:
+            hbox.add(hbox.child)
         else:
-            tab.child.reparent(tab)
-        self.select_tab(tab.tab)
+            hbox.child.reparent(hbox)
+        self.select_tab(hbox.tab, force_reset=True)
 
     def on_tab_close_click(self, button, tab):
         self.close_tab(tab)
+
+    def on_new_tab_window(self, notebook, page, x, y):
+        """
+        the tab so dropped to another window
+        """
+        editor = EditorWindow()
+        tab = page.tab
+        state = self.get_tab_state()
+        tab.window = editor
+        editor.append_tab(tab)
+        editor.set_tab_state(state)
+        self.close_tab(tab, save=False)
+        return True
 
     def chooser_dialog(self, title, callback, save=False):
         chooser = odMLChooserDialog(title=title, save=save)
@@ -429,14 +475,13 @@ class EditorWindow(gtk.Window):
         self.load_document(uri)
 
     def set_status_filename(self):
-        filename = self._current_tab.file_uri
+        filename = self.current_tab.file_uri
         if not filename:
             filename = "<new file>"
         self.update_statusbar(filename)
 
-    def update_model(self):
+    def update_model(self, tab):
         """updates the models if a different tab is selected changed"""
-        tab = self._current_tab
         model = None
         if tab.document:
             model = DocumentModel.DocumentModel(tab.document)
@@ -454,8 +499,8 @@ class EditorWindow(gtk.Window):
 
         runs a file_chooser dialog if the file_uri is not set
         """
-        if self._current_tab.file_uri:
-            return self._current_tab.save(self._current_tab.file_uri)
+        if self.current_tab.file_uri:
+            return self.current_tab.save(self.current_tab.file_uri)
         self.chooser_dialog(title="Save Document", callback=self.on_file_save, save=True)
         return False # TODO this signals that file saving was not successful
                      #      because no action should be taken until the chooser
@@ -467,8 +512,8 @@ class EditorWindow(gtk.Window):
         if not uri.lower().endswith('.odml') and \
             not uri.lower().endswith('.xml'):
                 uri += ".xml"
-        self._current_tab.file_uri = uri
-        self._current_tab.save(uri)
+        self.current_tab.file_uri = uri
+        self.current_tab.save(uri)
         self.set_status_filename()
 
     def save_if_changed(self):
@@ -477,8 +522,8 @@ class EditorWindow(gtk.Window):
 
         returns false if the user cancelled the action
         """
-        for tab in self.tabs:
-            if not tab.save_if_changed(): return False
+        for child in self.notebook:
+            if not child.tab.save_if_changed(): return False
         return True
 
     def quit(self, action, extra=None):
@@ -531,16 +576,16 @@ class EditorWindow(gtk.Window):
         self.enable_action("Redo", enable)
 
     def undo(self, action):
-        self._current_tab.command_manager.undo()
+        self.current_tab.command_manager.undo()
 
     def redo(self, action):
-        self._current_tab.command_manager.redo()
+        self.current_tab.command_manager.redo()
 
     def command_error(self, cmd, error):
         self._info_bar.show_info("Editing failed: %s" % error.message)
 
     def execute(self, cmd):
-        self._current_tab.command_manager.execute(cmd)
+        self.current_tab.command_manager.execute(cmd)
 
 def get_image_path():
     try:
