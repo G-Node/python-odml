@@ -167,14 +167,14 @@ class ValueView(TerminologyPopupTreeView):
 
     def get_popup_menu_items(self):
         model, path, obj = self.popup_data
-        menu_items = self.create_popup_menu_items("Add Property", "Empty Property", model.section, self.add_property, lambda sec: sec.properties, lambda prop: prop.name)
+        menu_items = self.create_popup_menu_items("odml-add-Property", "Empty Property", model.section, self.add_property, lambda sec: sec.properties, lambda prop: prop.name, stock=True)
         if obj is not None: # can also add value
             prop = obj
             if hasattr(obj, "_property"): # we care about the properties only
                 prop = obj._property
 
             value_filter = lambda prop: [val for val in prop.values if val.value is not None and val.value != ""]
-            for item in self.create_popup_menu_items("Add Value", "Empty Value", prop, self.add_value, value_filter, lambda val: val.value):
+            for item in self.create_popup_menu_items("odml-add-Value", "Empty Value", prop, self.add_value, value_filter, lambda val: val.value, stock=True):
                 menu_items.append(item)
             for item in self.create_popup_menu_items("Set Value", "Empty Value", prop, self.set_value, value_filter, lambda val: val.value):
                 if item.get_submenu() is None: continue # don't want a sole Set Value item

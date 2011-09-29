@@ -13,11 +13,12 @@ class EditorTab(object):
     file_uri = None
     edited = 0
 
-    def __init__(self, window):
-        cmdm = CommandManager()
-        cmdm.enable_undo = self.enable_undo
-        cmdm.enable_redo = self.enable_redo
-        cmdm.error_func  = window.command_error
+    def __init__(self, window, cmdm=None):
+        if cmdm is None:
+            cmdm = CommandManager()
+            cmdm.enable_undo = self.enable_undo
+            cmdm.enable_redo = self.enable_redo
+            cmdm.error_func  = window.command_error
         self.command_manager = cmdm
         self.document = None
         self.window = window

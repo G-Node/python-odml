@@ -12,6 +12,7 @@ from odml.tools.treemodel import SectionModel, DocumentModel
 
 from InfoBar import EditorInfoBar
 from ScrolledWindow import ScrolledWindow
+import TreeView
 from SectionView import SectionView
 from PropertyView import PropertyView
 from ValueView import ValueView
@@ -43,6 +44,7 @@ ui_info = \
           <menuitem action='NewProperty'/>
           <menuitem action='NewValue'/>
       </menu>
+      <menuitem action='Delete'/>
       <separator/>
       <menuitem action='CloneTab'/>
       <menuitem action='Map'/>
@@ -62,6 +64,7 @@ ui_info = \
     <toolitem action='NewSection'/>
     <toolitem action='NewProperty'/>
     <toolitem action='NewValue'/>
+    <toolitem action='Delete'/>
     <toolitem action='Map' />
   </toolbar>
 </ui>'''
@@ -315,7 +318,7 @@ class EditorWindow(gtk.Window):
         action_group.add_action(recent_action)
         return action_group
 
-    @gui_action("About", stock_id=gtk.STOCK_INFO)
+    @gui_action("About", stock_id=gtk.STOCK_ABOUT)
     def about(self, action):
         logo = self.render_icon("odml-logo", gtk.ICON_SIZE_DIALOG)
 
@@ -351,7 +354,10 @@ class EditorWindow(gtk.Window):
         self.append_tab(tab)
         return tab
 
-    @gui_action("CloneTab", tooltip="Create a copy of the current tab", label="_Clone")
+    @gui_action("CloneTab", tooltip="Create a copy of the current tab", label="_Clone", stock_id=gtk.STOCK_COPY)
+    def on_clone_tab(self, action):
+        self.clone_tab(self.current_tab)
+
     def clone_tab(self, tab, document=None):
         ntab = EditorTab(self, tab.command_manager)
         ntab.document = tab.document if document is None else document
@@ -360,11 +366,14 @@ class EditorWindow(gtk.Window):
         return ntab
 
     @gui_action("Map", tooltip="Create a new tab with the mappings of the current document",
-                label="_Map Document", accelerator="<control>M")
+                label="_Map Document", accelerator="<control>M", stock_id=gtk.STOCK_DND_MULTIPLE)
+    def on_map_tab(self, action):
+        self.map_tab(self.current_tab)
+
     def map_tab(self, tab):
-        mapdoc = mapping.create_mapping(tab.document)
+        mapdoc = odml.mapping.create_mapping(tab.document)
         ntab = self.clone_tab(tab, mapdoc)
-        ntap.file_uri += ".mapped.odml"
+        ntab.file_uri += ".mapped.odml"
         return ntab
 
     def select_tab(self, tab, force_reset=False):
@@ -602,25 +611,39 @@ class EditorWindow(gtk.Window):
                                                    # won't be passed to the window
         gtk.main_quit()
 
-    @gui_action("NewSection", tooltip="Add a section to the current selected one",
-        stock_id="odml-add-Section", label="_Section", accelerator="<control><shift>S")
+    @gui_action("NewSection", tooltip="Add a section to the current selected one", stock_id="odml-add-Section")
     def new_section(self, action):
         obj = self._section_tv.get_selected_object()
         self._section_tv.add_section(None, (obj, None))
 
-    @gui_action("NewProperty", tooltip="Add a property to the current section",
-        stock_id="odml-add-Property", label="_Property", accelerator="<control><shift>P")
+    @gui_action("NewProperty", tooltip="Add a property to the current section", stock_id="odml-add-Property")
     def new_property(self, action):
         obj = self._property_tv.section
         self._property_tv.add_property(None, (obj, None))
 
-    @gui_action("NewValue", tooltip="Add a value to the current selected property",
-        stock_id="odml-add-Value", label="_Value", accelerator="<control><shift>V")
+    @gui_action("NewValue", tooltip="Add a value to the current selected property", stock_id="odml-add-Value")
     def new_value(self, action):
         obj = self._property_tv.get_selected_object()
+        if obj is None: return
         if isinstance(obj, odml.value.Value):
             obj = obj.parent
         self._property_tv.add_value(None, (obj, None))
+
+    @gui_action("Delete", tooltip="Remove the current selected object from the document", stock_id=gtk.STOCK_DELETE, accelerator="<shift>Delete")
+    def delete_object(self, action):
+        widget = self.get_focus()
+        for w in [self._section_tv, self._property_tv]:
+            if widget is w._treeview:
+                widget = w
+                break
+        else:
+            return False
+
+        obj = widget.get_selected_object()
+        if obj is None:
+            return False
+        widget.on_delete(None, obj)
+        return True
 
     # TODO should we save a navigation history here?
     def on_section_change(self, section):
@@ -699,10 +722,11 @@ def get_image_path():
     return path
 
 def register_stock_icons():
+    ctrlshift = gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK
     icons = [('odml-logo', '_odML', 0, 0, ''),
-             ('odml-add-Section', 'Add _Section', 0, 0, ''),
-             ('odml-add-Property', 'Add Property', 0, 0, ''),
-             ('odml-add-Value', 'Add _Value', 0, 0, ''),
+             ('odml-add-Section', 'Add _Section', ctrlshift, gtk.keysyms.S, ''),
+             ('odml-add-Property', 'Add Property', ctrlshift, gtk.keysyms.P, ''),
+             ('odml-add-Value', 'Add _Value', ctrlshift, gtk.keysyms.V, ''),
              ]
     gtk.stock_add(icons)
 

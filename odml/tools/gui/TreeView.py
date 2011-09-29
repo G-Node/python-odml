@@ -140,16 +140,20 @@ class TerminologyPopupTreeView(TreeView):
     def create_popup_menu_del_item(self, obj):
         return self.create_menu_item("Delete %s" % repr(obj), self.on_delete, obj)
 
-    def create_menu_item(self, name, func, data):
+    def create_menu_item(self, name, func=None, data=None, stock=False):
         """
         Creates a single menu item
         """
-        item = gtk.MenuItem(name)
-        item.connect('activate', func, data)
+        if stock:
+            item = gtk.ImageMenuItem(name)
+        else:
+            item = gtk.MenuItem(name)
+        if func is not None:
+            item.connect('activate', func, data)
         item.show()
         return item
 
-    def create_popup_menu_items(self, add_name, empty_name, obj, func, terminology_func, name_func):
+    def create_popup_menu_items(self, add_name, empty_name, obj, func, terminology_func, name_func, stock=False):
         """
         create menu items for a popup menu
 
@@ -164,8 +168,7 @@ class TerminologyPopupTreeView(TreeView):
 
         returns an array of gtk.MenuItem
         """
-        add_section = gtk.MenuItem(add_name)
-        add_section.show()
+        add_section = self.create_menu_item(add_name, stock=stock)
 
         terms = self.get_terminology_suggestions(obj, terminology_func)
         if len(terms) == 0:

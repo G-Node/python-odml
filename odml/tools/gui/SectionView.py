@@ -121,7 +121,7 @@ class SectionView(TerminologyPopupTreeView):
         original_object = obj
         if obj is None:
             obj = model.document
-        menu_items = self.create_popup_menu_items("Add Section", "Empty Section", obj, self.add_section, lambda sec: sec.sections, lambda sec: "%s [%s]" % (sec.name, sec.type))
+        menu_items = self.create_popup_menu_items("odml-add-Section", "Empty Section", obj, self.add_section, lambda sec: sec.sections, lambda sec: "%s [%s]" % (sec.name, sec.type), stock=True)
         if original_object is not None:
             menu_items.append(self.create_popup_menu_del_item(original_object))
             if original_object.is_merged:
