@@ -40,6 +40,20 @@ class TreeView(object):
         self._treeview.append_column(column)
         return column
 
+
+    def get_selected_object(self):
+        """
+        return the currently selected object
+
+        retrieve the selection from the treeview
+        and ask its model to get the object for the selected
+        tree_iter
+        """
+        (model, tree_iter) = self._treeview.get_selection().get_selected()
+        if tree_iter is None:
+            return None
+        return model.get_object(tree_iter)
+
     def get_popup_menu(self):
         return None
 

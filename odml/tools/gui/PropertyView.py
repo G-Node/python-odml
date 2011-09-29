@@ -41,6 +41,9 @@ class PropertyView(TreeView):
         self._fmt   = obj._format
         self.fill()
 
+    def get_model(self):
+        return self._model
+
     def fill(self):
         self._store.clear()
 

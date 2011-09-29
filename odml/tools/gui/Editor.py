@@ -30,7 +30,22 @@ ui_info = \
       <menuitem action='OpenRecent' />
       <menuitem name='Save' action='Save' />
       <separator/>
+      <menuitem action='CloseTab'/>
+      <menuitem action='Close'/>
       <menuitem action='Quit'/>
+    </menu>
+    <menu name='EditMenu' action='EditMenu'>
+      <menuitem action='Undo'/>
+      <menuitem action='Redo'/>
+      <separator/>
+      <menu name='AddMenu' action='AddMenu'>
+          <menuitem action='NewSection'/>
+          <menuitem action='NewProperty'/>
+          <menuitem action='NewValue'/>
+      </menu>
+      <separator/>
+      <menuitem action='CloneTab'/>
+      <menuitem action='Map'/>
     </menu>
     <menu action='HelpMenu'>
       <menuitem action='VisitHP'/>
@@ -44,6 +59,10 @@ ui_info = \
     <toolitem name='Save' action='Save' />
     <toolitem name='Undo' action='Undo' />
     <toolitem name='Redo' action='Redo' />
+    <toolitem action='NewSection'/>
+    <toolitem action='NewProperty'/>
+    <toolitem action='NewValue'/>
+    <toolitem action='Map' />
   </toolbar>
 </ui>'''
 
@@ -64,23 +83,40 @@ License along with the Gnome Library; see the file COPYING.LIB.  If not,
 write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.\n'''
 
+def gui_action(name, tooltip=None, stock_id=None, label=None, accelerator=None):
+    """
+    function decorator indicating and providing info for a gui Action
+    """
+    def func(f):
+        f.name = name
+        f.tooltip = tooltip
+        f.stock_id = stock_id
+        f.label = label
+        f.accelerator = accelerator
+        return f
+    return func
+
 class EditorWindow(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
+    editors = set()
 
     def __init__(self, parent=None):
         gtk.Window.__init__(self)
+        self.editors.add(self)
         try:
             self.set_screen(parent.get_screen())
         except AttributeError:
-            self.connect('delete-event', self.quit)
+            self.connect('delete-event', self.close)
 
         self.set_title("odML Editor")
         self.set_default_size(800, 600)
 
-        icons = load_icon_pixbufs()
+        icons = load_icon_pixbufs("odml-logo")
         self.set_icon_list(*icons)
 
         merge = gtk.UIManager()
+        merge.connect('connect-proxy', self.on_uimanager__connect_proxy)
+        merge.connect('disconnect-proxy', self.on_uimanager__disconnect_proxy)
         self.set_data("ui-manager", merge)
         merge.insert_action_group(self.__create_action_group(), 0)
         self.add_accel_group(merge.get_accel_group())
@@ -225,44 +261,40 @@ class EditorWindow(gtk.Window):
         t.show()
         return t
 
+    def on_menu_item__select(self, menuitem, tooltip):
+        print "set", tooltip
+        self._statusbar.push(-1, tooltip)
+
+    def on_menu_item__deselect(self, menuitem, tooltip):
+        self._statusbar.pop()
+
+    def on_uimanager__connect_proxy(self, uimgr, action, widget):
+        # TODO this does not work on unity at least
+        tooltip = action.get_property('tooltip')
+        if isinstance(widget, gtk.MenuItem) and tooltip:
+            cid = widget.connect(
+             'select', self.on_menu_item__select, tooltip)
+            cid2 = widget.connect(
+             'deselect', self.on_menu_item__deselect)
+            widget.set_data('app::connect-ids', (cid, cid2))
+
+    def on_uimanager__disconnect_proxy(self, uimgr, action, widget):
+        cids = widget.get_data('app::connect-ids') or ()
+        for cid in cids:
+            widget.disconnect(cid)
+
     def __create_action_group(self):
-        entries = (
+        entries = [
               ( "FileMenu", None, "_File" ),               # name, stock id, label */
-              ( "OpenMenu", None, "_Open" ),               # name, stock id, label */
-              ( "HelpMenu", None, "_Help" ),               # name, stock id, label */
-              ( "NewFile", gtk.STOCK_NEW,                  # name, stock id */
-                "_New", "<control>N",                      # label, accelerator */
-                "Create a new document",                   # tooltip */
-                self.new_file ),
-              ( "FileOpen", gtk.STOCK_OPEN,                # name, stock id */
-                "_Open", None,                             # label, accelerator */
-                "Open a File",                             # tooltip */
-                self.open_file ),
-              ( "Save", gtk.STOCK_SAVE,                    # name, stock id */
-                "_Save", None,                             # label, accelerator */
-                "Save the current file",                   # tooltip */
-                self.save ),
-              ( "Quit", gtk.STOCK_QUIT,                    # name, stock id */
-                "_Quit", "<control>Q",                     # label, accelerator */
-                "Quit",                                    # tooltip */
-                self.quit ),
-              ( "Undo", gtk.STOCK_UNDO,                    # name, stock id */
-                "_Undo", "<control>Z",                     # label, accelerator */
-                "Undo last editing action",                # tooltip */
-                self.undo ),
-              ( "Redo", gtk.STOCK_REDO,                    # name, stock id */
-                "_Redo", "<control>Y",                     # label, accelerator */
-                "Redo an undone editing action",           # tooltip */
-                self.redo ),
-              ( "About", None,                             # name, stock id */
-                "_About", "",                    # label, accelerator */
-                "About",                                   # tooltip */
-                self.activate_action ),
-              ( "VisitHP", None,                           # name, stock id */
-                "Visit Homepage", "",                      # label, accelerator */
-                "Go to the odML Homepage",                 # tooltip */
-                self.on_visit_homepage ),
-              )
+              ( "EditMenu", None, "_Edit" ),               # name, stock id, label */
+              ( "AddMenu",  gtk.STOCK_ADD),                # name, stock id, label */
+              ( "HelpMenu", gtk.STOCK_HELP),               # name, stock id, label */
+              ]
+        for (k, v) in self.__class__.__dict__.iteritems():
+            if hasattr(v, "stock_id"):
+                entries.append(
+                    (v.name, v.stock_id, v.label, v.accelerator,
+                     v.tooltip, getattr(self, k)))
 
         recent_action = gtk.RecentAction ("OpenRecent",
                                           "Open Recent",
@@ -283,7 +315,8 @@ class EditorWindow(gtk.Window):
         action_group.add_action(recent_action)
         return action_group
 
-    def activate_action(self, action):
+    @gui_action("About", stock_id=gtk.STOCK_INFO)
+    def about(self, action):
         logo = self.render_icon("odml-logo", gtk.ICON_SIZE_DIALOG)
 
         dialog = gtk.AboutDialog()
@@ -293,7 +326,7 @@ class EditorWindow(gtk.Window):
             "Christian Kellner <kellner@bio.lmu.de>",
             "Hagen Fritsch <fritsch+odml@in.tum.de>",
             ])
-        dialog.set_website(Editor.odMLHomepage)
+        dialog.set_website(self.odMLHomepage)
         dialog.set_license (license_lgpl)
         dialog.set_logo(logo)
 
@@ -302,6 +335,7 @@ class EditorWindow(gtk.Window):
         dialog.connect("response", lambda d, r: d.destroy())
         dialog.show()
 
+    @gui_action("NewFile", tooltip="Create a new document", stock_id=gtk.STOCK_NEW)
     def new_file(self, action=None):
         """open a new tab with an empty document"""
         tab = EditorTab(self)
@@ -309,6 +343,7 @@ class EditorWindow(gtk.Window):
         self.append_tab(tab)
         return tab
 
+    @gui_action("FileOpen", stock_id=gtk.STOCK_OPEN)
     def load_document(self, uri):
         """open a new tab, load the document into it"""
         tab = EditorTab(self)
@@ -316,6 +351,7 @@ class EditorWindow(gtk.Window):
         self.append_tab(tab)
         return tab
 
+    @gui_action("CloneTab", tooltip="Create a copy of the current tab", label="_Clone")
     def clone_tab(self, tab, document=None):
         ntab = EditorTab(self, tab.command_manager)
         ntab.document = tab.document if document is None else document
@@ -323,6 +359,8 @@ class EditorWindow(gtk.Window):
         self.append_tab(ntab)
         return ntab
 
+    @gui_action("Map", tooltip="Create a new tab with the mappings of the current document",
+                label="_Map Document", accelerator="<control>M")
     def map_tab(self, tab):
         mapdoc = mapping.create_mapping(tab.document)
         ntab = self.clone_tab(tab, mapdoc)
@@ -380,7 +418,9 @@ class EditorWindow(gtk.Window):
             if child.tab is tab:
                 return i
 
-    def mk_tab_label(self, title, tab):
+    def mk_tab_label(self, tab):
+
+        title = os.path.basename(str(tab.file_uri))
         #hbox will be used to store a label and button, as notebook tab title
         hbox = gtk.HBox(False, 0)
         label = gtk.Label(title)
@@ -414,25 +454,31 @@ class EditorWindow(gtk.Window):
         has not been edited
         """
         child = self.mktab(tab)
-        self.notebook.append_page(child, self.mk_tab_label(str(tab.file_uri), tab))
+        self.notebook.append_page(child, self.mk_tab_label(tab))
         self.notebook.set_tab_reorderable(child, True)
         self.notebook.set_tab_detachable(child, True)
         self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
 
-    def close_tab(self, tab, save=True):
+    def close_tab(self, tab, save=True, create_new=True):
         """
         try to save and then remove the tab from our tab list
         and remove the tab from the Notebook widget
+
+        if *save* is true, the tab will only be closed upon successful save
+
+        if *create_new* is true, a new empty document will be created
+        after the last tab was closed
         """
         if save and not tab.save_if_changed():
-            return # action canceled
+            return False
 
         idx = self.get_notebook_page(tab)
-        if self.notebook.get_n_pages() == 1:
+        if create_new and self.notebook.get_n_pages() == 1:
             tab = self.new_file() # open a new tab already, so we never get empty
 
         self.notebook.remove_page(idx)
         self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
+        return True
 
     def on_tab_select(self, notebook, page, pagenum):
         """
@@ -470,6 +516,7 @@ class EditorWindow(gtk.Window):
         """called to show the open file dialog"""
         self.chooser_dialog(title="Open Document", callback=self.load_document)
 
+    # TODO gui action?
     def open_recent(self, recent_action):
         uri = recent_action.get_current_uri ()
         self.load_document(uri)
@@ -493,6 +540,7 @@ class EditorWindow(gtk.Window):
         # self._property_tv.set_model()
         # TODO restore selection/expansion if known in tab
 
+    @gui_action("Save", stock_id=gtk.STOCK_SAVE)
     def save(self, action):
         """
         called upon save_file action
@@ -526,18 +574,66 @@ class EditorWindow(gtk.Window):
             if not child.tab.save_if_changed(): return False
         return True
 
+    @gui_action("CloseTab", tooltip="Close the current tab", stock_id=gtk.STOCK_CLOSE, label="_Close Tab", accelerator="<control>W")
+    def on_close_tab(self, action):
+        self.close_tab(self.current_tab)
+
+    @gui_action("Close", tooltip="Close the current window", stock_id=gtk.STOCK_CLOSE, label="Close _Window", accelerator="<control><shift>W")
+    def close(self, action, extra=None):
+        if self.save_if_changed():
+            self.destroy()
+        return True
+
+    def destroy(self):
+        """
+        destroy the window and quit the app if no further odml windows
+        are left
+        """
+        super(EditorWindow, self).destroy()
+        if self in self.editors:
+            self.editors.remove(self)
+        if len(self.editors) == 0:
+            gtk.main_quit()
+
+    @gui_action("Quit", stock_id=gtk.STOCK_QUIT)
     def quit(self, action, extra=None):
-        if not self.save_if_changed(): return True # the event is handled and
+        for win in self.editors:
+            if not win.save_if_changed(): return True # the event is handled and
                                                    # won't be passed to the window
         gtk.main_quit()
+
+    @gui_action("NewSection", tooltip="Add a section to the current selected one",
+        stock_id="odml-add-Section", label="_Section", accelerator="<control><shift>S")
+    def new_section(self, action):
+        obj = self._section_tv.get_selected_object()
+        self._section_tv.add_section(None, (obj, None))
+
+    @gui_action("NewProperty", tooltip="Add a property to the current section",
+        stock_id="odml-add-Property", label="_Property", accelerator="<control><shift>P")
+    def new_property(self, action):
+        obj = self._property_tv.section
+        self._property_tv.add_property(None, (obj, None))
+
+    @gui_action("NewValue", tooltip="Add a value to the current selected property",
+        stock_id="odml-add-Value", label="_Value", accelerator="<control><shift>V")
+    def new_value(self, action):
+        obj = self._property_tv.get_selected_object()
+        if isinstance(obj, odml.value.Value):
+            obj = obj.parent
+        self._property_tv.add_value(None, (obj, None))
 
     # TODO should we save a navigation history here?
     def on_section_change(self, section):
         self._property_tv.section = section
-        self.set_navigation_object(section)
+        self.on_object_select(section)
 
     def on_object_select(self, obj):
         """an object has been selected, now fix the current property_view"""
+        for name, tv in ( \
+            #("NewSection", self._section_tv),
+            ("NewProperty", self._section_tv),
+            ("NewValue", self._property_tv)):
+            self.enable_action(name, tv._treeview.get_selection().count_selected_rows() > 0)
         self.set_navigation_object(obj)
 
     def set_navigation_object(self, obj):
@@ -562,9 +658,10 @@ class EditorWindow(gtk.Window):
             timestamp = gtk.get_current_event_time()
         gtk.show_uri(self.get_screen(), uri, timestamp)
 
+    @gui_action("VisitHP", tooltip="Go to the odML Homepage", label="Visit Homepage")
     def on_visit_homepage(self, action):
         timestamp = None
-        self.visit_uri(Editor.odMLHomepage, timestamp)
+        self.visit_uri(self.odMLHomepage, timestamp)
 
     def enable_action(self, action_name, enable):
         self.editor_actions.get_action(action_name).set_sensitive(enable)
@@ -575,9 +672,11 @@ class EditorWindow(gtk.Window):
     def enable_redo(self, enable=True):
         self.enable_action("Redo", enable)
 
+    @gui_action("Undo", tooltip="Undo last editing action", stock_id=gtk.STOCK_UNDO, label="_Undo", accelerator="<control>Z")
     def undo(self, action):
         self.current_tab.command_manager.undo()
 
+    @gui_action("Redo", tooltip="Redo an undone editing action", stock_id=gtk.STOCK_REDO, label="_Redo", accelerator="<control>Y")
     def redo(self, action):
         self.current_tab.command_manager.redo()
 
@@ -600,7 +699,11 @@ def get_image_path():
     return path
 
 def register_stock_icons():
-    icons = [('odml-logo', '_odML', 0, 0, '')]
+    icons = [('odml-logo', '_odML', 0, 0, ''),
+             ('odml-add-Section', 'Add _Section', 0, 0, ''),
+             ('odml-add-Property', 'Add Property', 0, 0, ''),
+             ('odml-add-Value', 'Add _Value', 0, 0, ''),
+             ]
     gtk.stock_add(icons)
 
     # Add our custom icon factory to the list of defaults
@@ -608,22 +711,23 @@ def register_stock_icons():
     factory.add_default()
 
     img_dir = get_image_path()
-    img_path = os.path.join(img_dir, 'odMLIcon.png')
+    for stock_icon in icons:
+        icon_name = stock_icon[0]
+        img_path = os.path.join(img_dir, "%s.png" % icon_name)
 
-    try:
-        pixbuf = gtk.gdk.pixbuf_new_from_file(img_path)
-        icon = pixbuf.add_alpha(False, chr(255), chr(255),chr(255))
-        icon_set = gtk.IconSet(icon)
+        try:
+            icon = load_pixbuf(img_path)
+            icon_set = gtk.IconSet(icon)
 
-        for icon in load_icon_pixbufs():
-            src = gtk.IconSource()
-            src.set_pixbuf (icon)
-            icon_set.add_source(src)
+            for icon in load_icon_pixbufs(icon_name):
+                src = gtk.IconSource()
+                src.set_pixbuf(icon)
+                icon_set.add_source(src)
 
-        factory.add('odml-logo', icon_set)
+            factory.add(icon_name, icon_set)
 
-    except gobject.GError, error:
-        print 'failed to load GTK logo for toolbar', error
+        except gobject.GError, error:
+            print 'failed to load icon', icon_name, error
 
 def load_pixbuf(path):
     try:
@@ -633,13 +737,13 @@ def load_pixbuf(path):
     except:
         return None
 
-def load_icon_pixbufs():
+def load_icon_pixbufs(prefix):
     icons = []
     img_dir = get_image_path()
     files = os.listdir (img_dir)
     for f in files:
-        if f.startswith("odMLIcon"):
-            abs_path = os.path.join (img_dir, f)
+        if f.startswith(prefix):
+            abs_path = os.path.join(img_dir, f)
             icon = load_pixbuf(abs_path)
             if icon:
                 icons.append(icon)
