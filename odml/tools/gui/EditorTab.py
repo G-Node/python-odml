@@ -1,5 +1,6 @@
 import gtk
 import gio
+import os.path
 
 import odml
 from odml.tools.xmlparser import XMLWriter, XMLReader
@@ -22,6 +23,7 @@ class EditorTab(object):
         self.command_manager = cmdm
         self.document = None
         self.window = window
+        self._clones = [self]
 
     def new(self):
         """
@@ -94,9 +96,64 @@ class EditorTab(object):
         return True # TODO return false on any error and notify the user
 
     def enable_undo(self, enable=True):
+        for tab in self._clones:
+            tab._enable_undo(enable)
+
+    def _enable_undo(self, enable):
         if self.window.current_tab is self:
             self.window.enable_undo(enable)
 
     def enable_redo(self, enable=True):
+        for tab in self._clones:
+            tab._enable_redo(enable)
+
+    def _enable_redo(self, enable=True):
         if self.window.current_tab is self:
             self.window.enable_redo(enable)
+
+    def clone(self, klass=None):
+        if klass is None: klass = self.__class__
+        ntab = klass(self.window, self.command_manager)
+        self._clones.append(ntab)
+        ntab._clones = self._clones
+        ntab.file_uri = self.file_uri
+        ntab.document = self.document
+        return ntab
+
+    def clone_mapping(self):
+        """
+        create a mapped clone of this tab
+
+        if there is a mapped clone already for this document
+        find it and return its clone
+
+        otherwise clone this tab and replace its document
+        with the mapping
+        """
+        for tab in self._clones:
+            if isinstance(tab, MappingEditorTab):
+                return tab.clone()
+
+        mapdoc = odml.mapping.create_mapping(tab.document)
+        ntab = self.clone(MappingEditorTab)
+        ntab.document = mapdoc
+        return ntab
+
+    def get_name(self):
+        return os.path.basename(str(self.file_uri))
+
+    def close(self):
+        """
+        any cleanup?
+        """
+        self._clones.remove(self)
+
+class MappingEditorTab(EditorTab):
+    def close(self):
+        super(MappingEditorTab, self).close()
+        if not filter(lambda x: isinstance(x, MappingEditorTab), self._clones):
+            # no more mappings present, go unmap
+            odml.mapping.unmap_document(self.document._proxy_obj)
+
+    def get_name(self):
+        return "map: %s" % super(MappingEditorTab, self).get_name()

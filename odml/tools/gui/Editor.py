@@ -354,14 +354,12 @@ class EditorWindow(gtk.Window):
         self.append_tab(tab)
         return tab
 
-    @gui_action("CloneTab", tooltip="Create a copy of the current tab", label="_Clone", stock_id=gtk.STOCK_COPY)
+    @gui_action("CloneTab", tooltip="Create a copy of the current tab", label="_Clone", stock_id=gtk.STOCK_COPY, accelerator="<control><shift>C")
     def on_clone_tab(self, action):
         self.clone_tab(self.current_tab)
 
-    def clone_tab(self, tab, document=None):
-        ntab = EditorTab(self, tab.command_manager)
-        ntab.document = tab.document if document is None else document
-        ntab.file_uri = tab.file_uri
+    def clone_tab(self, tab):
+        ntab = tab.clone()
         self.append_tab(ntab)
         return ntab
 
@@ -371,9 +369,8 @@ class EditorWindow(gtk.Window):
         self.map_tab(self.current_tab)
 
     def map_tab(self, tab):
-        mapdoc = odml.mapping.create_mapping(tab.document)
-        ntab = self.clone_tab(tab, mapdoc)
-        ntab.file_uri += ".mapped.odml"
+        ntab = tab.clone_mapping()
+        self.append_tab(ntab)
         return ntab
 
     def select_tab(self, tab, force_reset=False):
@@ -428,11 +425,9 @@ class EditorWindow(gtk.Window):
                 return i
 
     def mk_tab_label(self, tab):
-
-        title = os.path.basename(str(tab.file_uri))
         #hbox will be used to store a label and button, as notebook tab title
         hbox = gtk.HBox(False, 0)
-        label = gtk.Label(title)
+        label = gtk.Label(tab.get_name())
         hbox.pack_start(label)
 
         #get a stock close button image
@@ -468,7 +463,7 @@ class EditorWindow(gtk.Window):
         self.notebook.set_tab_detachable(child, True)
         self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
 
-    def close_tab(self, tab, save=True, create_new=True):
+    def close_tab(self, tab, save=True, create_new=True, close=True):
         """
         try to save and then remove the tab from our tab list
         and remove the tab from the Notebook widget
@@ -477,15 +472,21 @@ class EditorWindow(gtk.Window):
 
         if *create_new* is true, a new empty document will be created
         after the last tab was closed
+
+        if *close* is True, call close() on the tab. We don't want to do
+        that, if we move the tab somewhere else, but close it here.
         """
         if save and not tab.save_if_changed():
             return False
 
         idx = self.get_notebook_page(tab)
+
         if create_new and self.notebook.get_n_pages() == 1:
-            tab = self.new_file() # open a new tab already, so we never get empty
+            self.new_file() # open a new tab already, so we never get empty
 
         self.notebook.remove_page(idx)
+        if close:
+            tab.close()
         self.notebook.set_show_tabs(self.notebook.get_n_pages() > 1)
         return True
 
@@ -513,7 +514,7 @@ class EditorWindow(gtk.Window):
         tab.window = editor
         editor.append_tab(tab)
         editor.set_tab_state(state)
-        self.close_tab(tab, save=False)
+        self.close_tab(tab, save=False, close=False)
         return True
 
     def chooser_dialog(self, title, callback, save=False):
