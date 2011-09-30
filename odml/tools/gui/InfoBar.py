@@ -22,15 +22,15 @@ class EditorInfoBar(gtk.InfoBar):
         self._msg_label.set_text (text)
         self.set_message_type (gtk.MESSAGE_INFO)
         self.show ()
-        self.add_timer()
+        self.add_timer(int(3. * len(text) / 60))
 
     def show_question(self, text, resp):
         self._msg_label.set_text (text)
         self.set_message_type (gtk.MESSAGE_QUESTION)
         self.show ()
 
-    def add_timer(self):
-        self._timerid = gobject.timeout_add_seconds (3, self.on_timer)
+    def add_timer(self, seconds=3):
+        self._timerid = gobject.timeout_add_seconds(seconds, self.on_timer)
 
     def on_timer(self):
         self.hide()
