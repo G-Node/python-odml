@@ -107,8 +107,12 @@ class SectionModel(TreeModel):
         if context.action == "set" and context.postChange:
             path = self.get_node_path(context.obj)
             if not path: return # probably the section changed
-            iter = self.get_iter(path)
-            self.row_changed(path, iter)
+            try:
+                iter = self.get_iter(path)
+                self.row_changed(path, iter)
+            except ValueError, e: # an invalid tree path, that should never have reached us
+                print repr(e)
+                print context.dump()
 
         # there was some reason we did this, however context.obj can
         # also be a property of the current section

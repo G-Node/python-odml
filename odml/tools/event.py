@@ -138,6 +138,9 @@ class ChangeContext(object):
         if self.postChange: v = "Post"
         return "<%sChange %s.%s(%s)>" % (v, repr(self.obj), self.action, repr(self.val))
 
+    def dump(self):
+        return repr(self) + "\nObject stack:\n\t" + "\n\t".join(map(repr, self._obj))
+
 class ChangedEvent(object):
     def __init__(self):
         pass
