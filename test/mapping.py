@@ -352,5 +352,49 @@ s3[T3]
         """)
         self.check(src, dst)
 
+    def test_editing(self):
+        self.map_rule4()
+        src = parse("""
+        s1[t1]
+        - p2 mapping [T2:P1]
+        s2[t2] mapping [T2]
+        """)
+
+        src['s1'].properties['p2'].mapping = 'map#T3:P1'
+        dst = parse("""
+        s1[t1]
+        - S3[T3]
+          - P1
+        s2[T2]
+        """)
+        self.check(src, dst)
+
+        src['s1'].properties['p2'].mapping = 'map#T2:P1'
+        dst = parse("""
+        s1[t1]
+        s2[T2]
+        - P1
+        """)
+        self.check(src, dst)
+
+        with self.assertRaises(mapping.MappingError):
+            src['s2'].mapping = 'map#T3'
+
+        src['s1'].properties['p2'].mapping = ''
+        dst = parse("""
+        s1[t1]
+        - p2
+        s2[T2]
+        """)
+        self.check(src, dst)
+
+        src['s1'].mapping = 'map#T1'
+        dst = parse("""
+        s1[T1]
+        - p2
+        s2[T2]
+        """)
+        self.check(src, dst)
+
 if __name__ == '__main__':
     unittest.main()

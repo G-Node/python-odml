@@ -8,7 +8,7 @@ import odml
 class Property(base._baseobj):
     pass
 
-class BaseProperty(base.baseobject, mapping.mapable, Property):
+class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     """An odML Property"""
     _format = format.Property
 

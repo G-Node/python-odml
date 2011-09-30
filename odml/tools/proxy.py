@@ -273,7 +273,26 @@ class ReadOnlySection(SectionProxy, ReadOnlyObject):
         raise TypeError("Cannot insert into a proxy section")
 
     def remove(self, obj):
-        raise TypeError("Cannot remove from a proxy section")
+        if self.enable_protection:
+            raise TypeError("Cannot remove from a proxy section")
+        super(SectionProxy, self).remove(obj)
+
+    def remove_proxy(self, obj):
+        """
+        explicitly remove a proxy object without side-effects
+        """
+        assert isinstance(obj, Proxy)
+        super(ReadOnlySection, self).remove(obj)
+
+    def _unprotected(self, func):
+        """
+        briefly disable write protection for the execution
+        of *func*
+        """
+        p = self.enable_protection
+        self.enable_protection = False
+        func()
+        self.enable_protection = p
 
 class NonexistantSection(ReadOnlySection):
     def append(self, obj):
@@ -283,15 +302,40 @@ class NonexistantSection(ReadOnlySection):
         else:
             super(NonexistantSection, self).append(obj)
 
+    def remove(self, obj):
+        # also allow to remove proxy objects
+        # unmap the original property and then remove it
+        if not isinstance(obj, PropertyProxy):
+            return super(NonexistantSection, self).remove(obj)
+
+        raise NotImplementedError("""
+        we could do this, but this would break undo functionality, so
+        better remove the original property from its parent section
+        """)
+        # prop = obj._proxy_obj
+        # mapping.unmap_property(prop=prop, mprop=obj)
+        # prop.parent.remove(prop)
+
+    def merge(self, section=None):
+        self._unprotected(lambda: super(NonexistantSection, self).merge(section))
+
+    def unmerge(self, section):
+        self._unprotected(lambda: super(NonexistantSection, self).unmerge(section))
+
     def __repr__(self):
         return super(NonexistantSection, self).__repr__().replace("<Section", "<?Section")
+
+class DocumentProxy(odml.getImplementation().Document, Proxy):
+    # TODO this needs to proxy stuff too
+    def remove_proxy(self, obj):
+        self.remove(obj)
 
 class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
     """
     Like a fake section, but we reference a concrete section
     and forward changes to it
     """
-    hooks = set(["name", "repository"])
+    hooks = set(["name"])
 
     def __init__(self, obj, template=None):
         super(MappedSection, self).__init__(obj)
@@ -333,7 +377,7 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
         # use the normal append method of Section
         super(SectionProxy, self).append(obj)
 
-    # won't support insert. its crazy
+    # won't support insert. it'd be crazy
 
     def remove(self, obj):
         if not isinstance(obj, Proxy):

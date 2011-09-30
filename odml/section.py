@@ -9,7 +9,7 @@ from property import Property # this is supposedly ok, as we only use it for an 
 class Section(base._baseobj):
     pass
 
-class BaseSection(base.sectionable, mapping.mapable, Section):
+class BaseSection(base.sectionable, mapping.mapableSection, Section):
     """A odML Section"""
     type       = None
     id         = None
@@ -141,6 +141,12 @@ class BaseSection(base.sectionable, mapping.mapable, Section):
             return self.parent.get_repository()
         return super(BaseSection, self).repository
 
+    @base.sectionable.repository.setter
+    def repository(self, url):
+        if self._active_mapping is not None:
+            raise ValueError("cannot edit repsitory while a mapping is active")
+        base.sectionable.repository.fset(self, url)
+
     def get_terminology_equivalent(self):
         repo = self.get_repository()
         if repo is None: return None
@@ -184,6 +190,7 @@ class BaseSection(base.sectionable, mapping.mapable, Section):
         elif isinstance(obj, Property):
             self._props.remove(obj)
             obj._section = None
+            # also: TODO unmap the property
         else:
             raise ValueError, "Can only remove sections and properties"
 
