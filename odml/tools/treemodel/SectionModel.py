@@ -2,6 +2,7 @@ import gtk, gobject
 from TreeIters import PropIter, ValueIter
 from TreeModel import TreeModel, ColumnMapper
 import sys
+import odml
 from ... import value, property as odmlproperty
 debug = lambda x: sys.stderr.write(x+"\n")
 debug = lambda x: 0
@@ -74,13 +75,12 @@ class SectionModel(TreeModel):
 
     def post_delete(self, parent, old_path):
         super(SectionModel, self).post_delete(parent, old_path)
-        if isinstance(parent, odmlproperty.BaseProperty):
+        if isinstance(parent, odmlproperty.Property):
             # a value was deleted
             if len(parent) == 1:
                 # the last child row is also not present anymore,
                 # the value is now displayed inline
                 path = self.get_node_path(parent)
-                print "row deleted", path + (0,)
                 self.row_deleted(path + (0,)) # first child
                 self.row_has_child_toggled(path, self.get_iter(path))
 
@@ -101,15 +101,18 @@ class SectionModel(TreeModel):
         # we are only interested in changes going up to the section level,
         # but not those dealing with subsections of ours
         if not context.cur is self._section or \
-                isinstance(context.val, self._section.__class__):
+                isinstance(context.val, odml.section.Section):
             return
 
         if context.action == "set" and context.postChange:
             path = self.get_node_path(context.obj)
-            print "set path", path
             if not path: return # probably the section changed
-            iter = self.get_iter(path)
-            self.row_changed(path, iter)
+            try:
+                iter = self.get_iter(path)
+                self.row_changed(path, iter)
+            except ValueError, e: # an invalid tree path, that should never have reached us
+                print repr(e)
+                print context.dump()
 
         # there was some reason we did this, however context.obj can
         # also be a property of the current section
@@ -125,6 +128,8 @@ class SectionModel(TreeModel):
     def destroy(self):
         self._section.remove_change_handler(self.on_section_changed)
 
+    def __repr__(self):
+        return "<SectionModel of %s>" % (self.section)
 
     @property
     def section(self):

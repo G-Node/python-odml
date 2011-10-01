@@ -2,7 +2,10 @@ import types
 import base
 import format
 
-class Value(base.baseobject):
+class Value(base._baseobj):
+    pass
+
+class BaseValue(base.baseobject, Value):
     """
     An odML value
 
@@ -77,6 +80,10 @@ class Value(base.baseobject):
         if self._dtype:
             return "<%s %s>" % (str(self._dtype), str(self._value))
         return "<%s>" % str(self._value)
+
+    @property
+    def parent(self):
+        return self._property
 
     @property
     def data(self):
@@ -252,5 +259,3 @@ class Value(base.baseobject):
             if val == self:
                 return val
         return None
-
-BaseValue = Value

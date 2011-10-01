@@ -166,13 +166,15 @@ class TreeModel(gtk.GenericTreeModel):
         occured changes. Be sure to call this method for both preChange
         and postChange events.
         """
+        if not hasattr(context, "path"):
+            context.path = {}
+            context.parent = {}
         if context.preChange:
-            context.path = self.get_node_path(context.val)
-            context.parent = context.val.parent
+            context.path[self] = self.get_node_path(context.val)
+            context.parent[self] = context.val.parent
         if context.postChange:
-            if hasattr(context, "path"):
-                print "row deleted", context.path
-                self.post_delete(context.parent, context.path)
+            path = context.path[self]
+            self.post_delete(context.parent[self], path)
 
     def event_insert(self, context):
         """

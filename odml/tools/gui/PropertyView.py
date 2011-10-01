@@ -41,6 +41,9 @@ class PropertyView(TreeView):
         self._fmt   = obj._format
         self.fill()
 
+    def get_model(self):
+        return self._model
+
     def fill(self):
         self._store.clear()
 
@@ -52,7 +55,6 @@ class PropertyView(TreeView):
                 self._store.append([k, v])
 
     def on_edited(self, widget, row, new_value, col):
-        print "edit:", widget, row, col, new_value
         store = self._store
         iter = store.get_iter(row)
         k = store.get_value(iter, COL_KEY)

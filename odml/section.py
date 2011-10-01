@@ -2,26 +2,31 @@
 import base
 import format
 import terminology
+import mapping
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
 
-class Section(base.sectionable):
+class Section(base._baseobj):
+    pass
+
+class BaseSection(base.sectionable, mapping.mapableSection, Section):
     """A odML Section"""
     type       = None
     id         = None
     _link      = None
     _include    = None
-    mapping    = None
+    _mapping    = None
     reference  = None # the *import* property
 
     _merged = None
 
     _format = format.Section
 
-    def __init__(self, name, type="undefined", parent=None):
+    def __init__(self, name, type="undefined", parent=None, mapping=None):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
+        self._mapping = mapping
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
         self.type = type
@@ -132,9 +137,15 @@ class Section(base.sectionable):
         which might not be the *repository* attribute, but may
         be inherited from a parent section / the document
         """
-        if self._repository is None:
+        if self._repository is None and self.parent is not None:
             return self.parent.get_repository()
         return super(BaseSection, self).repository
+
+    @base.sectionable.repository.setter
+    def repository(self, url):
+        if self._active_mapping is not None:
+            raise ValueError("cannot edit repsitory while a mapping is active")
+        base.sectionable.repository.fset(self, url)
 
     def get_terminology_equivalent(self):
         repo = self.get_repository()
@@ -158,7 +169,7 @@ class Section(base.sectionable):
             self._props.append(obj)
             obj._section = self
         else:
-            raise ValueError, "Can only append sections and properties"
+            raise ValueError("Can only append sections and properties")
 
 
     def insert(self, position, obj):
@@ -170,7 +181,7 @@ class Section(base.sectionable):
             self._props.insert(position, obj)
             obj._section = self
         else:
-            raise ValueError, "Can only insert sections and properties"
+            raise ValueError("Can only insert sections and properties")
 
     def remove(self, obj):
         if isinstance(obj, Section): # TODO make sure this is not compare based
@@ -179,6 +190,7 @@ class Section(base.sectionable):
         elif isinstance(obj, Property):
             self._props.remove(obj)
             obj._section = None
+            # also: TODO unmap the property
         else:
             raise ValueError, "Can only remove sections and properties"
 
@@ -290,5 +302,3 @@ class Section(base.sectionable):
     @property
     def can_be_merged(self):
         return self._link is not None or self._include is not None
-
-BaseSection = Section

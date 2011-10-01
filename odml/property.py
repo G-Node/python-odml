@@ -1,9 +1,14 @@
 #-*- coding: utf-8
 import base
 import format
+import mapping
 import value as odml_value
+import odml
 
-class Property(base.baseobject):
+class Property(base._baseobj):
+    pass
+
+class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     """An odML Property"""
     _format = format.Property
 
@@ -39,17 +44,17 @@ class Property(base.baseobject):
         #TODO validate arguments
         self._name = name
         self._section = section
-        self._values = base.SafeList()
+        self._reset_values()
 
         self.definition = definition
         self.dependency = dependency
         self.dependencyValue = dependencyValue
-        self.mapping = mapping
+        self._mapping = mapping
 
         if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
-                    v = odml_value.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
+                    v = odml.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
                 self.append(v)
         elif not value is None:
             self.append(value)
@@ -74,6 +79,10 @@ class Property(base.baseobject):
     #
     #  properties
     @property
+    def parent(self):
+        return self._section
+
+    @property
     def values(self):
         """returns the list of values for this property"""
         return self._values
@@ -81,7 +90,7 @@ class Property(base.baseobject):
     @values.setter
     def values(self, new_values):
         # TODO for consistency this actually needs to manually remove each existing value
-        self._values = base.SafeList()
+        self._reset_values()
         for i in new_values:
             self.append(i)
 
@@ -99,7 +108,7 @@ class Property(base.baseobject):
 
     @value.setter
     def value(self, new_value):
-        self._values = base.SafeList()
+        self._reset_values()
         self.append(new_value)
 
     def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
@@ -119,7 +128,7 @@ class Property(base.baseobject):
                 if unit is None: unit = self._values[-1].unit
                 if type is None: dtype = self._values[-1].dtype
                 if uncertainty is None: uncertainty = self._values[-1].uncertainty
-            value = odml_value.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            value = odml.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
         value._property = self
 
@@ -143,12 +152,18 @@ class Property(base.baseobject):
         obj = super(BaseProperty, self).clone(children)
         obj._section = None
 
-        obj._values = base.SafeList()
+        obj._reset_values()
         if children:
             for v in self._values:
                 obj.append(v.clone())
 
         return obj
+
+    def _reset_values(self):
+        """
+        reinitialize the list of values with an empty list
+        """
+        self._values = base.SafeList()
 
     def merge(self, property):
         pass
@@ -165,12 +180,10 @@ class Property(base.baseobject):
         return self._section._merged.contains(self)
 
     def get_terminology_equivalent(self):
+        if self._section is None: return None
         sec = self._section.get_terminology_equivalent()
-        print "term-prop(sec)", self, sec
         if sec is None: return None
         try:
             return sec.properties[self.name]
         except KeyError:
             return None
-
-BaseProperty = Property

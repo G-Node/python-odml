@@ -55,6 +55,11 @@ class CommandManager(object):
     def is_modified(self):
         return bool(self.undo_stack)
 
+    can_undo = is_modified
+    @property
+    def can_redo(self):
+        return bool(self.redo_stack)
+
     def enable_undo(self, enable=True):
         pass
 

@@ -40,6 +40,20 @@ class TreeView(object):
         self._treeview.append_column(column)
         return column
 
+
+    def get_selected_object(self):
+        """
+        return the currently selected object
+
+        retrieve the selection from the treeview
+        and ask its model to get the object for the selected
+        tree_iter
+        """
+        (model, tree_iter) = self._treeview.get_selection().get_selected()
+        if tree_iter is None:
+            return None
+        return model.get_object(tree_iter)
+
     def get_popup_menu(self):
         return None
 
@@ -91,7 +105,6 @@ class TerminologyPopupTreeView(TreeView):
         """
         if obj is None: return []
         term = obj.get_terminology_equivalent()
-        print "get term", obj, term
         if term is None: return []
         return func(term)
 
@@ -102,7 +115,6 @@ class TerminologyPopupTreeView(TreeView):
         calls *get_popup_menu_items* to retrieve the actual
         items for the menu
         """
-        print "term popup: get popup menu"
         popup = gtk.Menu()
         for i in self.get_popup_menu_items():
             popup.append(i)
@@ -128,16 +140,20 @@ class TerminologyPopupTreeView(TreeView):
     def create_popup_menu_del_item(self, obj):
         return self.create_menu_item("Delete %s" % repr(obj), self.on_delete, obj)
 
-    def create_menu_item(self, name, func, data):
+    def create_menu_item(self, name, func=None, data=None, stock=False):
         """
         Creates a single menu item
         """
-        item = gtk.MenuItem(name)
-        item.connect('activate', func, data)
+        if stock:
+            item = gtk.ImageMenuItem(name)
+        else:
+            item = gtk.MenuItem(name)
+        if func is not None:
+            item.connect('activate', func, data)
         item.show()
         return item
 
-    def create_popup_menu_items(self, add_name, empty_name, obj, func, terminology_func, name_func):
+    def create_popup_menu_items(self, add_name, empty_name, obj, func, terminology_func, name_func, stock=False):
         """
         create menu items for a popup menu
 
@@ -152,8 +168,7 @@ class TerminologyPopupTreeView(TreeView):
 
         returns an array of gtk.MenuItem
         """
-        add_section = gtk.MenuItem(add_name)
-        add_section.show()
+        add_section = self.create_menu_item(add_name, stock=stock)
 
         terms = self.get_terminology_suggestions(obj, terminology_func)
         if len(terms) == 0:
@@ -168,3 +183,35 @@ class TerminologyPopupTreeView(TreeView):
         menu.show()
         add_section.set_submenu(menu)
         return [add_section]
+
+    def save_state(self):
+        """
+        return the current state (i.e. expanded and selected objects)
+        that can be restored with restore_state later
+        """
+
+        model = self._treeview.get_model()
+        if model is None: return
+        exp_lines = []
+        model.foreach(lambda model, path, iter: exp_lines.append(path) if self._treeview.row_expanded(path) else 0)
+        model, selected_rows = self._treeview.get_selection().get_selected_rows()
+        return exp_lines, selected_rows
+
+    def restore_state(self, state):
+        """
+        restore a state saved by
+        save_state
+        """
+        if state is None: return
+        exp_lines, selected_rows = state
+        model = self._treeview.get_model()
+        selection = self._treeview.get_selection()
+
+        def exp(model, path, iter):
+            if path in exp_lines:
+                self._treeview.expand_row(path, False)
+            if path in selected_rows:
+                selection.select_path(path)
+
+        model.foreach(exp)
+

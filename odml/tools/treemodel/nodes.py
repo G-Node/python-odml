@@ -4,6 +4,7 @@ Document, Section, Property and Value
 
 additionally implements change notifications up to the corresponding section
 """
+from ... import property as odmlproperty
 from .. import event
 
 def identity_index(obj, val):
@@ -81,10 +82,6 @@ class ParentedNode(RootNode):
     def position(self):
         return self.parent.path_to(self)[-1]
 
-    @property
-    def parent(self):
-        return self._parent
-
 class SectionNode(ParentedNode):
     """
     SectionNodes are special as they wrap two types of sub-nodes:
@@ -107,20 +104,15 @@ class SectionNode(ParentedNode):
 
 
     def path_to(self, child):
-        if isinstance(child, event.Property):
+        if isinstance(child, odmlproperty.Property):
             return (1, identity_index(self._props, child))
         return (0, identity_index(self._sections, child))
 
 
 class PropertyNode(ParentedNode):
     @property
-    def parent(self):
-        """returns the parent section of this Property"""
-        return self._section
-
-    @property
     def children(self):
-        return self._values
+        return self.values
 
     def successor(self):
         return self.parent._props[self.position + 1]
@@ -129,10 +121,6 @@ class PropertyNode(ParentedNode):
         return (identity_index(self.values, child),)
 
 class ValueNode(ParentedNode):
-    @property
-    def parent(self):
-        return self._property
-
     def path_from(self, path):
         raise TypeError("Value objects have no children")
 
@@ -150,3 +138,6 @@ import TreeIters
 Section.IterClass  = TreeIters.SectionIter
 Property.IterClass = TreeIters.PropIter
 Value.IterClass    = TreeIters.ValueIter
+
+import sys, odml
+odml.addImplementation('nodes', sys.modules[__name__])

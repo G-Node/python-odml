@@ -2,12 +2,7 @@
 import os, sys
 import gtk
 
-from odml.tools.gui import Editor
-
-def main(filename=None):
-    Editor.register_stock_icons()
-    editor = Editor.Editor(filename=filename)
-    gtk.main()
+from odml.tools import gui
 
 if __name__ == '__main__':
     try: # this works only on linux
@@ -19,5 +14,6 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser()
     (options, args) = parser.parse_args()
-    main(filename=args[0]) if len(args) > 0 else main()
+    gui.main(filenames=args)
+    gtk.main()
     
