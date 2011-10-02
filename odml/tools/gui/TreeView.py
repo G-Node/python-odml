@@ -23,6 +23,10 @@ class TreeView(object):
         if self.on_button_press is not None:
             tv.connect("button_press_event", self.on_button_press)
 
+        if self.on_get_tooltip is not None:
+            tv.connect('query-tooltip', self.on_query_tooltip)
+            tv.props.has_tooltip = True
+
         tv.set_headers_visible(True)
         tv.set_rules_hint(True)
 
@@ -88,6 +92,19 @@ class TreeView(object):
         gtk_tree_iter = model.get_iter(path)
         tree_iter = model.on_get_iter(model.get_path(gtk_tree_iter))
         return self.on_object_edit(tree_iter, data, new_value)
+
+    def on_query_tooltip(self, widget, x, y, keyboard_tip, tooltip):
+        if not widget.get_tooltip_context(x, y, keyboard_tip):
+            return False
+        else:
+            model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
+
+            value = model.get(iter, 0)
+            self.on_get_tooltip(model, path, iter, tooltip)
+            widget.set_tooltip_row(tooltip, path)
+            return True
+
+    on_get_tooltip = None
 
     def execute(self, cmd):
         cmd()

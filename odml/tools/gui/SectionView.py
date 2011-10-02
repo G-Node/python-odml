@@ -164,3 +164,10 @@ class SectionView(TerminologyPopupTreeView):
             return
 
         return self.on_section_change(model.get_object(tree_iter))
+
+    def on_get_tooltip(self, model, path, iter, tooltip):
+        """
+        set the tooltip text, if the gui queries for it
+        """
+        obj = model.get_object(iter)
+        tooltip.set_text("%s [%s]" % (obj.name, obj.type))
