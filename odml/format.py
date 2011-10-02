@@ -62,7 +62,7 @@ class Section(Format):
         'type': 1,
         'name': 0,
         'definition': 0,
-        'id': 0,
+        'reference': 0,
         'link': 0,
         'repository': 0,
         'mapping': 0,
