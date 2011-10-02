@@ -177,6 +177,7 @@ class XMLReader(object):
         if root.text: text.append(root.text.strip())
 
         for k, v in root.attrib.iteritems():
+            k = k.lower()
             self.is_valid_argument(k, fmt, root)
             if k not in fmt._xml_attributes:
                 self.error("<%s %s=...>: is not a valid attribute for %s" % (root.tag, k, root.tag), root)
@@ -184,6 +185,7 @@ class XMLReader(object):
                 args[k] = v
 
         for node in root:
+            node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
             if node.tag in fmt._args:
                 if node.tag in self.tags and node.tag in fmt._map: # this is a heuristic, but works for now
