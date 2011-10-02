@@ -144,8 +144,16 @@ class sectionable(baseobject):
                 return i
 
     def _matches(self, obj, key=None, type=None):
-        return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
-            and (type is None or (type is not None and hasattr(obj, "type") and obj.type == type))
+        """
+        find out
+        * if the *key* matches obj.name (if key is not None)
+        * or if *type* matches obj.type (if type is not None)
+
+        comparisms are caseinsensitive, however both key and type
+        MUST be lower-case.
+        """
+        return (key is None or (key is not None and hasattr(obj, "name") and obj.name.lower() == key)) \
+            and (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
 
     def find_by_path(self, path):
         """
@@ -170,6 +178,11 @@ class sectionable(baseobject):
     def find(self, key=None, type=None, findAll=False):
         """return the first subsection named *key* of type *type*"""
         ret = []
+        if key:
+            key = key.lower()
+        if type:
+            type = type.lower()
+
         for s in self._sections:
             if self._matches(s, key, type):
                 if findAll:
@@ -191,6 +204,10 @@ class sectionable(baseobject):
           * if *findAll* is True, returns a list of all matching objects
         """
         ret = []
+        if key:
+            key = key.lower()
+        if type:
+            type = type.lower()
 
         if children:
             for section in self._sections:
