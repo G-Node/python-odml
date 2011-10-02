@@ -152,7 +152,7 @@ class sectionable(baseobject):
         comparisms are caseinsensitive, however both key and type
         MUST be lower-case.
         """
-        return (key is None or (key is not None and hasattr(obj, "name") and obj.name.lower() == key)) \
+        return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
             and (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
 
     def find_by_path(self, path):
@@ -178,8 +178,6 @@ class sectionable(baseobject):
     def find(self, key=None, type=None, findAll=False):
         """return the first subsection named *key* of type *type*"""
         ret = []
-        if key:
-            key = key.lower()
         if type:
             type = type.lower()
 
@@ -204,8 +202,6 @@ class sectionable(baseobject):
           * if *findAll* is True, returns a list of all matching objects
         """
         ret = []
-        if key:
-            key = key.lower()
         if type:
             type = type.lower()
 
