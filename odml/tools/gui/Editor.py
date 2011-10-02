@@ -725,9 +725,9 @@ def get_image_path():
 def register_stock_icons():
     ctrlshift = gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK
     icons = [('odml-logo', '_odML', 0, 0, ''),
-             ('odml-add-Section', 'Add _Section', ctrlshift, gtk.keysyms.S, ''),
-             ('odml-add-Property', 'Add Property', ctrlshift, gtk.keysyms.P, ''),
-             ('odml-add-Value', 'Add _Value', ctrlshift, gtk.keysyms.V, ''),
+             ('odml-add-Section',  'Add _Section',  ctrlshift, ord("S"), ''),
+             ('odml-add-Property', 'Add _Property', ctrlshift, ord("P"), ''),
+             ('odml-add-Value',    'Add _Value',    ctrlshift, ord("V"), ''),
              ]
     gtk.stock_add(icons)
 
