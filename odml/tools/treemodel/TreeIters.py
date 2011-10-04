@@ -55,13 +55,7 @@ class ValueIter(GenericIter.GenericIter):
         if attr == "name":
             return
         if attr == "value":
-            if self._obj.dtype == "binary":
-                # fix how binary context is displayed here
-                data = self._obj.data
-                if data is not None:
-                    unprintable = filter(lambda x: x not in string.printable, data)
-                    if len(data) > 15 or (self._obj._encoder is None and len(unprintable) > 0):
-                        return "(%d bytes binary content)" % len(data)
+            return self._obj.get_display()
         return super(ValueIter, self).get_value(attr)
 
 class SectionIter(GenericIter.GenericIter):

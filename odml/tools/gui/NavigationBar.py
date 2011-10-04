@@ -67,7 +67,7 @@ class NavigationBar(gtk.Label):
             if hasattr(obj, "name"):
                 name = obj.name
             elif hasattr(obj, "value"):
-                name = obj.value
+                name = obj.get_display()
 
             names.append(
                 ( ("<b>%s</b>" if obj is cur else "%s") % name,

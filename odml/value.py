@@ -1,6 +1,9 @@
+#-*- coding: utf8
 import types
 import base
 import format
+
+import string
 
 class Value(base._baseobj):
     pass
@@ -78,7 +81,7 @@ class BaseValue(base.baseobject, Value):
 
     def __repr__(self):
         if self._dtype:
-            return "<%s %s>" % (str(self._dtype), str(self._value))
+            return "<%s %s>" % (str(self._dtype), self.get_display())
         return "<%s>" % str(self._value)
 
     @property
@@ -247,6 +250,44 @@ class BaseValue(base.baseobject, Value):
     def calculate_checksum(self, cs_type):
         return types.calculate_checksum(self._value, cs_type)
 
+    def can_display(self, text=None, max_length=-1):
+        """
+        return whether the content of this can be safely displayed in the gui
+        """
+        if text is None:
+            text = self._value
+
+        if max_length != -1 and len(data) > max_length:
+            return False
+
+        if self._dtype == "binary":
+            unprintable = filter(lambda x: x not in string.printable, text)
+            if self._encoder is None and len(unprintable) > 0:
+                return False
+
+        if "\n" in text or "\t" in text:
+            return False
+
+        return True
+
+    def get_display(self, max_length=-1):
+        text = self.value
+        if self.can_display(text, max_length):
+            return text
+
+        text = text.split("\n")[0]
+        if max_length != -1:
+            text = text[:max_length]
+        if self.can_display(text, max_length):
+            return text + u'…'
+
+        return "(%d bytes)" % len(self._value)
+
+#    def can_edit(self, max_length=-1)
+#        if not self.can_display(self): return False
+#
+#        return True
+#
     def clone(self):
         obj = super(BaseValue, self).clone()
         obj._property = None
