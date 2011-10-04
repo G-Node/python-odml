@@ -53,17 +53,24 @@ class baseobject(_baseobj):
         return obj
 
 class SafeList(list):
+    def index(self, obj):
+        """
+        find obj in list
+
+        be sure to use "is" based comparison (instead of __eq__)
+        """
+        for i, e in enumerate(self):
+            if e is obj:
+                return i
+        raise ValueError("remove: %s not in list" % repr(obj))
+
     def remove(self, obj):
         """
         remove an element from this list
 
-        be sure to use "is" based comparison (instead of __cmp__ / ==)
+        be sure to use "is" based comparison (instead of __eq__)
         """
-        for i, e in enumerate(self):
-            if e is obj:
-                del self[i]
-                return
-        raise ValueError("remove: %s not in list" % repr(obj))
+        del self[self.index(obj)]
 
 class SmartList(SafeList):
     def __getitem__(self, key):
