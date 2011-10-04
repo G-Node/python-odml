@@ -11,10 +11,6 @@ class TreeView(object):
         tv = gtk.TreeView(store)
         tv.set_headers_visible(False)
 
-        renderer = gtk.CellRendererText()
-        renderer.set_property("editable", True)
-        renderer.connect("edited", self.on_edited, None)
-
         if self.on_selection_change is not None:
             selection = tv.get_selection()
             selection.set_mode(gtk.SELECTION_BROWSE)
