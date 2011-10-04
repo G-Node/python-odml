@@ -193,10 +193,11 @@ class ModificationNotifier(ChangeHandlable):
         c.action = action
         c.preChange = True
         c.passOn(self)
-        func()
+        res = func()
         c.reset()
         c.postChange = True
         c.passOn(self)
+        return res
 
     def append(self, obj):
         func = lambda: super(ModificationNotifier, self).append(obj)
