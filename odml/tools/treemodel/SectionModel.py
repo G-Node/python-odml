@@ -125,6 +125,9 @@ class SectionModel(TreeModel):
         if (context.action == "append" or context.action == "insert") and context.postChange:
             self.event_insert(context)
 
+        if context.action == "reorder":
+            self.event_reorder(context)
+
     def destroy(self):
         self._section.remove_change_handler(self.on_section_changed)
 

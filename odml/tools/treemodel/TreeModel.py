@@ -183,3 +183,20 @@ class TreeModel(gtk.GenericTreeModel):
         """
         if context.postChange:
             self.post_insert(context.val)
+
+    def event_reorder(self, context):
+        """
+        handles action="reorder" and notifies the model accordingly issuing
+        a rows_reordered call
+        """
+        if context.preChange:
+            (childlist, new_index) = context.val
+            old_index = childlist.index(context.obj)
+            res = list(range(len(childlist)))
+            res.insert(new_index if new_index < old_index else new_index+1, old_index)
+            del res[old_index if new_index > old_index else (old_index+1)]
+            context.neworder = res
+        if context.postChange:
+            path = self.get_node_path(context.obj.parent)
+            iter = self.get_iter(path)
+            self.rows_reordered(path, iter, context.new_order)

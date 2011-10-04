@@ -138,6 +138,9 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         self._values.remove(value)
         value._property = None
 
+    def reorder(self, new_index):
+        return self._reorder(self.parent.properties, new_index)
+
     def __len__(self):
         return len(self._values)
 

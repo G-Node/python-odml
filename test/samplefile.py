@@ -179,6 +179,20 @@ class MiscTest(unittest.TestCase):
         """)
         self.assertEqual(len(doc.sections[1].find_related(type="T1", findAll=True)), 2)
 
+    def test_reorder_post(self):
+        old_index = self.doc.sections[0].reorder(2)
+        self.assertEqual(old_index, 0)
+        self.assertEqual(self.doc.sections[0].name, "sec 1")
+        self.assertEqual(self.doc.sections[1].name, "sec 2")
+        self.assertEqual(self.doc.sections[2].name, "sec 0")
+
+    def test_reorder_first(self):
+        old_index = self.doc.sections[2].reorder(0)
+        self.assertEqual(old_index, 2)
+        self.assertEqual(self.doc.sections[0].name, "sec 2")
+        self.assertEqual(self.doc.sections[1].name, "sec 0")
+        self.assertEqual(self.doc.sections[2].name, "sec 1")
+
 
 if __name__ == '__main__':
     import sys

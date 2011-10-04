@@ -211,6 +211,10 @@ class ModificationNotifier(ChangeHandlable):
         func = lambda: super(ModificationNotifier, self).insert(position, obj)
         self.__fireChange("insert", obj, func)
 
+    def _reorder(self, childlist, new_index):
+        func = lambda: super(ModificationNotifier, self)._reorder(childlist, new_index)
+        return self.__fireChange("reorder", (childlist, new_index), func)
+
 # create a seperate global Event listeners for each class
 # and provide ModificationNotifier Capabilities
 class Value(ModificationNotifier, odml.getImplementation().Value):

@@ -119,6 +119,19 @@ class DeleteObject(Command):
         """append obj (append_cmd.val) to its original parent (append_cmd.obj)"""
         self.append_cmd._execute()
 
+class ReorderObject(Command):
+    """
+    ReorderObject(obj=, new_index=)
+
+    calls obj.reorder(new_index) to move obj to new position *new_index* in its
+    parent list
+    """
+    def _execute(self):
+        self.old_index = self.obj.reorder(self.new_index)
+
+    def _undo(self):
+        self.obj.reorder(self.old_index)
+
 class CopyObject(Command):
     """
     CopyObject(obj=, dst=)

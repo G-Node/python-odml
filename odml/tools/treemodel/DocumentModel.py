@@ -98,3 +98,6 @@ class DocumentModel(TreeModel):
 
         if (context.action == "append" or context.action == "insert") and context.postChange:
             self.event_insert(context)
+
+        if context.action == "reorder":
+            self.event_reorder(context)

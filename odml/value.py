@@ -288,6 +288,9 @@ class BaseValue(base.baseobject, Value):
 #
 #        return True
 #
+    def reorder(self, new_index):
+        return self._reorder(self.parent.values, new_index)
+
     def clone(self):
         obj = super(BaseValue, self).clone()
         obj._property = None

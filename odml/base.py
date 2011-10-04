@@ -52,6 +52,25 @@ class baseobject(_baseobj):
         obj = copy.copy(self)
         return obj
 
+    def _reorder(self, childlist, new_index):
+        """
+        move this object in its parent child-list to the position *new_index*
+
+        returns the old index at which the object was found
+        """
+        l = childlist
+        old_index = l.index(self)
+
+        # 2 cases: insert after old_index / insert before
+        if new_index > old_index:
+            new_index += 1
+        l.insert(new_index, self)
+        if new_index < old_index:
+            del l[old_index+1]
+        else:
+            del l[old_index]
+        return old_index
+
 class SafeList(list):
     def index(self, obj):
         """
@@ -113,6 +132,9 @@ class sectionable(baseobject):
         """adds the section to the section-list and makes this document the section’s parent"""
         self._sections.append(section)
         section._parent = self
+
+    def reorder(self, new_index):
+        return self._reorder(self.parent.sections, new_index)
 
     def remove(self, section):
         self._sections.remove(section)
