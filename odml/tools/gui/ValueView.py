@@ -9,6 +9,7 @@ from ..treemodel import SectionModel
 from DragProvider import DragProvider
 from ChooserDialog import ChooserDialog
 from .. import xmlparser
+import TextEditor
 
 COL_KEY = 0
 COL_VALUE = 1
@@ -190,6 +191,9 @@ class ValueView(TerminologyPopupTreeView):
                 if val.data is not None:
                     menu_items.append(self.create_menu_item("Save binary content", self.binary_save, val))
 
+            if val is not None and val.dtype == "text":
+                menu_items.append(self.create_menu_item("Edit text in larger window", self.edit_text, val))
+
             # cannot delete properties that are linked (they'd be override on next load), instead allow to reset them
             merged = prop.get_merged_equivalent()
             if prop is obj and merged is not None:
@@ -226,6 +230,13 @@ class ValueView(TerminologyPopupTreeView):
             fp.close()
 
         chooser.on_accept = binary_save_file
+
+    def edit_text(self, widget, val):
+        """
+        popup menu action: edit text in larger window
+        """
+        t = TextEditor.TextEditor(val, "value")
+        t.execute = self.execute
 
     def reset_property(self, widget, prop):
         """
