@@ -72,6 +72,13 @@ class SampleFileOperationTest(unittest.TestCase):
         # find section by type
         self.assertEqual(self.doc.find_related(type="test").name, "sec 0,1")
 
+    def test_xml_writer_version(self):
+        doc = odml.Document()
+        val = unicode(xmlparser.XMLWriter(doc))
+        self.assertIn('version="%s"' % xmlparser.XML_VERSION, val)
+        doc = xmlparser.XMLReader().fromString(val)
+        self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
+
     def test_save(self):
         doc = xmlparser.XMLWriter(self.doc)
         path = os.tempnam()
