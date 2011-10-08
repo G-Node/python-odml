@@ -25,11 +25,14 @@ format.Document._xml_name = "odML"
 format.Section._xml_name = "section"
 format.Property._xml_name = "property"
 format.Value._xml_name = "value"
-format.Document._xml_attributes = ['version']
-format.Section._xml_attributes = []
-format.Property._xml_attributes = []
-format.Value._xml_attributes = []
+
+format.Document._xml_attributes = {'version': '_xml_version'} # attribute 'version' maps to _xml_version
+format.Section._xml_attributes = {'name': None} # attribute 'name' maps to 'name', but writing it as a tag is preferred
+format.Property._xml_attributes = {}
+format.Value._xml_attributes = {}
 format.Value._xml_content = 'value'
+
+XML_VERSION = "1"
 
 class XMLWriter:
     """
@@ -41,6 +44,9 @@ class XMLWriter:
 """
     def __init__(self, odml_document):
         self.doc = odml_document
+        if hasattr(odml_document, "_xml_version") and odml_document._xml_version != XML_VERSION:
+            sys.stderr.write("warning: this document will be saved as version %s instead of %s" % (XML_VERSION, odml_document._xml_version))
+        odml_document._xml_version = XML_VERSION
 
     @staticmethod
     def save_element(e):
@@ -56,16 +62,16 @@ class XMLWriter:
             cur = E(fmt._name)
 
         # generate attributes
-        for k in fmt._xml_attributes:
-            if not hasattr(e, fmt.map(k)): continue
+        for k,v in fmt._xml_attributes.iteritems():
+            if not v or not hasattr(e, fmt.map(v)): continue
 
-            val = getattr(e, fmt.map(k))
+            val = getattr(e, fmt.map(v))
             if val is None: continue # no need to save this
             cur.attrib[k] = unicode(val)
 
         # generate elements
         for k in fmt._args:
-            if k in fmt._xml_attributes \
+            if (k in fmt._xml_attributes and fmt._xml_attributes[k] is not None) \
                 or not hasattr(e, fmt.map(k)) \
                 or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
                     continue
@@ -164,7 +170,7 @@ class XMLReader(object):
             return None # won't be able to parse this one
         return getattr(self, "parse_" + node.tag)(node, self.tags[node.tag])
 
-    def parse_odML(self, root, fmt, insert_children=True, create=None):
+    def parse_tag(self, root, fmt, insert_children=True, create=None):
         """
         parse an odml node based on the format description *fmt*
         and a function *create* to instantiate a corresponding object
@@ -182,6 +188,7 @@ class XMLReader(object):
             if k not in fmt._xml_attributes:
                 self.error("<%s %s=...>: is not a valid attribute for %s" % (root.tag, k, root.tag), root)
             else:
+                k = fmt._xml_attributes[k] or k
                 args[k] = v
 
         for node in root:
@@ -226,6 +233,18 @@ class XMLReader(object):
 
         return obj
 
+    def parse_odML(self, root, fmt):
+        def create(**kargs): # need to make _xml_version an existing attribute first
+            res = fmt.create()
+            res._xml_version = None
+            return res
+        doc = self.parse_tag(root, fmt, create=create)
+        if not hasattr(doc, '_xml_version'):
+            self.warn('warning: unknown document version', root)
+        elif doc._xml_version != XML_VERSION:
+            self.warn('warnung: unsupport document version: %s' % doc._xml_version, root)
+        return doc
+
     def parse_section(self, root, fmt):
         name = root.get("name") # property name= overrides
         if name is None:        # the element
@@ -237,17 +256,17 @@ class XMLReader(object):
                 # be used to overwrite the already set name-attribute
 
         if name is None:
-            self.error("Missing name element in <section>", node)
+            self.error("Missing name element in <section>", root)
 
-        return self.parse_odML(root, fmt, create=lambda **kargs: fmt.create(name))
+        return self.parse_tag(root, fmt, create=lambda **kargs: fmt.create(name))
 
     def parse_property(self, root, fmt):
         create = lambda children, args, **kargs: fmt.create(value=children, **args)
-        return self.parse_odML(root, fmt, insert_children=False, create=create)
+        return self.parse_tag(root, fmt, insert_children=False, create=create)
 
     def parse_value(self, root, fmt):
         create = lambda text, args, **kargs: fmt.create(text, **args)
-        return self.parse_odML(root, fmt, create=create)
+        return self.parse_tag(root, fmt, create=create)
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -259,7 +278,5 @@ if __name__ == '__main__':
     if len(args) < 1:
         parser.print_help()
     else:
-        doc = load(args[0])
-        for sec in doc:
-            dumper.dumpSection(sec)
+        dumper.dumpDoc(load(args[0]))
 
