@@ -66,3 +66,8 @@ class SectionIter(GenericIter.GenericIter):
         if not self._obj.parent.parent: # the parent is the document root
             return None
         return super(SectionIter, self).parent
+
+class SectionPropertyIter(GenericIter.GenericIter):
+    @property
+    def n_children(self):
+        return len(self._obj.properties)

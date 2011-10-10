@@ -1,5 +1,5 @@
 import gtk, gobject
-from TreeIters import PropIter, ValueIter
+from TreeIters import PropIter, ValueIter, SectionPropertyIter
 from TreeModel import TreeModel, ColumnMapper
 import sys
 import odml
@@ -39,7 +39,7 @@ class SectionModel(TreeModel):
         return path[1:]
 
     def on_get_iter(self, path):
-        debug(":on_get_iter [%s] " % repr(path))
+        print (":on_get_iter [%s] " % repr(path))
 
         if len(self._section._props) == 0: return None
 
@@ -60,7 +60,6 @@ class SectionModel(TreeModel):
 
         return self.highlight(obj, v, column)
 
-
     def on_iter_nth_child(self, tree_iter, n):
         debug(":on_iter_nth_child [%d]: %s " % (n, tree_iter))
         if tree_iter == None:
@@ -69,9 +68,11 @@ class SectionModel(TreeModel):
         return super(SectionModel, self).on_iter_nth_child(tree_iter, n)
 
     def _get_node_iter(self, node):
+        if isinstance(node, odmlproperty.Property):
+            return PropIter(node)
         if isinstance(node, value.Value):
             return ValueIter(node)
-        return PropIter(node)
+        return SectionPropertyIter(node)
 
     def post_delete(self, parent, old_path):
         super(SectionModel, self).post_delete(parent, old_path)

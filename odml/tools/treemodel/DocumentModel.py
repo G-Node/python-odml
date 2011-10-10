@@ -93,6 +93,9 @@ class DocumentModel(TreeModel):
                 path = self.get_node_path(context.obj)
                 self.row_changed(path, self.get_iter(path))
 
+        if context.action == "reorder":
+            self.event_reorder(context)
+
         obj = context.val
         if not isinstance(obj, odml.base.sectionable): return
 
@@ -101,6 +104,3 @@ class DocumentModel(TreeModel):
 
         if (context.action == "append" or context.action == "insert") and context.postChange:
             self.event_insert(context)
-
-        if context.action == "reorder":
-            self.event_reorder(context)

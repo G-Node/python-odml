@@ -192,7 +192,7 @@ class TreeModel(gtk.GenericTreeModel):
         handles action="reorder" and notifies the model accordingly issuing
         a rows_reordered call
         """
-        if context.preChange:
+        if context.preChange and not hasattr(context, "neworder"):
             (childlist, new_index) = context.val
             old_index = childlist.index(context.obj)
             res = list(range(len(childlist)))
@@ -200,6 +200,8 @@ class TreeModel(gtk.GenericTreeModel):
             del res[old_index if new_index > old_index else (old_index+1)]
             context.neworder = res
         if context.postChange:
-            path = self.get_node_path(context.obj.parent)
-            iter = self.get_iter(path)
-            self.rows_reordered(path, iter, context.new_order)
+            iter = self.get_node_iter(context.obj.parent)
+            path = self.get_path(iter)
+            if not path and context.obj.parent is not self._section:
+                return # not our deal
+            self.rows_reordered(path, iter, context.neworder)
