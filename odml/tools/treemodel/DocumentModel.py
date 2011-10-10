@@ -34,7 +34,8 @@ class DocumentModel(TreeModel):
 
     def odml_path_to_model_path(self, path):
         # (a,0,b,0,c) -> (a,b,c)
-        if not path: return (0,) # the 0, is also the root-node, which sucks :/
+        if not path:
+            return () # this cannot be converted to a path, but it's fine
         return (path[0],) + path[2::2]
 
     def on_get_iter(self, path):
@@ -65,6 +66,8 @@ class DocumentModel(TreeModel):
         return super(DocumentModel, self).on_iter_nth_child(tree_iter, n)
 
     def _get_node_iter(self, node):
+        # no safety checks here, always return a section iter
+        # even for the root node (this is required to make n_children work when reordering)
         return SectionIter(node)
 
     def destroy(self):

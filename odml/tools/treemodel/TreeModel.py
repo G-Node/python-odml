@@ -43,8 +43,7 @@ class TreeModel(gtk.GenericTreeModel):
         the method gets our on tree_iter-version of the gtk one and returns
         its holding object
         """
-        path = self.get_path(gtk_tree_iter)
-        tree_iter = self.on_get_iter(path)
+        tree_iter = self.get_user_data(gtk_tree_iter)
         return tree_iter._obj
 
     def highlight(self, obj, value, column=0):
@@ -99,7 +98,9 @@ class TreeModel(gtk.GenericTreeModel):
         return tree_iter.has_child
 
     def on_iter_n_children(self, tree_iter):
-        if tree_iter is None: return 0
+        if tree_iter is None:
+            print "bug iter_n_children"
+            return 0
         return tree_iter.n_children
 
     def on_iter_nth_child(self, tree_iter, n):
@@ -122,17 +123,17 @@ class TreeModel(gtk.GenericTreeModel):
         #ugly fix, so to get a GtkTreeIter from our custom Iter instance
         #we first convert our custom Iter to a path and the return an iter from it
         #(apparently they are different)
-        path = self.get_node_path(node)
-        if path is ():
-            return self.get_iter_root()
-        return self.get_iter(path)
+        custom_iter = self._get_node_iter(node)
+        if custom_iter is not None:
+            return self.create_tree_iter(custom_iter)
 
     def get_node_path(self, node):
         """
         returns the path of a node
         """
         custom_iter = self._get_node_iter(node)
-        return self.on_get_path(custom_iter)
+        if custom_iter is not None:
+            return self.on_get_path(custom_iter)
 
     def post_insert(self, node):
         """
@@ -158,7 +159,9 @@ class TreeModel(gtk.GenericTreeModel):
         self.row_deleted(old_path)
         iter = self.get_node_iter(parent)
         if iter is not None:
-            self.row_has_child_toggled(self.get_path(iter), iter)
+            path = self.get_path(iter)
+            if path:
+                self.row_has_child_toggled(path, iter)
 
     def event_remove(self, context):
         """
