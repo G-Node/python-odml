@@ -3,85 +3,10 @@ import commands
 import odml
 from TreeView import TerminologyPopupTreeView
 from DragProvider import DragProvider
-from .. import xmlparser
 
-class SectionDragProvider(DragProvider):
-    def get_data(self, mime, model, iter):
-        obj = model.get_object(iter)
-        print (":get_data(%s)" % (mime)), repr(obj)
-        if mime == "odml/section-path":
-            return model.get_string_from_iter(iter) #':'.join(map(str, obj.to_path()))
-        return unicode(xmlparser.XMLWriter(obj))
-
-    def can_handle_data(self, widget, context, time):
-        print "sec:can_handle_data", widget.get_model(), context.targets
-        if not super(SectionDragProvider, self).can_handle_data(widget, context, time):
-            return False
-
-        if "odml/property-path" in context.targets:
-            if context.suggested_action == gtk.gdk.ACTION_LINK:
-                # cannot link to properties
-                context.drag_status(gtk.gdk.ACTION_MOVE, time)
-            return True
-
-        if "odml/section-path" in context.targets:
-            return True
-
-        if "TEXT" in context.targets:
-            def preview(context, data, time):
-                # TODO try to parse xml
-                # TODO might require xml-parser-rewrite first?
-                print "text data: ", data
-                return False
-
-            self.preview(widget, context, "TEXT", preview, time)
-
-        return False
-
-    def receive_data(self, mime, action, data, model, iter, position):
-        print ":receive_data(%s)" % mime
-        if iter is None:
-            iter = model.get_iter_root()
-        dest = model.get_object(iter)
-
-        copy = action == gtk.gdk.ACTION_COPY
-        link = action == gtk.gdk.ACTION_LINK
-
-        if mime == "odml/property-path":
-            model = self.context.get_source_widget().get_model()
-            data_iter = model.get_iter_from_string(data)
-            data = model.get_object(data_iter)
-
-            cmd = commands.CopyOrMoveObject(
-                     obj=data,
-                     dst=dest,
-                     copy=copy)
-
-        elif mime == "odml/section-path":
-            data_iter = model.get_iter_from_string(data)
-            data = model.get_object(data_iter)
-            if position == gtk.TREE_VIEW_DROP_BEFORE or position == gtk.TREE_VIEW_DROP_AFTER:
-                dest = dest.parent
-            else: # if position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
-                pass
-
-            if link:
-                cmd = commands.ChangeValue(
-                        object=dest,
-                        attr="link",
-                        new_value=dest.get_relative_path(data))
-            else:
-                cmd = commands.CopyOrMoveObject(
-                         obj=data,
-                         dst=dest,
-                         copy=copy)
-        else:
-            print "unimplemented (from xml)", data
-            raise NotImplementedError
-
-        self.execute(cmd)
-
-
+from dnd.targets import ValueDrop, PropertyDrop, SectionDrop
+from dnd.odmldrop import OdmlDrag, OdmlDrop
+from dnd.text import TextDrag, TextDrop, TextGenericDropForSectionTV
 
 class SectionView(TerminologyPopupTreeView):
     """
@@ -96,13 +21,22 @@ class SectionView(TerminologyPopupTreeView):
         self._treeview.show()
 
         # set up our drag provider
-        dp = SectionDragProvider(self._treeview)
-        dp.add_mime_type('odml/section-path', flags=gtk.TARGET_SAME_WIDGET)
-        dp.add_mime_type('odml/property-path', flags=gtk.TARGET_SAME_APP, allow_drag=False)
-        dp.add_mime_type('TEXT', allow_drop=False)
-        dp.add_mime_type('STRING', allow_drop=False)
-        dp.add_mime_type('text/plain', allow_drop=False)
-        dp.execute = lambda cmd: self.execute(cmd)
+        dp = DragProvider(self._treeview)
+        _exec = lambda cmd: self.execute(cmd)
+        pd = PropertyDrop(exec_func=_exec)
+        sd = SectionDrop(exec_func=_exec)
+        for target in [
+            OdmlDrag(mime="odml/section-ref", inst=odml.section.Section),
+            TextDrag(mime="odml/section", inst=odml.section.Section),
+            TextDrag(mime="TEXT"),
+            OdmlDrop(mime="odml/property-ref", target=pd, registry=registry, exec_func=_exec),
+            OdmlDrop(mime="odml/section-ref", target=sd, registry=registry, exec_func=_exec),
+            TextDrop(mime="odml/property", target=pd),
+            TextDrop(mime="odml/section", target=sd),
+            TextGenericDropForSectionTV(exec_func=_exec),
+            ]:
+            dp.append(target)
+        dp.execute = _exec
 
     def set_model(self, model):
         self._treeview.set_model(model)
