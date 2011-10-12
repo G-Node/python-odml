@@ -90,7 +90,7 @@ class SectionView(TerminologyPopupTreeView):
     showing properties and allows to edit them
     based on the format-description of the obj's class
     """
-    def __init__(self):
+    def __init__(self, registry):
         super(SectionView, self).__init__()
         self.add_column(name="Name", edit_func=self.on_edited)
         self._treeview.show()

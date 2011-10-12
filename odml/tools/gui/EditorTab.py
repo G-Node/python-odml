@@ -32,6 +32,7 @@ class EditorTab(object):
         doc = odml.Document()
         sec = odml.Section(name="Default Section")
         doc.append(sec)
+        self.window.registry.add(doc)
 
         self.document = doc
         self.file_uri = None
@@ -41,6 +42,7 @@ class EditorTab(object):
         xml_file = gio.File(uri)
         self.document = XMLReader(ignore_errors=True).fromFile(xml_file.read())
         self.document.finalize()
+        self.window.registry.add(self.document)
         self.window._info_bar.show_info("Loading of %s done!" % (xml_file.get_basename()))
         # TODO select default section
 
@@ -135,6 +137,7 @@ class EditorTab(object):
                 return tab.clone()
 
         mapdoc = odml.mapping.create_mapping(tab.document)
+        self.window.registry.add(mapdoc)
         ntab = self.clone(MappingEditorTab)
         ntab.document = mapdoc
         return ntab

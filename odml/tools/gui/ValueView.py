@@ -57,8 +57,7 @@ class ValueView(TerminologyPopupTreeView):
     The Main treeview for editing properties and their value-attributes
     """
     _section = None
-    def __init__(self, execute_func=lambda x: x()):
-        self.execute = execute_func
+    def __init__(self, registry):
 
         super(ValueView, self).__init__()
         tv = self._treeview

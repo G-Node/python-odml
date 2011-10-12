@@ -19,6 +19,7 @@ from ValueView import ValueView
 from NavigationBar import NavigationBar
 from ChooserDialog import odMLChooserDialog
 from EditorTab import EditorTab
+from DocumentRegistry import DocumentRegistry
 
 gtk.gdk.threads_init()
 
@@ -101,6 +102,7 @@ def gui_action(name, tooltip=None, stock_id=None, label=None, accelerator=None):
 
 class EditorWindow(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
+    registry = DocumentRegistry()
     editors = set()
 
     def __init__(self, parent=None):
@@ -183,7 +185,7 @@ class EditorWindow(gtk.Window):
         hpaned.show()
         hpaned.set_position(150)
 
-        section_tv = SectionView()
+        section_tv = SectionView(self.registry)
         section_tv.execute = self.execute
         section_tv.on_section_change = self.on_section_change
         section_view = gtk.VBox(homogeneous=False, spacing=0)
@@ -191,7 +193,7 @@ class EditorWindow(gtk.Window):
         section_view.show()
         hpaned.add1(section_view)
 
-        property_tv = ValueView(self.execute)
+        property_tv = ValueView(self.registry)
         property_tv.execute = self.execute
         property_tv.on_property_select = self.on_object_select
         property_view = gtk.VBox(homogeneous=False, spacing=0)
