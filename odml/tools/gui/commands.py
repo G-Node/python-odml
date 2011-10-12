@@ -201,7 +201,7 @@ class ReplaceObject(MoveObject):
 
 class CopyOrMoveObject(Command):
     """
-    CopyOrMoveObject(obj=, dst=, copy=True/False)                            tv=TreeView,)
+    CopyOrMoveObject(obj=, dst=, copy=True/False)
     """
     def __init__(self, *args, **kwargs):
         super(CopyOrMoveObject, self).__init__(*args, **kwargs)

@@ -19,6 +19,7 @@ class CommandManager(object):
         self.enable_undo()
         if e:
             raise
+        return True
 
     def undo(self):
         cmd = self.undo_stack.pop()
@@ -34,6 +35,7 @@ class CommandManager(object):
 
         if e:
             raise
+        return True
 
     def redo(self):
         self.execute(self.redo_stack.pop(), redo=True)

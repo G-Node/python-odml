@@ -710,7 +710,7 @@ class EditorWindow(gtk.Window):
         self._info_bar.show_info("Editing failed: %s" % error.message)
 
     def execute(self, cmd):
-        self.current_tab.command_manager.execute(cmd)
+        return self.current_tab.command_manager.execute(cmd)
 
 def get_image_path():
     try:
