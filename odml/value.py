@@ -256,8 +256,10 @@ class BaseValue(base.baseobject, Value):
         """
         if text is None:
             text = self._value
+        if text is None:
+            return True
 
-        if max_length != -1 and len(data) > max_length:
+        if max_length != -1 and len(text) > max_length:
             return False
 
         if self._dtype == "binary":
