@@ -39,7 +39,7 @@ class SectionModel(TreeModel):
         return path[1:]
 
     def on_get_iter(self, path):
-        print (":on_get_iter [%s] " % repr(path))
+        debug(":on_get_iter [%s] " % repr(path))
 
         if len(self._section._props) == 0: return None
 
@@ -59,6 +59,11 @@ class SectionModel(TreeModel):
             obj = obj._property
 
         return self.highlight(obj, v, column)
+
+    def on_iter_n_children(self, tree_iter):
+        if tree_iter is None:
+            tree_iter = SectionPropertyIter(self._section)
+        return super(SectionModel, self).on_iter_n_children(tree_iter)
 
     def on_iter_nth_child(self, tree_iter, n):
         debug(":on_iter_nth_child [%d]: %s " % (n, tree_iter))

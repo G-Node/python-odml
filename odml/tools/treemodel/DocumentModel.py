@@ -60,6 +60,11 @@ class DocumentModel(TreeModel):
         obj = tree_iter._obj
         return self.highlight(obj, v, column)
 
+    def on_iter_n_children(self, tree_iter):
+        if tree_iter is None:
+            tree_iter = SectionIter(self._section)
+        return super(DocumentModel, self).on_iter_n_children(tree_iter)
+
     def on_iter_nth_child(self, tree_iter, n):
         if tree_iter == None:
             return SectionIter(self._section.sections[n])
