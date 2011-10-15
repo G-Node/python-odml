@@ -5,6 +5,7 @@ collects common base functionality
 import doc
 import posixpath
 import terminology
+import mapping
 
 class _baseobj(object):
     pass
@@ -114,7 +115,7 @@ class SmartList(SafeList):
         # and fail eventually
         raise KeyError(key)
 
-class sectionable(baseobject):
+class sectionable(baseobject, mapping.mapped):
     def __init__(self):
         self._sections = SmartList()
         self._repository = None
@@ -134,6 +135,12 @@ class sectionable(baseobject):
     def sections(self):
         return self._sections
 
+    @mapping.remapable_insert
+    def insert(self, position, section):
+        self._sections.append(section)
+        section._parent = self
+
+    @mapping.remapable_append
     def append(self, section):
         """adds the section to the section-list and makes this document the section’s parent"""
         self._sections.append(section)
@@ -142,6 +149,7 @@ class sectionable(baseobject):
     def reorder(self, new_index):
         return self._reorder(self.parent.sections, new_index)
 
+    @mapping.remapable_remove
     def remove(self, section):
         self._sections.remove(section)
         section._parent = None
