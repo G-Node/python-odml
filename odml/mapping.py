@@ -268,7 +268,7 @@ def create_property_mapping(sec, prop):
     # rule 4c: target-type == section-type
     #          copy attributes, keep property
     if dst_type == msec.type:
-        msec.append(mprop)
+        msec.proxy_append(mprop)
         return mprop
 
     # rule 4d: one child has the type

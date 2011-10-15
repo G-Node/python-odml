@@ -130,9 +130,12 @@ class TestProxy(unittest.TestCase):
         # append a proxy to ps, both original and proxy compare to
         # be 'in' ps
         pp = proxy.PropertyProxy(p)
-        ps.append(pp)
+        # you can use proxy_append to add an explicit proxy obj (without affecting
+        # the original section) or you can append the object to the original section
+        # so that the proxy object is created in the proxy section, too
+        ps.proxy_append(pp) # this one is only in ps
         self.assertIn(pp, ps)
-        self.assertIn(p, ps)
+        self.assertIn(p, ps) # as p == pp, this also holds true
 
         # even if the name is changed
         ps.name = "p3"
@@ -152,7 +155,7 @@ class TestProxy(unittest.TestCase):
         # a mapped section added to another mapped section
         # will only appear there
         ps2 = proxy.MappedSection(s2)
-        ps.append(ps2)
+        ps.proxy_append(ps2)
 
         self.assertIn(ps2, ps)
         self.assertIn(s2, ps)
