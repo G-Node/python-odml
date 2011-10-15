@@ -12,6 +12,12 @@ class _baseobj(object):
 class baseobject(_baseobj):
     _format = None
 
+    @property
+    def document(self):
+        if self.parent is None:
+            return None
+        return self.parent.document
+
     def get_terminology_equivalent(self):
         return None
 
