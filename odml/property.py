@@ -13,7 +13,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     _format = format.Property
 
     def __init__(self, name, value, section=None,
-        definition=None, dependency=None, dependencyValue=None, mapping=None,
+        definition=None, dependency=None, dependency_value=None, mapping=None,
         unit=None, dtype=None, uncertainty=None):
         """
         create a new Property
@@ -37,7 +37,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
 
          * @param definition {@link String}
          * @param dependency {@link String}
-         * @param dependencyValue {@link String}
+         * @param dependency_value {@link String}
          * @param mapping {@link URL}
         """
         #TODO doc description for arguments
@@ -48,7 +48,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
 
         self.definition = definition
         self.dependency = dependency
-        self.dependencyValue = dependencyValue
+        self.dependency_value = dependency_value
         self._mapping = mapping
 
         if isinstance(value, list):

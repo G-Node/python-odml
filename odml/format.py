@@ -52,9 +52,12 @@ class Property(Format):
         'definition': 0,
         'mapping': 0,
         'dependency': 0,
-        'dependencyValue': 0
+        'dependencyvalue': 0
         }
-    _map = {'value': 'values'}
+    _map = {
+        'value': 'values',
+        'dependencyvalue': 'dependency_value'
+        }
 
 class Section(Format):
     _name = "section"
