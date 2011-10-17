@@ -542,7 +542,7 @@ class EditorWindow(gtk.Window):
     def update_model(self, tab):
         """updates the models if a different tab is selected changed"""
         model = None
-        if tab.document:
+        if tab.document is not None:
             model = DocumentModel.DocumentModel(tab.document)
 
         self._section_tv.set_model(model)
