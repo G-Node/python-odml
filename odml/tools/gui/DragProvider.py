@@ -68,8 +68,6 @@ class DragProvider(object):
             self.drag_targets.append(obj)
         if isinstance(obj, DropTarget):
             self.drop_targets.append(obj)
-        print self.drag_targets
-        print self.drop_targets
         self.connect()
 
     def _on_drag_begin(self, widget, context):
@@ -103,7 +101,6 @@ class DragProvider(object):
         tv.drag_source_set(gtk.gdk.BUTTON1_MASK,
                                     drag_targets,
                                     self.SOURCE_ACTIONS)
-        #print "resulting drag targets", drag_targets
 
     def get_source_target(self, context, mime):
         for target in self.drag_targets:
