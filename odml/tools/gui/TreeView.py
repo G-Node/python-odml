@@ -28,6 +28,9 @@ class TreeView(object):
 
         self._treeview = tv
 
+    def get_model(self):
+        return self._treeview.get_model()
+
     def add_column(self, name, edit_func=None, id=0, data=0):
         renderer = gtk.CellRendererText()
         if edit_func:
