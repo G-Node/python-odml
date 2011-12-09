@@ -6,6 +6,7 @@ from links import *
 from mapping import *
 from proxy import *
 from types import *
+from dnd import *
 
 if __name__ == '__main__':
     unittest.main()
