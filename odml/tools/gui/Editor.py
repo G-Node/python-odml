@@ -20,6 +20,7 @@ from NavigationBar import NavigationBar
 from ChooserDialog import odMLChooserDialog
 from EditorTab import EditorTab
 from DocumentRegistry import DocumentRegistry
+from Wizard import DocumentWizard
 
 gtk.gdk.threads_init()
 
@@ -341,10 +342,19 @@ class EditorWindow(gtk.Window):
         dialog.show()
 
     @gui_action("NewFile", tooltip="Create a new document", stock_id=gtk.STOCK_NEW)
-    def new_file(self, action=None):
-        """open a new tab with an empty document"""
+    def new_file(self, action=None, wizard=True, doc=None):
+        """
+        open a new tab with an empty document
+
+        if *wirzard* is True, run the wizard first
+        """
+        if wizard:
+            wiz = DocumentWizard()
+            wiz.finish = lambda doc: self.new_file(wizard=False, doc=doc)
+            return
+
         tab = EditorTab(self)
-        tab.new()
+        tab.new(doc)
         self.append_tab(tab)
         return tab
 
