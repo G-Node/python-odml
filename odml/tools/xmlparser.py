@@ -240,9 +240,9 @@ class XMLReader(object):
             return res
         doc = self.parse_tag(root, fmt, create=create)
         if not hasattr(doc, '_xml_version'):
-            self.warn('warning: unknown document version', root)
+            self.warn('unknown document version', root)
         elif doc._xml_version != XML_VERSION:
-            self.warn('warnung: unsupport document version: %s' % doc._xml_version, root)
+            self.warn('unsupport document version: %s' % doc._xml_version, root)
         return doc
 
     def parse_section(self, root, fmt):
