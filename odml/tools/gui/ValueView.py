@@ -2,6 +2,7 @@ import gtk
 import gio
 
 import odml
+from ... import terminology
 from ... import format
 import commands
 from TreeView import TerminologyPopupTreeView
@@ -143,6 +144,48 @@ class ValueView(TerminologyPopupTreeView):
         if cmd:
             self.execute(cmd)
 
+    def on_set_mapping(self, menu, (prop, mapping_obj)):
+        """
+        popup menu action: set mapping for a property
+        """
+        mapstr = "%s#%s:%s" % (prop.parent.get_repository(), mapping_obj.parent.type, mapping_obj.name)
+
+        cmd = commands.ChangeValue(
+                object = prop,
+                attr   = "mapping",
+                new_value = mapstr)
+        self.execute(cmd)
+
+    def get_popup_mapping_section(self, sec, obj):
+        """generate the popup menu items for a certain section in the mapping-popup-menu"""
+        for sec in sec.itersections():
+            item = self.create_menu_item(sec.name)
+            if len(sec) > 0:
+                item.set_submenu(self.get_popup_menu(lambda: self.get_popup_mapping_section(sec, obj)))
+                yield item
+
+        if isinstance(sec, odml.doc.Document): return
+
+        yield self.create_menu_item(None)  #separator
+
+        for prop in sec.properties:
+            item = self.create_menu_item(prop.name)
+            item.connect('activate', self.on_set_mapping, (obj, prop))
+            yield item
+
+    def get_popup_mapping_suggestions(self, prop):
+        """
+        build a submenu with mapping suggestions
+        """
+        repo = prop.parent.get_repository()
+        if not repo: return None
+        term = terminology.load(repo)
+
+        menu = self.create_menu_item("Map", stock="odml-set-Mapping")
+        submenu = self.get_popup_menu(lambda: self.get_popup_mapping_section(term, prop))
+        menu.set_submenu(submenu)
+        return menu
+
     def get_popup_menu_items(self):
         model, path, obj = self.popup_data
         menu_items = self.create_popup_menu_items("odml-add-Property", "Empty Property", model.section, self.add_property, lambda sec: sec.properties, lambda prop: prop.name, stock=True)
@@ -170,6 +213,11 @@ class ValueView(TerminologyPopupTreeView):
 
             if val is not None and val.dtype == "text":
                 menu_items.append(self.create_menu_item("Edit text in larger window", self.edit_text, val))
+
+            # if repository is set, show a menu to set mappings
+            mapping_menu = self.get_popup_mapping_suggestions(prop)
+            if mapping_menu:
+                menu_items.append(mapping_menu)
 
             # cannot delete properties that are linked (they'd be override on next load), instead allow to reset them
             merged = prop.get_merged_equivalent()

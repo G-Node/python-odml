@@ -124,15 +124,18 @@ class TerminologyPopupTreeView(TreeView):
         if term is None: return []
         return func(term)
 
-    def get_popup_menu(self):
+    def get_popup_menu(self, func=None):
         """
         create the popup menu for this object
 
-        calls *get_popup_menu_items* to retrieve the actual
+        calls *func* (defaults to *get_popup_menu_items*) to retrieve the actual
         items for the menu
         """
+        if func is None:
+            func = self.get_popup_menu_items
+
         popup = gtk.Menu()
-        for i in self.get_popup_menu_items():
+        for i in func():
             popup.append(i)
             i.show()
         popup.show()
