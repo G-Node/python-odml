@@ -28,6 +28,9 @@ class TreeView(object):
 
         self._treeview = tv
 
+    def get_model(self):
+        return self._treeview.get_model()
+
     def add_column(self, name, edit_func=None, id=0, data=0):
         renderer = gtk.CellRendererText()
         if edit_func:
@@ -121,15 +124,18 @@ class TerminologyPopupTreeView(TreeView):
         if term is None: return []
         return func(term)
 
-    def get_popup_menu(self):
+    def get_popup_menu(self, func=None):
         """
         create the popup menu for this object
 
-        calls *get_popup_menu_items* to retrieve the actual
+        calls *func* (defaults to *get_popup_menu_items*) to retrieve the actual
         items for the menu
         """
+        if func is None:
+            func = self.get_popup_menu_items
+
         popup = gtk.Menu()
-        for i in self.get_popup_menu_items():
+        for i in func():
             popup.append(i)
             i.show()
         popup.show()

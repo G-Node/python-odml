@@ -25,13 +25,15 @@ class EditorTab(object):
         self.window = window
         self._clones = [self]
 
-    def new(self):
+    def new(self, doc=None):
         """
         initialize a new document
         """
-        doc = odml.Document()
-        sec = odml.Section(name="Default Section")
-        doc.append(sec)
+        if doc is None:
+            doc = odml.Document()
+            sec = odml.Section(name="Default Section")
+            doc.append(sec)
+
         self.window.registry.add(doc)
 
         self.document = doc
@@ -77,7 +79,7 @@ class EditorTab(object):
 
         if response == gtk.RESPONSE_CANCEL: return False
         if response == gtk.RESPONSE_NO: return True
-        return window.save(None)
+        return self.window.save(None)
 
     def save(self, uri):
         self.document.clean()

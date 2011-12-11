@@ -99,6 +99,12 @@ class SectionView(TerminologyPopupTreeView):
 
         return self.on_section_change(model.get_object(tree_iter))
 
+    def on_section_change(self, section):
+        """
+        the user selected a new section
+        """
+        pass
+
     def on_get_tooltip(self, model, path, iter, tooltip):
         """
         set the tooltip text, if the gui queries for it
