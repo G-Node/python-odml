@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import gtk
-from ..treemodel.DocumentModel import DocumentModel
+from ..treemodel.SectionModel import SectionModel
 from SectionView import SectionView
 from ScrolledWindow import ScrolledWindow
 import odml
@@ -165,7 +165,7 @@ class SectionPage(Page):
 
     def prepare(self, assistant, prev_page):
         self.term = terminology.terminologies.load(prev_page.data['repository'])
-        self.view.set_model(DocumentModel(self.term))
+        self.view.set_model(SectionModel(self.term))
 
     @property
     def sections(self):

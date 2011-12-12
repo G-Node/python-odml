@@ -1,51 +1,54 @@
 import gtk, gobject
-from TreeIters import PropIter, ValueIter, SectionPropertyIter
+import odml.doc
+import odml.base
+
+from TreeIters import SectionIter
 from TreeModel import TreeModel, ColumnMapper
-import sys
-import odml
-from ... import value, property as odmlproperty
-debug = lambda x: sys.stderr.write(x+"\n")
 debug = lambda x: 0
+# to enable tree debugging:
+#import sys
+#debug = lambda x: sys.stdout.write(x + "\n")
 
-
-ColMapper = ColumnMapper({"Name"        : (0, "name"),
-                         "Value"       : (1, "value"),
-                         "Definition"  : (2, "definition"),
-                         "Type"        : (3, "dtype"),
-                         "Unit"        : (4, "unit"),
-                         "Comment"     : (5, "comment"),
-                         "Endcoder"    : (6, "encoder"),
-                         "Checksum"    : (7, "checksum"),
-                         "Reference"   : (8, "reference")})
+ColMapper = ColumnMapper({"Name"        : (0, "name")})
 
 class SectionModel(TreeModel):
-    def __init__(self, section):
+    def __init__(self, odml_document):
         super(SectionModel, self).__init__(ColMapper)
-        self._section = section
+
+        # otherwise bad things happen
+        assert isinstance(odml_document, odml.doc.Document)
+
+        self._section = odml_document
         self._section.add_change_handler(self.on_section_changed)
-        self.offset = len(section.to_path())
+
+    @property
+    def document(self):
+        return self._section
 
     def model_path_to_odml_path(self, path):
-        # (n, ...) -> (1, ...)
-        # this can only go wrong sometimes because properties
-        # with only one value share a common path
-        return (1,) + path # we consider properties only
+        # (a,b,c) -> (a,0,b,0,c)
+        rpath = (path[0],) # document -> section
+        for i in path[1:]:
+            rpath += (0,i) # section -> sub-section
+        return rpath
 
     def odml_path_to_model_path(self, path):
-        if len(path) == 3: # 1, prop, val
-            # if only one child, return property row
-            if len(self._section.from_path(path[:2])) == 1:
-                return path[1:2]
-        return path[1:]
+        # (a,0,b,0,c) -> (a,b,c)
+        if not path:
+            return () # this cannot be converted to a path, but it's fine
+        return (path[0],) + path[2::2]
 
     def on_get_iter(self, path):
-        debug(":on_get_iter [%s] " % repr(path))
-
-        if len(self._section._props) == 0: return None
-
-        path = self.model_path_to_odml_path(path) # we consider properties only
-        node = self._section.from_path(path)
-        return self._get_node_iter(node)
+        debug("+on_get_iter: %s" % repr(path))
+        if path == (0,) and len(self._section.sections) == 0: return None
+        # we get the path from the treemodel which does not show the properties
+        # therefore adjust the path to always select the sections
+        rpath = (path[0],) # document -> section
+        for i in path[1:]:
+            rpath += (0,i) # section -> sub-section
+        section = self._section.from_path(rpath)
+        debug("-on_get_iter: %s" % (section))
+        return SectionIter(section)
 
     def on_get_value(self, tree_iter, column):
         """
@@ -55,91 +58,54 @@ class SectionModel(TreeModel):
         if v is None: return v
 
         obj = tree_iter._obj
-        if isinstance(tree_iter, ValueIter):
-            obj = obj._property
-
         return self.highlight(obj, v, column)
 
     def on_iter_n_children(self, tree_iter):
         if tree_iter is None:
-            tree_iter = SectionPropertyIter(self._section)
+            tree_iter = SectionIter(self._section)
         return super(SectionModel, self).on_iter_n_children(tree_iter)
 
     def on_iter_nth_child(self, tree_iter, n):
-        debug(":on_iter_nth_child [%d]: %s " % (n, tree_iter))
         if tree_iter == None:
-            prop = self._section._props[n]
-            return PropIter(prop)
+            return SectionIter(self._section.sections[n])
         return super(SectionModel, self).on_iter_nth_child(tree_iter, n)
 
     def _get_node_iter(self, node):
-        if isinstance(node, odmlproperty.Property):
-            return PropIter(node)
-        if isinstance(node, value.Value):
-            return ValueIter(node)
-        return SectionPropertyIter(node)
+        # no safety checks here, always return a section iter
+        # even for the root node (this is required to make n_children work when reordering)
+        return SectionIter(node)
 
-    def post_delete(self, parent, old_path):
-        super(SectionModel, self).post_delete(parent, old_path)
-        if isinstance(parent, odmlproperty.Property):
-            # a value was deleted
-            if len(parent) == 1:
-                # the last child row is also not present anymore,
-                # the value is now displayed inline
-                path = self.get_node_path(parent)
-                self.row_deleted(path + (0,)) # first child
-                self.row_has_child_toggled(path, self.get_iter(path))
+    def destroy(self):
+        self._section.remove_change_handler(self.on_section_changed)
 
-    def post_insert(self, node):
-        # this actually already works fine, since the subtree will always start
-        # collapsed, however in fact we would need to insert an additional row
-        # if the property switched from one value to two values
-        # (the first was displayed inline, but now gets its own row)
-        super(SectionModel, self).post_insert(node)
-
-    def on_section_changed(self, context):
+    def on_section_changed(self, context): # document=None, section=None, prop=None, value=None,
+       # prop_pos=None, value_pos=None,
+       # attr=None, remove=None, append=None, pre_change=False, post_change=False,
+       # *args, **kargs):
         """
         this is called by the Eventable modified MixIns of Value/Property/Section
         and causes the GUI to refresh the corresponding cells
         """
-        print "change event(property): ", context
+        print "change event(section): ", context
 
-        # we are only interested in changes going up to the section level,
-        # but not those dealing with subsections of ours
-        if not context.cur is self._section or \
-                isinstance(context.val, odml.section.Section):
-            return
+        # we are only interested in changes on sections
+        if not isinstance(context.obj, odml.base.sectionable): return
+        if not context.cur.document is self.document: return
 
         if context.action == "set" and context.postChange:
-            path = self.get_node_path(context.obj)
-            if not path: return # probably the section changed
-            try:
-                iter = self.get_iter(path)
-                self.row_changed(path, iter)
-            except ValueError, e: # an invalid tree path, that should never have reached us
-                print repr(e)
-                print context.dump()
+            name, value = context.val
+            if name == "name":
+                path = self.get_node_path(context.obj)
+                self.row_changed(path, self.get_iter(path))
 
-        # there was some reason we did this, however context.obj can
-        # also be a property of the current section
-        #if not context.obj is self._section:
-        #    return
+        if context.action == "reorder":
+            self.event_reorder(context)
+
+        obj = context.val
+        if not isinstance(obj, odml.base.sectionable): return
 
         if context.action == "remove":
             self.event_remove(context)
 
         if (context.action == "append" or context.action == "insert") and context.postChange:
             self.event_insert(context)
-
-        if context.action == "reorder":
-            self.event_reorder(context)
-
-    def destroy(self):
-        self._section.remove_change_handler(self.on_section_changed)
-
-    def __repr__(self):
-        return "<SectionModel of %s>" % (self.section)
-
-    @property
-    def section(self):
-        return self._section

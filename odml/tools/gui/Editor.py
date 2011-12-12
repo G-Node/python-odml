@@ -8,14 +8,14 @@ import odml
 import odml.tools.treemodel.mixin
 import commands
 
-from odml.tools.treemodel import SectionModel, DocumentModel
+from odml.tools.treemodel import PropertyModel, SectionModel
 
 from InfoBar import EditorInfoBar
 from ScrolledWindow import ScrolledWindow
 import TreeView
 from SectionView import SectionView
+from AttributeView import AttributeView
 from PropertyView import PropertyView
-from ValueView import ValueView
 from NavigationBar import NavigationBar
 from ChooserDialog import odMLChooserDialog
 from EditorTab import EditorTab
@@ -195,7 +195,7 @@ class EditorWindow(gtk.Window):
         section_view.show()
         hpaned.add1(section_view)
 
-        property_tv = ValueView(self.registry)
+        property_tv = PropertyView(self.registry)
         property_tv.execute = self.execute
         property_tv.on_property_select = self.on_object_select
         property_view = gtk.VBox(homogeneous=False, spacing=0)
@@ -213,7 +213,7 @@ class EditorWindow(gtk.Window):
         # property_view to edit ODML-Properties
 
         # to edit properties of Document, Section or Property:
-        self._property_view = PropertyView(self.execute)
+        self._property_view = AttributeView(self.execute)
         frame = gtk.Frame()
         frame.set_label_widget(navigation_bar)
         frame.add(ScrolledWindow(self._property_view._treeview))
@@ -554,7 +554,7 @@ class EditorWindow(gtk.Window):
         """updates the models if a different tab is selected changed"""
         model = None
         if tab.document is not None:
-            model = DocumentModel.DocumentModel(tab.document)
+            model = SectionModel.SectionModel(tab.document)
 
         self._section_tv.set_model(model)
         # TODO restore selection/expansion if known in tab
