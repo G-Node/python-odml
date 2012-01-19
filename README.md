@@ -29,9 +29,23 @@ To build the windows package from source, follow these instructions:
 
    `$ easy_install.exe lxml`
 
-3. Compile
+   If this fails, you can fall back to installing it from the 
+   [Unofficial Windows Binaries for Python Extension Packages](http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml)
+
+3. To just run the software use:
+
+   `$ python.exe odml-gui`
+
+   You may also rename odml-gui to odml-gui.py, which allows you to start
+   the gui through double clicking on that file. You can even right click and
+   send it as a shortcut to the desktop.
+
+4. Compile a binary for redistribution
 
    `$ python.exe setup.py py2exe`
+
+   For some reason the compiled binary has a different look, so running
+   the software from source gets a more native look.
 
 Bugs & Questions
 ----------------
