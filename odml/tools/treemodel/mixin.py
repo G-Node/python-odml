@@ -23,6 +23,6 @@ Or get the implementation once it is registered::
 #Therefore mixin in odml.tools.events will be troublesome / not work.
 
 import odml
-import nodes
+import odml.tools.nodes
 odml.setDefaultImplementation('nodes')
 
