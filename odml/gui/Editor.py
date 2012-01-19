@@ -5,10 +5,10 @@ import gtk
 import gobject
 
 import odml
-import odml.tools.treemodel.mixin
+import odml.gui.treemodel.mixin
 import commands
 
-from odml.tools.treemodel import PropertyModel, SectionModel
+from odml.gui.treemodel import PropertyModel, SectionModel
 
 from InfoBar import EditorInfoBar
 from ScrolledWindow import ScrolledWindow

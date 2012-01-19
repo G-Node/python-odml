@@ -72,7 +72,7 @@ class SectionPropertyIter(GenericIter.GenericIter):
         return len(self._obj.properties)
 
 # associate the odml-classes to the corresponding iter-classes
-import nodes
+import odml.tools.nodes as nodes
 nodes.Section.IterClass  = SectionIter
 nodes.Property.IterClass = PropIter
 nodes.Value.IterClass    = ValueIter

@@ -1,4 +1,4 @@
-import odml.tools.treemodel.mixin #this also provides event functionality, and we also test tree-based event passing
+import odml.gui.treemodel.mixin #this also provides event functionality, and we also test tree-based event passing
 import odml.tools.event
 import unittest
 import samplefile

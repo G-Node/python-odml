@@ -1,6 +1,6 @@
 import gtk
 import cgi
-from ... import format
+import odml.format as format
 import commands
 from TreeView import TreeView
 COL_KEY = 0

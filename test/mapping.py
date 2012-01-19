@@ -2,8 +2,8 @@
 import unittest
 
 import odml
-import odml.tools.treemodel.mixin
-import odml.tools.gui.commands as commands
+import odml.gui.treemodel.mixin
+import odml.gui.commands as commands
 import odml.terminology
 import odml.tools.dumper as dumper
 import samplefile

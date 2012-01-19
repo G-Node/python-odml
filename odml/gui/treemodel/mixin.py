@@ -4,18 +4,18 @@ gtk.GenericTreeModels using MixIns
 
 to use it just import this module::
 
-    >>> import odml.tools.treemodel.mixin
+    >>> import odml.gui.treemodel.mixin
 
 Alternatively you can import the modified Value/Property/Section/Document
 classes manually::
 
-    >>> import odml.tools.treemodel.nodes as odml
+    >>> import odml.tools.nodes as odml
     >>> s = odml.Section("sample section")
 
 Or get the implementation once it is registered::
 
     >>> import odml
-    >>> import odml.tools.treemodel.nodes
+    >>> import odml.tools.nodes
     >>> odml.getImplementation('nodes').Section("sample section")
 
 """

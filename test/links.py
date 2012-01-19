@@ -1,7 +1,7 @@
 import unittest
 
-import odml.tools.treemodel.mixin
-import odml.tools.gui.commands as commands
+import odml.gui.treemodel.mixin
+import odml.gui.commands as commands
 import samplefile
 
 class TestLinks(unittest.TestCase):

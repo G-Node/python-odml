@@ -4,8 +4,8 @@ Document, Section, Property and Value
 
 additionally implements change notifications up to the corresponding section
 """
-from ... import property as odmlproperty
-from .. import event
+import odml.property
+import event
 
 def identity_index(obj, val):
     """
@@ -104,7 +104,7 @@ class SectionNode(ParentedNode):
 
 
     def path_to(self, child):
-        if isinstance(child, odmlproperty.Property):
+        if isinstance(child, odml.property.Property):
             return (1, identity_index(self._props, child))
         return (0, identity_index(self._sections, child))
 

@@ -2,7 +2,7 @@
 import os, sys
 import gtk
 
-from odml.tools import gui
+from odml import gui
 
 if __name__ == '__main__':
     try: # this works only on linux

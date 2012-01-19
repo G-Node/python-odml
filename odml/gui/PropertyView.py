@@ -2,11 +2,11 @@ import gtk
 import gio
 
 import odml
-from ... import terminology
-from ... import format
+import odml.terminology as terminology
+import odml.format as format
 import commands
 from TreeView import TerminologyPopupTreeView
-from ..treemodel import PropertyModel
+from treemodel import PropertyModel
 from DragProvider import DragProvider
 from ChooserDialog import ChooserDialog
 import TextEditor

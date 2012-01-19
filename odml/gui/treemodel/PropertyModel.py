@@ -3,7 +3,8 @@ from TreeIters import PropIter, ValueIter, SectionPropertyIter
 from TreeModel import TreeModel, ColumnMapper
 import sys
 import odml
-from ... import value, property as odmlproperty
+import odml.property
+import odml.value as value
 debug = lambda x: sys.stderr.write(x+"\n")
 debug = lambda x: 0
 
@@ -73,7 +74,7 @@ class PropertyModel(TreeModel):
         return super(PropertyModel, self).on_iter_nth_child(tree_iter, n)
 
     def _get_node_iter(self, node):
-        if isinstance(node, odmlproperty.Property):
+        if isinstance(node, odml.property.Property):
             return PropIter(node)
         if isinstance(node, value.Value):
             return ValueIter(node)
@@ -81,7 +82,7 @@ class PropertyModel(TreeModel):
 
     def post_delete(self, parent, old_path):
         super(PropertyModel, self).post_delete(parent, old_path)
-        if isinstance(parent, odmlproperty.Property):
+        if isinstance(parent, odml.property.Property):
             # a value was deleted
             if len(parent) == 1:
                 # the last child row is also not present anymore,

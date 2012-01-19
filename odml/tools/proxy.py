@@ -1,7 +1,7 @@
 import odml
 import event
 import weakmeth, weakref
-import treemodel.nodes as nodes
+import nodes
 
 class Proxy(object):
     # common interface

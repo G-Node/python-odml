@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import gtk
-from ..treemodel.SectionModel import SectionModel
+from treemodel.SectionModel import SectionModel
 from SectionView import SectionView
 from ScrolledWindow import ScrolledWindow
 import odml
