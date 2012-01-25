@@ -3,7 +3,8 @@ from TreeIters import PropIter, ValueIter, SectionPropertyIter
 from TreeModel import TreeModel, ColumnMapper
 import sys
 import odml
-from ... import value, property as odmlproperty
+import odml.property
+import odml.value as value
 debug = lambda x: sys.stderr.write(x+"\n")
 debug = lambda x: 0
 
@@ -18,9 +19,9 @@ ColMapper = ColumnMapper({"Name"        : (0, "name"),
                          "Checksum"    : (7, "checksum"),
                          "Reference"   : (8, "reference")})
 
-class SectionModel(TreeModel):
+class PropertyModel(TreeModel):
     def __init__(self, section):
-        super(SectionModel, self).__init__(ColMapper)
+        super(PropertyModel, self).__init__(ColMapper)
         self._section = section
         self._section.add_change_handler(self.on_section_changed)
         self.offset = len(section.to_path())
@@ -51,7 +52,7 @@ class SectionModel(TreeModel):
         """
         add some coloring to the value in certain cases
         """
-        v = super(SectionModel, self).on_get_value(tree_iter, column)
+        v = super(PropertyModel, self).on_get_value(tree_iter, column)
         if v is None: return v
 
         obj = tree_iter._obj
@@ -63,25 +64,25 @@ class SectionModel(TreeModel):
     def on_iter_n_children(self, tree_iter):
         if tree_iter is None:
             tree_iter = SectionPropertyIter(self._section)
-        return super(SectionModel, self).on_iter_n_children(tree_iter)
+        return super(PropertyModel, self).on_iter_n_children(tree_iter)
 
     def on_iter_nth_child(self, tree_iter, n):
         debug(":on_iter_nth_child [%d]: %s " % (n, tree_iter))
         if tree_iter == None:
             prop = self._section._props[n]
             return PropIter(prop)
-        return super(SectionModel, self).on_iter_nth_child(tree_iter, n)
+        return super(PropertyModel, self).on_iter_nth_child(tree_iter, n)
 
     def _get_node_iter(self, node):
-        if isinstance(node, odmlproperty.Property):
+        if isinstance(node, odml.property.Property):
             return PropIter(node)
         if isinstance(node, value.Value):
             return ValueIter(node)
         return SectionPropertyIter(node)
 
     def post_delete(self, parent, old_path):
-        super(SectionModel, self).post_delete(parent, old_path)
-        if isinstance(parent, odmlproperty.Property):
+        super(PropertyModel, self).post_delete(parent, old_path)
+        if isinstance(parent, odml.property.Property):
             # a value was deleted
             if len(parent) == 1:
                 # the last child row is also not present anymore,
@@ -95,7 +96,7 @@ class SectionModel(TreeModel):
         # collapsed, however in fact we would need to insert an additional row
         # if the property switched from one value to two values
         # (the first was displayed inline, but now gets its own row)
-        super(SectionModel, self).post_insert(node)
+        super(PropertyModel, self).post_insert(node)
 
     def on_section_changed(self, context):
         """
@@ -138,7 +139,7 @@ class SectionModel(TreeModel):
         self._section.remove_change_handler(self.on_section_changed)
 
     def __repr__(self):
-        return "<SectionModel of %s>" % (self.section)
+        return "<PropertyModel of %s>" % (self.section)
 
     @property
     def section(self):

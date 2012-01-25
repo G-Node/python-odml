@@ -11,9 +11,9 @@ debug = lambda x: 0
 
 ColMapper = ColumnMapper({"Name"        : (0, "name")})
 
-class DocumentModel(TreeModel):
+class SectionModel(TreeModel):
     def __init__(self, odml_document):
-        super(DocumentModel, self).__init__(ColMapper)
+        super(SectionModel, self).__init__(ColMapper)
 
         # otherwise bad things happen
         assert isinstance(odml_document, odml.doc.Document)
@@ -54,7 +54,7 @@ class DocumentModel(TreeModel):
         """
         add some coloring to the value in certain cases
         """
-        v = super(DocumentModel, self).on_get_value(tree_iter, column)
+        v = super(SectionModel, self).on_get_value(tree_iter, column)
         if v is None: return v
 
         obj = tree_iter._obj
@@ -63,12 +63,12 @@ class DocumentModel(TreeModel):
     def on_iter_n_children(self, tree_iter):
         if tree_iter is None:
             tree_iter = SectionIter(self._section)
-        return super(DocumentModel, self).on_iter_n_children(tree_iter)
+        return super(SectionModel, self).on_iter_n_children(tree_iter)
 
     def on_iter_nth_child(self, tree_iter, n):
         if tree_iter == None:
             return SectionIter(self._section.sections[n])
-        return super(DocumentModel, self).on_iter_nth_child(tree_iter, n)
+        return super(SectionModel, self).on_iter_nth_child(tree_iter, n)
 
     def _get_node_iter(self, node):
         # no safety checks here, always return a section iter

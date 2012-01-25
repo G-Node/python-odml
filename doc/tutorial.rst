@@ -8,6 +8,17 @@ Getting Started
 Installation
 ------------
 
+Should be easy using::
+
+    $ python setup.py install
+
+You should be able to just test the library using the following::
+
+    $ export PYTHONPATH=.
+    $ python
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import odml 
+
 Running python-odml
 -------------------
 Once python-odml is installed, you can use it in your python shell::
@@ -73,11 +84,9 @@ whereas the ``value`` attribute contains the serialized data as a ``string``.
 Working with files
 ==================
 Currently, odML-Files can be read from and written to XML-files.
-This is provided by the :ref:`odml.tools.xmlparser` module::
+This is provided by the :py:mod:`odml.tools.xmlparser` module::
 
-    >>> from odml.tools.xmlparser import parseXML, XMLWriter
-
-Note: this API is still subject to change.
+    >>> from odml.tools.xmlparser import load, XMLReader, XMLWriter
 
 You can write files using the XMLWriter (``d`` is our ODML-Document from the previous examples)::
 
@@ -97,9 +106,117 @@ To just print the xml-representation::
       </section>
     </odML>
 
-You can read files using the parseXML-function, which works on a file-object::
+You can read files using the load()-function for convenience::
 
-    >>> document = parseXML(open('example.odml'))
+    >>> document = load('example.odml')
     <Doc 1.0 by None (1 sections)>
 
 Note: the XML-parser will enforce propper structure.
+
+If you need to parse Strings, you can use the XMLParser, which can also parse odML-objects such as::
+
+    >>> XMLReader().fromString("""<value>13<type>int</type></value>""")
+    <int 13>
+
+Advanced odML-Features
+======================
+
+Data types and conversion
+-------------------------
+
+Values always hold their string-representation (``value`` property).
+If they have a ``dtype`` set, this representation will be converted to a native
+one (``data`` property)::
+
+    >>> import odml
+    >>> odml.Value("13")
+    <13>
+    >>> v = odml.Value("13")
+    >>> v, v.value, v.data
+    (<13>, u'13', u'13')
+    >>> v.dtype = "int"
+    >>> v, v.value, v.data
+    (<int 13>, u'13', 13)
+    >>> v.dtype = "float"
+    >>> v, v.value, v.data
+    (<float 13.0>, u'13.0', 13.0)
+
+When changing the ``dtype``, the data is first converted back to its string
+representation and then tried to parse as new data. If the representation for
+the data type is invalid, a ``ValueError`` is raised.
+Also note, that during such a process, value loss may occur.
+
+    >>> v.data = 13.5
+    >>> v.dtype = "int"  # converts 13.5 -> u'13.5' -> 13
+    >>> v.dtype = "float"
+    >>> v.data
+    13.0
+
+The available types are implemented in the :py:mod:`odml.types` Module.
+
+There is one additional special case, which is the ``binary`` data type, that
+comes with different encodings (``base64``, ``hexadecimal`` and ``quoted-printable``)::
+
+    >>> v = odml.Value("TcO8bGxlcg==", dtype="binary", encoder="base64")
+    >>> v
+    <binary TcO8bGxlcg==>
+    >>> print v.data
+    Müller
+    >>> v.encoder = "hexadecimal"
+    >>> v
+    <binary 4dc3bc6c6c6572>
+
+The checksum is automatically calculated on the raw data and defaults to a
+``crc32`` checksum::
+
+    >>> v.checksum
+    'crc32$6c47b7c5'
+    >>> v.checksum = "md5"
+    >>> v.checksum
+    'md5$e35bc0a78f1c870124dfc1bbbd23721f'
+
+Links & Includes
+----------------
+
+odML-Sections can be linked to other sections, so that they include their
+attributes. A link can be within the document (``link`` property) or to an
+external one (``include`` property).
+
+After parsing a document, these links are not yet resolved, but can be using
+the :py:meth:`odml.doc.BaseDocument.finalize` method::
+
+    >>> d = xmlparser.load("sample.odml")
+    >>> d.finalize()
+
+Only the parser does not automatically resolve link properties, as the referenced
+sections may not yet be available.
+However, when manually setting the ``link`` (or ``include``) attribute, it will
+be immediately resolved. To avoid this behaviour, set the ``_link`` (or ``_include``)
+attribute instead.
+The object remembers to which one it is linked in its ``_merged`` attribute.
+The link can be unresolved manually using :py:meth:`odml.section.BaseSection.unmerge`
+and merged again using :py:meth:`odml.section.BaseSection.merge`.
+
+Unresolving means to remove sections and properties that do not differ from their
+linked equivalents. This should be done globally before saving using the
+:py:meth:`odml.base.baseobject.clean` method::
+
+    >>> d.clean()
+    >>> xmlparser.XMLWriter(d).write_file('sample.odml')
+
+Changing a ``link`` (or ``include``) attribute will first unmerge the section and
+then set merge with the new object.
+
+Terminologies
+-------------
+
+odML supports terminologies that are data structure templates for typical use cases.
+Sections can have a ``repository`` attribute. As repositories can be inherited,
+the current applicable one can be obtained using the :py:meth:`odml.section.BaseSection.get_repository`
+method.
+
+To see whether an object has a terminology equivalent, use the :py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
+method, which returns the corresponding object of the terminology.
+
+
+

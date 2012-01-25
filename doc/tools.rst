@@ -1,8 +1,18 @@
+.. _datatypes:
+
+Data Types
+==========
+
+.. automodule:: odml.types
+   :members:
+   :inherited-members:
+   :undoc-members:
+
 .. _tools:
 
 Tools
 =====
-Several tools are provided with the :ref:`odml.tools` package.
+Several tools are provided with the :py:mod:`odml.tools` package.
 
 XMLParser
 ---------

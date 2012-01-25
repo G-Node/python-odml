@@ -160,6 +160,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         """
         return self._merged
 
+    @mapping.remapable_append
     def append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
@@ -171,7 +172,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         else:
             raise ValueError("Can only append sections and properties")
 
-
+    @mapping.remapable_insert
     def insert(self, position, obj):
         """insert a Section or Property at the respective position"""
         if isinstance(obj, Section):
@@ -183,6 +184,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         else:
             raise ValueError("Can only insert sections and properties")
 
+    @mapping.remapable_remove
     def remove(self, obj):
         if isinstance(obj, Section): # TODO make sure this is not compare based
             self._sections.remove(obj)

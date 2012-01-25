@@ -1,5 +1,4 @@
 import GenericIter
-import string
 
 class PropIter(GenericIter.GenericIter):
     """
@@ -71,3 +70,9 @@ class SectionPropertyIter(GenericIter.GenericIter):
     @property
     def n_children(self):
         return len(self._obj.properties)
+
+# associate the odml-classes to the corresponding iter-classes
+import odml.tools.nodes as nodes
+nodes.Section.IterClass  = SectionIter
+nodes.Property.IterClass = PropIter
+nodes.Value.IterClass    = ValueIter

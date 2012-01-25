@@ -5,17 +5,17 @@ import gtk
 import gobject
 
 import odml
-import odml.tools.treemodel.mixin
+import odml.gui.treemodel.mixin
 import commands
 
-from odml.tools.treemodel import SectionModel, DocumentModel
+from odml.gui.treemodel import PropertyModel, SectionModel
 
 from InfoBar import EditorInfoBar
 from ScrolledWindow import ScrolledWindow
 import TreeView
 from SectionView import SectionView
+from AttributeView import AttributeView
 from PropertyView import PropertyView
-from ValueView import ValueView
 from NavigationBar import NavigationBar
 from ChooserDialog import odMLChooserDialog
 from EditorTab import EditorTab
@@ -32,6 +32,7 @@ ui_info = \
       <menuitem action='FileOpen'/>
       <menuitem action='OpenRecent' />
       <menuitem name='Save' action='Save' />
+      <menuitem action='SaveAs' />
       <separator/>
       <menuitem action='CloseTab'/>
       <menuitem action='Close'/>
@@ -194,7 +195,7 @@ class EditorWindow(gtk.Window):
         section_view.show()
         hpaned.add1(section_view)
 
-        property_tv = ValueView(self.registry)
+        property_tv = PropertyView(self.registry)
         property_tv.execute = self.execute
         property_tv.on_property_select = self.on_object_select
         property_view = gtk.VBox(homogeneous=False, spacing=0)
@@ -212,7 +213,7 @@ class EditorWindow(gtk.Window):
         # property_view to edit ODML-Properties
 
         # to edit properties of Document, Section or Property:
-        self._property_view = PropertyView(self.execute)
+        self._property_view = AttributeView(self.execute)
         frame = gtk.Frame()
         frame.set_label_widget(navigation_bar)
         frame.add(ScrolledWindow(self._property_view._treeview))
@@ -553,7 +554,7 @@ class EditorWindow(gtk.Window):
         """updates the models if a different tab is selected changed"""
         model = None
         if tab.document is not None:
-            model = DocumentModel.DocumentModel(tab.document)
+            model = SectionModel.SectionModel(tab.document)
 
         self._section_tv.set_model(model)
         # TODO restore selection/expansion if known in tab
@@ -561,6 +562,20 @@ class EditorWindow(gtk.Window):
         self._navigation_bar.document = tab.document
         # self._property_tv.set_model()
         # TODO restore selection/expansion if known in tab
+
+    @gui_action("SaveAs", stock_id=gtk.STOCK_SAVE_AS)
+    def save_as(self, action):
+        """
+        called upon save_file action
+
+        always runs a file_chooser dialog to allow saving to a different filename
+        """
+        self.chooser_dialog(title="Save Document", callback=self.on_file_save, save=True)
+        return False # TODO this signals that file saving was not successful
+                     #      because no action should be taken until the chooser
+                     #      dialog is finish, however the user might then need to
+                     #      repeat the action, once the document was saved and the
+                     #      edited flag was cleared
 
     @gui_action("Save", stock_id=gtk.STOCK_SAVE)
     def save(self, action):
@@ -571,12 +586,7 @@ class EditorWindow(gtk.Window):
         """
         if self.current_tab.file_uri:
             return self.current_tab.save(self.current_tab.file_uri)
-        self.chooser_dialog(title="Save Document", callback=self.on_file_save, save=True)
-        return False # TODO this signals that file saving was not successful
-                     #      because no action should be taken until the chooser
-                     #      dialog is finish, however the user might then need to
-                     #      repeat the action, once the document was saved and the
-                     #      edited flag was cleared
+        return self.save_as(self, action)
 
     def on_file_save(self, uri):
         if not uri.lower().endswith('.odml') and \

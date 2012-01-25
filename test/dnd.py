@@ -1,11 +1,11 @@
 import unittest
 
 import odml
-import odml.tools.gui.dnd.targets as targets
-import odml.tools.gui.dnd.odmldrop as odmldrop
-import odml.tools.gui.dnd.text as text
-import odml.tools.gui.dnd.tree as tree
-from odml.tools.gui.DocumentRegistry import DocumentRegistry
+import odml.gui.dnd.targets as targets
+import odml.gui.dnd.odmldrop as odmldrop
+import odml.gui.dnd.text as text
+import odml.gui.dnd.tree as tree
+from odml.gui.DocumentRegistry import DocumentRegistry
 import samplefile
 import mapping
 import gtk

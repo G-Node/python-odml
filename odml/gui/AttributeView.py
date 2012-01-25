@@ -1,11 +1,11 @@
 import gtk
 import cgi
-from ... import format
+import odml.format as format
 import commands
 from TreeView import TreeView
 COL_KEY = 0
 COL_VALUE = 1
-class PropertyView(TreeView):
+class AttributeView(TreeView):
     """
     A key-value ListStore based TreeView
 
@@ -20,7 +20,7 @@ class PropertyView(TreeView):
         if obj is not None:
             self.set_model(obj)
 
-        super(PropertyView, self).__init__(self._store)
+        super(AttributeView, self).__init__(self._store)
 
         for i, name in ((COL_KEY, "Attribute"), (COL_VALUE, "Value")):
             self.add_column(

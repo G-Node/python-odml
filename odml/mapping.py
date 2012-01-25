@@ -2,12 +2,35 @@ import odml
 import terminology
 import weakref
 
-class mapable(object):
+# late import, as the proxy module relies on the latest available
+# concrete odml-class implementations, that would not be available if they
+# were directly imported in the beginning
+proxy = None
+
+class mapped(object):
+    """
+    Keeps information for objects that can have a current mapped object associated
+    with them
+    """
+    __active_mapping = None
+    @property
+    def _active_mapping(self):
+        if self.__active_mapping is None: return None
+        return self.__active_mapping()
+
+    @_active_mapping.setter
+    def _active_mapping(self, new_value):
+        self.__active_mapping = weakref.ref(new_value)
+
+    @_active_mapping.deleter
+    def _active_mapping(self):
+        del self.__active_mapping
+
+class mapable(mapped):
     """
     Provides assisting functionality for objects that support
     the mapping attribute (i.e. sections and properties)
     """
-    __active_mapping = None
     def get_mapping(self):
         """
         returns the current valid mapping for this section / property
@@ -88,7 +111,9 @@ class mapable(object):
         if self._mapping == new_value: return
 
         remap = None
-        print "active mapping:", self._active_mapping, self.__active_mapping
+        # TODO should save the old index when unmapping and then use insert to
+        #      (re)introduce the new mapping, to keep order intact
+        print "active mapping:", self._active_mapping
         if self._active_mapping is not None:
             remap = self.unmap()
 
@@ -96,19 +121,6 @@ class mapable(object):
 
         if remap is not None:
             self.remap(remap)
-
-    @property
-    def _active_mapping(self):
-        if self.__active_mapping is None: return None
-        return self.__active_mapping()
-
-    @_active_mapping.setter
-    def _active_mapping(self, new_value):
-        self.__active_mapping = weakref.ref(new_value)
-
-    @_active_mapping.deleter
-    def _active_mapping(self):
-        del self.__active_mapping
 
     def unmap(self):
         """
@@ -124,41 +136,84 @@ class mapable(object):
 
 class mapableProperty(mapable):
     def unmap(self):
-        print "unmap property"
         return unmap_property(prop=self)
 
     def remap(self, mprop):
-        print "remap property"
         create_property_mapping(self.parent, self)
 
 class mapableSection(mapable):
     def unmap(self):
+        """
+        recursively unmap this section
+
+        in certain configurations, a mapping cannot be completely removed for a
+        whole section. In this case, this will raise a MappingError-Exception.
+
+        To still do it, unmap the whole document (or destroy the mapped view)
+        prior to the change execution.
+        """
         return unmap_section(self)
 
     def remap(self, msec):
-        # the mapping might have changed, we create a new
-        # mapped section and replace msec in its tree if appropriate
+        """
+        reestablish a mapping assuming that this section was successfully unmapped
+        earlier. To avoid undefined side-effects, only call this, if this section
+        is the only section without an established mapping.
+        """
+        # map the section subtree
         nmsec = create_section_mapping(self)
-        nmsec._sections = msec._sections
 
-        self._active_mapping = nmsec
-        for prop in self.properties:
-            create_property_mapping(self, prop)
+        # remap all the properties
+        for child in self.itersections(recursive=True, yield_self=True):
+            for prop in child.properties:
+                create_property_mapping(child, prop)
+
+def remapable_append(func):
+    def f(self, obj):
+        ret = func(self, obj)
+        if (proxy and not isinstance(obj, proxy.Proxy)) and hasattr(obj, "_remap_info"):
+            obj.remap(obj._remap_info)
+        return ret
+    return f
+
+def remapable_insert(func):
+    def f(self, position, obj):
+        ret = func(self, position, obj)
+        if (proxy and not isinstance(obj, proxy.Proxy)) and hasattr(obj, "_remap_info"):
+            obj.remap(obj._remap_info)
+        return ret
+    return f
+
+def remapable_remove(func):
+    def f(self, obj):
+        # don't attempt anything on proxy objects
+        if (proxy and not isinstance(obj, proxy.Proxy)) and obj._active_mapping is not None:
+            obj._remap_info = obj.unmap()
+        return func(self, obj)
+    return f
 
 class MappingError(TypeError):
     pass
 
 def create_mapping(doc):
+    """
+    install the mapping for the document
+
+    1. recursively map all sections
+    2. afterwards map all their properties
+    """
     global proxy # we install the proxy only late time
     import tools.proxy as proxy
-    mdoc = doc.clone(children=False) # TODO might need to proxy this too
+    #mdoc = doc.clone(children=False) # TODO might need to proxy this too
+    mdoc = proxy.DocumentProxy(doc)
+    # TODO copy attributes, but also make this generic
     mdoc._proxy_obj = doc
     doc._active_mapping = mdoc
 
     # iterate each section and property
     # take the mapped object and try to put it at a meaningful place
-    for sec in doc.itersections(recursive=True):
-        create_section_mapping(sec)
+    for sec in doc.sections:
+        create_section_mapping(sec) # this recurses on its own
 
     for sec in doc.itersections(recursive=True):
         for prop in sec.properties: # not needed anymore: [:]:
@@ -167,19 +222,34 @@ def create_mapping(doc):
     return mdoc
 
 def create_section_mapping(sec):
+    """
+    recursively install the mapping for a section
+
+    Note: the mappings for the properties contained in the sections need to be
+    installed afterwards (after all sections have been mapped) manually
+    """
     obj = sec.mapped_object
     msec = proxy.MappedSection(sec, template=obj)
     sec._active_mapping = msec
-    sec.parent._active_mapping.append(msec)
+    sec.parent._active_mapping.proxy_append(msec)
 
     if obj:
         term = obj.get_repository()
         if msec.get_repository() != term:
             msec.repository = term
 
+    # map all child sections
+    for child in sec.sections:
+        create_section_mapping(child)
+
     return msec
 
 def create_property_mapping(sec, prop):
+    """
+    map a property to its destination place using the mapping rules (see test/mapping.py)
+
+    Note: all sections of the document need already to be mapped
+    """
     msec = sec._active_mapping
     mprop = proxy.PropertyProxy(prop)
     mprop._section = None
@@ -187,7 +257,7 @@ def create_property_mapping(sec, prop):
 
     mapping = prop.mapped_object
     if mapping is None: # easy case: just proxy the property
-        msec.append(mprop)
+        msec.proxy_append(mprop)
         return
 
     print mprop.parent
@@ -198,7 +268,7 @@ def create_property_mapping(sec, prop):
     # rule 4c: target-type == section-type
     #          copy attributes, keep property
     if dst_type == msec.type:
-        msec.append(mprop)
+        msec.proxy_append(mprop)
         return mprop
 
     # rule 4d: one child has the type
@@ -212,8 +282,8 @@ def create_property_mapping(sec, prop):
                 # rule 4e2: create a subsection linked to the sibling
                 # TODO set repository and other attributes?
                 child = proxy.NonexistantSection(sibling.name, sibling.type)
-                child.append(mprop)
-                msec.append(child)
+                child.proxy_append(mprop)
+                msec.proxy_append(child)
 
                 # TODO the link will have trouble to be resolved, as the
                 # nonexistant section does not allow to create any attributes in it
@@ -226,18 +296,28 @@ def create_property_mapping(sec, prop):
             # rule 4f: no sibling, create a new section
             # TODO set repository and other attributes?
             child = proxy.NonexistantSection(mapping._section.name, dst_type)
-            msec.append(child)
+            msec.proxy_append(child)
     elif len(child) > 1:
         raise MappingError("""Your data organisation does not make sense,
         there are %d children of type '%s'. Don't know how to handle.""" % (len(child), dst_type))
     else: # exactly one child found
         child = child[0]
 
-    child.append(mprop)
+    # corner-case: we are remapping and/or the section already contains a property
+    # with the same name
+    # however this will also hold true, if multiple properties map to the same target
+    # for now live with it being there multiple times (TODO)
+    obj = child.contains(mprop)
+    if obj is not None:
+        pass #child.proxy_remove(obj)
+
+    child.proxy_append(mprop)
     return mprop
 
 def unmap_property(prop=None, mprop=None):
-    print "unmap prop"
+    """
+    uninstall the property mapping by removing its proxy object from its mapped section
+    """
     if mprop is None:
         if prop is None or prop._active_mapping is None: return
         mprop = prop._active_mapping
@@ -245,49 +325,111 @@ def unmap_property(prop=None, mprop=None):
     if prop is None:
         prop = mprop._proxy_obj
 
+    # the section where the property is mapped to
     msec = mprop.parent
 
-    msec.remove_proxy(mprop)
+    msec.proxy_remove(mprop)
+
     # figure out, if we can safely remove mprop's section
-    if isinstance(msec, proxy.NonexistantSection) and \
-        len(msec) == 0:
-        # there are no subsections/properties left
-        msec.parent.remove_proxy(msec)
-        # TODO cascade till toplevel?
+    # the section can either be a MappedSection that directly corresponds to a section
+    # in the original document, or it is a NonexistantSection (either linked or plain)
+    #
+    if isinstance(msec, proxy.NonexistantSection):
+        if msec.is_merged:
+            # the section is merged, i.e. it has a link attribute set (can't be include
+            # as it is a non-existant section)
+            # for now all properties that are no proxies (they are installed using
+            # clone()-call) are just copies
+            l = len(filter(lambda x: isinstance(x, proxy.Proxy), msec.properties))
+        else:
+            l = len(msec.properties)
+
+        if l == 0:
+            # there are no subsections/properties left
+            msec.parent.proxy_remove(msec)
+            # TODO cascade till toplevel? probably not
 
     del prop._active_mapping
     return mprop
 
-def unmap_section(sec):
+def can_unmap_section(sec, top):
     """
-    try to unmap the section, but make sure, that there are
-    no dependencies. i.e. we cannot unmap a section if properties
+    check if a section including its subsections, properties and properties of
+    mapped subsections (i.e. NonexistantSections) can safely be unmapped
+    """
+    # all subsections must be unmap-able
+    for sec in sec.sections:
+        if not can_unmap_section(sec, top):
+            return False
+
+    msec = sec._active_mapping
+    if not can_unmap_all_properties(msec, top):
+        return False
+
+    # proxy sections that only exist in the mapping, must fulfill the property condition too
+    for mchild in msec.sections:
+        if isinstance(mchild, proxy.NonexistantSection) and not can_unmap_all_properties(mchild, top):
+            return False
+
+    return True
+
+def can_unmap_all_properties(msec, top):
+    """
+    find out if the mapped section *msec* contains any property whose origin (its proxied object)
+    is not within the subtree indicated by section *top*
+    """
+    for mprop in msec.properties:
+        p = mprop._proxy_obj.parent
+
+        while p is not None:
+            if p is top:
+                break
+            p = p.parent
+        else:
+            # top is not a parent of p
+            return False
+
+    return True
+
+def unmap_section(sec, check=True):
+    """
+    try to unmap the section (including its children),
+    but make sure, that there are no dependencies:
+    i.e. we cannot unmap a section if properties
     from other sections are mapped here, this would break stuff
     """
-    print "unmap sec"
-    if sec._active_mapping is None: return
+    if sec._active_mapping is None:
+        return
     msec = sec._active_mapping
-    for mprop in msec:
-        if mprop._proxy_obj.parent is not msec._proxy_obj:
-            raise MappingError("""
-            There are other active mappings to this section.
+
+    if check and not can_unmap_section(sec, sec):
+        raise MappingError("""
+            There are other active mappings to this section (or one of its children)
             Unmapping can't be done safely. Destroy the mapped view
-            before editing. (%s vs %s) (%s.%s)
-            """ % (mprop._proxy_obj.parent, msec._proxy_obj, msec, mprop))
+            before editing.
+            """)
 
-    # all properties we find here are from our own section,
-    # so it seems safe to unmap all
-    for mprop in msec:
-        unmap_property(mprop=mprop)
+    # first unmap all properties of this section
+    for child in sec.itersections(recursive=True, yield_self=True):
+        for prop in child.properties:
+            mprop = prop._active_mapping
+            if mprop is not None: # this may happen for linked sections
+                unmap_property(mprop=mprop)
 
-    # now the section should have no properties left
-    assert len(msec.properties) == 0
+    # now each mapped section should not have any properties left
+    for mchild in msec.itersections(recursive=True, yield_self=True):
+        assert len(mchild.properties) == 0
+
+    # and we are safe to remove the mappings
+    for child in sec.itersections(recursive=True, yield_self=True):
+        del child._active_mapping
 
     # TODO do we need to do anything more with this section?
-    if isinstance(msec.parent, proxy.Proxy):
-        msec.parent.remove_proxy(msec)
-    else:
-        msec.parent.remove(msec)
+
+    # finally we can remove this section from the tree
+    assert isinstance(msec.parent, proxy.Proxy)
+    msec.parent.proxy_remove(msec)
+
 
     return msec
 

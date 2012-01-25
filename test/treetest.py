@@ -1,12 +1,10 @@
-#from odml.tools import xmlparser
-import odml.tools.treemodel.mixin
+import odml.gui.treemodel.mixin
 import unittest
 import samplefile
 
 class TestTreemodel(unittest.TestCase):
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        #for s in self.doc: xmlparser.dumpSection(s)
 
     def path_property(self, prop, path):
         for i, val in enumerate(prop):
