@@ -178,7 +178,12 @@ class EditorTab(object):
         self.update_validation_error_objects(errors)
 
     def get_name(self):
+        """return the filename of this tab's document"""
         return os.path.basename(str(self.file_uri))
+
+    def update_label(self):
+        """update the tab label with the current filename"""
+        self.label.set_text(self.get_name())
 
     def close(self):
         """

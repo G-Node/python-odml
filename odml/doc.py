@@ -39,13 +39,13 @@ class BaseDocument(base.sectionable, Document):
     def date(self):
         return types.set(self._date, "date")
 
-    @property
-    def parent(self):
-        return None
-
     @date.setter
     def date(self, new_value):
         self._date = types.get(new_value, "date")
+
+    @property
+    def parent(self):
+        return None
 
     def __repr__(self):
         return "<Doc %s by %s (%d sections)>" % (self._version, self._author, len(self._sections))

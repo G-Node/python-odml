@@ -405,7 +405,7 @@ class EditorWindow(gtk.Window):
         if not force_reset:
             self.current_tab = tab
 
-        self.set_status_filename()
+        self.set_status_filename(tab)
         self.update_model(tab)
         self.enable_undo(tab.command_manager.can_undo)
         self.enable_redo(tab.command_manager.can_redo)
@@ -453,6 +453,7 @@ class EditorWindow(gtk.Window):
         #hbox will be used to store a label and button, as notebook tab title
         hbox = gtk.HBox(False, 0)
         label = gtk.Label(tab.get_name())
+        tab.label = label
         hbox.pack_start(label)
 
         #get a stock close button image
@@ -556,8 +557,10 @@ class EditorWindow(gtk.Window):
         uri = recent_action.get_current_uri ()
         self.load_document(uri)
 
-    def set_status_filename(self):
-        filename = self.current_tab.file_uri
+    def set_status_filename(self, tab=None):
+        if tab is None:
+            tab = self.current_tab
+        filename = tab.file_uri
         if not filename:
             filename = "<new file>"
         self.update_statusbar(filename)
@@ -605,6 +608,7 @@ class EditorWindow(gtk.Window):
             not uri.lower().endswith('.xml'):
                 uri += ".xml"
         self.current_tab.file_uri = uri
+        self.current_tab.update_label()
         self.current_tab.save(uri)
         self.set_status_filename()
 
