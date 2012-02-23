@@ -170,7 +170,7 @@ class SectionPage(Page):
     @property
     def sections(self):
         for sec in self.term.itersections(recursive=True):
-            if sec in self.view.sections:
+            if self.view.sections.get(sec, False):
                 yield sec
 
 class SummaryPage(Page):
