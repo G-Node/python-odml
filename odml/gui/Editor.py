@@ -193,7 +193,10 @@ class EditorWindow(gtk.Window):
         section_tv.execute = self.execute
         section_tv.on_section_change = self.on_section_change
         section_view = gtk.VBox(homogeneous=False, spacing=0)
-        section_view.pack_start(ScrolledWindow(section_tv._treeview), True, True, 1)
+        tmp = gtk.Frame("Sections")
+        tmp.add(ScrolledWindow(section_tv._treeview))
+        tmp.show()
+        section_view.pack_start(tmp, True, True, 1)
         section_view.show()
         hpaned.add1(section_view)
 
@@ -205,7 +208,10 @@ class EditorWindow(gtk.Window):
         info_bar = EditorInfoBar ()
         self._info_bar = info_bar
         property_view.pack_start(info_bar, False, False, 1)
-        property_view.pack_start(ScrolledWindow(property_tv._treeview), True, True, 1)
+        tmp = gtk.Frame("Properties")
+        tmp.add(ScrolledWindow(property_tv._treeview))
+        tmp.show()
+        property_view.pack_start(tmp, True, True, 1)
         property_view.show()
         hpaned.add2(property_view)
 
