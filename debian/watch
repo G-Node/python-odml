@@ -1,0 +1,5 @@
+# Compulsory line, this is a version 3 file
+version=3
+opts="filenamemangle=s/.*\/(.*)/python-odml-$1\.tar\.gz/" \
+  http://github.com/G-Node/python-odml/downloads
+.*tarball/([\d\.a-z]+)

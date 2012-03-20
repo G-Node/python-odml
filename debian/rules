@@ -1,0 +1,6 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# one ring to rule them all ...
+%:
+	dh $@

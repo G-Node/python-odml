@@ -1,0 +1,24 @@
+Source: python-odml
+Priority: extra
+Maintainer: G-Node Debian Team <debian-team@g-node.org>
+Uploaders: Jan Grewe <jan.grewe@g-node.org>, Michael Hanke <mih@debian.org>
+Build-Depends: debhelper (>= 7.0.50~), python-all-dev, python-support, python-lxml, python-gtk2
+Standards-Version: 3.9.3
+Section: science
+Homepage: http://github.com/G-Node/python-odml
+Vcs-Browser: http://github.com/G-Node/python-odml
+Vcs-Git: git://github.com/G-Node/python-odml.git
+
+Package: python-odml
+Section: python
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+XB-Python-Version: ${python:Versions}
+Description: Python GUI and API for data annotation with odml.
+ The odml format is a simple hierarchical format basically consisting
+ of extended key-value pairs that can be grouped in sections. The odml
+ format is designed for data annotation with any kind of metadata. 
+ These are stored in xml files. 
+ .
+ Standardization can be achieved by applying odml-terminologies. The
+ editor offers tools to validate against these terminologies.

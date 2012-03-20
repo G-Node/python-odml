@@ -1,0 +1,5 @@
+python-odml (1.0-1) UNRELEASED; urgency=low
+
+  * Initial Debian packaging. Closes: #
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Fri, 16 Mar 2012 10:24:59 +0100
