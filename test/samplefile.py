@@ -2,12 +2,13 @@ import odml
 import unittest
 import os
 from odml.tools import xmlparser
+from odml.tools import jsonparser
 from odml.tools import dumper
 import mapping
 
 def dump(doc, filename):
     """
-    helper function to dump a duocument for debugging purposes
+    helper function to dump a document for debugging purposes
     """
     open(filename, "w").write(unicode(xmlparser.XMLWriter(doc)))
 
@@ -80,17 +81,22 @@ class SampleFileOperationTest(unittest.TestCase):
         self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
 
     def test_save(self):
-        doc = xmlparser.XMLWriter(self.doc)
-        path = os.tempnam()
-        doc.write_file(path)
-        os.unlink(path)
+        for module in [xmlparser.XMLWriter, jsonparser.JSONWriter]:
+            doc = module(self.doc)
+            path = os.tempnam()
+            doc.write_file(path)
+            os.unlink(path)
 
     def test_restore(self):
         import StringIO
-        doc = xmlparser.XMLWriter(self.doc)
-        doc = StringIO.StringIO(unicode(doc))
-        doc = xmlparser.XMLReader().fromFile(doc)
-        self.assertEqual(doc, self.doc)
+        for Writer,Reader in [
+            (xmlparser.XMLWriter, xmlparser.XMLReader),
+            (jsonparser.JSONWriter, jsonparser.JSONReader)]:
+        
+            doc = Writer(self.doc)
+            doc = StringIO.StringIO(unicode(doc))
+            doc = Reader().fromFile(doc)
+            self.assertEqual(doc, self.doc)
 #        for a,b in zip(doc.sections, self.doc.sections):
 #            print "sec cmp", a, b
 #            self.assertEqual(a, b)
@@ -101,7 +107,7 @@ class SampleFileOperationTest(unittest.TestCase):
 #        for sec in self.doc.sections:
 #            xmlparser.dumpSection(sec)
 #        print "-----------------------------------"
-#
+
 class AttributeTest(unittest.TestCase):
     def test_value_int(self):
         v = odml.Value(value="1", dtype="int")

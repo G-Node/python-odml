@@ -13,11 +13,11 @@ class BaseDocument(base.sectionable, Document):
     _format = format.Document
 
     def __init__(self, author=None, date=None, version=None, repository=None):
+        super(BaseDocument, self).__init__()
         self._author = author
         self._date = date # date must be a datetime
         self._version = version
         self._repository = repository
-        super(BaseDocument, self).__init__()
 
     @property
     def author(self):
