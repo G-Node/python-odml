@@ -6,9 +6,17 @@ Source: https://github.com/G-Node/python-odml
 
 
 Files: *
-Copyright: 2011, Hagen Fritsch <fritsch+hagen@in.tum.de>
+Copyright: 2011, Hagen Fritsch <fritsch+gnode@in.tum.de>
 License: LGPL-2.1
 
+Files: odml/gui/*.py odml/*.py
+Copyright: 2011, Hagen Fritsch <fritsch+gnode@in.tum.de>
+  2011, Christian Kellner <kellner@bio.lmu.de>
+License: LGPL-2.1
+
+Files: images/*
+Copyright: 2011, Jan Grewe <jan.grewe@g-node.org>
+License: LGPL-2.1
 
 Files: debian/*
 Copyright: 2012, Michael Hanke <michael.hanke@gmail.com>
