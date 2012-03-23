@@ -1,4 +1,4 @@
-python-odml (1.0-1) UNRELEASED; urgency=low
+python-odml (0.9-1) UNRELEASED; urgency=low
 
   * Initial Debian packaging. Closes: #
 
