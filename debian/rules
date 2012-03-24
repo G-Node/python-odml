@@ -1,6 +1,8 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+DEB_PYTHON_SYSTEM=distutils
+
 # one ring to rule them all ...
 %:
 	dh $@
