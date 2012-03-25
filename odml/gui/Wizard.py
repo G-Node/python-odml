@@ -182,6 +182,7 @@ class DocumentWizard:
     def __init__(self):
         assistant = gtk.Assistant()
 
+        assistant.set_title("New odML-Document wizard")
         assistant.set_default_size(-1, 500)
 
         assistant.connect("apply", self.apply)
