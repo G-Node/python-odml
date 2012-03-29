@@ -7,47 +7,11 @@ import odml.gui.commands as commands
 import odml.terminology
 import odml.tools.dumper as dumper
 import samplefile
+from samplefile import parse
 
 import odml.mapping as mapping
 
-import re
 
-def parse(data):
-    #pat = re.compile(r'(?P<name>\w+)(\[(?P<type>\w+)\])?(\s+mapping \[(?P<dsttype>\w+)(:(?P<dstname>\w+))?\])?')
-    lines = data.strip(" ").strip("\n").split("\n")
-    offset = len(re.compile('(\s*)').match(lines[0]).group())
-    pat = re.compile(r'(?P<name>\w+)(\[(?P<type>\w+)\])?(\s+mapping \[(?P<dst>[\w:]+)\])?(\s+linked to (?P<link>[\w/]+))?')
-    parents = [odml.Document(), None]
-    for line in lines:
-        line = line[offset:]
-        while len(parents) > 1:
-            parpref =(len(parents)-2)*2
-            if line.startswith(" " * parpref):
-                line = line[parpref:]
-                break
-            parents.pop()
-
-        if line.startswith('- '):
-            line = line[2:]
-        else:
-            parents.pop()
-
-        try:
-            m = pat.match(line).groupdict()
-        except:
-            print "error parsing", repr(line)
-            raise
-        if m['type'] is None:
-            obj = odml.Property(name=m['name'], value="[val]")
-        else:
-            obj = odml.Section(name=m['name'], type=m['type'])
-        if m['dst'] is not None:
-            obj.mapping = 'map#%s' % m['dst']
-        if m['link'] is not None:
-            obj._link = m['link']
-        parents[-1].append(obj)
-        parents.append(obj)
-    return parents[0]
 
 class TestMapping(unittest.TestCase):
 

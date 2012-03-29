@@ -7,7 +7,6 @@ import odml.gui.dnd.text as text
 import odml.gui.dnd.tree as tree
 from odml.gui.DocumentRegistry import DocumentRegistry
 import samplefile
-import mapping
 import gtk
 
 MOVE = gtk.gdk.ACTION_MOVE
@@ -70,7 +69,7 @@ class TestDND(unittest.TestCase):
         data = '<section name="s2"><type>t2</type></section>'
         print dropper.odml_tree_receive_data(self.MOVE, sec, -1, data)
 
-        dst = mapping.parse("""
+        dst = samplefile.parse("""
         s1[t1]
         - s2[t2]
         """)
@@ -92,7 +91,7 @@ class TestDND(unittest.TestCase):
         data = dragger.odml_get_data(self.MOVE, s2)
         dropper.odml_tree_receive_data(self.MOVE, s1, -1, data)
 
-        dst = mapping.parse("""
+        dst = samplefile.parse("""
         s1[t1]
         - s2[t2]
         """)

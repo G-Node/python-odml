@@ -1,16 +1,63 @@
 import odml
 import unittest
 import os
+import re
+
 from odml.tools import xmlparser
 from odml.tools import jsonparser
 from odml.tools import dumper
-import mapping
 
 def dump(doc, filename):
     """
     helper function to dump a document for debugging purposes
     """
     open(filename, "w").write(unicode(xmlparser.XMLWriter(doc)))
+    
+def parse(data):
+    """
+    parses strings to quickly create odml-documents
+    
+    e.g.:
+        s1[t1] mapping [T1]
+        - p1
+        s2[t1]
+        - s21[t2] linked to /s1/s2
+    """
+    lines = data.strip(" ").strip("\n").split("\n")
+    offset = len(re.compile('(\s*)').match(lines[0]).group())
+    pat = re.compile(r'(?P<name>\w+)(\[(?P<type>\w+)\])?(\s+mapping \[(?P<dst>[\w:]+)\])?(\s+linked to (?P<link>[\w/]+))?')
+    parents = [odml.Document(), None]
+    for line in lines:
+        line = line[offset:]
+        while len(parents) > 1:
+            parpref =(len(parents)-2)*2
+            if line.startswith(" " * parpref):
+                line = line[parpref:]
+                break
+            parents.pop()
+
+        if line.startswith('- '):
+            line = line[2:]
+        else:
+            parents.pop()
+
+        try:
+            m = pat.match(line).groupdict()
+        except:
+            print "error parsing", repr(line)
+            raise
+        if m['type'] is None:
+            obj = odml.Property(name=m['name'], value="[val]")
+        else:
+            obj = odml.Section(name=m['name'], type=m['type'])
+        if m['dst'] is not None:
+            obj.mapping = 'map#%s' % m['dst']
+        if m['link'] is not None:
+            obj._link = m['link']
+        parents[-1].append(obj)
+        parents.append(obj)
+    return parents[0]
+
 
 class SampleFileCreator:
     def create_document(self):
@@ -178,13 +225,13 @@ class MiscTest(unittest.TestCase):
         self.assertIs(sec10.find_by_path(path_to_sec11), sec11)
 
     def test_findall_related(self):
-        doc = mapping.parse("""
+        doc = parse("""
         s1[T1]
         - s2[T1]
         """)
         self.assertEqual(len(doc.find_related(type="T1", findAll=True)), 2)
 
-        doc = mapping.parse("""
+        doc = parse("""
         s0[T1]
         - s00[T2]
         s1[T2]
