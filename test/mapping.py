@@ -64,7 +64,16 @@ class TestMapping(unittest.TestCase):
         src.repository = 'term'
         dst.repository = 'term' # dst needs to be equal to src for the comparism
         self.check(src, dst)
-
+        
+    def test_rule1_SectionNotFound(self):
+        """
+        a MappingError is raised when the mapping cannot be resolved
+        """
+        odml.terminology.terminologies['map'] = parse("S1[T1]")
+        src = parse("s1[t1] mapping [T2]")
+        with self.assertRaises(mapping.MappingError):
+            self.check(src, None)
+       
     def test_rule2(self):
         """
         2. Enthält eine Section kein Mapping und es gibt auch keines in der
