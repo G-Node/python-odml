@@ -36,6 +36,7 @@
 /usr/lib/python2.7/dist-packages/odml/gui/treemodel/SectionModel.py
 /usr/lib/python2.7/dist-packages/odml/gui/treemodel/GenericIter.py
 /usr/lib/python2.7/dist-packages/odml/gui/treemodel/mixin.py
+/usr/lib/python2.7/dist-packages/odml/gui/__main__.py
 /usr/lib/python2.7/dist-packages/odml/gui/TreeView.py
 /usr/lib/python2.7/dist-packages/odml/gui/TextEditor.py
 /usr/lib/python2.7/dist-packages/odml/gui/PropertyView.py
