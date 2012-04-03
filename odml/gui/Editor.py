@@ -269,11 +269,10 @@ class EditorWindow(gtk.Window):
         return t
 
     def on_menu_item__select(self, menuitem, tooltip):
-        print "set", tooltip
         self._statusbar.push(-1, tooltip)
 
-    def on_menu_item__deselect(self, menuitem, tooltip):
-        self._statusbar.pop()
+    def on_menu_item__deselect(self, menuitem):
+        self._statusbar.pop(-1)
 
     def on_uimanager__connect_proxy(self, uimgr, action, widget):
         # TODO this does not work on unity at least
