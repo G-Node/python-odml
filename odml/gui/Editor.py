@@ -585,7 +585,7 @@ class EditorWindow(gtk.Window):
         """
         if self.current_tab.file_uri:
             return self.current_tab.save(self.current_tab.file_uri)
-        return self.save_as(self, action)
+        return self.save_as(action)
 
     def on_file_save(self, uri):
         if not uri.lower().endswith('.odml') and \
