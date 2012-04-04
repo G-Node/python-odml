@@ -93,15 +93,14 @@ class TreeView(object):
         return self.on_object_edit(tree_iter, data, new_value)
 
     def on_query_tooltip(self, widget, x, y, keyboard_tip, tooltip):
-        if not widget.get_tooltip_context(x, y, keyboard_tip):
-            return False
-        else:
+        if widget.get_tooltip_context(x, y, keyboard_tip):
             model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
 
             value = model.get(iter, 0)
-            self.on_get_tooltip(model, path, iter, tooltip)
-            widget.set_tooltip_row(tooltip, path)
-            return True
+            if self.on_get_tooltip(model, path, iter, tooltip) is not None:
+                widget.set_tooltip_row(tooltip, path)
+                return True
+        return False
 
     on_get_tooltip = None
 

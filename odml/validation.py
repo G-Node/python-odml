@@ -22,6 +22,15 @@ class ValidationError(object):
         self.obj = obj
         self.msg = msg
         self.type = type
+
+    @property
+    def is_warning(self):
+        return self.type == 'warning'
+
+    @property
+    def is_error(self):
+        return self.type == 'error'
+
     def __repr__(self):
         return "<ValidationError(%s):%s \"%s\">" % (self.type, self.obj, self.msg)
     
@@ -73,6 +82,14 @@ class Validation(object):
         """
         self.errors.append(validation_error)
 
+    def __getitem__(self, obj):
+        """return a list of the errors for a certain object"""
+        errors = []
+        for err in self.errors:
+            if err.obj is obj:
+                errors.append(err)
+        return errors
+
 # ------------------------------------------------
 # validation rules
 
@@ -113,10 +130,19 @@ Validation.register_handler('section',  section_unique_names)
 Validation.register_handler('section', property_unique_names)
 
 def odML_mapped_document_be_valid(doc):
+    """
+    try to create a mapping of the document and if that succeeds
+    validate the mapped document according to the validation rules
+    """
     if mapping.proxy is not None and isinstance(doc, mapping.proxy.Proxy):
         return # don't try to map already mapped documents
+    mdoc = doc._active_mapping
+    # TODO: if mdoc is set there is already a mapping present. However, this
+    # TODO  may have been corrupted by user interaction, thus we should actually
+    # TODO  unmap the document, create a new one and then remap the original one
     try:
-        mdoc = mapping.create_mapping(doc)
+        if mdoc is None:
+            mdoc = mapping.create_mapping(doc)
     except mapping.MappingError, e:
         yield ValidationError(doc, 'mapping: %s' % str(e), 'error')
         return

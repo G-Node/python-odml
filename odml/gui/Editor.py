@@ -51,6 +51,7 @@ ui_info = \
       <separator/>
       <menuitem action='CloneTab'/>
       <menuitem action='Map'/>
+      <menuitem action='Validate'/>
     </menu>
     <menu action='HelpMenu'>
       <menuitem action='VisitHP'/>
@@ -69,6 +70,7 @@ ui_info = \
     <toolitem action='NewValue'/>
     <toolitem action='Delete'/>
     <toolitem action='Map' />
+    <toolitem action='Validate' />
   </toolbar>
 </ui>'''
 
@@ -385,6 +387,11 @@ class EditorWindow(gtk.Window):
         ntab = tab.clone_mapping()
         self.append_tab(ntab)
         return ntab
+
+    @gui_action("Validate", tooltip="Validate the document and check for errors",
+                label="_Validate", stock_id=gtk.STOCK_APPLY, accelerator="<control>E")
+    def on_validate(self, action):
+        self.current_tab.validate()
 
     def select_tab(self, tab, force_reset=False):
         """
