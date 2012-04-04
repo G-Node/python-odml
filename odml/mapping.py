@@ -445,6 +445,7 @@ def unmap_document(doc):
         del sec._active_mapping
         for prop in sec.properties:
             del prop._active_mapping
+    del doc._active_mapping
             
 def get_object_from_mapped_equivalent(mobj):
     """
