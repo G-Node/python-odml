@@ -234,3 +234,13 @@ class TerminologyPopupTreeView(TreeView):
 
         model.foreach(exp)
 
+    def select_object(self, obj):
+        """
+        change current the selection to *obj*, i.e. navigate there
+        """
+        model = self._treeview.get_model()
+        path = model.get_node_path(obj)
+        selection = self._treeview.get_selection()
+        if path in selection.get_selected_rows():
+            return
+        selection.select_path(path)
