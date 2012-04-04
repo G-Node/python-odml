@@ -147,6 +147,10 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     def __iter__(self):
         return self._values.__iter__()
 
+    def get_path(self):
+        """return the absolute path to this object"""
+        return self.parent.get_path() + ":" + self.name
+
     def clone(self, children=True):
         """
         clone this object recursively allowing to copy it independently
