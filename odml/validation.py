@@ -8,7 +8,7 @@ import tools.event
 import odml
 
 # event capabilities are needed for mappings
-odml.setDefaultImplementation('event')
+odml.setMinimumImplementation('event')
 
 class ValidationError(object):
     """

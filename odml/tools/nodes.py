@@ -128,10 +128,12 @@ class ValueNode(ParentedNode):
         raise TypeError("Value objects have no children")
 
 #TODO? provide this externally?
+name = "nodes"
+provides = event.provides + ["nodes"]
 class Document(event.Document, RootNode): pass
 class Value(event.Value, ValueNode): pass
 class Property(event.Property, PropertyNode): pass
 class Section(event.Section, SectionNode): pass
 
 import sys, odml
-odml.addImplementation('nodes', sys.modules[__name__])
+odml.addImplementation(sys.modules[__name__])
