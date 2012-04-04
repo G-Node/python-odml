@@ -110,4 +110,11 @@ class SectionView(TerminologyPopupTreeView):
         set the tooltip text, if the gui queries for it
         """
         obj = model.get_object(iter)
-        tooltip.set_text("%s [%s]" % (obj.name, obj.type))
+        doc = obj.document
+        if doc and hasattr(doc, "validation_result"):
+            errors = doc.validation_result[obj]
+            error = "\n\nErrors:\n" + "\n".join([e.msg for e in errors])
+        else:
+            error = ""
+        tooltip.set_text("%s [%s]" % (obj.name, obj.type) + error)
+        return True

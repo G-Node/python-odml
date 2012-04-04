@@ -64,6 +64,21 @@ class TreeModel(gtk.GenericTreeModel):
 
         if italics:
             value = "<i>%s</i>" % value
+
+        # check for validation errors
+        if column == 0:
+            warning = -1
+            doc = obj.document
+            if doc is not None and hasattr(doc, "validation_result"):
+                for err in doc.validation_result.errors:
+                    if err.obj is obj:
+                        warning = 1 if err.is_error else 0
+
+            if warning >= 0:
+                colors = ['red', 'yellow']
+                value = "<span background='%s' foreground='%s'>(!)</span> %s" % (
+                        colors[warning], colors[1-warning], value)
+
         if color is None: return value
         return "<span foreground='%s'>%s</span>" % (color, value)
 

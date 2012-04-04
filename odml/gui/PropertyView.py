@@ -23,6 +23,7 @@ class PropertyView(TerminologyPopupTreeView):
     The Main treeview for editing properties and their value-attributes
     """
     _section = None
+
     def __init__(self, registry):
 
         super(PropertyView, self).__init__()
@@ -95,6 +96,18 @@ class PropertyView(TerminologyPopupTreeView):
     def on_property_select(self, prop):
         """called when a different property is selected"""
         pass
+
+    def on_get_tooltip(self, model, path, iter, tooltip):
+        """
+        set the tooltip text, if the gui queries for it
+        """
+        obj = model.get_object(iter)
+        doc = obj.document
+        if doc and hasattr(doc, "validation_result"):
+            errors = doc.validation_result[obj]
+            if len(errors) > 0:
+                tooltip.set_text("\n".join([e.msg for e in errors]))
+                return True
 
     def on_object_edit(self, tree_iter, column_name, new_text):
         """

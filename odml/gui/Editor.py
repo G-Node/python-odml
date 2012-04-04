@@ -51,6 +51,7 @@ ui_info = \
       <separator/>
       <menuitem action='CloneTab'/>
       <menuitem action='Map'/>
+      <menuitem action='Validate'/>
     </menu>
     <menu action='HelpMenu'>
       <menuitem action='VisitHP'/>
@@ -69,6 +70,7 @@ ui_info = \
     <toolitem action='NewValue'/>
     <toolitem action='Delete'/>
     <toolitem action='Map' />
+    <toolitem action='Validate' />
   </toolbar>
 </ui>'''
 
@@ -385,6 +387,11 @@ class EditorWindow(gtk.Window):
         self.append_tab(ntab)
         return ntab
 
+    @gui_action("Validate", tooltip="Validate the document and check for errors",
+                label="_Validate", stock_id=gtk.STOCK_APPLY, accelerator="<control>E")
+    def on_validate(self, action):
+        self.current_tab.validate()
+
     def select_tab(self, tab, force_reset=False):
         """
         activate a new tab, reset the statusbar and models accordingly
@@ -435,6 +442,12 @@ class EditorWindow(gtk.Window):
         for i, child in enumerate(self.notebook):
             if child.tab is tab:
                 return i
+
+    @property
+    def tabs(self):
+        """iterate over the tabs in the notebook"""
+        for child in self.notebook:
+            yield child.tab
 
     def mk_tab_label(self, tab):
         #hbox will be used to store a label and button, as notebook tab title
@@ -692,6 +705,29 @@ class EditorWindow(gtk.Window):
         update the property_view to work on object *obj*
         """
         self._property_view.set_model(obj)
+
+    def navigate_to_document(self, doc):
+        if self.current_tab.document is doc:
+            return
+        for tab in self.tabs:
+            if tab.document is doc:
+                return self.select_tab(tab)
+
+    def navigate(self, obj):
+        """navigate to a certain object"""
+        # 1. select the right tab
+        self.navigate_to_document(obj.document)
+            
+        # 2. select the corresponding section
+        sec = obj
+        prop = None
+        if isinstance(obj, odml.property.Property):
+            sec = obj.parent
+            prop = obj
+        self._section_tv.select_object(sec)
+        # 3. select the property
+        if prop is not None:
+            self._property_tv.select_object(prop)
 
     def update_statusbar(self, message, clear_previous=True):
         if clear_previous:
