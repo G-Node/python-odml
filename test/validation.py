@@ -7,21 +7,27 @@ import odml.terminology
 validate = odml.validation.Validation
 
 class TestValidation(unittest.TestCase):
+
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
+        self.maxDiff = None
+
+    def filter_repository_errors(self, errors):
+        return filter(lambda x: not "A section should have an associated repository" in x.msg, errors)
 
     def test_errorfree(self):
         res = validate(self.doc)
-        self.assertEqual(res.errors, [])
+        self.assertEqual(self.filter_repository_errors(res.errors), [])
         
     def assertError(self, res, err):
         """
         passes only if err appears in res.errors
         """
-        for i in res.errors:
+        errs = self.filter_repository_errors(res.errors)
+        for i in errs:
             if err in i.msg:
                 return
-        self.assertEqual(res.errors, err)
+        self.assertEqual(errs, err)
         
     def test_section_type(self):
         doc = samplefile.parse("""s1[undefined]""")
@@ -29,13 +35,13 @@ class TestValidation(unittest.TestCase):
         # the section type is undefined (also in the mapping)
         self.assertError(res, "Section type undefined")
         
-    def test_unique_names(self):
+    def test_uniques(self):
         doc = samplefile.parse("""
             s1[t1]
-            s1[t2]
+            s1[t1]
             """)
         res = validate(doc)
-        self.assertError(res, "Object names must be unique")
+        self.assertError(res, "name/type combination must be unique")
 
         doc = samplefile.parse("""
             s1[t1]

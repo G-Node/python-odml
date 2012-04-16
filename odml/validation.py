@@ -100,33 +100,59 @@ def section_type_must_be_defined(sec):
 
 Validation.register_handler('section', section_type_must_be_defined)
 
-def object_unique_names(obj, children):
+def section_repository_should_be_present(sec):
+    """
+    1. warn, if a section has no repository or 
+    2. the section type is not present in the repository
+    """
+    repo = sec.get_repository()
+    if repo is None:
+        yield ValidationError(sec, 'A section should have an associated repository', 'warning')
+        return
+
+    try:
+        tsec = sec.get_terminology_equivalent()
+    except Exception, e:
+        yield ValidationError(sec, 'Could not load terminology: ' + e.message, 'warning')
+        return
+
+    if tsec is None:
+        yield ValidationError(sec, "Section type '%s' not found in terminology" % sec.type, 'warning')
+
+Validation.register_handler('section', section_repository_should_be_present)
+
+def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names must be unique"):
     """
     test that object names within one section are unique
     
+    *attr* is a function, that returns the item that needs to be unique
+
     *children* is a function, that returns the children to be
     considered. This is to be able to use the same function
     for sections and properties
     """
-    names = set([s.name for s in children(obj)])
+    names = set(map(attr, children(obj)))
     if len(names) == len(children(obj)):
         return # quick exit
     names = set()
     for s in children(obj):
-        if s.name in names:
-            yield ValidationError(s, 'Object names must be unique', 'error')
-        names.add(s.name)
+        if attr(s) in names:
+            yield ValidationError(s, msg, 'error')
+        names.add(attr(s))
 
-def section_unique_names(obj):
-    for i in object_unique_names(obj, lambda x: x.sections):
-        yield i
+def section_unique_name_type_combination(obj):
+    for i in object_unique_names(obj,
+        attr=lambda x: (x.name, x.type),
+        children=lambda x: x.sections,
+        msg="name/type combination must be unique"):
+            yield i
         
 def property_unique_names(obj):
     for i in object_unique_names(obj, lambda x: x.properties):
         yield i
 
-Validation.register_handler('odML',     section_unique_names)
-Validation.register_handler('section',  section_unique_names)
+Validation.register_handler('odML',    section_unique_name_type_combination)
+Validation.register_handler('section', section_unique_name_type_combination)
 Validation.register_handler('section', property_unique_names)
 
 def odML_mapped_document_be_valid(doc):
@@ -155,13 +181,54 @@ def odML_mapped_document_be_valid(doc):
         
 Validation.register_handler('odML', odML_mapped_document_be_valid)
 
+def property_values_same_unit(prop, tprop):
+    units = set(map(lambda x: x.unit, prop.values))
+    if len(units) > 1:
+        yield ValidationError(prop, 'Values of a property should be of the same unit', 'warning')
+    if tprop is not None and tprop.value.unit != prop.value.unit:
+        yield ValidationError(prop, 'Values of a property should have the same unit as their terminology equivalent', 'warning')
+
 def property_terminology_check(prop):
-    """warn, if there are properties that do not occur in the terminology"""
+    """
+    executes a couple of checks:
+
+    1. warn, if there are properties that do not occur in the terminology
+    2. warn, if there are multiple values with different units or the unit does not
+       match the one in the terminology
+    """
     tsec = prop.parent.get_terminology_equivalent()
     if tsec is None: return
     try:
         tprop = tsec.properties[prop.name]
     except KeyError:
+        tprop = None
         yield ValidationError(prop, "Property '%s' not found in terminology" % prop.name, 'warning')
-        
+    for err in property_values_same_unit(prop, tprop):
+        yield err
+
 Validation.register_handler('property', property_terminology_check)
+
+def property_dependency_check(prop):
+    """
+    warn, if the dependency attribute refers to a non-existant attribute
+    or the dependency_value does not match
+    """
+    dep = prop.dependency
+    if dep is None: return
+
+    try:
+        dep_obj = prop.parent[dep]
+    except KeyError:
+        yield ValidationError(prop, "Property refers to a non-existant dependency object", 'warning')
+        return
+
+    if dep_obj.value.value != prop.dependency_value:
+        yield ValidationError(prop, "Dependency-value is not equal to value of the property's dependency", 'warning')
+
+Validation.register_handler('property', property_dependency_check)
+
+def value_empty(val):
+    if val.value == '':
+        yield ValidationError(val, "Values may only be empty in terminologies", 'warning')
+
+Validation.register_handler('value', value_empty)
