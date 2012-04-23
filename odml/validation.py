@@ -194,7 +194,7 @@ def property_values_same_unit(prop, tprop=None):
     units = set(map(lambda x: x.unit, prop.values))
     if len(units) > 1:
         yield ValidationError(prop, 'Values of a property should be of the same unit', 'warning')
-    if tprop is not None and tprop.value.unit != prop.value.unit:
+    if tprop is not None and tprop.values[0].unit != prop.values[0].unit:
         yield ValidationError(prop, 'Values of a property should have the same unit as their terminology equivalent', 'warning')
 
 Validation.register_handler('property', property_values_same_unit)

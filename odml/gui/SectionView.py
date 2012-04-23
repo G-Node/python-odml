@@ -130,11 +130,11 @@ class SectionView(TerminologyPopupTreeView):
             text += "\n\n" + '\n'.join(info)
 
         doc = obj.document
+        error = ""
         if doc and hasattr(doc, "validation_result"):
             errors = doc.validation_result[obj]
-            error = "\n\nErrors:\n" + "\n".join([e.msg for e in errors])
-        else:
-            error = ""
-
+            if errors:
+                error = "\n\nErrors:\n" + "\n".join([e.msg for e in errors])
+    
         tooltip.set_text(text + error)
         return True
