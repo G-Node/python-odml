@@ -31,6 +31,12 @@ class ValidationError(object):
     def is_error(self):
         return self.type == 'error'
 
+    @property
+    def path(self):
+        if isinstance(self.obj, odml.value.Value):
+            return self.obj.parent.get_path()
+        return self.obj.get_path()
+
     def __repr__(self):
         return "<ValidationError(%s):%s \"%s\">" % (self.type, self.obj, self.msg)
     
@@ -163,6 +169,9 @@ def odML_mapped_document_be_valid(doc):
     if mapping.proxy is not None and isinstance(doc, mapping.proxy.Proxy):
         return # don't try to map already mapped documents
     mdoc = doc._active_mapping
+    if mdoc is not None:
+        mapping.unmap_document(doc)
+        mdoc = None
     # TODO: if mdoc is set there is already a mapping present. However, this
     # TODO  may have been corrupted by user interaction, thus we should actually
     # TODO  unmap the document, create a new one and then remap the original one

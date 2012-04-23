@@ -233,13 +233,21 @@ class TerminologyPopupTreeView(TreeView):
 
         model.foreach(exp)
 
-    def select_object(self, obj):
+    def select_object(self, obj, expand=True):
         """
         change current the selection to *obj*, i.e. navigate there
+
+        if expand is set, the selection 
         """
         model = self._treeview.get_model()
         path = model.get_node_path(obj)
+        if not path: return
+
+        if expand:
+            self._treeview.expand_to_path(path)
+    
         selection = self._treeview.get_selection()
         if path in selection.get_selected_rows():
             return
         selection.select_path(path)
+        

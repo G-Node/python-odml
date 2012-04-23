@@ -72,12 +72,11 @@ class TreeModel(gtk.GenericTreeModel):
             if doc is not None and hasattr(doc, "validation_result"):
                 for err in doc.validation_result.errors:
                     if err.obj is obj:
-                        warning = 1 if err.is_error else 0
+                        warning = max(warning, 1 if err.is_error else 0)
 
             if warning >= 0:
-                colors = ['red', 'yellow']
-                value = "<span background='%s' foreground='%s'>(!)</span> %s" % (
-                        colors[warning], colors[1-warning], value)
+                colors = ['orange', 'red']
+                value = value + u" <span foreground='%s'>\u26A0</span>" % colors[warning]
 
         if color is None: return value
         return "<span foreground='%s'>%s</span>" % (color, value)
