@@ -181,12 +181,14 @@ def odML_mapped_document_be_valid(doc):
         
 Validation.register_handler('odML', odML_mapped_document_be_valid)
 
-def property_values_same_unit(prop, tprop):
+def property_values_same_unit(prop, tprop=None):
     units = set(map(lambda x: x.unit, prop.values))
     if len(units) > 1:
         yield ValidationError(prop, 'Values of a property should be of the same unit', 'warning')
     if tprop is not None and tprop.value.unit != prop.value.unit:
         yield ValidationError(prop, 'Values of a property should have the same unit as their terminology equivalent', 'warning')
+
+Validation.register_handler('property', property_values_same_unit)
 
 def property_terminology_check(prop):
     """
