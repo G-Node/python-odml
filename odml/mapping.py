@@ -24,7 +24,8 @@ class mapped(object):
 
     @_active_mapping.deleter
     def _active_mapping(self):
-        del self.__active_mapping
+        if not self.__active_mapping is None:
+            del self.__active_mapping
 
 class mapable(mapped):
     """
@@ -263,7 +264,6 @@ def create_property_mapping(sec, prop):
         msec.proxy_append(mprop)
         return
 
-    print mprop.parent
     mprop.name = mapping.name
 
     dst_type = mapping._section.type
@@ -440,7 +440,6 @@ def unmap_document(doc):
     """
     clear all mappings from the document
     """
-    print "unmap doc"
     for sec in doc.itersections(recursive=True):
         del sec._active_mapping
         for prop in sec.properties:
