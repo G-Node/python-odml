@@ -1,10 +1,12 @@
 [Desktop Entry]
+Encoding=UTF-8
+Version=1.0
 Name=Open Metadata Editor
 Comment=Editor for odML documents
-Comment[de]=Editor f?r odML Dokumente
+Comment[de]=Editor für odML Dokumente
 TryExec=odml-gui
 Exec=odml-gui
 Type=Application
 Terminal=False
-Categories=Science;
+Categories=Gtk;Science;Education;
 Icon=odml-logo
