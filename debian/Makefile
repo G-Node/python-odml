@@ -5,7 +5,7 @@ tmp:
 	cd ..; fakeroot debian/rules install
 
 python-odml.install: tmp
-	find tmp -type f | egrep -v -e "(gui|pixmap|desktop)" | sed s~tmp~~ > $@
+	find tmp -type f | egrep -v -e "(gui|pixmap|desktop)" | sed s~tmp~~ | sort > $@
 
 python-odml-gui.install: tmp
-	find tmp -type f | egrep -e "(gui|pixmap|desktop)" | sed s~tmp~~ > $@
+	find tmp -type f | egrep -e "(gui|pixmap|desktop)" | sed s~tmp~~ | sort > $@
