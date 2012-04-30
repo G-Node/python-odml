@@ -329,6 +329,47 @@ class EditorWindow(gtk.Window):
         action_group.add_action(recent_action)
         return action_group
 
+    def welcome(self, action=None):
+        """
+        display a welcome window
+        """
+        page = gtk.Label()
+        # welcome text
+        text = """<span size="x-large" weight="bold">Welcome to odML-Editor</span>\n\nNow go ahead and <a href="#new">create a new document</a>."""
+        
+        # display recently used files
+        recent_filter = gtk.RecentFilter()
+        odMLChooserDialog._setup_file_filter(recent_filter)
+        files = filter(lambda i: recent_filter.filter(
+            {'display_name': i.get_display_name(),
+             'uri': i.get_uri(),
+             'mime_type': i.get_mime_type()}),
+            gtk.recent_manager_get_default().get_items())
+
+        if files:
+            text += """\n\nOr open a <b>recently used file</b>:\n"""
+            text += "\n".join([u"""\u2022 <a href="%s">%s</a>""" % (i.get_uri(), i.get_display_name()) for i in files])
+            
+        page.set_markup(text)
+        page.connect("activate-link", self.welcome_action)
+        page.show()
+        self.notebook.set_show_tabs(False)
+        self.notebook.append_page(page)
+
+    def welcome_action(self, widget, path):
+        """
+        create a new document or open a recently used file
+        as indicated by the *path* argument.
+
+        the method is invoked by clicking on a link in the welcome tab
+        """
+        self.notebook.remove_page(0)
+        if path == "#new":
+            self.new_file()
+        elif path is not None:
+            self.load_document(path)
+        return True
+
     @gui_action("About", stock_id=gtk.STOCK_ABOUT)
     def about(self, action):
         logo = self.render_icon("odml-logo", gtk.ICON_SIZE_DIALOG)
@@ -421,9 +462,12 @@ class EditorWindow(gtk.Window):
 
     @property
     def current_tab(self):
+        """
+        returns the current odml tab
+        """
         page = self.notebook.get_current_page()
         child = self.notebook.get_nth_page(page)
-        if child is not None:
+        if child is not None and not isinstance(child, gtk.Label):
             return child.tab
 
     @current_tab.setter
@@ -490,6 +534,11 @@ class EditorWindow(gtk.Window):
         has not been edited
         """
         child = self.mktab(tab)
+        # some action caused creation of a new tab
+        # make sure, that we close the welcome screen if still present
+        if isinstance(self.notebook.get_nth_page(0), gtk.Label):
+            self.welcome_action(widget=None, path=None)
+
         self.notebook.append_page(child, self.mk_tab_label(tab))
         self.notebook.set_tab_reorderable(child, True)
         self.notebook.set_tab_detachable(child, True)
@@ -508,13 +557,17 @@ class EditorWindow(gtk.Window):
         if *close* is True, call close() on the tab. We don't want to do
         that, if we move the tab somewhere else, but close it here.
         """
-        if save and not tab.save_if_changed():
+        if tab is None or (save and not tab.save_if_changed()):
             return False
 
         idx = self.get_notebook_page(tab)
 
         if create_new and self.notebook.get_n_pages() == 1:
-            self.new_file() # open a new tab already, so we never get empty
+            self.welcome() # open a new tab already, so we never get empty
+            # also: remove the vpaned (hbox.child) from the widget, so that
+            # it does not receive any destroy signals and can be reused
+            hbox = self.notebook.get_nth_page(idx)
+            hbox.remove(hbox.child)
 
         self.notebook.remove_page(idx)
         if close:
@@ -527,7 +580,10 @@ class EditorWindow(gtk.Window):
         the notebook widget selected a tab
         """
         hbox = notebook.get_nth_page(pagenum)
+        if isinstance(hbox, gtk.Label): 
+            return # quick exit for the Welcome screen
         if hbox.child.get_parent() is None:
+            hbox.child.show()
             hbox.add(hbox.child)
         else:
             hbox.child.reparent(hbox)
@@ -625,7 +681,7 @@ class EditorWindow(gtk.Window):
         returns false if the user cancelled the action
         """
         for child in self.notebook:
-            if not child.tab.save_if_changed(): return False
+            if not isinstance(child, gtk.Label) and not child.tab.save_if_changed(): return False
         return True
 
     @gui_action("CloseTab", tooltip="Close the current tab", stock_id=gtk.STOCK_CLOSE, label="_Close Tab", accelerator="<control>W")
