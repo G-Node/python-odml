@@ -3,9 +3,11 @@ import gio
 import os.path
 
 import odml
+import odml.validation
 from odml.tools.xmlparser import XMLWriter, XMLReader
 
 from CommandManager import CommandManager
+from ValidationWindow import ValidationWindow
 
 class EditorTab(object):
     """
@@ -144,8 +146,44 @@ class EditorTab(object):
         ntab.document = mapdoc
         return ntab
 
+    def validate(self):
+        """check the document for errors"""
+        self.remove_validation()
+        validation = odml.validation.Validation(self.document)
+        self.document.validation_result = validation
+        if len(validation.errors) > 0:
+            self.update_validation_error_objects(validation.errors)
+            ValidationWindow(self).show()
+        else:
+            self.window._info_bar.show_info("The document is valid. No errors found.")
+            self.remove_validation()
+
+    def update_validation_error_objects(self, errors):
+        """
+        send out a change event for all error-affected objects
+        so that the gui can refresh these
+        """
+        for err in errors:
+            c = odml.tools.event.ChangeContext(('_error', True))
+            c.postChange = True
+            c.action = "set"
+            c.passOn(err.obj)
+
+    def remove_validation(self):
+        """remove any dangling validation references"""
+        if not hasattr(self.document, "validation_result"):
+            return
+        errors = self.document.validation_result.errors
+        del self.document.validation_result
+        self.update_validation_error_objects(errors)
+
     def get_name(self):
+        """return the filename of this tab's document"""
         return os.path.basename(str(self.file_uri))
+
+    def update_label(self):
+        """update the tab label with the current filename"""
+        self.label.set_text(self.get_name())
 
     def close(self):
         """

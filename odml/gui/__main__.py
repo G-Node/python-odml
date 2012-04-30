@@ -13,8 +13,6 @@ def main(filenames=[]):
     Editor.register_stock_icons()
     editor = Editor.EditorWindow()
     tabs = map(editor.load_document, filenames)
-    if len(filenames) == 0:
-        tabs = [editor.new_file()]
     return tabs
 
 def run():

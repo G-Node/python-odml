@@ -110,4 +110,31 @@ class SectionView(TerminologyPopupTreeView):
         set the tooltip text, if the gui queries for it
         """
         obj = model.get_object(iter)
-        tooltip.set_text("%s [%s]" % (obj.name, obj.type))
+
+        merged = obj.get_merged_equivalent()
+        info = []
+        if merged is not None:
+            # the object is only merged
+            info.append('merged:%s' % merged.get_path())
+            if not merged == obj:
+                # the object is merged but differs from its merged equivalent
+                info[-1] += ' (modified)'
+
+        merged = obj.get_terminology_equivalent()
+        if merged is not None:
+            # the object has an associated terminology equivalent
+            info.append('terminology: %s:%s' % (obj.get_repository(), merged.get_path()))
+
+        text = "%s [%s]" % (obj.name, obj.type)
+        if info:
+            text += "\n\n" + '\n'.join(info)
+
+        doc = obj.document
+        error = ""
+        if doc and hasattr(doc, "validation_result"):
+            errors = doc.validation_result[obj]
+            if errors:
+                error = "\n\nErrors:\n" + "\n".join([e.msg for e in errors])
+    
+        tooltip.set_text(text + error)
+        return True

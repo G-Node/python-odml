@@ -51,6 +51,7 @@ ui_info = \
       <separator/>
       <menuitem action='CloneTab'/>
       <menuitem action='Map'/>
+      <menuitem action='Validate'/>
     </menu>
     <menu action='HelpMenu'>
       <menuitem action='VisitHP'/>
@@ -69,6 +70,7 @@ ui_info = \
     <toolitem action='NewValue'/>
     <toolitem action='Delete'/>
     <toolitem action='Map' />
+    <toolitem action='Validate' />
   </toolbar>
 </ui>'''
 
@@ -191,7 +193,10 @@ class EditorWindow(gtk.Window):
         section_tv.execute = self.execute
         section_tv.on_section_change = self.on_section_change
         section_view = gtk.VBox(homogeneous=False, spacing=0)
-        section_view.pack_start(ScrolledWindow(section_tv._treeview), True, True, 1)
+        tmp = gtk.Frame("Sections")
+        tmp.add(ScrolledWindow(section_tv._treeview))
+        tmp.show()
+        section_view.pack_start(tmp, True, True, 1)
         section_view.show()
         hpaned.add1(section_view)
 
@@ -203,7 +208,10 @@ class EditorWindow(gtk.Window):
         info_bar = EditorInfoBar ()
         self._info_bar = info_bar
         property_view.pack_start(info_bar, False, False, 1)
-        property_view.pack_start(ScrolledWindow(property_tv._treeview), True, True, 1)
+        tmp = gtk.Frame("Properties")
+        tmp.add(ScrolledWindow(property_tv._treeview))
+        tmp.show()
+        property_view.pack_start(tmp, True, True, 1)
         property_view.show()
         hpaned.add2(property_view)
 
@@ -269,11 +277,10 @@ class EditorWindow(gtk.Window):
         return t
 
     def on_menu_item__select(self, menuitem, tooltip):
-        print "set", tooltip
         self._statusbar.push(-1, tooltip)
 
-    def on_menu_item__deselect(self, menuitem, tooltip):
-        self._statusbar.pop()
+    def on_menu_item__deselect(self, menuitem):
+        self._statusbar.pop(-1)
 
     def on_uimanager__connect_proxy(self, uimgr, action, widget):
         # TODO this does not work on unity at least
@@ -386,6 +393,11 @@ class EditorWindow(gtk.Window):
         self.append_tab(ntab)
         return ntab
 
+    @gui_action("Validate", tooltip="Validate the document and check for errors",
+                label="_Validate", stock_id=gtk.STOCK_APPLY, accelerator="<control>E")
+    def on_validate(self, action):
+        self.current_tab.validate()
+
     def select_tab(self, tab, force_reset=False):
         """
         activate a new tab, reset the statusbar and models accordingly
@@ -399,7 +411,7 @@ class EditorWindow(gtk.Window):
         if not force_reset:
             self.current_tab = tab
 
-        self.set_status_filename()
+        self.set_status_filename(tab)
         self.update_model(tab)
         self.enable_undo(tab.command_manager.can_undo)
         self.enable_redo(tab.command_manager.can_redo)
@@ -437,10 +449,17 @@ class EditorWindow(gtk.Window):
             if child.tab is tab:
                 return i
 
+    @property
+    def tabs(self):
+        """iterate over the tabs in the notebook"""
+        for child in self.notebook:
+            yield child.tab
+
     def mk_tab_label(self, tab):
         #hbox will be used to store a label and button, as notebook tab title
         hbox = gtk.HBox(False, 0)
         label = gtk.Label(tab.get_name())
+        tab.label = label
         hbox.pack_start(label)
 
         #get a stock close button image
@@ -544,8 +563,10 @@ class EditorWindow(gtk.Window):
         uri = recent_action.get_current_uri ()
         self.load_document(uri)
 
-    def set_status_filename(self):
-        filename = self.current_tab.file_uri
+    def set_status_filename(self, tab=None):
+        if tab is None:
+            tab = self.current_tab
+        filename = tab.file_uri
         if not filename:
             filename = "<new file>"
         self.update_statusbar(filename)
@@ -586,13 +607,14 @@ class EditorWindow(gtk.Window):
         """
         if self.current_tab.file_uri:
             return self.current_tab.save(self.current_tab.file_uri)
-        return self.save_as(self, action)
+        return self.save_as(action)
 
     def on_file_save(self, uri):
         if not uri.lower().endswith('.odml') and \
             not uri.lower().endswith('.xml'):
                 uri += ".xml"
         self.current_tab.file_uri = uri
+        self.current_tab.update_label()
         self.current_tab.save(uri)
         self.set_status_filename()
 
@@ -693,6 +715,29 @@ class EditorWindow(gtk.Window):
         update the property_view to work on object *obj*
         """
         self._property_view.set_model(obj)
+
+    def navigate_to_document(self, doc):
+        if self.current_tab.document is doc:
+            return
+        for tab in self.tabs:
+            if tab.document is doc:
+                return self.select_tab(tab)
+
+    def navigate(self, obj):
+        """navigate to a certain object"""
+        # 1. select the right tab
+        self.navigate_to_document(obj.document)
+            
+        # 2. select the corresponding section
+        sec = obj
+        prop = None
+        if isinstance(obj, odml.property.Property):
+            sec = obj.parent
+            prop = obj
+        self._section_tv.select_object(sec)
+        # 3. select the property
+        if prop is not None:
+            self._property_tv.select_object(prop)
 
     def update_statusbar(self, message, clear_previous=True):
         if clear_previous:

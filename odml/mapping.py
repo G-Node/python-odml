@@ -24,7 +24,8 @@ class mapped(object):
 
     @_active_mapping.deleter
     def _active_mapping(self):
-        del self.__active_mapping
+        if not self.__active_mapping is None:
+            del self.__active_mapping
 
 class mapable(mapped):
     """
@@ -67,14 +68,19 @@ class mapable(mapped):
         """
         url, stype, prop_name = mapable.parse_mapping(url)
         term = terminology.load(url)
+        if term is None:
+            raise MappingError("Terminology '%s' could not be loaded" % url)
         if stype is None:
             return term.sections[0]
         sec = term.find_related(type=stype)
         if sec is None:
-            return None
+            raise MappingError("No section of type '%s' could be found" % stype)
         if prop_name is None:
             return sec
-        return sec.properties[prop_name]
+        try:
+            return sec.properties[prop_name]
+        except KeyError:
+            raise MappingError("No property named '%s' could be found in section '%s'" % (prop_name, sec.name))
 
     @property
     def mapped_object(self):
@@ -113,7 +119,6 @@ class mapable(mapped):
         remap = None
         # TODO should save the old index when unmapping and then use insert to
         #      (re)introduce the new mapping, to keep order intact
-        print "active mapping:", self._active_mapping
         if self._active_mapping is not None:
             remap = self.unmap()
 
@@ -204,7 +209,6 @@ def create_mapping(doc):
     """
     global proxy # we install the proxy only late time
     import tools.proxy as proxy
-    #mdoc = doc.clone(children=False) # TODO might need to proxy this too
     mdoc = proxy.DocumentProxy(doc)
     # TODO copy attributes, but also make this generic
     mdoc._proxy_obj = doc
@@ -260,7 +264,6 @@ def create_property_mapping(sec, prop):
         msec.proxy_append(mprop)
         return
 
-    print mprop.parent
     mprop.name = mapping.name
 
     dst_type = mapping._section.type
@@ -437,8 +440,27 @@ def unmap_document(doc):
     """
     clear all mappings from the document
     """
-    print "unmap doc"
     for sec in doc.itersections(recursive=True):
         del sec._active_mapping
         for prop in sec.properties:
             del prop._active_mapping
+    del doc._active_mapping
+            
+def get_object_from_mapped_equivalent(mobj):
+    """
+    This function tries to find out which object was responsible for
+    creating the *mobj*.
+    This is straightforward in several cases (i.e. *mobj* being a BaseProxy instance)
+    but is not for others (e.g. *mobj* being a section solely created
+    for mapping of a property).
+    """
+    if isinstance(mobj, proxy.BaseProxy):
+        return mobj._proxy_obj
+        
+    # TODO which other cases may we have?
+    assert isinstance(mobj, proxy.NonexistantSection)
+    # get the first property (TODO this may not always be the one who caused the section to be created)
+    for mprop in mobj.properties:
+        return get_object_from_mapped_equivalent(mprop)
+        
+    return None

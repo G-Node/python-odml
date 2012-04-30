@@ -72,3 +72,6 @@ class AttributeView(TreeView):
         """
         if context.cur is self._model and context.postChange:
             self.fill()
+
+    def on_button_press(self, widget, event):
+        pass

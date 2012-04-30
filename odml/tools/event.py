@@ -217,6 +217,8 @@ class ModificationNotifier(ChangeHandlable):
 
 # create a seperate global Event listeners for each class
 # and provide ModificationNotifier Capabilities
+name = "event"
+provides = odml.getImplementation().provides + ["event"]
 class Value(ModificationNotifier, odml.getImplementation().Value):
     _Changed = Event("value")
 
@@ -251,4 +253,4 @@ Property._Changed.finish = pass_on_change
 Section._Changed.finish  = pass_on_change_section
 
 import sys
-odml.addImplementation('event', sys.modules[__name__])
+odml.addImplementation(sys.modules[__name__])

@@ -24,5 +24,5 @@ Or get the implementation once it is registered::
 
 import odml
 import odml.tools.nodes
-odml.setDefaultImplementation('nodes')
+odml.setMinimumImplementation('nodes')
 

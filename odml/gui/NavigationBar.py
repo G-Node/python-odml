@@ -73,7 +73,7 @@ class NavigationBar(gtk.Label):
                 ( ("<b>%s</b>" if obj is cur else "%s") % name,
                   ":".join([str(i) for i in obj.to_path()])) )
 
-        self.set_markup(": ".join(
+        self.set_markup("Attributes | " + ": ".join(
             ['<a href="%s">%s</a>' % (path, name) for name, path in names[::-1]]
             ) + " ")
 
