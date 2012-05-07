@@ -1,5 +1,9 @@
-all: python-odml.install python-odml-gui.install
+all: clean python-odml.install python-odml-gui.install
+
+.PHONY : clean
+clean:
 	cd ..; debian/rules clean
+	rm python-odml.install python-odml-gui.install
 
 tmp:
 	cd ..; fakeroot debian/rules install
