@@ -16,7 +16,7 @@ ColMapper = ColumnMapper({"Name"        : (0, "name"),
                          "Unit"        : (4, "unit"),
                          "Comment"     : (5, "comment"),
                          "Endcoder"    : (6, "encoder"),
-                         "Checksum"    : (7, "checksum"),
+                         "Filename"    : (7, "filename"),
                          "Reference"   : (8, "reference")})
 
 class PropertyModel(TreeModel):

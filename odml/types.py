@@ -8,7 +8,7 @@ self = sys.modules[__name__].__dict__
 
 from datetime import datetime, date, time
 import binascii
-import md5
+import hashlib
 
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
@@ -175,13 +175,13 @@ def binary_set(value, encoding=None):
 def calculate_crc32_checksum(data):
     return "%08x" % (binascii.crc32(data) & 0xffffffff)
 
-def calculate_md5_checksum(data):
-    return md5.md5(data).hexdigest()
-
 checksums = {
     'crc32': calculate_crc32_checksum,
-    'md5': calculate_md5_checksum,
 }
+# allow to use any available algorithm
+for algo in hashlib.algorithms:
+    checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
+
 def valid_checksum_type(checksum_type):
     return checksum_type in checksums
 

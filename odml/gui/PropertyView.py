@@ -246,6 +246,9 @@ class PropertyView(TerminologyPopupTreeView):
         popup menu action: load binary content
         """
         chooser = ChooserDialog(title="Open binary file", save=False)
+        if val.filename is not None:
+            # try to set the filename (if it exists)
+            chooser.set_file(gio.File(val.filename))
         chooser.show()
 
         def binary_load_file(uri):
@@ -260,6 +263,9 @@ class PropertyView(TerminologyPopupTreeView):
         popup menu action: load binary content
         """
         chooser = ChooserDialog(title="Save binary file", save=True)
+        if val.filename is not None:
+            # suggest a filename
+            chooser.set_current_name(val.filename)
         chooser.show()
 
         def binary_save_file(uri):
