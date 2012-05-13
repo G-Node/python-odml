@@ -1,6 +1,7 @@
 import odml
 import terminology
 import weakref
+from functools import wraps
 
 # late import, as the proxy module relies on the latest available
 # concrete odml-class implementations, that would not be available if they
@@ -174,6 +175,7 @@ class mapableSection(mapable):
                 create_property_mapping(child, prop)
 
 def remapable_append(func):
+    @wraps(func)
     def f(self, obj):
         ret = func(self, obj)
         if (proxy and not isinstance(obj, proxy.Proxy)) and hasattr(obj, "_remap_info"):
@@ -182,6 +184,7 @@ def remapable_append(func):
     return f
 
 def remapable_insert(func):
+    @wraps(func)
     def f(self, position, obj):
         ret = func(self, position, obj)
         if (proxy and not isinstance(obj, proxy.Proxy)) and hasattr(obj, "_remap_info"):
@@ -190,6 +193,7 @@ def remapable_insert(func):
     return f
 
 def remapable_remove(func):
+    @wraps(func)
     def f(self, obj):
         # don't attempt anything on proxy objects
         if (proxy and not isinstance(obj, proxy.Proxy)) and obj._active_mapping is not None:

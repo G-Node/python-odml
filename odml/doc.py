@@ -3,12 +3,21 @@ import types
 import base
 import format
 import terminology
+from tools.doc_inherit import *
 
 class Document(base._baseobj):
     pass
 
+@allow_inherit_docstring
 class BaseDocument(base.sectionable, Document):
-    """A represenation of an odML document in memory"""
+    """
+    A represenation of an odML document in memory.
+
+    Its odml attributes are: *author*, *date*, *version* and *repository*.
+
+    A Document behaves very much like a section, except that it cannot hold
+    properties.
+    """
 
     _format = format.Document
 
@@ -21,6 +30,9 @@ class BaseDocument(base.sectionable, Document):
 
     @property
     def author(self):
+        """
+        The author of the document.
+        """
         return self._author
 
     @author.setter
@@ -29,6 +41,10 @@ class BaseDocument(base.sectionable, Document):
 
     @property
     def version(self):
+        """
+        A personal version-specifier that can be used to track different
+        versions of the same document.
+        """
         return self._version
 
     @version.setter
@@ -37,6 +53,9 @@ class BaseDocument(base.sectionable, Document):
 
     @property
     def date(self):
+        """
+        The date the document was created.
+        """
         return types.set(self._date, "date")
 
     @date.setter
@@ -45,6 +64,7 @@ class BaseDocument(base.sectionable, Document):
 
     @property
     def parent(self):
+        """The parent of a document is always None."""
         return None
 
     def __repr__(self):
@@ -63,6 +83,7 @@ class BaseDocument(base.sectionable, Document):
             if sec._include is not None:
                 sec.include = sec._include
 
+    @inherit_docstring
     def get_terminology_equivalent(self):
         if self.repository is None: return None
         term = terminology.load(self.repository)

@@ -17,7 +17,10 @@ You should be able to just test the library using the following::
     $ export PYTHONPATH=.
     $ python
     Type "help", "copyright", "credits" or "license" for more information.
-    >>> import odml 
+    >>> import odml
+
+See `github:python-odml#Installation <https://github.com/G-Node/python-odml#installation>`_
+for more descriptions including setup on Windows and Debian/Ubuntu.
 
 Running python-odml
 -------------------

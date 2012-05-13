@@ -14,6 +14,22 @@ and start either the gui or a python shell:
     $ PYTHONPATH=. ./odml-gui
     $ PYTHONPATH=. python
 
+### Debian / Ubuntu
+
+Two debian packages are created:
+    * python-odml containing only the odml-library (API)
+    * python-odml-gui providing the additional gui-specific parts
+
+To build the packages run:
+
+    git checkout debian
+    cd debian; make; cd ..
+    fakeroot debian/rules binary
+
+And install them:
+
+    dpkg -i ../python-odml*.deb
+
 ### Windows
 
 A windows package is seperately bundled.
@@ -21,7 +37,7 @@ To build the windows package from source, follow these instructions:
 
 1. Install the following software (ALWAYS use the 32-bit versions!)
     * [python-2.7](http://www.python.org/getit/windows/)
-    * [pygtk-windows](all-in-one installer: http://www.pygtk.org/downloads.html)
+    * [pygtk-windows](http://www.pygtk.org/downloads.html) (all-in-one installer)
     * [py2exe](http://sourceforge.net/projects/py2exe/files/py2exe/0.6.9/py2exe-0.6.9.win32-py2.7.exe/download)
     * [setuptools](http://pypi.python.org/pypi/setuptools#files)
 
@@ -46,6 +62,9 @@ To build the windows package from source, follow these instructions:
 
    For some reason the compiled binary has a different look, so running
    the software from source gets a more native look.
+
+   The provided standalone package is created on linux using the `gen-win32-package.sh`
+   script on the win32 branch. It requires wine though for extraction of msi-installers.
 
 Bugs & Questions
 ----------------

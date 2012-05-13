@@ -20,6 +20,10 @@ class baseobject(_baseobj):
         return self.parent.document
 
     def get_terminology_equivalent(self):
+        """
+        returns the equivalent object in an terminology (should there be one
+        defined) or None
+        """
         return None
 
     def __eq__(self, obj):
@@ -46,6 +50,9 @@ class baseobject(_baseobj):
         return not self == obj
 
     def clean(self):
+        """
+        stub that doesn't do anything for this class
+        """
         pass
 
     def clone(self, children=True):
@@ -133,10 +140,16 @@ class sectionable(baseobject, mapping.mapped):
 
     @property
     def sections(self):
+        """the list of sections contained in this section/document"""
         return self._sections
 
     @mapping.remapable_insert
     def insert(self, position, section):
+        """
+        adds the section to the section-list and makes this document the section’s parent
+
+        currently just appends the section and does not insert at the specified *position*
+        """
         self._sections.append(section)
         section._parent = self
 
@@ -148,9 +161,11 @@ class sectionable(baseobject, mapping.mapped):
 
     def reorder(self, new_index):
         return self._reorder(self.parent.sections, new_index)
+    reorder.__doc__ = baseobject._reorder.__doc__
 
     @mapping.remapable_remove
     def remove(self, section):
+        """removes the specified child-section"""
         self._sections.remove(section)
         section._parent = None
 
@@ -168,6 +183,8 @@ class sectionable(baseobject, mapping.mapped):
         iterate each child section
 
         if *recursive* is set, iterate all child sections recurively (depth-search)
+
+        if *yield_self* is set, includes itsself in the iteration
         """
         if yield_self:
             yield self
@@ -327,6 +344,9 @@ class sectionable(baseobject, mapping.mapped):
         return self._get_relative_path(a,b)
 
     def clean(self):
+        """
+        runs clean() on all immediate child-sections
+        """
         for i in self:
             i.clean()
 
@@ -346,6 +366,7 @@ class sectionable(baseobject, mapping.mapped):
 
     @property
     def repository(self):
+        """An url to a terminology."""
         return self._repository
 
     @repository.setter
@@ -356,4 +377,8 @@ class sectionable(baseobject, mapping.mapped):
             terminology.deferred_load(url)
 
     def get_repository(self):
+        """
+        return the current applicable repository (may be inherited from a
+        parent) or None
+        """
         return self._repository

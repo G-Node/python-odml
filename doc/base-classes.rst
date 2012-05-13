@@ -14,30 +14,36 @@ The odml Module contains wrappers, that are shortcuts for creating the main obje
     >>> Document(version=0.9, author="Kermit")
     <Doc 0.9 by Kermit (0 sections)>
 
+Several modules exist to extend the implementation.
+The ones included in the library are those:
+
+* :py:mod:`odml.tools.event` provides event capabilities, allowing to add change-listeners to objects
+* :py:mod:`odml.tools.nodes` provides a tree-interface used by the gui with functions like next() and position()
+
 Document
 --------
-.. autoclass:: odml.doc.Document
+.. autoclass:: odml.doc.BaseDocument
    :members:
    :inherited-members:
    :undoc-members:
 
 Section
 -------
-.. autoclass:: odml.section.Section
+.. autoclass:: odml.section.BaseSection
    :members:
    :inherited-members:
    :undoc-members:
 
 Property
 --------
-.. autoclass:: odml.property.Property
+.. autoclass:: odml.property.BaseProperty
    :members:
    :inherited-members:
    :undoc-members:
 
 Value
 -----
-.. autoclass:: odml.value.Value
+.. autoclass:: odml.value.BaseValue
    :members:
    :inherited-members:
    :undoc-members:
