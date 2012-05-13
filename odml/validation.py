@@ -168,6 +168,20 @@ def odML_mapped_document_be_valid(doc):
     """
     if mapping.proxy is not None and isinstance(doc, mapping.proxy.Proxy):
         return # don't try to map already mapped documents
+
+    # first check if any object has a mapping attribute
+    for sec in doc.itersections(recursive=True):
+        if sec.mapping is not None:
+            break
+        for prop in sec.properties:
+            if prop.mapping is not None:
+                break
+        else: # no break in the loop, continue with next section
+            continue
+        break # found a mapping can stop searching
+    else:
+        return # no mapping found
+
     mdoc = doc._active_mapping
     if mdoc is not None:
         mapping.unmap_document(doc)
@@ -181,6 +195,7 @@ def odML_mapped_document_be_valid(doc):
     except mapping.MappingError, e:
         yield ValidationError(doc, 'mapping: %s' % str(e), 'error')
         return
+
     v = Validation(mdoc)
     for err in v.errors:
         err.mobj = err.obj
