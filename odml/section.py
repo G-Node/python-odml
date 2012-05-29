@@ -5,12 +5,14 @@ import terminology
 import mapping
 from property import Property # this is supposedly ok, as we only use it for an isinstance check
                               # it MUST however not be used to create any Property objects
+from tools.doc_inherit import *
 
 class Section(base._baseobj):
     pass
 
+@allow_inherit_docstring
 class BaseSection(base.sectionable, mapping.mapableSection, Section):
-    """A odML Section"""
+    """An odML Section"""
     type       = None
     id         = None
     _link      = None
@@ -44,6 +46,10 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
 
     @property
     def include(self):
+        """
+        the same as :py:attr:`odml.section.BaseSection.link`, except that include specifies an arbitrary url
+        instead of a local path within the same document
+        """
         return self._include
 
     @include.setter
@@ -77,6 +83,21 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
 
     @property
     def link(self):
+        """
+        specifies a softlink, i.e. a path within the document
+
+        When the merge()-method is called, the link will be resolved creating
+        according copies of the section referenced by the link attribute.
+
+        When the unmerge() method is called (which happens when running clean())
+        the link is unresolved, i.e. all properties and sections that are completely
+        equivalent to the merged object will be removed. (They will be restored
+        accordingly when calling merge()).
+
+        When changing the *link* attribute, the previously merged section is
+        unmerged, and the new reference will be immediately resolved. To avoid
+        this side-effect, directly change the *_link* attribute.
+        """
         return self._link
 
     @link.setter
@@ -99,36 +120,38 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         self._link = new_value
         self.merge(new_section)
 
-    def get_name_definition(self, UseTerminology=True):
+    @property
+    def name_definition(self):
+        """Name Definition of the section"""
         if hasattr(self, "_name_definition"):
             return self._name_definition
         else:
             return None
 
-    def set_name_definition(self, val):
+    @name_definition.setter
+    def name_definition(self, val):
         self._name_definition = val
 
-    def del_name_definition(self):
+    @name_definition.deleter
+    def name_definition(self):
         del self._name_definition
-
-    definition = property(get_name_definition,
-                              set_name_definition,
-                              del_name_definition,
-                              "Name Definition of the section")
 
     # API (public)
     #
     #  properties
     @property
     def properties(self):
+        """the list of all properties contained in this section"""
     	return self._props
 
     @property
     def sections(self):
+        """the list of all child-sections of this section"""
     	return self._sections
 
     @property
     def parent(self):
+        """the parent section, the parent document or None"""
         return self._parent
 
     def get_repository(self):
@@ -147,6 +170,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
             raise ValueError("cannot edit repsitory while a mapping is active")
         base.sectionable.repository.fset(self, url)
 
+    @inherit_docstring
     def get_terminology_equivalent(self):
         repo = self.get_repository()
         if repo is None: return None
@@ -242,8 +266,11 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         """
         merges this section with another *section*
 
-        if section is none, sets the link/include attribute causing
-        the section to be automatically merged
+        See also: :py:attr:`odml.section.BaseSection.link`
+
+        If section is none, sets the link/include attribute (if _link or
+        _include are set), causing the section to be automatically merged
+        to the referenced section.
         """
         if section is None:
             # for the high level interface
@@ -263,6 +290,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
                 self.append(mine)
         self._merged = section
 
+    @inherit_docstring
     def clean(self):
         if self._merged is not None:
             self.unmerge(self._merged)
@@ -299,8 +327,15 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
 
     @property
     def is_merged(self):
+        """
+        returns True if the section is merged with another one (e.g. through
+        :py:attr:`odml.section.BaseSection.link` or :py:attr:`odml.section.BaseSection.include`)
+
+        The merged object can be accessed through the *_merged* attribute.
+        """
         return self._merged is not None
 
     @property
     def can_be_merged(self):
+        """returns True if either a *link* or an *include* attribute is specified"""
         return self._link is not None or self._include is not None

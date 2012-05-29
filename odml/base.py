@@ -6,6 +6,7 @@ import doc
 import posixpath
 import terminology
 import mapping
+from tools.doc_inherit import *
 
 class _baseobj(object):
     pass
@@ -15,6 +16,7 @@ class baseobject(_baseobj):
 
     @property
     def document(self):
+        """returns the Document object in which this object is contained"""
         if self.parent is None:
             return None
         return self.parent.document
@@ -67,11 +69,6 @@ class baseobject(_baseobj):
         return obj
 
     def _reorder(self, childlist, new_index):
-        """
-        move this object in its parent child-list to the position *new_index*
-
-        returns the old index at which the object was found
-        """
         l = childlist
         old_index = l.index(self)
 
@@ -84,6 +81,14 @@ class baseobject(_baseobj):
         else:
             del l[old_index]
         return old_index
+
+    def reorder(self, new_index):
+        """
+        move this object in its parent child-list to the position *new_index*
+
+        returns the old index at which the object was found
+        """
+        raise NotImplementedError
 
 class SafeList(list):
     def index(self, obj):
@@ -122,6 +127,7 @@ class SmartList(SafeList):
         # and fail eventually
         raise KeyError(key)
 
+@allow_inherit_docstring
 class sectionable(baseobject, mapping.mapped):
     def __init__(self):
         self._sections = SmartList()
@@ -159,9 +165,9 @@ class sectionable(baseobject, mapping.mapped):
         self._sections.append(section)
         section._parent = self
 
+    @inherit_docstring
     def reorder(self, new_index):
         return self._reorder(self.parent.sections, new_index)
-    reorder.__doc__ = baseobject._reorder.__doc__
 
     @mapping.remapable_remove
     def remove(self, section):
@@ -345,7 +351,10 @@ class sectionable(baseobject, mapping.mapped):
 
     def clean(self):
         """
-        runs clean() on all immediate child-sections
+        Runs clean() on all immediate child-sections causing any resolved links
+        or includes to be unresolved.
+
+        This should be called for the document prior to saving.
         """
         for i in self:
             i.clean()

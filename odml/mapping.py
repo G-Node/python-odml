@@ -101,6 +101,9 @@ class mapable(mapped):
 
     @property
     def mapping(self):
+        """
+        return the applicable mapping-url (which may be provided by the terminology)
+        """
         if self._mapping is None:
             term = self.get_terminology_equivalent()
             if term is not None:
@@ -142,9 +145,15 @@ class mapable(mapped):
 
 class mapableProperty(mapable):
     def unmap(self):
+        """
+        uninstall the property mapping by removing its proxy object from its mapped section
+        """
         return unmap_property(prop=self)
 
     def remap(self, mprop):
+        """
+        install the mapping for this property
+        """
         create_property_mapping(self.parent, self)
 
 class mapableSection(mapable):
@@ -175,6 +184,9 @@ class mapableSection(mapable):
                 create_property_mapping(child, prop)
 
 def remapable_append(func):
+    """
+    decorator for append-functions to deal with Proxy objects
+    """
     @wraps(func)
     def f(self, obj):
         ret = func(self, obj)
@@ -184,6 +196,9 @@ def remapable_append(func):
     return f
 
 def remapable_insert(func):
+    """
+    decorator for insert-functions to deal with Proxy objects
+    """
     @wraps(func)
     def f(self, position, obj):
         ret = func(self, position, obj)
@@ -193,6 +208,9 @@ def remapable_insert(func):
     return f
 
 def remapable_remove(func):
+    """
+    decorator for remove-functions to deal with Proxy objects
+    """
     @wraps(func)
     def f(self, obj):
         # don't attempt anything on proxy objects

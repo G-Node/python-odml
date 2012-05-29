@@ -3,8 +3,11 @@ import event
 import weakmeth, weakref
 import nodes
 
+# events are required for proxy objects 
+odml.setMinimumImplementation('event')
+
 class Proxy(object):
-    # common interface
+    """common interface"""
     pass
 
 # here we hook the base-class-comparism functionality to
@@ -23,8 +26,9 @@ class BaseProxy(Proxy):
     self._proxy_obj
 
     Comparism is hooked, so the following always holds
-    >>> BaseProxy(o) == o
-    True
+
+        >>> BaseProxy(o) == o
+        True
     """
     def __init__(self, obj):
         object.__setattr__(self, "_proxy_obj", obj)
@@ -45,6 +49,10 @@ class BaseProxy(Proxy):
         return "P(%s)" % repr(self._proxy_obj)
 
 class EqualityBaseProxy(BaseProxy):
+    """
+    A BaseProxy that uses a set of attributes (defined in self._format)
+    to compare to other objects
+    """
     def __eq__(self, obj):
         for key in self._format:
             if not hasattr(self, key) or not hasattr(obj, key):
@@ -57,14 +65,14 @@ class PassProxy(BaseProxy):
     """
     A simple Proxy forwarding all attribute access to the delegate
 
-    it can have inaccessable values (write protected):
+    It can have inaccessable values (write protected)::
 
-    inaccessable = {'name': 'default name'}
+        inaccessable = {'name': 'default name'}
 
-    attributes indicated in the dictionary *personal* are stored in the proxy
+    Attributes indicated in the dictionary *personal* are stored in the proxy
     and not in the delegate, however note: functions not defined in the proxy
     are actually attributes of the delegate and executed on it, so they will not
-    work on the *personal* attributes, but on the delegates ones
+    work on the *personal* attributes, but on the delegates ones.
     """
     PASS_THROUGH = "PASS_THROUGH"
     inaccessable = {}

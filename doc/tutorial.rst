@@ -52,7 +52,7 @@ Properties
 ----------
 
 Now we have a section and can create a property. Keep in mind that a property always
-needs a value. If the supplied value is not a :ref:`odml.value.Value` it will be converted to one::
+needs a value. If the supplied value is not a :py:mod:`odml.value.Value` it will be converted to one::
 
     >>> p = Property(name="quality", value=144)
     >>> p
@@ -61,7 +61,7 @@ needs a value. If the supplied value is not a :ref:`odml.value.Value` it will be
     <144>
     >>> s.append(p)
 
-As you can see, to append an element to another node always uses the ``append`` function.
+As you can see, the ``append`` function is always used to append an element to another node.
 A property can also contain multiple values::
 
     >>> p.append(135)
@@ -70,11 +70,11 @@ A property can also contain multiple values::
 
 Note: If a Property has multiple values, ``p.value`` returns a list.
 If the Property has only one, ``p.value`` will directly return this value.
-In constrast ``p.values`` will always return the list of values, even if it’s only one.
+In contrast ``p.values`` will always return the list of values, even if it’s only one.
 
 Values
 ------
-Values are typed data. If no dtype is set, the dtype is ``string``::
+Values are typed data. If no ``dtype`` is set, the ``dtype`` is ``string``::
 
     >>> Value(144).data
     u'144'
@@ -114,7 +114,7 @@ You can read files using the load()-function for convenience::
     >>> document = load('example.odml')
     <Doc 1.0 by None (1 sections)>
 
-Note: the XML-parser will enforce propper structure.
+Note: the XML-parser will enforce proper structure.
 
 If you need to parse Strings, you can use the XMLParser, which can also parse odML-objects such as::
 
@@ -145,9 +145,9 @@ one (``data`` property)::
     (<float 13.0>, u'13.0', 13.0)
 
 When changing the ``dtype``, the data is first converted back to its string
-representation and then tried to parse as new data. If the representation for
-the data type is invalid, a ``ValueError`` is raised.
-Also note, that during such a process, value loss may occur.
+representation. Then the software tries to parse this string as the new data type.
+If the representation for the data type is invalid, a ``ValueError`` is raised.
+Also note, that during such a process, value loss may occur::
 
     >>> v.data = 13.5
     >>> v.dtype = "int"  # converts 13.5 -> u'13.5' -> 13
@@ -191,7 +191,7 @@ the :py:meth:`odml.doc.BaseDocument.finalize` method::
     >>> d = xmlparser.load("sample.odml")
     >>> d.finalize()
 
-Only the parser does not automatically resolve link properties, as the referenced
+Note: Only the parser does not automatically resolve link properties, as the referenced
 sections may not yet be available.
 However, when manually setting the ``link`` (or ``include``) attribute, it will
 be immediately resolved. To avoid this behaviour, set the ``_link`` (or ``_include``)
@@ -202,7 +202,7 @@ and merged again using :py:meth:`odml.section.BaseSection.merge`.
 
 Unresolving means to remove sections and properties that do not differ from their
 linked equivalents. This should be done globally before saving using the
-:py:meth:`odml.base.baseobject.clean` method::
+:py:meth:`odml.doc.BaseDocument.clean` method::
 
     >>> d.clean()
     >>> xmlparser.XMLWriter(d).write_file('sample.odml')
@@ -221,5 +221,30 @@ method.
 To see whether an object has a terminology equivalent, use the :py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
 method, which returns the corresponding object of the terminology.
 
+Mappings
+--------
 
+A sometimes obscure but very useful feature is the idea of mappings, which can
+be used to write documents in a user-defined terminology, but provide mapping
+information to a standard-terminology that allows the document to be viewed in
+the standard-terminology (provided that adequate mapping-information is provided).
 
+See :py:class:`test.mapping.TestMapping` if you need to understand the
+mapping-process itself.
+
+Mappings are views on documents and are created as follows::
+
+    >>> import odml
+    >>> import odml.mapping as mapping
+    >>> doc = odml.Document()
+    >>> mdoc = mapping.create_mapping(doc)
+    >>> mdoc
+    P(<Doc None by None (0 sections)>)
+    >>> mdoc.__class__
+    <class 'odml.tools.proxy.DocumentProxy'>
+
+Creating a view has the advantage, that changes on a Proxy-object are
+propagated to the original document.
+This works quite well and is extensively used in the GUI.
+However, be aware that you are typically dealing with proxy objects only
+and not all API methods may be available.

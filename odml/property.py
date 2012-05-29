@@ -4,10 +4,12 @@ import format
 import mapping
 import value as odml_value
 import odml
+from tools.doc_inherit import *
 
 class Property(base._baseobj):
     pass
 
+@allow_inherit_docstring
 class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     """An odML Property"""
     _format = format.Property
@@ -80,6 +82,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     #  properties
     @property
     def parent(self):
+        """the section containing this property"""
         return self._section
 
     @property
@@ -99,7 +102,8 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         """
         returns the value of this property (or list if multiple values are present)
 
-        use :ref:`values`() to always return the list"""
+        use :py:meth:`odml.property.BaseProperty.values` to always return the list
+        """
         if len(self._values) == 1:
             return self._values[0]
 
@@ -133,11 +137,18 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         value._property = self
 
     def remove(self, value):
+        """
+        Remove a value from this property and unset its parent.
+
+        Raises a TypeError if this would cause the property not to hold any value at all.
+        This can be circumvented by using the *_values* property.
+        """
         if len(self._values) == 1:
             raise TypeError("Cannot remove %s from %s. A property must always have at least one value." % (repr(value), repr(self)))
         self._values.remove(value)
         value._property = None
 
+    @inherit_docstring
     def reorder(self, new_index):
         return self._reorder(self.parent.properties, new_index)
 
@@ -173,9 +184,11 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         self._values = base.SafeList()
 
     def merge(self, property):
+        """stub that doesn't do anything for this class"""
         pass
 
     def unmerge(self, property):
+        """stub that doesn't do anything for this class"""
         pass
 
     def get_merged_equivalent(self):
@@ -186,6 +199,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         if self._section._merged is None: return None
         return self._section._merged.contains(self)
 
+    @inherit_docstring
     def get_terminology_equivalent(self):
         if self._section is None: return None
         sec = self._section.get_terminology_equivalent()

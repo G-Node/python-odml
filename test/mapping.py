@@ -14,7 +14,14 @@ import odml.mapping as mapping
 
 
 class TestMapping(unittest.TestCase):
+    """
+    Testcases for the mapping mechanisms and rules.
 
+    Also useful to understand, how mappings work.
+    
+    Also have a look at the actual sourcefile (``test/mapping.py``)
+    which provides illustrations to the rule-definitions.
+    """
     def check(self, src, dst, map=True):
         """
         check if the mappingn of *src* is equivalent to *dst*

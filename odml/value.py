@@ -4,10 +4,12 @@ import base
 import format
 
 import string
+from tools.doc_inherit import *
 
 class Value(base._baseobj):
     pass
 
+@allow_inherit_docstring
 class BaseValue(base.baseobject, Value):
     """
     An odML value
@@ -86,6 +88,7 @@ class BaseValue(base.baseobject, Value):
 
     @property
     def parent(self):
+        """the property containing this value"""
         return self._property
 
     @property
@@ -248,6 +251,11 @@ class BaseValue(base.baseobject, Value):
         self._checksum_type = data[0]
 
     def calculate_checksum(self, cs_type):
+        """
+        returns the checksum for the data of this Value-object 
+
+        *cs_type* is the checksum mechanism (e.g. 'crc32' or 'md5')
+        """
         return types.calculate_checksum(self._value, cs_type)
 
     def can_display(self, text=None, max_length=-1):
@@ -273,6 +281,11 @@ class BaseValue(base.baseobject, Value):
         return True
 
     def get_display(self, max_length=-1):
+        """
+        return a textual representation that can be used for display
+
+        typically takes the first line (max *max_length* chars) and adds '…'
+        """
         text = self.value
         if self.can_display(text, max_length):
             return text
@@ -290,6 +303,7 @@ class BaseValue(base.baseobject, Value):
 #
 #        return True
 #
+    @inherit_docstring
     def reorder(self, new_index):
         return self._reorder(self.parent.values, new_index)
 
@@ -298,10 +312,11 @@ class BaseValue(base.baseobject, Value):
         obj._property = None
         return obj
 
+    @inherit_docstring
     def get_terminology_equivalent(self):
         prop = self._property.get_terminology_equivalent()
         if prop is None: return None
         for val in prop:
-            if val == self:
+            if val == self: # TODO: shouldn't we take the index or st.?
                 return val
         return None

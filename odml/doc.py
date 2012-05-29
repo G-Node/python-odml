@@ -73,7 +73,10 @@ class BaseDocument(base.sectionable, Document):
     def finalize(self):
         """
         This needs to be called after the document is set up from parsing
-        it will perform additional operations, that need the complete document
+        it will perform additional operations, that need the complete document.
+
+        In particular, this method will resolve all *link* and *include* attributes
+        accordingly.
         """
         # we could not fill out links while parsing (referenced sections where not known),
         # so try to set them now, where the document is complete
