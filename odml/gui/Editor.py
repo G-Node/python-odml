@@ -108,6 +108,7 @@ class EditorWindow(gtk.Window):
     odMLHomepage = "http://www.g-node.org/projects/odml"
     registry = DocumentRegistry()
     editors = set()
+    welcome_disabled_actions = ["Save", "SaveAs", "NewSection", "NewProperty", "NewValue", "Delete", "CloneTab", "Map", "Validate"]
 
     def __init__(self, parent=None):
         gtk.Window.__init__(self)
@@ -336,6 +337,8 @@ class EditorWindow(gtk.Window):
         page = gtk.Label()
         # welcome text
         text = """<span size="x-large" weight="bold">Welcome to odML-Editor</span>\n\nNow go ahead and <a href="#new">create a new document</a>."""
+        for action in self.welcome_disabled_actions:
+            self.enable_action(action, False)
         
         # display recently used files
         recent_filter = gtk.RecentFilter()
@@ -363,7 +366,11 @@ class EditorWindow(gtk.Window):
 
         the method is invoked by clicking on a link in the welcome tab
         """
+        # remove the page and enable the gui actions again
         self.notebook.remove_page(0)
+        for action in self.welcome_disabled_actions:
+            self.enable_action(action, True)
+
         if path == "#new":
             self.new_file()
         elif path is not None:
@@ -715,6 +722,7 @@ class EditorWindow(gtk.Window):
     @gui_action("NewSection", tooltip="Add a section to the current selected one", stock_id="odml-add-Section")
     def new_section(self, action):
         obj = self._section_tv.get_selected_object()
+        if obj is None: obj = self.current_tab.document
         self._section_tv.add_section(None, (obj, None))
 
     @gui_action("NewProperty", tooltip="Add a property to the current section", stock_id="odml-add-Property")
