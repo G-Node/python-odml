@@ -121,20 +121,20 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         self.merge(new_section)
 
     @property
-    def name_definition(self):
+    def definition(self):
         """Name Definition of the section"""
-        if hasattr(self, "_name_definition"):
-            return self._name_definition
+        if hasattr(self, "_definition"):
+            return self._definition
         else:
             return None
 
-    @name_definition.setter
-    def name_definition(self, val):
-        self._name_definition = val
+    @definition.setter
+    def definition(self, val):
+        self._definition = val
 
-    @name_definition.deleter
-    def name_definition(self):
-        del self._name_definition
+    @definition.deleter
+    def definition(self):
+        del self._definition
 
     # API (public)
     #
