@@ -59,7 +59,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
                     v = odml.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
                 self.append(v)
         elif not value is None:
-            self.append(value)
+            self.append(value, unit=unit, uncertainty=uncertainty, dtype=dtype)
 
         # getter and setter methods are omnitted for now, but they can easily
         # be introduced later using python-properties
