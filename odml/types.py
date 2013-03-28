@@ -179,8 +179,9 @@ checksums = {
     'crc32': calculate_crc32_checksum,
 }
 # allow to use any available algorithm
-for algo in hashlib.algorithms:
-    checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
+if not sys.version_info < (2, 7):
+    for algo in hashlib.algorithms:
+        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
 
 def valid_checksum_type(checksum_type):
     return checksum_type in checksums
