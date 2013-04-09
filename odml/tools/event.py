@@ -199,8 +199,8 @@ class ModificationNotifier(ChangeHandlable):
         c.passOn(self)
         return res
 
-    def append(self, obj):
-        func = lambda: super(ModificationNotifier, self).append(obj)
+    def append(self, obj, *args, **kwargs):
+        func = lambda: super(ModificationNotifier, self).append(obj, *args, **kwargs)
         self.__fireChange("append", obj, func)
 
     def remove(self, obj):
