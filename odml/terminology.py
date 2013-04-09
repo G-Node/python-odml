@@ -50,7 +50,7 @@ class Terminologies(dict):
 
         if url in self.loading:
             self.loading[url].join()
-            del self.loading[url]
+            self.loading.pop(url, None)
             return self.load(url)
 
         return self._load(url)
