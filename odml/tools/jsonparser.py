@@ -5,7 +5,6 @@ This is rudimentary for now, assuming everything is well-formed.
 """
 import odml
 import json
-from odml import format
 
 class OdmlSerializer(object):
     """
@@ -13,7 +12,7 @@ class OdmlSerializer(object):
     """
     def __init__(self, odml_document):
         self.doc = odml_document
-        
+
     @staticmethod
     def save_element(e):
         """
@@ -46,20 +45,20 @@ class JSONWriter(OdmlSerializer):
         doc = self.save_element(self.doc)
         doc['_version'] = JSON_VERSION
         return json.dumps(doc)
-        
+
     def write_file(self, filename):
         data = unicode(self)
         f = open(filename, "w")
         f.write(data)
         f.close()
-        
+
 class OdmlReader(object):
     """
     opposite of OdmlSerializer: converts dictionaries representing
     odml objects back to their classes
     """
     def to_odml(self, obj):
-        fmt = getattr(format, obj['_type'])
+        fmt = getattr(odml.format, obj['_type'])
         kargs = {}
         objects = []
         for k in fmt._args:
@@ -70,28 +69,28 @@ class OdmlReader(object):
             elif v is not None:
                 kargs[fmt.map(k)] = v
         return getattr(self, "create_%s" % fmt._name)(fmt, kargs, obj, objects)
-        
+
     def create_odML(self, fmt, kargs, obj, children):
         obj = fmt.create(**kargs)
         for i in children:
             obj.append(i)
         return obj
-    
+
     create_section = create_odML
     create_value = create_odML
-    
+
     def create_property(self, fmt, kargs, obj, children):
         kargs['value'] = children
         return self.create_odML(fmt, kargs, obj, [])
-        
+
 class JSONReader(OdmlReader):
     def fromString(self, data):
         obj = json.loads(data)
         return self.to_odml(obj)
-        
+
     def fromFile(self, infile):
         return self.fromString(infile.read())
-        
+
 if __name__=="__main__":
     import sys
     y = JSONReader().fromFile(sys.stdin)
