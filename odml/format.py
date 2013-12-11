@@ -17,7 +17,7 @@ class Format(object):
         if self._rev_map is None:
             # create the reverse map only if requested
             self._rev_map = {}
-            for k,v in self._map.iteritems():
+            for k, v in self._map.iteritems():
                 self._rev_map[v] = k
         return self._rev_map.get(name, name)
 
@@ -56,7 +56,8 @@ class Property(Format):
         }
     _map = {
         'value': 'values',
-        'dependencyvalue': 'dependency_value'
+        'dependencyvalue': 'dependency_value',
+        'type': 'dtype'
         }
 
 class Section(Format):
@@ -92,8 +93,8 @@ class Document(Format):
         }
 
 Document = Document()
-Section  = Section()
-Value    = Value()
+Section = Section()
+Value = Value()
 Property = Property()
 
 __all__ = [Document, Section, Property, Value]
