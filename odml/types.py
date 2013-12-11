@@ -6,7 +6,7 @@ for odml
 import sys
 self = sys.modules[__name__].__dict__
 
-from datetime import datetime, date, time
+import datetime
 import binascii
 import hashlib
 
@@ -89,7 +89,10 @@ def str_set(value):
 
 def time_get(string):
     if not string: return None
-    return datetime.strptime(string, '%H:%M:%S').time()
+    if type(string) is datetime.time:
+        return datetime.strptime(string.isoformat(), '%H:%M:%S').time()
+    else:
+        return datetime.strptime(string, '%H:%M:%S').time()
 
 def time_set(value):
     if not value: return None
@@ -97,13 +100,19 @@ def time_set(value):
 
 def date_get(string):
     if not string: return None
-    return datetime.strptime(string, '%Y-%m-%d').date()
+    if type(string) is datetime.date:
+        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d').date()
+    else:
+        return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
 date_set = time_set
 
 def datetime_get(string):
     if not string: return None
-    return datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+    if type(string) is datetime.datetime:
+        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 def datetime_set(value):
     if not value: return None
@@ -111,6 +120,8 @@ def datetime_set(value):
 
 def boolean_get(string):
     if not string: return None
+    if type(string) is bool:
+        string = str(string)
     string = string.lower()
     truth = ["true", "t", "1"] # be kind, spec only accepts True / False
     if string in truth: return True
