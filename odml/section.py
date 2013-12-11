@@ -24,10 +24,11 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
 
     _format = format.Section
 
-    def __init__(self, name, type="undefined", parent=None, mapping=None):
+    def __init__(self, name, type="undefined", parent=None, definition=None, mapping=None):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
+	self._definition = definition
         self._mapping = mapping
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
@@ -259,7 +260,9 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         if path[0] == "": # this indicates a path like "/name1" i.e. starting with a slash
             if self.document is None: # for dangling sections (e.g. parsing not complete)
                 return None
-            return self.document._find_by_path(path[1:])
+            else:
+                return self.document._find_by_path(path[1:])
+
         return super(BaseSection, self)._find_by_path(path)
 
     def merge(self, section=None):
