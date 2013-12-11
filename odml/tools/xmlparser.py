@@ -95,7 +95,7 @@ class XMLWriter:
     def write_file(self, filename):
         # calculate the data before opening the file in case we get any
         # exception
-        data = unicode(self)
+        data = unicode(self).encode('utf-8')
         f = open(filename, "w")
         f.write(self.header)
         f.write(data)
