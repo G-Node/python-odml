@@ -28,7 +28,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
-	self._definition = definition
+        self._definition = definition
         self._mapping = mapping
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
