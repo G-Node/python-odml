@@ -12,6 +12,24 @@ import hashlib
 
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
+dtype_map = {
+    'int': 'integer',
+    'str': 'string',
+    'bool': 'boolean',
+}
+
+
+def infer_dtype(value):
+    dtype = (type(value)).__name__
+
+    if dtype in dtype_map:
+        return dtype_map[dtype]
+    elif valid_type(dtype):
+        return dtype
+    else:
+        return None
+
+
 def valid_type(dtype):
     """
     checks if *dtype* is a valid type
