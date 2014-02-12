@@ -73,8 +73,9 @@ class BaseValue(base.baseobject, Value):
 
         if value is not None:
             # assign value directly (through property would raise a change-event)
-            self._value  = types.get(value, self._dtype, self._encoder)
+            self._value = types.get(value, self._dtype, self._encoder)
         elif data is not None:
+            self._dtype = types.infer_dtype(data)
             self._value = data
 
         self._checksum_type = None
@@ -252,7 +253,7 @@ class BaseValue(base.baseobject, Value):
 
     def calculate_checksum(self, cs_type):
         """
-        returns the checksum for the data of this Value-object 
+        returns the checksum for the data of this Value-object
 
         *cs_type* is the checksum mechanism (e.g. 'crc32' or 'md5')
         """
