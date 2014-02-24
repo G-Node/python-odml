@@ -89,7 +89,11 @@ def str_set(value):
 
 def time_get(string):
     if not string: return None
-    return datetime.strptime(string, '%H:%M:%S').time()
+
+    try:
+        return datetime.strptime(string, '%H:%M:%S.%f').time()
+    except ValueError:
+        return datetime.strptime(string, '%H:%M:%S').time()
 
 def time_set(value):
     if not value: return None
@@ -103,7 +107,11 @@ date_set = time_set
 
 def datetime_get(string):
     if not string: return None
-    return datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+
+    try:
+        return datetime.strptime(string, '%Y-%m-%d %H:%M:%S.%f')
+    except ValueError:
+        return datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 def datetime_set(value):
     if not value: return None
