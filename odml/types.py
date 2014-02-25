@@ -23,8 +23,11 @@ def infer_dtype(value):
     dtype = (type(value)).__name__
 
     if dtype in dtype_map:
-        return dtype_map[dtype]
-    elif valid_type(dtype):
+        dtype = dtype_map[dtype]
+
+    if valid_type(dtype):
+        if dtype == 'string' and '\n' in value:
+            dtype = 'text'
         return dtype
     else:
         return None
