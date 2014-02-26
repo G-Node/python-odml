@@ -4,18 +4,31 @@ for odml
 """
 
 import sys
+
 self = sys.modules[__name__].__dict__
 
 from datetime import datetime, date, time
 import binascii
 import hashlib
+from enum import Enum
 
-types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
-dtype_map = {
-    'str': 'string',
-    'bool': 'boolean',
-}
+class DType(Enum):
+    string = 'str'
+    text = 'text'
+    int = 'int'
+    float = 'float'
+    URL = 'url'
+    datetime = 'datetime'
+    date = 'date'
+    time = 'time'
+    boolean = 'bool'
+    person = 'person'
+    binary = 'binary'
+
+
+types = set(t.name for t in list(DType))
+dtype_map = {'str': 'string', 'bool': 'boolean'}
 
 
 def infer_dtype(value):
@@ -63,9 +76,10 @@ def validate(string, dtype):
                 return True
             return False
         #try to parse it
-        self.get(dtype+"_get", str_get)(string)
+        self.get(dtype + "_get", str_get)(string)
     except: #any error, this type ain't valid
         return False
+
 
 def get(string, dtype=None, encoding=None):
     """
@@ -76,7 +90,8 @@ def get(string, dtype=None, encoding=None):
         return tuple_get(string)
     if dtype == "binary":
         return binary_get(string, encoding)
-    return self.get(dtype+"_get", str_get)(string)
+    return self.get(dtype + "_get", str_get)(string)
+
 
 def set(value, dtype=None, encoding=None):
     """
@@ -87,7 +102,8 @@ def set(value, dtype=None, encoding=None):
         return tuple_set(value)
     if dtype == "binary":
         return binary_set(value, encoding)
-    return self.get(dtype+"_set", str_set)(value)
+    return self.get(dtype + "_set", str_set)(value)
+
 
 def int_get(string):
     if not string: return 0
@@ -97,15 +113,19 @@ def int_get(string):
         # convert to float first and then cast to int
         return int(float(string))
 
+
 def float_get(string):
     if not string: return 0.0
     return float(string)
 
+
 def str_get(string):
     return unicode(string)
 
+
 def str_set(value):
     return unicode(value)
+
 
 def time_get(string):
     if not string: return None
@@ -115,15 +135,19 @@ def time_get(string):
     except ValueError:
         return datetime.strptime(string, '%H:%M:%S').time()
 
+
 def time_set(value):
     if not value: return None
     return value.isoformat()
+
 
 def date_get(string):
     if not string: return None
     return datetime.strptime(string, '%Y-%m-%d').date()
 
+
 date_set = time_set
+
 
 def datetime_get(string):
     if not string: return None
@@ -133,9 +157,11 @@ def datetime_get(string):
     except ValueError:
         return datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
+
 def datetime_set(value):
     if not value: return None
     return value.isoformat(' ')
+
 
 def boolean_get(string):
     if not string: return None
@@ -146,9 +172,11 @@ def boolean_get(string):
     if string in false: return False
     raise ValueError("Cannot interpret '%s' as boolean" % string)
 
+
 def boolean_set(value):
     if value is None: return None
     return str(value)
+
 
 def tuple_get(string, count=None):
     """
@@ -163,6 +191,7 @@ def tuple_get(string, count=None):
         assert len(res) == count
     return res
 
+
 def tuple_set(value):
     if not value: return None
     return "(%s)" % ";".join(value)
@@ -175,10 +204,13 @@ class Encoder(object):
     def __init__(self, encode, decode):
         self._encode = encode
         self._decode = decode
+
     def encode(self, data):
         return self._encode(data)
+
     def decode(self, string):
         return self._decode(string)
+
 
 encodings = {
     'base64': Encoder(lambda x: binascii.b2a_base64(x).strip(), binascii.a2b_base64),
@@ -187,21 +219,26 @@ encodings = {
     None: Encoder(lambda x: x, lambda x: x), #identity encoder
 }
 
+
 def valid_encoding(encoding):
     return encoding in encodings
+
 
 def binary_get(string, encoding=None):
     "binary decode the *string* according to *encoding*"
     if not string: return None
     return encodings[encoding].decode(string)
 
+
 def binary_set(value, encoding=None):
     "binary encode the *value* according to *encoding*"
     if not value: return None
     return encodings[encoding].encode(value)
 
+
 def calculate_crc32_checksum(data):
     return "%08x" % (binascii.crc32(data) & 0xffffffff)
+
 
 checksums = {
     'crc32': calculate_crc32_checksum,
@@ -211,8 +248,10 @@ if not sys.version_info < (2, 7):
     for algo in hashlib.algorithms:
         checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
 
+
 def valid_checksum_type(checksum_type):
     return checksum_type in checksums
+
 
 def calculate_checksum(data, checksum_type):
     if data is None: data = ''
