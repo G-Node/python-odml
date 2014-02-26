@@ -60,7 +60,7 @@ class BaseValue(base.baseobject, Value):
         if data is not None and value is not None:
             raise TypeError("only one of data or value can be set")
 
-        self._dtype  = dtype
+        self._dtype = dtype
         self._property = None
         self._unit = unit
         self._uncertainty = uncertainty
