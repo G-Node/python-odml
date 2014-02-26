@@ -4,6 +4,7 @@ import format
 import mapping
 import value as odml_value
 import odml
+import types
 from tools.doc_inherit import *
 
 class Property(base._baseobj):
@@ -56,7 +57,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
-                    v = odml.Value(v, unit=unit, uncertainty=uncertainty, dtype=dtype)
+                    v = odml.Value(data=v, unit=unit, uncertainty=uncertainty, dtype=dtype)
                 self.append(v)
         elif not value is None:
             self.append(value, unit=unit, uncertainty=uncertainty, dtype=dtype)
@@ -115,7 +116,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         self._reset_values()
         self.append(new_value)
 
-    def append(self, value, unit=None, dtype=None, uncertainty=None, copy_attributes=False):
+    def append(self, value, unit=None, dtype=None, uncertainty=None):
         """
         adds a value to the list of values
 
@@ -128,11 +129,8 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         copied from, an IndexError will be raised.
         """
         if not isinstance(value, odml_value.Value):
-            if copy_attributes:
-                if unit is None: unit = self._values[-1].unit
-                if type is None: dtype = self._values[-1].dtype
-                if uncertainty is None: uncertainty = self._values[-1].uncertainty
-            value = odml.Value(value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            dtype = types.infer_dtype(value) if not dtype else dtype
+            value = odml.Value(data=value, unit=unit, dtype=dtype, uncertainty=uncertainty)
         self._values.append(value)
         value._property = self
 

@@ -72,8 +72,10 @@ class BaseValue(base.baseobject, Value):
 
         if value is not None:
             # assign value directly (through property would raise a change-event)
-            self._value  = types.get(value, self._dtype, self._encoder)
+            self._value = types.get(value, self._dtype, self._encoder)
         elif data is not None:
+            if dtype is None:
+                self._dtype = types.infer_dtype(data)
             self._value = data
 
         self._checksum_type = None
