@@ -260,8 +260,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         if path[0] == "": # this indicates a path like "/name1" i.e. starting with a slash
             if self.document is None: # for dangling sections (e.g. parsing not complete)
                 return None
-            else:
-                return self.document._find_by_path(path[1:])
+            return self.document._find_by_path(path[1:])
 
         return super(BaseSection, self)._find_by_path(path)
 

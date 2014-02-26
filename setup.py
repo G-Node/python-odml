@@ -1,6 +1,13 @@
 #!/usr/bin/env python
-from distutils.core import setup
-import sys, os, glob
+
+import sys
+import os
+import glob
+
+try:
+    from setuptools import setup
+except ImportError as ex:
+    from distutils.core import setup
 
 kwargs = {}
 try:
@@ -8,12 +15,12 @@ try:
     import py2exe
     kwargs.update({'console': ['odml-gui']})
 except ImportError:
-    pass
+    py2exe = None
 
-packages=[
-        'odml',
-        'odml.tools'
-	]
+packages = [
+    'odml',
+    'odml.tools'
+]
 
 if '--no-gui' in sys.argv:
     sys.argv.remove('--no-gui')
