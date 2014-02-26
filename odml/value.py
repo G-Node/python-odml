@@ -60,7 +60,6 @@ class BaseValue(base.baseobject, Value):
         if data is not None and value is not None:
             raise TypeError("only one of data or value can be set")
 
-        self._dtype  = dtype
         self._property = None
         self._unit = unit
         self._uncertainty = uncertainty
@@ -252,7 +251,7 @@ class BaseValue(base.baseobject, Value):
 
     def calculate_checksum(self, cs_type):
         """
-        returns the checksum for the data of this Value-object 
+        returns the checksum for the data of this Value-object
 
         *cs_type* is the checksum mechanism (e.g. 'crc32' or 'md5')
         """

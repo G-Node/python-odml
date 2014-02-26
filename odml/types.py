@@ -16,8 +16,10 @@ def valid_type(dtype):
     """
     checks if *dtype* is a valid type
     """
-    if dtype in types: return True
-    if dtype is None: return True
+    if dtype in types:
+        return True
+    if dtype is None:
+        return True
     if dtype.endswith("-tuple"):
         try:
             count = int(dtype[:-6])
@@ -51,7 +53,8 @@ def get(string, dtype=None, encoding=None):
     """
     convert *string* to the corresponding *dtype*
     """
-    if not dtype: return str_get(string)
+    if not dtype:
+        return str_get(string)
     if dtype.endswith("-tuple"): # special case, as the count-number is included in the type-name
         return tuple_get(string)
     if dtype == "binary":
@@ -62,7 +65,8 @@ def set(value, dtype=None, encoding=None):
     """
     serialize a *value* of type *dtype* to a unicode string
     """
-    if not dtype: return str_set(value)
+    if not dtype:
+        return str_set(value)
     if dtype.endswith("-tuple"):
         return tuple_set(value)
     if dtype == "binary":
@@ -70,7 +74,8 @@ def set(value, dtype=None, encoding=None):
     return self.get(dtype+"_set", str_set)(value)
 
 def int_get(string):
-    if not string: return 0
+    if not string:
+        return 0
     try:
         return int(string)
     except ValueError:
@@ -78,7 +83,8 @@ def int_get(string):
         return int(float(string))
 
 def float_get(string):
-    if not string: return 0.0
+    if not string:
+        return 0.0
     return float(string)
 
 def str_get(string):
@@ -88,38 +94,47 @@ def str_set(value):
     return unicode(value)
 
 def time_get(string):
-    if not string: return None
+    """
+
+    """
+    if not string:
+        return None
     if type(string) is datetime.time:
-        return datetime.strptime(string.isoformat(), '%H:%M:%S').time()
+        return string
     else:
-        return datetime.strptime(string, '%H:%M:%S').time()
+        return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
 def time_set(value):
-    if not value: return None
+    if not value:
+        return None
     return value.isoformat()
 
 def date_get(string):
-    if not string: return None
+    if not string:
+        return None
     if type(string) is datetime.date:
-        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d').date()
+        return string
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
 date_set = time_set
 
 def datetime_get(string):
-    if not string: return None
+    if not string:
+        return None
     if type(string) is datetime.datetime:
-        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d %H:%M:%S')
+        return string
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 def datetime_set(value):
-    if not value: return None
+    if not value:
+        return None
     return value.isoformat(' ')
 
 def boolean_get(string):
-    if not string: return None
+    if not string:
+        return None
     if type(string) is bool:
         string = str(string)
     string = string.lower()
@@ -130,14 +145,16 @@ def boolean_get(string):
     raise ValueError("Cannot interpret '%s' as boolean" % string)
 
 def boolean_set(value):
-    if value is None: return None
+    if value is None:
+        return None
     return str(value)
 
 def tuple_get(string, count=None):
     """
     parse a tuple string like "(1024;768)" and return strings of the elements
     """
-    if not string: return None
+    if not string:
+        return None
     string = string.strip()
     assert string.startswith("(") and string.endswith(")")
     string = string[1:-1]
@@ -147,7 +164,8 @@ def tuple_get(string, count=None):
     return res
 
 def tuple_set(value):
-    if not value: return None
+    if not value:
+        return None
     return "(%s)" % ";".join(value)
 
 ###############################################################################
