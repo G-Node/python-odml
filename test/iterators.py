@@ -2,6 +2,9 @@ import unittest
 from datetime import datetime as dt
 from odml import Property, Section, Document
 
+longago = dt.strptime('2013-08-11 09:48:49', "%Y-%m-%d %H:%M:%S")
+recently = dt.strptime('2014-02-25 14:42:13', "%Y-%m-%d %H:%M:%S")
+
 
 class TestValidation(unittest.TestCase):
 
@@ -13,9 +16,9 @@ class TestValidation(unittest.TestCase):
         sec.append(Property("txtprop", "some\ntext"))
         sec.append(Property("intprop", 200))
         sec.append(Property("floatprop", 2.00))
-        sec.append(Property("datetimeprop", dt.now()))
-        sec.append(Property("dateprop", dt.now().date()))
-        sec.append(Property("timeprop", dt.now().time()))
+        sec.append(Property("datetimeprop", longago))
+        sec.append(Property("dateprop", longago.date()))
+        sec.append(Property("timeprop", longago.time()))
         sec.append(Property("boolprop", True))
 
         sec = Section("bar", "bartype")

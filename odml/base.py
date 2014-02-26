@@ -188,9 +188,15 @@ class sectionable(baseobject, mapping.mapped):
         """
         iterate each child section
 
-        if *recursive* is set, iterate all child sections recurively (depth-search)
+        :param recursive: iterate all child sections recursively (depth-search)
+        :type recursive: bool
 
-        if *yield_self* is set, includes itsself in the iteration
+        :param yield_self: includes itsself in the iteration
+        :type yield_self: bool
+
+        :param filter_func: accepts a function that will be applied to each iterable. Yields
+                            iterable if function returns True
+        :type filter_func: function
         """
         if yield_self and filter_func(self):
             yield self
@@ -200,6 +206,39 @@ class sectionable(baseobject, mapping.mapped):
             if recursive:
                 for j in i.itersections(recursive=recursive, filter_func=filter_func):
                     yield j
+
+    def iterproperties(self, recursive=True, filter_func=lambda x: True):
+        """
+        iterate each related property (recursively)
+
+        :param recursive: iterate all child sections recursively (depth-search)
+        :type recursive: bool
+
+        :param filter_func: accepts a function that will be applied to each iterable. Yields
+                            iterable if function returns True
+        :type filter_func: function
+        """
+        for sec in [s for s in self.itersections(recursive=recursive, yield_self=True)]:
+            if hasattr(sec, "properties"):  # not to fail if odml.Document
+                for i in sec.properties:
+                    if filter_func(i):
+                        yield i
+
+    def itervalues(self, recursive=True, filter_func=lambda x: True):
+        """
+        iterate each related property (recursively)
+
+        :param recursive: iterate all child sections recursively (depth-search)
+        :type recursive: bool
+
+        :param filter_func: accepts a function that will be applied to each iterable. Yields
+                            iterable if function returns True
+        :type filter_func: function
+        """
+        for prop in [p for p in self.iterproperties(recursive=recursive)]:
+            for v in prop.values:
+                if filter_func(v):
+                    yield v
 
     def contains(self, obj):
         """
