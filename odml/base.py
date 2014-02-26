@@ -234,10 +234,14 @@ class sectionable(baseobject, mapping.mapped):
         """
         cur = self
         for i in path:
-            if i == "." or i == "": continue
+            if i == "." or i == "":
+                continue
             if i == "..":
                 cur = cur.parent
                 continue
+            if ":" in i:  #indicates that a property is searched
+                cur = cur[i.split(':')[0]]
+                return cur.properties[i.split(':')[-1]]
             cur = cur[i]
         return cur
 
