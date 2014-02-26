@@ -184,7 +184,7 @@ class sectionable(baseobject, mapping.mapped):
     def __iter__(self):
         return self._sections.__iter__()
 
-    def itersections(self, recursive=False, yield_self=False):
+    def itersections(self, recursive=False, yield_self=False, filter_func=lambda x: True):
         """
         iterate each child section
 
@@ -192,12 +192,13 @@ class sectionable(baseobject, mapping.mapped):
 
         if *yield_self* is set, includes itsself in the iteration
         """
-        if yield_self:
+        if yield_self and filter_func(self):
             yield self
         for i in self._sections:
-            yield i
+            if filter_func(i):
+                yield i
             if recursive:
-                for j in i.itersections(recursive=recursive):
+                for j in i.itersections(recursive=recursive, filter_func=filter_func):
                     yield j
 
     def contains(self, obj):
