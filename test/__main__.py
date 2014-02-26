@@ -8,6 +8,7 @@ from proxy import *
 from types import *
 from dnd import *
 from bugs import *
+from infer_type import *
 from validation import *
 
 if __name__ == '__main__':
