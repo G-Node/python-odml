@@ -188,6 +188,10 @@ class sectionable(baseobject, mapping.mapped):
         """
         iterate each child section
 
+        >>> # example: return all subsections which name contains "foo"
+        >>> filter_func = lambda x: getattr(x, 'name').find("foo") > -1
+        >>> sec_or_doc.itersections(recursive=True, filter_func=filter_func)
+
         :param recursive: iterate all child sections recursively (depth-search)
         :type recursive: bool
 
@@ -211,6 +215,10 @@ class sectionable(baseobject, mapping.mapped):
         """
         iterate each related property (recursively)
 
+        >>> # example: return all children properties which name contains "foo"
+        >>> filter_func = lambda x: getattr(x, 'name').find("foo") > -1
+        >>> sec_or_doc.iterproperties(filter_func=filter_func)
+
         :param recursive: iterate all child sections recursively (depth-search)
         :type recursive: bool
 
@@ -227,6 +235,10 @@ class sectionable(baseobject, mapping.mapped):
     def itervalues(self, recursive=True, filter_func=lambda x: True):
         """
         iterate each related property (recursively)
+
+        >>> # example: return all children values which string converted version has "foo"
+        >>> filter_func = lambda x: str(getattr(x, 'data')).find("foo") > -1
+        >>> sec_or_doc.itervalues(filter_func=filter_func)
 
         :param recursive: iterate all child sections recursively (depth-search)
         :type recursive: bool
