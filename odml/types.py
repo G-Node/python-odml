@@ -13,7 +13,6 @@ import hashlib
 types = ['string', 'int', 'text', 'float', 'URL', 'datetime', 'boolean', 'date', 'binary', 'person', 'time']
 
 dtype_map = {
-    'int': 'integer',
     'str': 'string',
     'bool': 'boolean',
 }
