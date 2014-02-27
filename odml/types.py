@@ -13,8 +13,8 @@ import hashlib
 from enum import Enum
 
 
-class DType(Enum):
-    string = 'str'
+class DType(str, Enum):
+    string = 'string'
     text = 'text'
     int = 'int'
     float = 'float'
@@ -22,20 +22,19 @@ class DType(Enum):
     datetime = 'datetime'
     date = 'date'
     time = 'time'
-    boolean = 'bool'
+    boolean = 'boolean'
     person = 'person'
     binary = 'binary'
 
 
-types = set(t.name for t in list(DType))
-dtype_map = {'str': 'string', 'bool': 'boolean'}
+_dtype_map = {'str': 'string', 'bool': 'boolean'}
 
 
 def infer_dtype(value):
     dtype = (type(value)).__name__
 
-    if dtype in dtype_map:
-        dtype = dtype_map[dtype]
+    if dtype in _dtype_map:
+        dtype = _dtype_map[dtype]
 
     if valid_type(dtype):
         if dtype == 'string' and '\n' in value:
@@ -49,15 +48,23 @@ def valid_type(dtype):
     """
     checks if *dtype* is a valid type
     """
-    if dtype in types: return True
-    if dtype is None: return True
+    if dtype in _dtype_map:
+        dtype = _dtype_map[dtype]
+
+    if hasattr(DType, dtype):
+        return True
+    if dtype is None:
+        return True
+
     if dtype.endswith("-tuple"):
         try:
-            count = int(dtype[:-6])
+            int(dtype[:-6])
             return True
         except ValueError:
             pass
+
     return False
+
 
 # TODO also take encoding into account
 def validate(string, dtype):
@@ -68,16 +75,18 @@ def validate(string, dtype):
      * *string* is a valid expression of type *dtype*
     """
     try:
-        if not dtype in types:
+        if not valid_type(dtype):
             if dtype.endswith("-tuple"):
                 count = int(dtype[:-6])
                 #try to parse it
                 tuple_get(string, count=count)
                 return True
+                #try to parse it
+            self.get(dtype + "_get", str_get)(string)
+        else:
             return False
-        #try to parse it
-        self.get(dtype + "_get", str_get)(string)
-    except: #any error, this type ain't valid
+    except RuntimeError:
+        #any error, this type ain't valid
         return False
 
 
