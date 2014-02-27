@@ -13,6 +13,7 @@ kwargs = {}
 try:
     # only necessary for the windows build
     import py2exe
+
     kwargs.update({'console': ['odml-gui']})
 except ImportError:
     py2exe = None
@@ -28,11 +29,11 @@ else:
     packages.append('odml.gui')
     packages.append('odml.gui.dnd')
     packages.append('odml.gui.treemodel')
-    kwargs['data_files']=[
+    kwargs['data_files'] = [
         ('share/applications', ['odml.desktop']),
         ('share/pixmaps', glob.glob(os.path.join("images", "*")))
-        ]
-    kwargs['scripts']=['odml-gui']
+    ]
+    kwargs['scripts'] = ['odml-gui']
 
 setup(name='odML',
       version='1.0',
@@ -41,12 +42,12 @@ setup(name='odML',
       author_email='fritsch+gnode@in.tum.de',
       url='http://www.g-node.org/projects/odml',
       packages=packages,
-      options = {
+      options={
           'py2exe': {
               'packages': 'odml',
-              'includes': 'cairo, pango, pangocairo, atk, gobject, gio, lxml, gzip',
+              'includes': 'cairo, pango, pangocairo, atk, gobject, gio, lxml, gzip, enum34',
           }
       },
       **kwargs
-     )
+)
 

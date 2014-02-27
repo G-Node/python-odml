@@ -7,46 +7,41 @@ import odml
 import types
 from tools.doc_inherit import *
 
+
 class Property(base._baseobj):
     pass
+
 
 @allow_inherit_docstring
 class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
     """An odML Property"""
     _format = format.Property
 
-    def __init__(self, name, value, section=None,
-        definition=None, dependency=None, dependency_value=None, mapping=None,
-        unit=None, dtype=None, uncertainty=None):
+    def __init__(self, name, value, definition=None, dependency=None, dependency_value=None, mapping=None):
         """
-        create a new Property
+        Create a new Property with one single or multiple values. If something is passed as value that
+        is not a Value object, the method will try to infer the values dtype from the type of the
+        parameter.
 
-        *value*
-            specifies a direct value that shall be assigned as a first value
-            if *value* is a list, the whole list of values will be assigned.
-            Further info
+        Example for a property with a single value
+        >>> Property("property1", Value(data=2)) #or
+        >>> Property("property1", 2)
 
-                    *unit*
-                    the unit of the value(s)
+        Example for a property with multiple values
+        >>> Property("property2", [Value(data=1), Value(data=2)]) #or
+        >>> Property("property2", [1, 2])
 
-                *dtype*
-                    the data type of the value(s)
-
-                *uncertainty*
-                    an estimation of uncertainty of the value(s)
-
-        *section*
-            the parent section to which this property belongs
-
-         * @param definition {@link String}
-         * @param dependency {@link String}
-         * @param dependency_value {@link String}
-         * @param mapping {@link URL}
+        :param name: The mane of the property
+        :param value: Either a Value or some type a Value can be created from or a list of values.
+        :param definition: The definition of the property.
+        :param dependency: Another property this property depends on.
+        :param dependency_value: Dependency on a certain value.
+        :param mapping: Mapping information of the property.
         """
         #TODO doc description for arguments
         #TODO validate arguments
         self._name = name
-        self._section = section
+        self._section = None
         self._reset_values()
 
         self.definition = definition
@@ -57,10 +52,10 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
-                    v = odml.Value(data=v, unit=unit, uncertainty=uncertainty, dtype=dtype)
+                    v = odml.Value(data=v)
                 self.append(v)
-        elif not value is None:
-            self.append(value, unit=unit, uncertainty=uncertainty, dtype=dtype)
+        elif value is not None:
+            self.append(value)
 
         # getter and setter methods are omnitted for now, but they can easily
         # be introduced later using python-properties
@@ -116,7 +111,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         self._reset_values()
         self.append(new_value)
 
-    def append(self, value, unit=None, dtype=None, uncertainty=None):
+    def append(self, value):
         """
         adds a value to the list of values
 
@@ -129,8 +124,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         copied from, an IndexError will be raised.
         """
         if not isinstance(value, odml_value.Value):
-            dtype = types.infer_dtype(value) if not dtype else dtype
-            value = odml.Value(data=value, unit=unit, dtype=dtype, uncertainty=uncertainty)
+            value = odml.Value(data=value)
         self._values.append(value)
         value._property = self
 
