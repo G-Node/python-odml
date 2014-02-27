@@ -184,34 +184,41 @@ class sectionable(baseobject, mapping.mapped):
     def __iter__(self):
         return self._sections.__iter__()
 
-    def itersections(self, recursive=False, yield_self=False, filter_func=lambda x: True):
+    def itersections(self, recursive=True, yield_self=False, filter_func=lambda x: True, max_depth=None):
         """
         iterate each child section
 
         >>> # example: return all subsections which name contains "foo"
         >>> filter_func = lambda x: getattr(x, 'name').find("foo") > -1
-        >>> sec_or_doc.itersections(recursive=True, filter_func=filter_func)
+        >>> sec_or_doc.itersections(filter_func=filter_func)
 
-        :param recursive: iterate all child sections recursively (depth-search)
+        :param recursive: iterate all child sections recursively (deprecated)
         :type recursive: bool
 
-        :param yield_self: includes itsself in the iteration
+        :param yield_self: includes itself in the iteration
         :type yield_self: bool
 
         :param filter_func: accepts a function that will be applied to each iterable. Yields
                             iterable if function returns True
         :type filter_func: function
         """
-        if yield_self and filter_func(self):
-            yield self
-        for i in self._sections:
-            if filter_func(i):
-                yield i
-            if recursive:
-                for j in i.itersections(recursive=recursive, filter_func=filter_func):
-                    yield j
+        stack = []
+        if self == self.document:
+            for sec in self.sections:
+                stack.append((sec, 1))
+        else:
+            stack.append((self, 0))
 
-    def iterproperties(self, recursive=True, filter_func=lambda x: True):
+        while len(stack) > 0:
+            (sec, level) = stack.pop(0)
+            if filter_func(sec) and (yield_self if level == 0 else True):
+                yield sec
+
+            if max_depth is None or level < max_depth:
+                for sec in sec.sections:
+                    stack.append((sec, level + 1))
+
+    def iterproperties(self, max_depth=None, filter_func=lambda x: True):
         """
         iterate each related property (recursively)
 
@@ -219,35 +226,37 @@ class sectionable(baseobject, mapping.mapped):
         >>> filter_func = lambda x: getattr(x, 'name').find("foo") > -1
         >>> sec_or_doc.iterproperties(filter_func=filter_func)
 
-        :param recursive: iterate all child sections recursively (depth-search)
-        :type recursive: bool
+        :param max_depth: iterate all properties recursively if None, only to a certain
+                            level otherwise
+        :type max_depth: bool
 
         :param filter_func: accepts a function that will be applied to each iterable. Yields
                             iterable if function returns True
         :type filter_func: function
         """
-        for sec in [s for s in self.itersections(recursive=recursive, yield_self=True)]:
+        for sec in [s for s in self.itersections(max_depth=max_depth, yield_self=True)]:
             if hasattr(sec, "properties"):  # not to fail if odml.Document
                 for i in sec.properties:
                     if filter_func(i):
                         yield i
 
-    def itervalues(self, recursive=True, filter_func=lambda x: True):
+    def itervalues(self, max_depth=None, filter_func=lambda x: True):
         """
-        iterate each related property (recursively)
+        iterate each related value (recursively)
 
         >>> # example: return all children values which string converted version has "foo"
         >>> filter_func = lambda x: str(getattr(x, 'data')).find("foo") > -1
         >>> sec_or_doc.itervalues(filter_func=filter_func)
 
-        :param recursive: iterate all child sections recursively (depth-search)
-        :type recursive: bool
+        :param max_depth: iterate all properties recursively if None, only to a certain
+                            level otherwise
+        :type max_depth: bool
 
         :param filter_func: accepts a function that will be applied to each iterable. Yields
                             iterable if function returns True
         :type filter_func: function
         """
-        for prop in [p for p in self.iterproperties(recursive=recursive)]:
+        for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
             for v in prop.values:
                 if filter_func(v):
                     yield v
