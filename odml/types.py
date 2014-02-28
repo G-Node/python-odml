@@ -106,11 +106,14 @@ def set(value, dtype=None, encoding=None):
     """
     serialize a *value* of type *dtype* to a unicode string
     """
-    if not dtype: return str_set(value)
+    if not dtype:
+        return str_set(value)
     if dtype.endswith("-tuple"):
         return tuple_set(value)
     if dtype == "binary":
         return binary_set(value, encoding)
+    if type(value) in (str, unicode):
+        return str_set(value)
     return self.get(dtype + "_set", str_set)(value)
 
 
@@ -133,7 +136,11 @@ def str_get(string):
 
 
 def str_set(value):
-    return unicode(value)
+    try:
+        return unicode(value)
+    except Exception as ex:
+        fail = ex
+        raise fail
 
 
 def time_get(string):

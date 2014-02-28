@@ -1,10 +1,10 @@
 #-*- coding: utf-8
+
 import base
 import format
 import mapping
 import value as odml_value
 import odml
-import types
 from tools.doc_inherit import *
 
 
@@ -24,11 +24,11 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         parameter.
 
         Example for a property with a single value
-        >>> Property("property1", Value(data=2)) #or
+        >>> Property("property1", odml.Value(2)) #or
         >>> Property("property1", 2)
 
         Example for a property with multiple values
-        >>> Property("property2", [Value(data=1), Value(data=2)]) #or
+        >>> Property("property2", [odml.Value(data=1), odml.Value(data=2)]) #or
         >>> Property("property2", [1, 2])
 
         :param name: The mane of the property
@@ -52,7 +52,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         if isinstance(value, list):
             for v in value:
                 if not isinstance(v, odml_value.Value):
-                    v = odml.Value(data=v)
+                    v = odml.Value(v)
                 self.append(v)
         elif value is not None:
             self.append(value)
@@ -124,7 +124,7 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         copied from, an IndexError will be raised.
         """
         if not isinstance(value, odml_value.Value):
-            value = odml.Value(data=value)
+            value = odml.Value(value)
         self._values.append(value)
         value._property = self
 
