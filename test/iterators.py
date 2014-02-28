@@ -57,8 +57,6 @@ class TestValidation(unittest.TestCase):
         sec_filt = self.doc.itersections(max_depth=1)
         assert(len([s for s in sec_filt]) == 1)
 
-        import ipdb
-        ipdb.set_trace()
         sec_filt = self.doc.itersections(max_depth=0)
         assert(len([s for s in sec_filt]) == 0)
 

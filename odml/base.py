@@ -203,11 +203,12 @@ class sectionable(baseobject, mapping.mapped):
         :type filter_func: function
         """
         stack = []
-        if self == self.document:
+        # below: never yield self if self is a Document
+        if self == self.document and (max_depth > 0 or max_depth is None):
             for sec in self.sections:
-                stack.append((sec, 1))
-        else:
-            stack.append((self, 0))
+                stack.append((sec, 1))  # (<section>, <level in a tree>)
+        elif not self == self.document:
+            stack.append((self, 0))  # (<section>, <level in a tree>)
 
         while len(stack) > 0:
             (sec, level) = stack.pop(0)
