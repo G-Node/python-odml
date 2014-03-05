@@ -283,6 +283,53 @@ class sectionable(baseobject, mapping.mapped):
         return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
             and (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
 
+    def get_section_by_path(self, path):
+        return self._get_any_by_path(path)
+
+    def get_property_by_path(self, path):
+        return self._get_any_by_path(path)
+
+    def _get_any_by_path(self, path):
+        """
+        Returns Section / Property by a given path.
+        Raises ValueError if not found.
+        """
+        def match_iterable(iterable, key):
+            """
+            Searches for a key match within a given iterable.
+            Raises ValueError if not found.
+            """
+            for obj in iterable:
+                if self._matches(obj, key):
+                    return obj
+            raise ValueError("Object named '%s' does not exist" % key)
+
+        if path.startswith("/"):
+            doc = self.document
+            if doc:
+                return doc._get_any_by_path(path[1:])
+            raise ValueError("A section with no Document cannot resolve absolute path")
+
+        pathlist = path.split("/")
+        if len(pathlist > 1):
+            if pathlist[0] == "..":
+                found = self.parent
+            elif pathlist[0] == ".":
+                found = self
+            else:
+                found = match_iterable(self.sections, pathlist[0])
+
+            if found:
+                return found._get_any_by_path("/".join(pathlist[1:]))
+            raise ValueError("Section named '%s' does not exist" % pathlist[0])
+
+        else:
+            laststep = pathlist[0].split(":")
+            found = match_iterable(self.sections, laststep[0])
+            if len(laststep) > 1:
+                return match_iterable(found.properties, laststep[1])
+            return found
+
     def find_by_path(self, path):
         """
         find a Section/Property through a path like "name1/name2"
