@@ -42,6 +42,7 @@ setup(name='odML',
       author_email='fritsch+gnode@in.tum.de',
       url='http://www.g-node.org/projects/odml',
       packages=packages,
+      test_suite = 'test',
       options={
           'py2exe': {
               'packages': 'odml',

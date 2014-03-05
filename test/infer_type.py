@@ -7,45 +7,45 @@ from odml.tools.xmlparser import XMLReader, XMLWriter
 class TestInferType(unittest.TestCase):
 
     def test_string(self):
-        v = Value(data="somestring")
+        v = Value("somestring")
         assert(v.dtype == "string")
         assert(type(v.data) == str)
 
     def test_text(self):
-        v = Value(data="some\nstring")
+        v = Value("some\nstring")
         assert(v.dtype == "text")
         assert(type(v.data) == str)
 
     def test_int(self):
-        v = Value(data=111)
+        v = Value(111)
         assert(v.dtype == "int")
         assert(type(v.data) == int)
 
     def test_float(self):
-        v = Value(data=3.14)
+        v = Value(3.14)
         assert(v.dtype == "float")
         assert(type(v.data) == float)
 
     def test_datetime(self):
-        v = Value(data=dt.now())
+        v = Value(dt.now())
         assert(v.dtype == "datetime")
         assert(type(v.data) == dt)
 
     def test_date(self):
-        v = Value(data=dt.now().date())
+        v = Value(dt.now().date())
         assert(v.dtype == "date")
         assert(type(v.data) == date)
 
     def test_time(self):
-        v = Value(data=dt.now().time())
+        v = Value(dt.now().time())
         assert(v.dtype == "time")
         assert(type(v.data) == time)
 
     def test_boolean(self):
-        v = Value(data=True)
+        v = Value(True)
         assert(v.dtype == "boolean")
         assert(type(v.data) == bool)
-        v = Value(data=False)
+        v = Value(False)
         assert(v.dtype == "boolean")
         assert(type(v.data) == bool)
 
