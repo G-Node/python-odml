@@ -289,6 +289,10 @@ class MiscTest(unittest.TestCase):
         path = newsec.sections[0].get_path()
         self.assertRaises(ValueError, newsec.sections[1].get_section_by_path, path)
 
+        # test path with property is invalid
+        path = sec11.properties[0].get_path()
+        self.assertRaises(ValueError, self.doc.get_section_by_path, path)
+
     def test_get_property_by_path(self):
         sec0 = self.doc.sections[0]
         sec1 = self.doc.sections[1]
@@ -312,6 +316,10 @@ class MiscTest(unittest.TestCase):
 
         # test non-existing property
         wrongpath = sec10.get_relative_path(sec11) + ":foo"
+        self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
+
+        # test path with section is invalid
+        wrongpath = sec11.get_path()
         self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
 
 
