@@ -283,25 +283,63 @@ class sectionable(baseobject, mapping.mapped):
         return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
             and (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
 
-    def find_by_path(self, path):
+    def get_section_by_path(self, path):
         """
-        find a Section/Property through a path like "name1/name2"
-        """
-        path = path.split("/")
-        return self._find_by_path(path)
+        find a Section through a path like "../name1/name2"
 
-    def _find_by_path(self, path):
+        :param path: path like "../name1/name2"
+        :type path: str
         """
-        find a Section/Property through a path like ("name1", "name2")
+        return self._get_section_by_path(path)
+
+    def get_property_by_path(self, path):
         """
-        cur = self
-        for i in path:
-            if i == "." or i == "": continue
-            if i == "..":
-                cur = cur.parent
-                continue
-            cur = cur[i]
-        return cur
+        find a Property through a path like "../name1/name2:property_name"
+
+        :param path: path like "../name1/name2:property_name"
+        :type path: str
+        """
+        laststep = path.split(":")  # assuming section names do not contain :
+        found = self._get_section_by_path(laststep[0])
+        return self._match_iterable(found.properties, ":".join(laststep[1:]))
+
+    def _match_iterable(self, iterable, key):
+        """
+        Searches for a key match within a given iterable.
+        Raises ValueError if not found.
+        """
+        for obj in iterable:
+            if self._matches(obj, key):
+                return obj
+        raise ValueError("Object named '%s' does not exist" % key)
+
+    def _get_section_by_path(self, path):
+        """
+        Returns a Section by a given path.
+        Raises ValueError if not found.
+        """
+        if path.startswith("/"):
+            if len(path) == 1:
+                raise ValueError("Not a valid path")
+            doc = self.document
+            if doc is not None:
+                return doc._get_section_by_path(path[1:])
+            raise ValueError("A section with no Document cannot resolve absolute path")
+
+        pathlist = path.split("/")
+        if len(pathlist) > 1:
+            if pathlist[0] == "..":
+                found = self.parent
+            elif pathlist[0] == ".":
+                found = self
+            else:
+                found = self._match_iterable(self.sections, pathlist[0])
+
+            if found:
+                return found._get_section_by_path("/".join(pathlist[1:]))
+            raise ValueError("Section named '%s' does not exist" % pathlist[0])
+        else:
+            return self._match_iterable(self.sections, pathlist[0])
 
     def find(self, key=None, type=None, findAll=False):
         """return the first subsection named *key* of type *type*"""
