@@ -6,16 +6,15 @@ import format
 import string
 from tools.doc_inherit import *
 
+
 class Value(base._baseobj):
     pass
+
 
 @allow_inherit_docstring
 class BaseValue(base.baseobject, Value):
     """
     An odML value
-
-    value
-        mandatory (unless data is set). It's the string representation of the value.
 
     data
         mandatory (unless value is set). It's the content itself.
@@ -49,12 +48,16 @@ class BaseValue(base.baseobject, Value):
     definition (optional)
         additional comments on the value of the property
 
+    value
+        mandatory (unless data is set). It's the string representation of the value.
+
     TODO: comment
     """
 
     _format = format.Value
 
-    def __init__(self, value=None, data=None, uncertainty=None, unit=None, dtype=None, definition=None, reference=None, filename=None, encoder=None, checksum=None, comment=None):
+    def __init__(self, data=None, uncertainty=None, unit=None, dtype=None, definition=None, reference=None,
+                 filename=None, encoder=None, checksum=None, comment=None, value=None):
         if data is None and value is None:
             raise TypeError("either data or value has to be set")
         if data is not None and value is not None:
@@ -103,7 +106,7 @@ class BaseValue(base.baseobject, Value):
         return self._value
 
     @data.setter
-    def data (self, new_value):
+    def data(self, new_value):
         self._value = new_value
 
     @property
@@ -112,7 +115,7 @@ class BaseValue(base.baseobject, Value):
         used to access typed data of the value as a string.
         Use data to access the raw type, i.e.:
 
-        >>> v = Value("1", type="float")
+        >>> v = Value(1, type="float")
         >>> v.data
         1.0
         >>> v.data = 1.5
@@ -145,17 +148,19 @@ class BaseValue(base.baseobject, Value):
     def dtype(self, new_type):
         # check if this is a valid type
         if not types.valid_type(new_type):
-            raise AttributeError("'%s' is not a valid type." % (new_type))
+            raise AttributeError("'%s' is not a valid type." % new_type)
         # we convert the value if possible
-        old_type  = self._dtype
+        old_type = self._dtype
         old_value = types.set(self._value, self._dtype, self._encoder)
         try:
             new_value = types.get(old_value,  new_type, self._encoder)
-        except: # cannot convert, try the other way around
+        except:
+            # cannot convert, try the other way around
             try:
                 old_value = types.set(self._value, new_type, self._encoder)
                 new_value = types.get(old_value,   new_type, self._encoder)
-            except: #doesn't work either, therefore refuse
+            except:
+                #doesn't work either, therefore refuse
                 raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
         self._value = new_value
         self._dtype = new_type
@@ -176,7 +181,8 @@ class BaseValue(base.baseobject, Value):
         if not self._dtype == "binary":
             raise AttributeError("attribute 'encoding' can only be set for binary types, not for '%s'" % self._dtype)
 
-        if not encoding: encoding = None
+        if not encoding:
+            encoding = None
 
         if not types.valid_encoding(encoding):
             raise AttributeError("'%s' is not a valid encoding" % encoding)
@@ -317,8 +323,12 @@ class BaseValue(base.baseobject, Value):
     @inherit_docstring
     def get_terminology_equivalent(self):
         prop = self._property.get_terminology_equivalent()
-        if prop is None: return None
+
+        if prop is None:
+            return None
+
         for val in prop:
-            if val == self: # TODO: shouldn't we take the index or st.?
+            if val == self:  # TODO: shouldn't we take the index or st.?
                 return val
+
         return None
