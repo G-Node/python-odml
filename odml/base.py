@@ -290,7 +290,7 @@ class sectionable(baseobject, mapping.mapped):
         :param path: path like "../name1/name2"
         :type path: str
         """
-        return self._get_any_by_path(path)
+        return self._get_section_by_path(path)
 
     def get_property_by_path(self, path):
         """
@@ -299,29 +299,31 @@ class sectionable(baseobject, mapping.mapped):
         :param path: path like "../name1/name2:property_name"
         :type path: str
         """
-        return self._get_any_by_path(path)
+        laststep = path.split(":")  # assuming section names do not contain :
+        found = self._get_section_by_path(laststep[0])
+        return self._match_iterable(found.properties, ":".join(laststep[1:]))
 
-    def _get_any_by_path(self, path):
+    def _match_iterable(self, iterable, key):
         """
-        Returns Section / Property by a given path.
+        Searches for a key match within a given iterable.
         Raises ValueError if not found.
         """
-        def match_iterable(iterable, key):
-            """
-            Searches for a key match within a given iterable.
-            Raises ValueError if not found.
-            """
-            for obj in iterable:
-                if self._matches(obj, key):
-                    return obj
-            raise ValueError("Object named '%s' does not exist" % key)
+        for obj in iterable:
+            if self._matches(obj, key):
+                return obj
+        raise ValueError("Object named '%s' does not exist" % key)
 
+    def _get_section_by_path(self, path):
+        """
+        Returns a Section by a given path.
+        Raises ValueError if not found.
+        """
         if path.startswith("/"):
             if len(path) == 1:
                 raise ValueError("Not a valid path")
             doc = self.document
             if doc is not None:
-                return doc._get_any_by_path(path[1:])
+                return doc._get_section_by_path(path[1:])
             raise ValueError("A section with no Document cannot resolve absolute path")
 
         pathlist = path.split("/")
@@ -331,18 +333,13 @@ class sectionable(baseobject, mapping.mapped):
             elif pathlist[0] == ".":
                 found = self
             else:
-                found = match_iterable(self.sections, pathlist[0])
+                found = self._match_iterable(self.sections, pathlist[0])
 
             if found:
-                return found._get_any_by_path("/".join(pathlist[1:]))
+                return found._get_section_by_path("/".join(pathlist[1:]))
             raise ValueError("Section named '%s' does not exist" % pathlist[0])
-
         else:
-            laststep = pathlist[0].split(":")
-            found = match_iterable(self.sections, laststep[0])
-            if len(laststep) > 1:
-                return match_iterable(found.properties, ":".join(laststep[1:]))
-            return found
+            return self._match_iterable(self.sections, pathlist[0])
 
     def find(self, key=None, type=None, findAll=False):
         """return the first subsection named *key* of type *type*"""
