@@ -284,9 +284,21 @@ class sectionable(baseobject, mapping.mapped):
             and (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
 
     def get_section_by_path(self, path):
+        """
+        find a Section through a path like "../name1/name2"
+
+        :param path: path like "../name1/name2"
+        :type path: str
+        """
         return self._get_any_by_path(path)
 
     def get_property_by_path(self, path):
+        """
+        find a Property through a path like "../name1/name2:property_name"
+
+        :param path: path like "../name1/name2:property_name"
+        :type path: str
+        """
         return self._get_any_by_path(path)
 
     def _get_any_by_path(self, path):
@@ -305,8 +317,10 @@ class sectionable(baseobject, mapping.mapped):
             raise ValueError("Object named '%s' does not exist" % key)
 
         if path.startswith("/"):
+            if len(path) == 1:
+                raise ValueError("Not a valid path")
             doc = self.document
-            if doc:
+            if doc is not None:
                 return doc._get_any_by_path(path[1:])
             raise ValueError("A section with no Document cannot resolve absolute path")
 
@@ -329,26 +343,6 @@ class sectionable(baseobject, mapping.mapped):
             if len(laststep) > 1:
                 return match_iterable(found.properties, laststep[1])
             return found
-
-    def find_by_path(self, path):
-        """
-        find a Section/Property through a path like "name1/name2"
-        """
-        path = path.split("/")
-        return self._find_by_path(path)
-
-    def _find_by_path(self, path):
-        """
-        find a Section/Property through a path like ("name1", "name2")
-        """
-        cur = self
-        for i in path:
-            if i == "." or i == "": continue
-            if i == "..":
-                cur = cur.parent
-                continue
-            cur = cur[i]
-        return cur
 
     def find(self, key=None, type=None, findAll=False):
         """return the first subsection named *key* of type *type*"""

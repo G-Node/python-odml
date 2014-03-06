@@ -75,7 +75,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
             return
 
         term = terminology.load(url)
-        new_section = term.find_by_path(path) if path is not None else term.sections[0]
+        new_section = term.get_section_by_path(path) if path is not None else term.sections[0]
 
         if self._include is not None:
             self.clean()
@@ -115,7 +115,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
             self.clean()
             return
 
-        new_section = self.find_by_path(new_value) # raises exception if path cannot be found
+        new_section = self.get_section_by_path(new_value) # raises exception if path cannot be found
         if self._link is not None:
             self.clean()
         self._link = new_value
@@ -255,14 +255,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         for i in self._props:
             if obj.name == i.name:
                 return i
-
-    def _find_by_path(self, path):
-        if path[0] == "": # this indicates a path like "/name1" i.e. starting with a slash
-            if self.document is None: # for dangling sections (e.g. parsing not complete)
-                return None
-            return self.document._find_by_path(path[1:])
-
-        return super(BaseSection, self)._find_by_path(path)
 
     def merge(self, section=None):
         """

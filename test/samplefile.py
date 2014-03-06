@@ -218,11 +218,11 @@ class MiscTest(unittest.TestCase):
 
         path_to_sec10 = sec1.get_relative_path(sec10)
         self.assertEqual(path_to_sec10, sec10.name)
-        self.assertIs(sec1.find_by_path(path_to_sec10), sec10)
+        self.assertIs(sec1.get_section_by_path(path_to_sec10), sec10)
 
         path_to_sec11 = sec10.get_relative_path(sec11)
         self.assertEqual(path_to_sec11, "../" + sec11.name)
-        self.assertIs(sec10.find_by_path(path_to_sec11), sec11)
+        self.assertIs(sec10.get_section_by_path(path_to_sec11), sec11)
 
     def test_findall_related(self):
         doc = parse("""
@@ -252,6 +252,42 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(self.doc.sections[0].name, "sec 2")
         self.assertEqual(self.doc.sections[1].name, "sec 0")
         self.assertEqual(self.doc.sections[2].name, "sec 1")
+
+    def test_get_section_by_path(self):
+        sec0 = self.doc.sections[0]
+        sec1 = self.doc.sections[1]
+        sec01 = sec0.sections[1]
+        sec10 = sec1.sections[0]
+        sec11 = sec1.sections[1]
+
+        # test absolute path
+        current = self.doc.get_section_by_path(sec10.get_path())
+        self.assertEqual(current, sec10)
+
+        # test relative path with ../
+        current = sec10.get_section_by_path(sec10.get_relative_path(sec01))
+        self.assertEqual(current, sec01)
+
+        # test relative path with ./
+        current = sec1.get_section_by_path("./" + sec1.get_relative_path(sec11))
+        self.assertEqual(current, sec11)
+
+        # test relative path
+        current = sec1.get_section_by_path(sec1.get_relative_path(sec11))
+        self.assertEqual(current, sec11)
+
+        # test wrong parent
+        wrongpath = "../" + sec10.get_relative_path(sec01)
+        self.assertRaises(ValueError, sec10.get_section_by_path(wrongpath))
+
+        # test wrong child
+        wrongpath = sec1.get_relative_path(sec10) + "/foo"
+        self.assertRaises(ValueError, sec1.get_section_by_path(wrongpath))
+
+        # test absolute path with no document
+        newsec = SampleFileCreator().create_section("foo", 2)
+        path = newsec.sections[0].get_path()
+        self.assertRaises(ValueError, newsec.sections[1].get_section_by_path(path))
 
 
 if __name__ == '__main__':
