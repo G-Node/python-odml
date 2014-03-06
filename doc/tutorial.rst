@@ -2,8 +2,10 @@
 Tutorial
 ========
 
+
 Getting Started
 ===============
+
 
 Installation
 ------------
@@ -22,67 +24,314 @@ You should be able to just test the library using the following::
 See `github:python-odml#Installation <https://github.com/G-Node/python-odml#installation>`_
 for more descriptions including setup on Windows and Debian/Ubuntu.
 
+
 Running python-odml
 -------------------
 Once python-odml is installed, you can use it in your python shell::
 
     >>> import odml
-    >>> odml.Document(version=0.9, author="Kermit")
-    <Doc 0.9 by Kermit (0 sections)>
 
-Creating and manipulating data
+
+Generating an odML-file
 ==============================
-The objects allow to play around freely. You can just edit the properties.
-Most directly map to their odML-Names. Few are mapped to other names (e.g.
-the ``type`` property of an odML-Value is mapped to ``dtype``).
-See the description of the classes in the Reference for the :ref:`class-reference`
-if you don't find the property you’re looking for.
+A final odML-file has a tree-like structure with section-objects as branches 
+property-objects as end nodes with one value- or many value-objects as leafs. 
+Corresponding to a root of a tree, the document-object connects the most 
+highest section-objects to the final tree-like structure. To generate now an 
+odML-file one has to create each odML-object individually and append them 
+to the wanted tree structure.
 
-Document & Sections
+As a first step one has to learn how one can create the different objects
+and which odML-object can be attached to which other odML-object.
+
+
+Creating a document
 -------------------
+As already mentioned the document-object is the root of the odML-file. It 
+is possible to create a document-object with no attributes given::
 
-To add a sections to a document::
+	>>> document = odml.Document()
+	>>> print document
+	<Doc None by None (0 sections)>
 
-    >>> from odml import *
-    >>> d = Document()
-    >>> s = Section(name="section1")
-    >>> d.append(s)
+But to be able to identify the author of the odML-file, the date the odML-file
+was generated and the current version of the odML-file, it is helpful to 
+give these attributes to the document-object::
+
+	>>> document = odml.Document(author="Arthur Dent", date="2014-03-05", version=0.1)
+	>>> document
+	<Doc 0.1 by Arthur Dent (0 sections)>
+	>>> document.author
+	'Arthur Dent'
+	>>> document.version
+	0.1
+	
+If a common terminology (e.g. the terminology provided by the G-Node) is 
+used for the odML-file (how to use the attached terminology see ???), one 
+can also already provide the URL to the terminology.odml in the document::
+	
+	>>> gnode_terminology = "http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml"
+	>>> document = odml.Document(author="Arthur Dent", date="2014-03-05", version=0.1, repository=gnode_terminology)
+	>>> document
+	<Doc 0.1 by Arthur Dent (0 sections)>
+	>>> document.repository
+	'https://github.com/G-Node/odml-terminologies/blob/master/v1.0/odMLTerminologies.xml'
+	
+	
+Creating a section
+------------------
+The sections are the branches of the odML-file tree structure. The can either
+have section- or property-objects as childrens. The 'name' of a section-object
+is a required attribute and has to be given::
+
+	>>> section_1 = odml.Section("Subject")
+	>>> section_1
+	<Section Subject[undefined] (0)>
+	
+Other important attributes of a section-object are type and definition::
+
+	>>> section_1 = odml.Section("Subject", type="subject", definition="The investigated experimental subject (animal or person).")
+	>>> section_1
+	<Section Subject[subject] (0)>
+	>>> section_1.type
+	'subject'
+	>>> section_1.definition
+	'The investigated experimental subject (animal or person).'
+	
+As above mentioned, it is possible to append a section to another section 
+creating a subsection::
+
+	>>> section_2 = odml.Section("Preparation", type="subject", definition="Description of the preparation procedure.")
+	>>> section_2
+	<Section Preparation[subject] (0)>
+	>>> section_2.type
+	'subject'
+	>>> section_2.definition
+	'Description of the preparation procedure.'
+	>>> section_1.append(section_2)
+	>>> section_1
+	<Section Subject[subject] (1)>
+	>>> section_1.sections
+	[<Section Preparation[subject] (0)>]
+	
+Note that the number in the round brackets of section-object 'Subject' 
+increased by one. It corresponds to the number of section-objects below 
+the current section-object.
+
+
+A tree with branches: a document with sections
+----------------------------------------------
+Let's create first a third section-object before creating a first tree 
+structure::
+
+	>>> section_3 = odml.Section("Electrode", type="electrode", definition="Properties to describe an electrode.")
+	>>> section_3
+	<Section Electrode[electrode] (0)>
+	>>> section_3.type
+	'electrode'
+	>>> section_3.definition
+	'Properties to describe an electrode.'
+	
+Now one append all created section-objects to the document-object::
+
+	>>> document.append(section_1)
+	>>> document.append(section_2)
+	>>> document
+	<Doc 0.1 by Arthur Dent (2 sections)>
+	>>> document.sections
+	[<Section Subject[subject] (1)>, <Section Electrode[electrode] (0)>]
+
+Note that the section-object 'Subject' still has one subsection. Appending
+a section-object always includes all of its appended children (subsections
+and/or properties).
+
+
+Creating properties with values
+-------------------------------
+Before one creates a property-object one should create a value-object. The 
+'data' of a value-object is a required attribute and has to be given::
+
+	>>> value_1 = odml.Value(14)
+	>>> value_1
+	<int 14>
+	>>> value_1.data
+	14
+	>>> value_1.dtype
+	'int'
+	
+Note that the data type 'int' of the given 'data' of value_1 is automatically 
+assigned. This odml data type guessing only works for 'data' of python type 
+int, float, str, datetime-objects (date, time, datetime) and bool. One 
+can also directly specify the odml data type while creating a value-object
+via the 'dtype' attribute. Possible odml data types are 'int', 'float', 
+'string', 'date', 'time', 'datetime', 'booleans', 'person', 'text' and 'URL' 
+(for details see odml.Value documentation). 
+
+It is also possible to specify in the attributes the uncertainty, the unit 
+and the definition of a value-object ::
+
+	>>> value_1 = odml.Value(14, unit="day")
+	>>> value_1.unit
+	'day'
+	>>> value_2 = odml.Value(258.4, uncertainty=1.4, unit="g")
+	>>> value_2
+	<float 258.4>
+	>>> value_2.uncertainty
+	1.4
+	>>> value_2.unit
+	'g'
+	>>> value_3 = odml.Value("Rattus norvegicus", definition="Species of the genus Rattus")
+	>>> value_3
+	<string Rattus norvegicus>
+	>>> value_3.definition
+	'Species of the genus Rattus'
+	
+Note that every attribute of a value-object can be overwritten afterwards, 
+but the type guessing only works while creating the value-object. If one
+changes the data afterwards one needs to change the dtype as well if 
+neccessary.
+
+Now let's create a property-object. The name and the value are required
+attributes of a property-object. Optional one can give also a definition
+to a property-object::
+
+	>>> property_1 = odml.Property("Age", value_1, definition="The age of the subject since birth.")
+	>>> property_1
+	<Property Age>
+	>>> property_1.value
+	<int 14>
+	>>> property_1.value.data
+	14
+	>>> property_1.value.dtype
+	'int'
+	>>> property_1.value.unit
+	'day'
+	>>> property_1.definition
+	'The age of the subject since birth.'
+	
+	>>> property_2 = odml.Property("Weight", value_2, defintion="The weigth of this subject.")
+	>>> property_2
+	<Property Weight>
+	>>> property_2.value
+	<float 258.4>
+	>>> property_2.value.data
+	258.4
+	>>> property_2.value.uncertainty
+	1.4	
+	>>> property_2.value.dtype
+	'float'
+	>>> property_2.value.unit
+	'g'
+	>>> property_2.definition
+	'The weigth of this subject.'
+	
+	>>> property_3 = odml.Property("Species", value_3, definition="The scientific name of the species.")
+	>>> property_3
+	<Property Species>
+	>>> property_3.value
+	<string Rattus norvegicus>
+	>>> property_2.value.data
+	'Rattus norvegicus'
+	>>> property_2.value.dtype
+	'string'
+	>>> property_2.value.definition
+	'Species of the genus Rattus'
+	>>> property_2.definition
+	'The scientific name of the species.'
+
+Note that the value of a property-object is usually given as value-object.
+All attributes specified in the value-object remain intact. The value-object
+is accessable via 'property.value'.
+
+
+
+
+
+
+
+
+
+
+
     
-Properties
-----------
+Properties and Values
+---------------------
 
 Now we have a section and can create a property. Keep in mind that a property always
-needs a value. If the supplied value is not a :py:mod:`odml.value.Value` it will be converted to one::
+needs a value. Values are typed data.:: 
 
-    >>> p = Property(name="quality", value=144)
-    >>> p
-    <Property quality>
-    >>> p.value
-    <144>
-    >>> s.append(p)
+    >>> v = Value(data=144, dtype="int")
+    >>> p1 = Property(name="property1", value=v)
+    >>> p1.value
+    <int 144>
 
-As you can see, the ``append`` function is always used to append an element to another node.
+If the supplied value is not a :py:mod:`odml.value.Value` it will be converted to one::
+
+    >>> p1 = Property(name="property1", value=144, dtype="int")
+    >>> p1.value
+    <int 144>
+
 A property can also contain multiple values::
 
-    >>> p.append(135)
-    >>> p.value
-    [<144>, <135>]
-
-Note: If a Property has multiple values, ``p.value`` returns a list.
+    >>> v1 = Value(data=1, dtype="int")
+    >>> v2 = Value(data=2, dtype="int")
+    >>> v3 = Value(data=3, dtype="int")
+    >>> p2 = Property(name="property2", value=[v1, v2, v3])
+    >>> p2.values
+    [<int 1>, <int 2>, <int 3>]
+    
+Note: If a Property has multiple values, ``p.value`` returns a list
 If the Property has only one, ``p.value`` will directly return this value.
-In contrast ``p.values`` will always return the list of values, even if it’s only one.
+In contrast ``p.values`` will always return the list of values, even if it’s only one::
 
-Values
-------
-Values are typed data. If no ``dtype`` is set, the ``dtype`` is ``string``::
+	>>> p1.value
+    <int 144>
+    >>> p1.values
+    [<int 144>]
+    >>> p2.value
+    [<int 1>, <int 2>, <int 3>]
+    >>> p2.values
+    [<int 1>, <int 2>, <int 3>]
+      
+If the supplied value list is not a list of :py:mod:`odml.value.Value` 
+each element will be converted to a :py:mod:`odml.value.Value`::
 
-    >>> Value(144).data
-    u'144'
-    >>> Value(144, dtype='int').data
-    144
+    >>> p2 = Property(name="property2", value=[1, 2, 3], dtype="int")
+    >>> p2.values
+    [<int 1>, <int 2>, <int 3>]
+    
+Note: If the supplied value list is not a list of :py:mod:`odml.value.Value` 
+all elements are set to the given ``dtype``, but in general a property
+can contain multiple values with different ``dtype``::
 
-The Value’s attribute ``data`` always holds the representation in the corresponding datatype,
-whereas the ``value`` attribute contains the serialized data as a ``string``.
+    >>> v1 = Value(data=1, dtype="int")
+    >>> v2 = Value(data=2.0, dtype="float")
+    >>> v3 = Value(data="3", dtype="string")
+    >>> p2 = Property(name="property2", value=[v1, v2, v3])
+    >>> p2.values
+    [<int 1>, <float 2.0>, <string 3>]
+
+You can also use the ``append`` function to add a value to an existing property::
+
+	>>> v = Value(data=155, dtype="int")
+	>>> p1.append(v)
+	>>> p1.values
+	[<int 144>, <int 155>]
+	
+If the supplied value is not a :py:mod:`odml.value.Value` it will be converted to one::
+
+	>>> p1.append(155, dtype="int")
+	>>> p1.values
+	[<int 144>, <int 155>]
+	
+As you can see, the ``append`` function is also used to attach a property to a section::
+
+	>>> s.append(p1)
+	>>> s.append(p2)
+	s.properties
+	[<Property property1>, <Property property2>]
+	
+
 
 Working with files
 ==================
@@ -99,15 +348,23 @@ You can write files using the XMLWriter (``d`` is our ODML-Document from the pre
 To just print the xml-representation::
 
     >>> print unicode(writer)
-    <odML version="1.0">
-      <section name="section1">
-        <property>
-          <name>quality</name>
-          <value>144</value>
-          <value>135</value>
-        </property>
-      </section>
-    </odML>
+	<odML version="1">
+	  <section>
+		<property>
+		  <value>144<type>int</type></value>
+		  <value>155<type>int</type></value>
+		  <name>property1</name>
+		</property>
+		<property>
+		  <value>1<type>int</type></value>
+		  <value>2.0<type>float</type></value>
+		  <value>3<type>string</type></value>
+		  <name>property2</name>
+		</property>
+		<name>section1</name>
+		<type>undefined</type>
+	  </section>
+	</odML>
 
 You can read files using the load()-function for convenience::
 
