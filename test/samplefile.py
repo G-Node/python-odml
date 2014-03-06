@@ -265,8 +265,8 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(current, sec10)
 
         # test relative path with ../
-        current = sec10.get_section_by_path(sec10.get_relative_path(sec01))
-        self.assertEqual(current, sec01)
+        current = sec10.get_section_by_path(sec10.get_relative_path(sec11))
+        self.assertEqual(current, sec11)
 
         # test relative path with ./
         current = sec1.get_section_by_path("./" + sec1.get_relative_path(sec11))
@@ -277,17 +277,42 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(current, sec11)
 
         # test wrong parent
-        wrongpath = "../" + sec10.get_relative_path(sec01)
-        self.assertRaises(ValueError, sec10.get_section_by_path(wrongpath))
+        wrongpath = "../" + sec10.get_relative_path(sec11)
+        self.assertRaises(ValueError, sec10.get_section_by_path, wrongpath)
 
         # test wrong child
         wrongpath = sec1.get_relative_path(sec10) + "/foo"
-        self.assertRaises(ValueError, sec1.get_section_by_path(wrongpath))
+        self.assertRaises(ValueError, sec1.get_section_by_path, wrongpath)
 
         # test absolute path with no document
-        newsec = SampleFileCreator().create_section("foo", 2)
+        newsec = SampleFileCreator().create_section("foo", 0)
         path = newsec.sections[0].get_path()
-        self.assertRaises(ValueError, newsec.sections[1].get_section_by_path(path))
+        self.assertRaises(ValueError, newsec.sections[1].get_section_by_path, path)
+
+    def test_get_property_by_path(self):
+        sec0 = self.doc.sections[0]
+        sec1 = self.doc.sections[1]
+        sec00 = self.doc.sections[0].sections[0]
+        sec11 = self.doc.sections[1].sections[1]
+        sec10 = self.doc.sections[1].sections[0]
+        prop = sec11.properties[0]
+
+        # test absolute path from document
+        current = self.doc.get_property_by_path(prop.get_path())
+        self.assertEqual(current, prop)
+
+        # test absolute path from section
+        current = sec00.get_property_by_path(prop.get_path())
+        self.assertEqual(current, prop)
+
+        # test relative path from section
+        manualpath = "../%s/%s:%s" % (sec1.name, sec11.name, prop.name)
+        current = sec0.get_property_by_path(manualpath)
+        self.assertEqual(current, prop)
+
+        # test non-existing property
+        wrongpath = sec10.get_relative_path(sec11) + ":foo"
+        self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
 
 
 if __name__ == '__main__':

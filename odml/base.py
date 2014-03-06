@@ -325,7 +325,7 @@ class sectionable(baseobject, mapping.mapped):
             raise ValueError("A section with no Document cannot resolve absolute path")
 
         pathlist = path.split("/")
-        if len(pathlist > 1):
+        if len(pathlist) > 1:
             if pathlist[0] == "..":
                 found = self.parent
             elif pathlist[0] == ".":
@@ -341,7 +341,7 @@ class sectionable(baseobject, mapping.mapped):
             laststep = pathlist[0].split(":")
             found = match_iterable(self.sections, laststep[0])
             if len(laststep) > 1:
-                return match_iterable(found.properties, laststep[1])
+                return match_iterable(found.properties, ":".join(laststep[1:]))
             return found
 
     def find(self, key=None, type=None, findAll=False):
