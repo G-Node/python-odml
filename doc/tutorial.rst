@@ -1,14 +1,65 @@
-========
-Tutorial
-========
+==================
+odML Documentation
+==================
+
+:Author:
+	Lyuba Zehl
+:Release:
+	0.1
+
+-----------------------------------------------------------------------
+
+odML Description
+================
+
+odML (open metadata Markup Language) is an initiative, based on XML, to 
+define and establish an open, flexible, easy-to-use, machine-, but also 
+human-readable textual format to collect, store and share metadata. 
+
+What are metadata and why are they needed?
+------------------------------------------
+Metadata are data about data, and describing therefore the conditions under 
+which the actual raw-data of an experiment were acquired. A simple example 
+in an electrophysiological context is the sampling-rate which was used 
+recording the raw-data. This may sound ridiculous for everyone doing such 
+an experiment should know how the raw-data were acquired, but what if the 
+data have to be shared in a collaboration and a complete description about 
+how and under which conditions the data were recorded is required?
+
+odML can help to collect all metadata which are usually distributed over 
+in several files and formats, store them and share them, while maintaining 
+their relation to the actual raw-data.
+
+Key features of odML
+--------------------
+- open, XML based language, to collect, store and share metadata
+- Machine- and human-readable
+- Interactive odML editor for interactive exploration and generation of odML files
+- Python odML library with integrated helper functions:
+	- to generate an odML file
+	- to screen metadata content independent from the structure of an odML file
+
+
+Structure of this tutorial
+==========================
+
+The scientific background of the possible user community of odML varies 
+enormously (e.g. physics, informatics, mathematics, biology, medicine,
+psychology). Some users will be trained programmers, others probably have
+never learned a programming language. 
+
+To cover the different demands of all user types, we first provide a slow 
+introduction to odML that allows programming beginners to learn the basic 
+concepts behind odML and how to generate and use their own odML files either 
+using the interactive odML editor or the Python library. In later chapters 
+we present the more advanced possibilies of the Python odML library.
 
 
 Getting Started
 ===============
 
-
-Installation
-------------
+Download and Installation
+-------------------------
 
 Should be easy using::
 
@@ -25,17 +76,20 @@ See `github:python-odml#Installation <https://github.com/G-Node/python-odml#inst
 for more descriptions including setup on Windows and Debian/Ubuntu.
 
 
-Running python-odml
--------------------
-Once python-odml is installed, you can use it in your python shell::
 
-    >>> import odml
 
+
+
+Introduction to odml
+====================
+
+
+As you can see an odML-file has a tree-like structure with section as branches 
+property as end nodes with one value or many values as leafs.
 
 Generating an odML-file
 ==============================
-A final odML-file has a tree-like structure with section-objects as branches 
-property-objects as end nodes with one value- or many value-objects as leafs. 
+ 
 Corresponding to a root of a tree, the document-object connects the most 
 highest section-objects to the final tree-like structure. To generate now an 
 odML-file one has to create each odML-object individually and append them 
@@ -48,11 +102,7 @@ and which odML-object can be attached to which other odML-object.
 Creating a document
 -------------------
 As already mentioned the document-object is the root of the odML-file. It 
-is possible to create a document-object with no attributes given::
-
-	>>> document = odml.Document()
-	>>> print document
-	<Doc None by None (0 sections)>
+is possible to create a document-object with no attributes given.
 
 But to be able to identify the author of the odML-file, the date the odML-file
 was generated and the current version of the odML-file, it is helpful to 
@@ -83,10 +133,6 @@ Creating a section
 The sections are the branches of the odML-file tree structure. The can either
 have section- or property-objects as childrens. The 'name' of a section-object
 is a required attribute and has to be given::
-
-	>>> section_1 = odml.Section("Subject")
-	>>> section_1
-	<Section Subject[undefined] (0)>
 	
 Other important attributes of a section-object are type and definition::
 
