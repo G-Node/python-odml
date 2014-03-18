@@ -17,27 +17,25 @@ define and establish an open, flexible, easy-to-use, machine-, but also
 human-readable textual format to collect, store and share metadata. 
 
 What are metadata and why are they needed?
-------------------------------------------
-Metadata are data about data, and describing therefore the conditions under 
-which the actual raw-data of an experiment were acquired. A simple example 
-in an electrophysiological context is the sampling-rate which was used 
-recording the raw-data. This may sound ridiculous for everyone doing such 
-an experiment should know how the raw-data were acquired, but what if the 
-data have to be shared in a collaboration and a complete description about 
-how and under which conditions the data were recorded is required?
+	Metadata are data about data, and describing therefore the conditions under 
+	which the actual raw-data of an experiment were acquired. A simple example 
+	in an electrophysiological context is the sampling-rate which was used 
+	recording the raw-data. This may sound ridiculous for everyone doing such 
+	an experiment should know how the raw-data were acquired, but what if the 
+	data have to be shared in a collaboration and a complete description about 
+	how and under which conditions the data were recorded is required?
 
-odML can help to collect all metadata which are usually distributed over 
-in several files and formats, store them and share them, while maintaining 
-their relation to the actual raw-data.
+	odML can help to collect all metadata which are usually distributed over 
+	in several files and formats, store them and share them, while maintaining 
+	their relation to the actual raw-data.
 
 Key features of odML
---------------------
-- open, XML based language, to collect, store and share metadata
-- Machine- and human-readable
-- Interactive odML editor for interactive exploration and generation of odML files
-- Python odML library with integrated helper functions:
-	- to generate an odML file
-	- to screen metadata content independent from the structure of an odML file
+	- open, XML based language, to collect, store and share metadata
+	- Machine- and human-readable
+	- Interactive odML editor for interactive exploration and generation of odML files
+	- Python odML library with integrated helper functions':'
+		- to generate an odML file
+		- to screen metadata content independent from the structure of an odML file
 
 
 Structure of this tutorial
