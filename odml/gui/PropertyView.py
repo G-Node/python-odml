@@ -171,7 +171,7 @@ class PropertyView(TerminologyPopupTreeView):
 
     def get_popup_mapping_section(self, sec, obj):
         """generate the popup menu items for a certain section in the mapping-popup-menu"""
-        for sec in sec.itersections():
+        for sec in sec.sections:
             item = self.create_menu_item(sec.name)
             if len(sec) > 0:
                 item.set_submenu(self.get_popup_menu(lambda: self.get_popup_mapping_section(sec, obj)))
