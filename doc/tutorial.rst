@@ -1,6 +1,6 @@
-==================
-odML Documentation
-==================
+=============
+odML Tutorial
+=============
 
 :Author:
 	Lyuba Zehl
@@ -12,9 +12,14 @@ odML Documentation
 odML Description
 ================
 
-odML (open metadata Markup Language) is an initiative, based on XML, to 
-define and establish an open, flexible, easy-to-use, machine-, but also 
-human-readable textual format to collect, store and share metadata. 
+odML (open metadata Markup Language) helps to collect, store and share
+metadata. It is an open, flexible, easy-to-use, machine-, but also 
+human-readable format based on XML. Developed in the German Neuroinformatics 
+Node (G-Node) of the International Neuroinformatics Coordinating Facility 
+(INCF) in Munich, odML was a first initiative to connect electrophysiological
+recorded data to the documentation of the project the data belong to and 
+to all metadata describing the experimental conditions the data were acquired
+from.
 
 What are metadata and why are they needed?
 	Metadata are data about data, and describing therefore the conditions under 
@@ -26,14 +31,14 @@ What are metadata and why are they needed?
 	how and under which conditions the data were recorded is required?
 
 	odML can help to collect all metadata which are usually distributed over 
-	in several files and formats, store them and share them, while maintaining 
+	several files and formats, store and share them, while maintaining 
 	their relation to the actual raw-data.
 
 Key features of odML
 	- open, XML based language, to collect, store and share metadata
 	- Machine- and human-readable
 	- Interactive odML editor for interactive exploration and generation of odML files
-	- Python odML library with integrated helper functions':'
+	- Python odML library with integrated helper functions":"
 		- to generate an odML file
 		- to screen metadata content independent from the structure of an odML file
 
@@ -52,13 +57,21 @@ concepts behind odML and how to generate and use their own odML files either
 using the interactive odML editor or the Python library. In later chapters 
 we present the more advanced possibilies of the Python odML library.
 
+A set of example odML files, which we use within this tutorial are part of
+the documentation package (see example_odMLs folder).
 
-Getting Started
-===============
 
 Download and Installation
--------------------------
+=========================
 
+Dependencies
+------------
+
+Windows
+-------
+
+Debian/Ubuntu
+-------------
 Should be easy using::
 
     $ python setup.py install
@@ -75,15 +88,172 @@ for more descriptions including setup on Windows and Debian/Ubuntu.
 
 
 
-
-
-
 Introduction to odml
 ====================
 
+Before we start, it is important to know the basic structure of an odML file. 
+Within an odML file metadata are grouped and stored in a hierachical tree 
+structure which consists of four different odML objects":"
+	- 'document':
+		- corresponds to the root of the tree (groups everything together)
+		- parent: no parent
+		- children: section
+	- 'section':
+		- corresponds to branches of the tree
+		- parent: section or document
+		- children: section and/or property
+	- 'property':
+		- are possible at every node of the tree
+		- parent: section
+		- children: at least one value
+	- 'value':
+		- corresponds to leaf of the tree (contains metadata)
+		- parent: property
+		- children: no children
+			
+Each of these odML objects has a certain set of attributes where the user
+can describe the object and its contents. Which attribute belongs to which
+object and the meaning of each attribute is better explained in an example
+odML file using the odML editor.
+			
+The best way to get familiar how the different odML objects are linked to 
+a complete structure of an odML file, which attribute belongs to which object 
+and what each attribute means, is to open one of the example odML files 
+in the odML editor.
 
-As you can see an odML-file has a tree-like structure with section as branches 
-property as end nodes with one value or many values as leafs.
+Open the odML editor and use the "open files" button in the menu bar (top
+of the editor window) to select and open the odML example file "intro-example.odml".
+
+You should then see that the editor window is subdivided into three parts":"
+	
+	The part on the upper left displays a tree view starting from the top 
+	section level of the document. (sections window)
+	
+	If you select one section in the tree view, the part on the upper right
+	will display a table containing the name, value and value attributes 
+	of each property (row) belonging to the selected section. (properties window)
+	
+	The part on the bottom shows you the attributes of the current selected 
+	section or property or of the document. (attributes window)
+	As header above the values of the attributes the path to the selected 
+	section or property is displayed in red starting from the document. 
+
+Below the attributes window the file path to the currently loaded an displayed
+odML file is displayed ("file:///.../example_odMLs/intro-example.odml").
+	
+Let's now have a more detailed look at the different objects and their 
+attributes of the example odML file ("intro-example.odml"). Please note 
+that some object attributes are obligatory, some are recommended and others 
+are optional. The optional attributes are important for the advanced odML
+possibilies and can for now be ignored by odML beginners.
+
+The document
+------------
+To display the attributes of the document of the example odML file click 
+on 'Document' in the path of the attributes window (bottom part) of the 
+odML editor window.
+
+Document attributes":"
+	- 'author' (recommended): 
+		The author of this odML file. In our example 'Arthur Dent' is the 
+		author of the "intro-example.odml" file.
+	- 'date' (recommended):
+		The date this odML file was created (yyyy-mm-dd format). In our 
+		example 'Arthor Dent' created the "intro-example.odml" file at 20th 
+		of March 2014 (2014-03-20).
+	- 'version' (recommended):
+		The version of this odML file. In our example 'Arthor Dent' created 
+		version 4.7 of the "intro-example.odml" file.
+	- 'repository' (optional) :
+		The URL to the repository of terminologies used in this odML file. 
+		In our example 'Arthor Dent' used the G-Node terminology 
+		("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+		
+The sections
+------------
+To display the attribute of a section of the example odML file click on 
+the section 'Setup' in the sections window (upper left) and a have a look 
+at the attributes window (bottom) of the odML editor.
+
+Section attributes":"
+	- 'name' (obligatory):
+		The name of the section. Usually the name already describes 
+		what kind of information can be found in this section. In our 
+		example 'Arthur Dent' used the section name 'Setup'.
+	- 'definition': 
+		The definition of the content within this section.
+	- 'type':
+		The category type of this section which allows to group related
+		sections due to a superior semantic context.
+	- 'reference':
+		The ? 
+	- 'link': 
+		The odML path within the same odML file (internal link) to another
+		section from which this section should 'inherit' information.
+	- 'include':
+		The URL to an other odML file or a section within this external
+		odML file from which this section should 'inherit' information.	
+	- 'repository':
+		The URL to the repository of terminologies used in this odML file. 
+		In our example 'Arthor Dent' used the G-Node terminology 
+		("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+	- 'mapping':
+		The odML path within the same odML file (internal link) to another
+		section to which all children of this section, if a conversion 
+		is requested, should be transferred to, as long as the children
+		not themselves define a mapping.
+		
+The properties
+--------------
+Attributes":"
+	- 'name':
+		The name of the property. Usually the name already describes 
+		what kind of values can be found in this property.
+	- 'definition':
+		The definition of this property.
+	- 'value':
+		The value (containing the metadata) of this property. A property
+		can have multiple values.
+	- 'mapping':
+		The odML path within the same odML file (internal link) to another
+		section to which all children of this section, if a conversion 
+		is requested, should be transferred to, as long as the children
+		not themselves define a mapping.
+	- 'dependency':
+		A name of a propery within the same section, which this property
+		depends on.
+	- 'dependency value':
+		Restriction of the dependency of this property to the property 
+		specified in 'dependency' to the very value given in this field.
+		
+The values
+----------
+Attributes":"
+	- 'value'/'data':
+		The actual metadata value.
+	- 'uncertainty':
+		Specifies the uncertainty of the given metadata value.
+	- 'unit':
+		The unit of the given metadata value.
+	- 'dtype':
+		The data-type of the given metadata value.
+	- 'definition':
+		The definition of the given metadata value.
+	- 'reference':
+		The ?
+	- 'filename':
+		The ?
+	- 'encoder':
+		Name of the applied encoder used to encode a binary value into 
+		ascii.
+	- 'checksum':
+		Checksum and name of the algorithm that calculated the checksum
+		of a given value (algorithm$checksum format)
+
+
+
+
+
 
 Generating an odML-file
 ==============================
