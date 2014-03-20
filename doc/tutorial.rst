@@ -158,6 +158,7 @@ on 'Document' in the path of the attributes window (bottom part) of the
 odML editor window.
 
 Document attributes:
+
 - 'author'
 	- recommended document attribute
 	- The author of this odML file. 
@@ -182,6 +183,7 @@ the section 'Setup' in the sections window (upper left) and a have a look
 at the attributes window (bottom) of the odML editor.
 
 Section attributes:
+
 - 'name'
 	- obligatory section attribute
 	- The name of the section. Should describe what kind of information can be found in this section.
@@ -197,91 +199,104 @@ Section attributes:
 - 'reference'
 	- optional section attribute
 	- The ? 
-	- In our example ?
+	- In our example the section 'Setup' has no reference.
 - 'link'
 	- optional section attribute
 	- The odML path within the same odML file (internal link) to another section from which this section should 'inherit' information.
-	- In our example ?
+	- In our example the section 'Setup' is not linked from another section in the odML file.
 - 'include'
 	- optional section attribute
 	- The URL to an other odML file or a section within this external odML file from which this section should 'inherit' information.	
-	- In our example ?
+	- In our example  the section 'Setup' is not included from another section of another odML file.
 - 'repository'
 	- optional section attribute
 	- The URL to the repository of terminologies used in this odML file. 
-	- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+	- In our example the section 'Setup' is not linked to a terminology.
 - 'mapping'
 	- optional section attribute
 	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
-	- In our example ?
+	- In our example the section 'Setup' has no mapping.
 		
 The properties
 --------------
+To display the attribute of a property of the example odML file click on 
+the section 'Setup' in the sections window (upper left) and then on the 
+the property 'Creator' in the properties window (upper right). The attributes
+of this property are then displayed in the attributes window (bottom) of 
+the odML editor.
+
 Property attributes:
+
 - 'name'
 	- obligatory property attribute
 	- The name of the property. Should describe what kind of values can be found in this property.
-	- In our example
+	- In our example 'Creator' is the property name.
 - 'value'
 	- obligatory property attribute
 	- The value (containing the metadata) of this property. A property can have multiple values.		
-	- In our example
+	- In our example 'Arthur Dent' created the setup.
 - 'definition' (recommended):
 	- recommended property attribute
 	- The definition of this property.
-	- In our example
+	- In our example 'Arthur Dent' defines the property 'Creator' as 'The person who built the setup.'.
 - 'dependency'
 	- optional property attribute
 	- A name of a propery within the same section, which this property depends on.
-	- In our example
+	- In our example the property 'Creator' has no dependency.
 - 'dependency value'
 	- optional property attribute
 	- Restriction of the dependency of this property to the property specified in 'dependency' to the very value given in this field.		
-	- In our example
+	- In our example the property 'Creator' has no dependency, and therefore no dependency value.
 - 'mapping'
 	- recommended property attribute
 	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
-	- In our example
+	- In our example the property 'Creator' has no mapping.
 		
 The values
 ----------
+To display the attribute of a value of the example odML file click on 
+the section 'Setup' in the sections window (upper left). The attributes
+of the value of the property 'Creator' are displayed in the row of the 
+property in the properties window (upper right) of the odML editor.
+
 Value attributes:
+
 - 'value'/'data'
 	- obligatory value attribute
 	- The actual metadata value.
-	- In our example	
+	- In our example 'Arthur Dent' is the 'Creator'.
 - 'dtype'
 	- recommended value attribute
 	- The data-type of the given metadata value.		
-	- In our example
+	- In our example 'Arthur Dent' sets the data-type of the given value for the property 'Creator' to 'person'.
 - 'uncertainty'
 	- recommended value attribute
 	- Specifies the uncertainty of the given metadata value, if it has an uncertainty.
-	- In our example
+	- In our example the given value of the property 'Creator' has no uncertainty.
 - 'unit'
 	- recommended value attribute
 	- The unit of the given metadata value, if it has a unit.
-	- In our example
+	- In our example the given value of the property 'Creator' has no unit.
 - 'definition'
 	- recommended value attribute
 	- The definition of the given metadata value.
-	- In our example
+	- In our example 'Arthur Dent' defines the value as 'First and last name of a person.'.
 - 'reference'
 	- optional value attribute
 	- The ?
-	- In our example
+	- In our example the value 'Arthur Dent' has no reference.
 - 'filename'
 	- optional value attribute
 	- The ?
-	- In our example
+	- In our example the value 'Arthur Dent' has no connection to a file.
 - 'encoder'
 	- optional value attribute
 	- Name of the applied encoder used to encode a binary value into ascii.
-	- In our example
+	- In our example the value 'Arthur Dent' do not need an encoder.
 - 'checksum'
 	- optional value attribute
 	- Checksum and name of the algorithm that calculated the checksum of a given value (algorithm$checksum format)
-	- In our example
+	- In our example there was no checksum calculated for the value 'Arthur Dent'.
 
 
 Generating an odML-file
