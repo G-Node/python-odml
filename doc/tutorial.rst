@@ -171,13 +171,13 @@ section, property, value).
 
 The document
 ------------
-Display attributes using the odML editor
+Display attributes using the odML editor:
 
 	To display the attributes of the document of the example odML file click 
 	on 'Document' in the path of the attributes window (bottom part) of the 
 	odML editor window. 
 	
-Display attributes using Python
+Display attributes using Python:
 
 	To print out the attributes of the document of the example odML file,
 	use the following commands::
@@ -346,14 +346,14 @@ Property attributes:
 		
 The values
 ----------
-Display attributes using the odML editor
+Display attributes using the odML editor:
 
 	To display the attribute of a value of the example odML file click on 
 	the section 'Setup' in the sections window (upper left). The attributes
 	of the value of the property 'Creator' are displayed in the row of the 
 	property in the properties window (upper right) of the odML editor.
 
-Display attributes using Python
+Display attributes using Python:
 
 	To print out the attributes of a value of a property of a section, e.g. 
 	value of property 'Creator' of the section 'Setup' of the example odML 
