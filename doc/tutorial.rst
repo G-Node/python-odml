@@ -94,6 +94,7 @@ Introduction to odml
 Before we start, it is important to know the basic structure of an odML file. 
 Within an odML file metadata are grouped and stored in a hierachical tree 
 structure which consists of four different odML objects.
+
 - 'document':
 	- corresponds to the root of the tree (groups everything together)
 	- parent: no parent
@@ -157,20 +158,22 @@ on 'Document' in the path of the attributes window (bottom part) of the
 odML editor window.
 
 Document attributes:
-	- 'author' (recommended)
-		The author of this odML file. In our example 'Arthur Dent' is the 
-		author of the "intro-example.odml" file.
-	- 'date' (recommended)
-		The date this odML file was created (yyyy-mm-dd format). In our 
-		example 'Arthor Dent' created the "intro-example.odml" file at 20th 
-		of March 2014 (2014-03-20).
-	- 'version' (recommended)
-		The version of this odML file. In our example 'Arthor Dent' created 
-		version 4.7 of the "intro-example.odml" file.
-	- 'repository' (optional)
-		The URL to the repository of terminologies used in this odML file. 
-		In our example 'Arthor Dent' used the G-Node terminology 
-		("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+	- 'author'
+		- recommended attribute
+		- The author of this odML file. 
+		- In our example 'Arthur Dent' is the author of the "intro-example.odml" file.
+	- 'date'
+		- recommended attribute
+		- The date this odML file was created (yyyy-mm-dd format). 
+		- In our example 'Arthor Dent' created the "intro-example.odml" file at 20th of March 2014 (2014-03-20).
+	- 'version'
+		- recommended
+		- The version of this odML file. 
+		- In our example 'Arthor Dent' created version 4.7 of the "intro-example.odml" file.
+	- 'repository'
+		- optional
+		- The URL to the repository of terminologies used in this odML file. 
+		- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
 		
 The sections
 ------------
