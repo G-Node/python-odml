@@ -158,22 +158,22 @@ on 'Document' in the path of the attributes window (bottom part) of the
 odML editor window.
 
 Document attributes:
-	- 'author'
-		- recommended attribute
-		- The author of this odML file. 
-		- In our example 'Arthur Dent' is the author of the "intro-example.odml" file.
-	- 'date'
-		- recommended attribute
-		- The date this odML file was created (yyyy-mm-dd format). 
-		- In our example 'Arthor Dent' created the "intro-example.odml" file at 20th of March 2014 (2014-03-20).
-	- 'version'
-		- recommended
-		- The version of this odML file. 
-		- In our example 'Arthor Dent' created version 4.7 of the "intro-example.odml" file.
-	- 'repository'
-		- optional
-		- The URL to the repository of terminologies used in this odML file. 
-		- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+- 'author'
+	- recommended document attribute
+	- The author of this odML file. 
+	- In our example 'Arthur Dent' is the author of the "intro-example.odml" file.
+- 'date'
+	- recommended document attribute
+	- The date this odML file was created (yyyy-mm-dd format). 
+	- In our example 'Arthor Dent' created the "intro-example.odml" file at 20th of March 2014 (2014-03-20).
+- 'version'
+	- recommended document attribute
+	- The version of this odML file. 
+	- In our example 'Arthor Dent' created version 4.7 of the "intro-example.odml" file.
+- 'repository'
+	- optional document attribute
+	- The URL to the repository of terminologies used in this odML file. 
+	- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
 		
 The sections
 ------------
@@ -182,82 +182,106 @@ the section 'Setup' in the sections window (upper left) and a have a look
 at the attributes window (bottom) of the odML editor.
 
 Section attributes:
-	- 'name' (obligatory):
-		The name of the section. Usually the name already describes 
-		what kind of information can be found in this section. In our 
-		example 'Arthur Dent' used the section name 'Setup'.
-	- 'definition' (recommended): 
-		The definition of the content within this section. In our example
-		'Arthur Dent' defines the 'Setup' section with the following sentence
-		'Description of the used experimental setup.'.
-	- 'type' (recommended):
-		The category type of this section which allows to group related
-		sections due to a superior semantic context. In our example 'Arthur
-		Dent' used 
-	- 'reference' (optional):
-		The ? 
-	- 'link' (optional): 
-		The odML path within the same odML file (internal link) to another
-		section from which this section should 'inherit' information.
-	- 'include' (optional):
-		The URL to an other odML file or a section within this external
-		odML file from which this section should 'inherit' information.	
-	- 'repository' (optional):
-		The URL to the repository of terminologies used in this odML file. 
-		In our example 'Arthor Dent' used the G-Node terminology 
-		("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
-	- 'mapping' (optional):
-		The odML path within the same odML file (internal link) to another
-		section to which all children of this section, if a conversion 
-		is requested, should be transferred to, as long as the children
-		not themselves define a mapping.
+- 'name'
+	- obligatory section attribute
+	- The name of the section. Should describe what kind of information can be found in this section.
+	- In our example 'Arthur Dent' used the section name 'Setup'.
+- 'definition'
+	- recommended section attribute
+	- The definition of the content within this section. 
+	- In our example 'Arthur Dent' defines the 'Setup' section with the following sentence 'Description of the used experimental setup.'.
+- 'type'
+	- recommended section attribute
+	- The category type of this section which allows to group related sections due to a superior semantic context.
+	- In our example 'Arthur Dent' chose 'setup' as superior categorization type of section 'Setup'.
+- 'reference'
+	- optional section attribute
+	- The ? 
+	- In our example ?
+- 'link'
+	- optional section attribute
+	- The odML path within the same odML file (internal link) to another section from which this section should 'inherit' information.
+	- In our example ?
+- 'include'
+	- optional section attribute
+	- The URL to an other odML file or a section within this external odML file from which this section should 'inherit' information.	
+	- In our example ?
+- 'repository'
+	- optional section attribute
+	- The URL to the repository of terminologies used in this odML file. 
+	- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+- 'mapping'
+	- optional section attribute
+	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
+	- In our example ?
 		
 The properties
 --------------
 Property attributes:
-	- 'name' (obligatory):
-		The name of the property. Usually the name already describes 
-		what kind of values can be found in this property.
-	- 'value' (obligatory):
-		The value (containing the metadata) of this property. A property
-		can have multiple values.		
-	- 'definition' (recommended):
-		The definition of this property.
-	- 'dependency' (optional):
-		A name of a propery within the same section, which this property
-		depends on.
-	- 'dependency value' (optional):
-		Restriction of the dependency of this property to the property 
-		specified in 'dependency' to the very value given in this field.		
-	- 'mapping' (optional):
-		The odML path within the same odML file (internal link) to another
-		section to which all children of this section, if a conversion 
-		is requested, should be transferred to, as long as the children
-		not themselves define a mapping.
+- 'name'
+	- obligatory property attribute
+	- The name of the property. Should describe what kind of values can be found in this property.
+	- In our example
+- 'value'
+	- obligatory property attribute
+	- The value (containing the metadata) of this property. A property can have multiple values.		
+	- In our example
+- 'definition' (recommended):
+	- recommended property attribute
+	- The definition of this property.
+	- In our example
+- 'dependency'
+	- optional property attribute
+	- A name of a propery within the same section, which this property depends on.
+	- In our example
+- 'dependency value'
+	- optional property attribute
+	- Restriction of the dependency of this property to the property specified in 'dependency' to the very value given in this field.		
+	- In our example
+- 'mapping'
+	- recommended property attribute
+	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
+	- In our example
 		
 The values
 ----------
 Value attributes:
-	- 'value'/'data' (obligatory):
-		The actual metadata value.
-	- 'dtype' (recommended):
-		The data-type of the given metadata value.		
-	- 'uncertainty' (recommended):
-		Specifies the uncertainty of the given metadata value.
-	- 'unit' (recommended):
-		The unit of the given metadata value.
-	- 'definition' (recommended):
-		The definition of the given metadata value.
-	- 'reference' (optional):
-		The ?
-	- 'filename' (optional):
-		The ?
-	- 'encoder' (optional):
-		Name of the applied encoder used to encode a binary value into 
-		ascii.
-	- 'checksum' (optional):
-		Checksum and name of the algorithm that calculated the checksum
-		of a given value (algorithm$checksum format)
+- 'value'/'data'
+	- obligatory value attribute
+	- The actual metadata value.
+	- In our example	
+- 'dtype'
+	- recommended value attribute
+	- The data-type of the given metadata value.		
+	- In our example
+- 'uncertainty'
+	- recommended value attribute
+	- Specifies the uncertainty of the given metadata value, if it has an uncertainty.
+	- In our example
+- 'unit'
+	- recommended value attribute
+	- The unit of the given metadata value, if it has a unit.
+	- In our example
+- 'definition'
+	- recommended value attribute
+	- The definition of the given metadata value.
+	- In our example
+- 'reference'
+	- optional value attribute
+	- The ?
+	- In our example
+- 'filename'
+	- optional value attribute
+	- The ?
+	- In our example
+- 'encoder'
+	- optional value attribute
+	- Name of the applied encoder used to encode a binary value into ascii.
+	- In our example
+- 'checksum'
+	- optional value attribute
+	- Checksum and name of the algorithm that calculated the checksum of a given value (algorithm$checksum format)
+	- In our example
 
 
 Generating an odML-file
