@@ -114,9 +114,11 @@ structure which consists of four different odML objects.
 			
 Each of these odML objects has a certain set of attributes where the user
 can describe the object and its contents. Which attribute belongs to which
-object and the meaning of each attribute is better explained in an example
+object and the meaning of each attribute are better explained in an example
 odML file using the odML editor.
 
+A first look with the odML editor
+---------------------------------
 The best way to get familiar how the different odML objects are linked to 
 a complete structure of an odML file, which attribute belongs to which object 
 and what each attribute means, is to open one of the example odML files 
@@ -142,158 +144,280 @@ You should then see that the editor window is subdivided into three parts.
 	the attributes the path to the selected section or property is displayed 
 	in red starting from the document. 
 
-Below the attributes window the file path to the currently loaded an displayed
-odML file is displayed ("file:///.../example_odMLs/intro-example.odml").
+Below the attributes window the file path to the currently loaded odML file 
+is displayed ("file:///.../example_odMLs/intro-example.odml").
 	
-Let's now have a more detailed look at the different objects and their 
-attributes of the example odML file ("intro-example.odml"). Please note 
-that some object attributes are obligatory, some are recommended and others 
-are optional. The optional attributes are important for the advanced odML
-possibilies and can for now be ignored by odML beginners.
+A more detailed look at the different objects and their attributes of the 
+example odML file ("intro-example.odml") is given in subchapters for each
+odML object type (document, section, property, value).
+
+A first look with Python
+------------------------
+If you are already a little bit familiar with the concept behind an odML
+file and you can also have a first look at the example odML file "intro-example.odml"
+in Python.
+
+If you open a Python shell, first, import the odml package::
+
+	>>> import odml
+	
+You can load an odML file with the following command lines::
+	
+	>>> odmlfile = odml.tools.xmlparser.load("/doc/example_odMLs/intro-example.odml")
+	
+How you can access the attributes of the different odML objects is described
+in more detail in the subchapters for each odML object type (document, 
+section, property, value).
 
 The document
 ------------
-To display the attributes of the document of the example odML file click 
-on 'Document' in the path of the attributes window (bottom part) of the 
-odML editor window.
+Display attributes using the odML editor
+
+	To display the attributes of the document of the example odML file click 
+	on 'Document' in the path of the attributes window (bottom part) of the 
+	odML editor window. 
+	
+Display attributes using Python
+
+	To print out the attributes of the document of the example odML file,
+	use the following commands::
+	
+		>>> odmlfile.document.author
+		'Arthur Dent'
+		>>> odmlfile.document.date
+		'2014-03-20'
+		>>> odmlfile.document.version
+		4.7
+		>>> odmlfile.document.repository
+		'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+
+The meaning of the document attributes are described in the following.
+Please note that some attributes are obligatory, some are recommended and 
+others are optional. The optional attributes are important for the advanced 
+odML possibilies and can for now be ignored by odML beginners. You can find 
+an example of their usage in later chapters where the more advanced possibilies 
+of the Python odML library are described.
 
 Document attributes:
 
-- 'author'
+- author
 	- recommended document attribute
 	- The author of this odML file. 
 	- In our example 'Arthur Dent' is the author of the "intro-example.odml" file.
-- 'date'
+- date
 	- recommended document attribute
 	- The date this odML file was created (yyyy-mm-dd format). 
 	- In our example 'Arthor Dent' created the "intro-example.odml" file at 20th of March 2014 (2014-03-20).
-- 'version'
+- version
 	- recommended document attribute
 	- The version of this odML file. 
 	- In our example 'Arthor Dent' created version 4.7 of the "intro-example.odml" file.
-- 'repository'
+- repository
 	- optional document attribute
 	- The URL to the repository of terminologies used in this odML file. 
 	- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
 		
 The sections
 ------------
-To display the attribute of a section of the example odML file click on 
-the section 'Setup' in the sections window (upper left) and a have a look 
-at the attributes window (bottom) of the odML editor.
+Display attributes using the odML editor
+
+	To display the attribute of a section of the example odML file click on 
+	the section 'Setup' in the sections window (upper left) and a have a look 
+	at the attributes window (bottom) of the odML editor.
+
+Display attributes using Python
+
+	To print out the attributes of a section, e.g. section 'Setup' of the 
+	example odML file, use the following commands::
+	
+		>>> odmlfile.sections['Setup'].name
+		'Setup'
+		>>> odmlfile.sections['Setup'].definition
+		'Description of the used experimental setup.'
+		>>> odmlfile.sections['Setup'].type
+		'setup'
+		>>> odmlfile.sections['Setup'].reference
+		>>> odmlfile.sections['Setup'].link
+		>>> odmlfile.sections['Setup'].include
+		>>> odmlfile.sections['Setup'].repository
+		>>> odmlfile.sections['Setup'].mapping
+
+The meaning of the section attributes are described in the following.
+Please note that some attributes are obligatory, some are recommended and 
+others are optional. The optional attributes are important for the advanced 
+odML possibilies and can for now be ignored by odML beginners. You can find 
+an example of their usage in later chapters where the more advanced possibilies 
+of the Python odML library are described.
 
 Section attributes:
 
-- 'name'
+- name
 	- obligatory section attribute
 	- The name of the section. Should describe what kind of information can be found in this section.
 	- In our example 'Arthur Dent' used the section name 'Setup'.
-- 'definition'
+- definition
 	- recommended section attribute
 	- The definition of the content within this section. 
 	- In our example 'Arthur Dent' defines the 'Setup' section with the following sentence 'Description of the used experimental setup.'.
-- 'type'
+- type
 	- recommended section attribute
 	- The category type of this section which allows to group related sections due to a superior semantic context.
 	- In our example 'Arthur Dent' chose 'setup' as superior categorization type of section 'Setup'.
-- 'reference'
+- reference
 	- optional section attribute
 	- The ? 
 	- In our example the section 'Setup' has no reference.
-- 'link'
+- link
 	- optional section attribute
 	- The odML path within the same odML file (internal link) to another section from which this section should 'inherit' information.
 	- In our example the section 'Setup' is not linked from another section in the odML file.
-- 'include'
+- include
 	- optional section attribute
 	- The URL to an other odML file or a section within this external odML file from which this section should 'inherit' information.	
 	- In our example  the section 'Setup' is not included from another section of another odML file.
-- 'repository'
+- repository
 	- optional section attribute
 	- The URL to the repository of terminologies used in this odML file. 
 	- In our example the section 'Setup' is not linked to a terminology.
-- 'mapping'
+- mapping
 	- optional section attribute
 	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
 	- In our example the section 'Setup' has no mapping.
 		
 The properties
 --------------
-To display the attribute of a property of the example odML file click on 
-the section 'Setup' in the sections window (upper left) and then on the 
-the property 'Creator' in the properties window (upper right). The attributes
-of this property are then displayed in the attributes window (bottom) of 
-the odML editor.
+Display attributes using the odML editor
+
+	To display the attribute of a property of the example odML file click on 
+	the section 'Setup' in the sections window (upper left) and then on the 
+	the property 'Creator' in the properties window (upper right). The attributes
+	of this property are then displayed in the attributes window (bottom) of 
+	the odML editor.
+
+Display attributes using Python
+
+	To print out the attributes of a property of a section, e.g. property
+	'Creator' of the section 'Setup' of the example odML file, use the following 
+	commands::
+	
+	>>> odmlfile.sections['Setup'].properties['Creator'].name
+	'Creator'
+	>>> odmlfile.sections['Setup'].properties['Creator'].value
+	<person Arthur Dent>
+	>>> odmlfile.sections['Setup'].properties['Creator'].definition
+	'The person who built the setup.'
+	>>> odmlfile.sections['Setup'].properties['Creator'].dependency
+	>>> odmlfile.sections['Setup'].properties['Creator'].dependency_value
+	>>> odmlfile.sections['Setup'].properties['Creator'].mapping	
+	
+The meaning of the property attributes are described in the following.
+Please note that some attributes are obligatory, some are recommended and 
+others are optional. The optional attributes are important for the advanced 
+odML possibilies and can for now be ignored by odML beginners. You can find 
+an example of their usage in later chapters where the more advanced possibilies 
+of the Python odML library are described.
 
 Property attributes:
 
-- 'name'
+- name
 	- obligatory property attribute
 	- The name of the property. Should describe what kind of values can be found in this property.
 	- In our example 'Creator' is the property name.
-- 'value'
+- value
 	- obligatory property attribute
 	- The value (containing the metadata) of this property. A property can have multiple values.		
-	- In our example 'Arthur Dent' created the setup.
-- 'definition' (recommended):
+	- In our example the person 'Arthur Dent' created the setup.
+- definition
 	- recommended property attribute
 	- The definition of this property.
 	- In our example 'Arthur Dent' defines the property 'Creator' as 'The person who built the setup.'.
-- 'dependency'
+- dependency
 	- optional property attribute
 	- A name of a propery within the same section, which this property depends on.
 	- In our example the property 'Creator' has no dependency.
-- 'dependency value'
+- dependency value
 	- optional property attribute
 	- Restriction of the dependency of this property to the property specified in 'dependency' to the very value given in this field.		
 	- In our example the property 'Creator' has no dependency, and therefore no dependency value.
-- 'mapping'
+- mapping
 	- recommended property attribute
 	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
 	- In our example the property 'Creator' has no mapping.
 		
 The values
 ----------
-To display the attribute of a value of the example odML file click on 
-the section 'Setup' in the sections window (upper left). The attributes
-of the value of the property 'Creator' are displayed in the row of the 
-property in the properties window (upper right) of the odML editor.
+Display attributes using the odML editor
+
+	To display the attribute of a value of the example odML file click on 
+	the section 'Setup' in the sections window (upper left). The attributes
+	of the value of the property 'Creator' are displayed in the row of the 
+	property in the properties window (upper right) of the odML editor.
+
+Display attributes using Python
+
+	To print out the attributes of a value of a property of a section, e.g. 
+	value of property 'Creator' of the section 'Setup' of the example odML 
+	file, use the following commands::
+
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.data
+	u'Arthur Dent'
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.dtype
+	'person'
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.definition
+	'First and last name of a person.'	
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.uncertainty
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.unit
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.reference
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.filename
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.encoder
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.checksum
+	
+	Note that these commands are for properties containing one value. For
+	accessing attributes of one value of a property with multiple values,
+	see chapter ?.
+	
+The meaning of the value attributes are described in the following.
+Please note that some attributes are obligatory, some are recommended and 
+others are optional. The optional attributes are important for the advanced 
+odML possibilies and can for now be ignored by odML beginners. You can find 
+an example of their usage in later chapters where the more advanced possibilies 
+of the Python odML library are described.
 
 Value attributes:
 
-- 'value'/'data'
+- data
 	- obligatory value attribute
 	- The actual metadata value.
 	- In our example 'Arthur Dent' is the 'Creator'.
-- 'dtype'
+- dtype
 	- recommended value attribute
 	- The data-type of the given metadata value.		
 	- In our example 'Arthur Dent' sets the data-type of the given value for the property 'Creator' to 'person'.
-- 'uncertainty'
-	- recommended value attribute
-	- Specifies the uncertainty of the given metadata value, if it has an uncertainty.
-	- In our example the given value of the property 'Creator' has no uncertainty.
-- 'unit'
-	- recommended value attribute
-	- The unit of the given metadata value, if it has a unit.
-	- In our example the given value of the property 'Creator' has no unit.
-- 'definition'
+- definition
 	- recommended value attribute
 	- The definition of the given metadata value.
 	- In our example 'Arthur Dent' defines the value as 'First and last name of a person.'.
-- 'reference'
+- uncertainty
+	- recommended value attribute
+	- Specifies the uncertainty of the given metadata value, if it has an uncertainty.
+	- In our example the given value of the property 'Creator' has no uncertainty.
+- unit
+	- recommended value attribute
+	- The unit of the given metadata value, if it has a unit.
+	- In our example the given value of the property 'Creator' has no unit.
+- reference
 	- optional value attribute
 	- The ?
 	- In our example the value 'Arthur Dent' has no reference.
-- 'filename'
+- filename
 	- optional value attribute
 	- The ?
 	- In our example the value 'Arthur Dent' has no connection to a file.
-- 'encoder'
+- encoder
 	- optional value attribute
 	- Name of the applied encoder used to encode a binary value into ascii.
 	- In our example the value 'Arthur Dent' do not need an encoder.
-- 'checksum'
+- checksum
 	- optional value attribute
 	- Checksum and name of the algorithm that calculated the checksum of a given value (algorithm$checksum format)
 	- In our example there was no checksum calculated for the value 'Arthur Dent'.
