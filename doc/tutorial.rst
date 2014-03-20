@@ -172,12 +172,14 @@ section, property, value).
 The document
 ------------
 Display attributes using the odML editor:
+*****************************************
 
 	To display the attributes of the document of the example odML file click 
 	on 'Document' in the path of the attributes window (bottom part) of the 
 	odML editor window. 
 	
 Display attributes using Python:
+********************************
 
 	To print out the attributes of the document of the example odML file,
 	use the following commands::
@@ -199,6 +201,7 @@ an example of their usage in later chapters where the more advanced possibilies
 of the Python odML library are described.
 
 Document attributes:
+********************
 
 - author
 	- recommended document attribute
@@ -359,18 +362,18 @@ Display attributes using Python:
 	value of property 'Creator' of the section 'Setup' of the example odML 
 	file, use the following commands::
 
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.data
-	u'Arthur Dent'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.dtype
-	'person'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.definition
-	'First and last name of a person.'	
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.uncertainty
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.unit
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.reference
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.filename
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.encoder
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.checksum
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.data
+		u'Arthur Dent'
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.dtype
+		'person'
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.definition
+		'First and last name of a person.'	
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.uncertainty
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.unit
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.reference
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.filename
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.encoder
+		>>> odmlfile.sections['Setup'].properties['Creator'].value.checksum
 	
 	Note that these commands are for properties containing one value. For
 	accessing attributes of one value of a property with multiple values,
