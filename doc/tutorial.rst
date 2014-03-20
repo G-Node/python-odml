@@ -300,15 +300,15 @@ Display attributes using Python
 	'Creator' of the section 'Setup' of the example odML file, use the following 
 	commands::
 	
-	>>> odmlfile.sections['Setup'].properties['Creator'].name
-	'Creator'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value
-	<person Arthur Dent>
-	>>> odmlfile.sections['Setup'].properties['Creator'].definition
-	'The person who built the setup.'
-	>>> odmlfile.sections['Setup'].properties['Creator'].dependency
-	>>> odmlfile.sections['Setup'].properties['Creator'].dependency_value
-	>>> odmlfile.sections['Setup'].properties['Creator'].mapping	
+		>>> odmlfile.sections['Setup'].properties['Creator'].name
+		'Creator'
+		>>> odmlfile.sections['Setup'].properties['Creator'].value
+		<person Arthur Dent>
+		>>> odmlfile.sections['Setup'].properties['Creator'].definition
+		'The person who built the setup.'
+		>>> odmlfile.sections['Setup'].properties['Creator'].dependency
+		>>> odmlfile.sections['Setup'].properties['Creator'].dependency_value
+		>>> odmlfile.sections['Setup'].properties['Creator'].mapping	
 	
 The meaning of the property attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
