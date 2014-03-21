@@ -465,8 +465,9 @@ You can easily change the attributes. For our intro-example.odml we chose the fo
 - Author: Arthur Dent
 
 If you changed the entries to your needs, you get with the 'Forward' button to the next window, where you can chose, if you provided a link to a terminology repository as document attribute, a set of top section out of your specified terminology. You don't need to select a section. This is optional.
+
 If you click then 'Forward' and 'Apply' you will get back to the actual odML-Editor window, which we described in the 'Introduction to odml'.
-You can see your document attributes in the bottom attributes window. You can also see, if you didn't select already some top section out of the terminology, that the sections and the properties window of the odML-Editor are empty.
+You can see your document attributes in the Attributes window at the bottom. You can also see, if you didn't select already some top section out of the terminology, that the sections and the properties window of the odML-Editor are empty.
 
 ... using Python
 ****************
@@ -500,8 +501,7 @@ To name this section you have again two options.
 You can change the attributes of a in the Sections window selected section in the Attributes window.
 
 - Select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
-- In our intro_example.odml we changed the attribute 'type' to "setup"
-- In our intro_example.odml we changed the attribute 'definition' to "Description of the used experimental setup."
+- In our intro_example.odml we changed the attribute 'type' to "setup" and the attribute 'definition' to "Description of the used experimental setup."
 
 ... using Python
 ****************
@@ -538,14 +538,14 @@ If you want to change the attributes of a property you have to do it in the Attr
 - In our intro_example.odml we changed the attribute 'definition' to "The person/s who built the setup."
 
 Each new property has directly one value attached to it, which needs to be defined.
-To define a value click on the 'Value' cell of the property in the Properties window, enter a value and press 'Enter'.
 
+- To define a value click on the 'Value' cell of the property in the Properties window, enter a value and press 'Enter'.
 - In our intro_example.odml we entered the value "Arthur Dent" to the property "Creator".
 
-To change the attributes of this value click in the row of this value on the corresponding cell, change the attribute and press 'Enter'.
+To change the attributes of this value stay in the Properties window.
 
-- In our intro_example.odml we changed the 'Definition' of the value "Arthur Dent" of the property "Creator" to "First and last name of a person."
-- In our intro_example.odml we changed the 'Type' of the the value "Arthur Dent" of the property "Creator" to "person"
+- Click in the row of the value on the cell of the corresponding attribute, change it and press 'Enter'.
+- In our intro_example.odml we changed the 'Definition' of the value "Arthur Dent" of the property "Creator" to "First and last name of a person." and the 'Type' of the the value "Arthur Dent" of the property "Creator" to "person"
 
 You can also add multiple values to a selected property. This is possible in three ways.
 
@@ -571,19 +571,44 @@ The resulting odML property object contains now the first generated odML
 value object. Note that you can also enter multiple value objects to one 
 property::
 
-	>>> value_2 = odml.Value(data = "",
+	>>> value_2 = odml.Value(data = "Zaphod Beeblebrox",
 	                         dtype = "person",
 	                         definition = "First and last name of a person.")
-	>>> value_3 = odml.Value(data = "",
+	>>> value_3 = odml.Value(data = "Trillian Astra",
 	                         dtype = "person",
 	                         definition = "First and last name of a person.")
-	>>> value_4 = odml.Value(data = "",
+	>>> value_4 = odml.Value(data = "Ford Prefect",
 	                         dtype = "person",
 	                         definition = "First and last name of a person.")
 	                         
 	>>> property_2 = odml.Property(name = "User",
 		                           definition = "The person/s who use the setup.",
 		                           value = [value_2, value_3, value_4])
+
+Creating the odML tree
+----------------------
+... using the odML-Editor
+*************************
+In the odML-Editor the tree structure is directly created by the user by 
+creating top sections and subsections interactively. After creating all
+sections, properties and values you can validate your document by pressing
+the 'Validate the document and check for errors' button in the menu bar or
+by selecting 'Edit/Validate' in the menu. The odML-Editor will present you
+a list of error notifications in a new window, if you generated your document
+wrongly or if you still forgot some obligatory entries.
+
+... using Python
+****************
+In Python you need to link the created document to the created sections, and
+the properties with their already included values to the corresponding sections.
+
+For our intro-example.odml, this meant the following commands::
+
+	>>> document.append(top_section_1)
+	>>> top_section_1.append(property_1)
+	>>> top_section_1.append(property_2)
+	
+	
 
 ------------------------------------------------------------------------
 
