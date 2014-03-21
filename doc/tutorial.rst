@@ -445,19 +445,25 @@ Creating a document ...
 ... using the odML-Editor
 *************************
 You can create then a new document in three ways. In all cases a new window the "New Document Wizard" will open guiding you through the first steps of creating a new odML document.
+
 - If you newly open the odML-Editor, you can also use the link "create a new document" in the "Welcome to the odML-Editor" window. 
 - If the odML-Editor is already open use the "create a new document" button in the menu bar (top of the editor window).
 - You can also select 'File/New' in the menu of the odML-Editor.
+
 If you click on the 'Forward' button at the right bottom corner, the wizard will display the document attributes with default entries.
+
 - Date: the current date (yyyy-mm-dd format)
 - Version: 1.0
 - Repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
 - Author: your user name
-You can easily change the attributes. For our intro-example.odml we chose the following entries:
+
+You can easily change the attributes. For our intro-example.odml we chose the following entries.
+
 - Date: 2014-03-20
 - Version: 4.7
 - Repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
 - Author: Arthur Dent
+
 If you changed the entries to your needs, you get with the 'Forward' button to the next window, where you can chose, if you provided a link to a terminology repository as document attribute, a set of top section out of your specified terminology. You don't need to select a section. This is optional.
 If you click then 'Forward' and 'Apply' you will get back to the actual odML-Editor window, which we described in the 'Introduction to odml'.
 You can see your document attributes in the bottom attributes window. You can also see, if you didn't select already some top section out of the terminology, that the sections and the properties window of the odML-Editor are empty.
@@ -480,14 +486,19 @@ Creating a section ...
 ... using the odML-Editor
 *************************
 In the odML-Editor, you can create a new (unnamed) section in three ways. In all cases appears a new unnamed section in the Sections window.
+
 - Press the 'add a section to the current selected one' button in the menu bar.
 - Select 'Edit/Add/Add Section' in the menu.
 - Click the right mice button in the Sections window and then selecting 'Add Section/Empty Section'.
+
 To name this section you have again two options.
+
 - Click on the unnamed section in the sections windows, rename it and press 'Enter'.
 - First, select the section you want to rename in the Sections window, then select the attribute 'name' in the Attributes window, click on its 'Value' cell ("unnamed section"), rename it and press 'Enter'.
 - In our intro-example.odml we named the section "Setup".
+
 You can change the attributes of a in the Sections window selected section in the Attributes window.
+
 - Select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
 - In our intro_example.odml we changed the attribute 'type' to "setup"
 - In our intro_example.odml we changed the attribute 'definition' to "Description of the used experimental setup."
@@ -510,23 +521,34 @@ how you create and combine these two odML objects directly.
 *************************
 If you want to create a property in the odML-Editor, first select the section you want to add the property to.
 You can create then a new (unnamed) property in three ways. In all cases appears a new unnamed property in the Properties window.
+
 - Press the 'add a property to the current section' button in the menu bar.
 - Select 'Edit/Add/Add Property' in the menu.
 - Click the right mice button in the Properties window and then selecting 'Add Property'.
+
 To name this property you have again two options.
+
 - Select the unnamed property in the Properties window, click on its 'Name' cell ("unnamed property"), rename it and press 'Enter'.
 - First, select the unnamed property in the Properties window, then select the attribute 'name' in the Attributes window, click on its 'Value' cell ("unnamed property"), rename it and press 'Enter'.
 - In our intro-example.odml we named the property "Creator".
+
 If you want to change the attributes of a property you have to do it in the Attributes window.
+
 - First, select the property you want to modify in the Properties window, then select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
 - In our intro_example.odml we changed the attribute 'definition' to "The person/s who built the setup."
+
 Each new property has directly one value attached to it, which needs to be defined.
 To define a value click on the 'Value' cell of the property in the Properties window, enter a value and press 'Enter'.
+
 - In our intro_example.odml we entered the value "Arthur Dent" to the property "Creator".
+
 To change the attributes of this value click in the row of this value on the corresponding cell, change the attribute and press 'Enter'.
+
 - In our intro_example.odml we changed the 'Definition' of the value "Arthur Dent" of the property "Creator" to "First and last name of a person."
 - In our intro_example.odml we changed the 'Type' of the the value "Arthur Dent" of the property "Creator" to "person"
+
 You can also add multiple values to a selected property. This is possible in three ways.
+
 - Press the 'add a value to the current selected property' button in the menu bar.
 - Select 'Edit/Add/Add Value' in the menu.
 - Click the right mice button on the property of the Properties window and then selecting 'Add Value'.
