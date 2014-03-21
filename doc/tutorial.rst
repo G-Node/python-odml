@@ -444,11 +444,10 @@ Creating a document ...
 -----------------------
 ... using the odML-Editor
 *************************
-- In the odML-Editor use the "create a new document" button in the menu bar 
-(top of the editor window). If you newly open the odML-Editor, you can also 
-use the link "create a new document" in the "Welcome to the odML-Editor"
-window. 
-- In both cases a new window the "New Document Wizard" will open guiding you through the first steps of creating a new odML document.
+- You can create then a new document in three ways. In all cases a new window the "New Document Wizard" will open guiding you through the first steps of creating a new odML document.
+	- If you newly open the odML-Editor, you can also use the link "create a new document" in the "Welcome to the odML-Editor" window. 
+	- If the odML-Editor is already open use the "create a new document" button in the menu bar (top of the editor window).
+	- You can also select 'File/New' in the menu of the odML-Editor.
 - If you click on the 'Forward' button at the right bottom corner, the wizard will display the document attributes with default entries.
 	- Date: the current date (yyyy-mm-dd format)
 	- Version: 1.0
