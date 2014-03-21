@@ -7,7 +7,7 @@ odML Tutorial
 :Release:
 	0.1
 
------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 odML Description
 ================
@@ -37,10 +37,12 @@ What are metadata and why are they needed?
 Key features of odML
 	- open, XML based language, to collect, store and share metadata
 	- Machine- and human-readable
-	- Interactive odML editor for interactive exploration and generation of odML files
+	- Interactive odML-Editor for interactive exploration and generation of odML files
 	- Python odML library with integrated helper functions
 		- to generate an odML file
 		- to screen metadata content independent from the structure of an odML file
+
+------------------------------------------------------------------------
 
 
 Structure of this tutorial
@@ -54,11 +56,13 @@ never learned a programming language.
 To cover the different demands of all user types, we first provide a slow 
 introduction to odML that allows programming beginners to learn the basic 
 concepts behind odML and how to generate and use their own odML files either 
-using the interactive odML editor or the Python library. In later chapters 
+using the interactive odML-Editor or the Python library. In later chapters 
 we present the more advanced possibilies of the Python odML library.
 
 A set of example odML files, which we use within this tutorial are part of
 the documentation package (see example_odMLs folder).
+
+------------------------------------------------------------------------
 
 
 Download and Installation
@@ -86,6 +90,7 @@ You should be able to just test the library using the following::
 See `github:python-odml#Installation <https://github.com/G-Node/python-odml#installation>`_
 for more descriptions including setup on Windows and Debian/Ubuntu.
 
+------------------------------------------------------------------------
 
 
 Introduction to odml
@@ -115,16 +120,16 @@ structure which consists of four different odML objects.
 Each of these odML objects has a certain set of attributes where the user
 can describe the object and its contents. Which attribute belongs to which
 object and the meaning of each attribute are better explained in an example
-odML file using the odML editor.
+odML file (e.g., "intro-example.odml").
 
-A first look with the odML editor
+A first look with the odML-Editor
 ---------------------------------
 The best way to get familiar how the different odML objects are linked to 
 a complete structure of an odML file, which attribute belongs to which object 
 and what each attribute means, is to open one of the example odML files 
-in the odML editor.
+in the odML-Editor.
 
-Open the odML editor and use the "open files" button in the menu bar (top
+Open the odML-Editor and use the "open files" button in the menu bar (top
 of the editor window) to select and open the odML example file "intro-example.odml".
 
 You should then see that the editor window is subdivided into three parts.
@@ -145,7 +150,7 @@ You should then see that the editor window is subdivided into three parts.
 	in red starting from the document. 
 
 Below the attributes window the file path to the currently loaded odML file 
-is displayed ("file:///.../example_odMLs/intro-example.odml").
+is displayed ("file:///.../doc/example_odMLs/intro-example.odml").
 	
 A more detailed look at the different objects and their attributes of the 
 example odML file ("intro-example.odml") is given in subchapters for each
@@ -171,11 +176,11 @@ section, property, value).
 
 The document
 ------------
-Display attributes using the odML editor:
+Display attributes using the odML-Editor:
 *****************************************
 To display the attributes of the document of the example odML file click 
 on 'Document' in the path of the attributes window (bottom part) of the 
-odML editor window. 
+odML-Editor window. 
 	
 Display attributes using Python:
 ********************************
@@ -207,23 +212,23 @@ of the Python odML library are described.
 - date
 	- recommended document attribute
 	- The date this odML file was created (yyyy-mm-dd format). 
-	- In our example 'Arthor Dent' created the "intro-example.odml" file at 20th of March 2014 (2014-03-20).
+	- In our example 'Arthur Dent' created the "intro-example.odml" file at 20th of March 2014 (2014-03-20).
 - version
 	- recommended document attribute
 	- The version of this odML file. 
-	- In our example 'Arthor Dent' created version 4.7 of the "intro-example.odml" file.
+	- In our example 'Arthur Dent' created version 4.7 of the "intro-example.odml" file.
 - repository
 	- optional document attribute
 	- The URL to the repository of terminologies used in this odML file. 
-	- In our example 'Arthor Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
+	- In our example 'Arthur Dent' used the G-Node terminology ("http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml").
 		
 The sections
 ------------
-Display attributes using the odML editor
+Display attributes using the odML-Editor
 ****************************************
 To display the attribute of a section of the example odML file click on 
 the section 'Setup' in the sections window (upper left) and a have a look 
-at the attributes window (bottom) of the odML editor.
+at the attributes window (bottom) of the odML-Editor.
 
 Display attributes using Python
 *******************************
@@ -286,13 +291,13 @@ of the Python odML library are described.
 		
 The properties
 --------------
-Display attributes using the odML editor
+Display attributes using the odML-Editor
 ****************************************
 To display the attribute of a property of the example odML file click on 
 the section 'Setup' in the sections window (upper left) and then on the 
 the property 'Creator' in the properties window (upper right). The attributes
 of this property are then displayed in the attributes window (bottom) of 
-the odML editor.
+the odML-Editor.
 
 Display attributes using Python
 *******************************
@@ -330,7 +335,7 @@ of the Python odML library are described.
 - definition
 	- recommended property attribute
 	- The definition of this property.
-	- In our example 'Arthur Dent' defines the property 'Creator' as 'The person who built the setup.'.
+	- In our example 'Arthur Dent' defines the property 'Creator' as 'The person/s who built the setup.'.
 - dependency
 	- optional property attribute
 	- A name of a propery within the same section, which this property depends on.
@@ -346,12 +351,12 @@ of the Python odML library are described.
 		
 The values
 ----------
-Display attributes using the odML editor:
+Display attributes using the odML-Editor:
 *****************************************
 To display the attribute of a value of the example odML file click on 
 the section 'Setup' in the sections window (upper left). The attributes
 of the value of the property 'Creator' are displayed in the row of the 
-property in the properties window (upper right) of the odML editor.
+property in the properties window (upper right) of the odML-Editor.
 
 Display attributes using Python:
 ********************************
@@ -422,297 +427,160 @@ of the Python odML library are described.
 	- Checksum and name of the algorithm that calculated the checksum of a given value (algorithm$checksum format)
 	- In our example there was no checksum calculated for the value 'Arthur Dent'.
 
+------------------------------------------------------------------------
+
 
 Generating an odML-file
-==============================
- 
-Corresponding to a root of a tree, the document-object connects the most 
-highest section-objects to the final tree-like structure. To generate now an 
-odML-file one has to create each odML-object individually and append them 
-to the wanted tree structure.
+=======================
 
-As a first step one has to learn how one can create the different objects
-and which odML-object can be attached to which other odML-object.
+After getting familiar with the different odml objects and their attributes
+during the introduction to odML, you will now learn how to generate your 
+own odML file. We will show you first how to create the different odML objects 
+with their obligatory and recommended attributes using the odML-Editor and 
+Python. Please have a look at the tutorial part describing the advanced 
+possibilities of the Python odML library for the usage of the optional attributes.
 
+Creating a document ...
+-----------------------
+... using the odML-Editor
+*************************
+- In the odML-Editor use the "create a new document" button in the menu bar 
+(top of the editor window). If you newly open the odML-Editor, you can also 
+use the link "create a new document" in the "Welcome to the odML-Editor"
+window. 
+- In both cases a new window the "New Document Wizard" will open guiding
+you through the first steps of creating a new odML document.
+- If you click on the 'Forward' button at the right bottom corner, the wizard
+will display the document attributes with default entries.
+	- Date: the current date (yyyy-mm-dd format)
+	- Version: 1.0
+	- Repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
+	- Author: your user name
+- You can easily change the attributes. For our intro-example.odml we chose the following
+entries:
+	- Date: 2014-03-20
+	- Version: 4.7
+	- Repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
+	- Author: Arthur Dent
+- If you changed the entries to your needs, you get with the 'Forward' button
+to the next window, where you can chose, if you provided a link to a terminology
+repository as document attribute, a set of top section out of your specified
+terminology. You don't need to select a section. This is optional.
+- If you click then 'Forward' and 'Apply' you will get back to the actual
+odML-Editor window, which we described in the 'Introduction to odml'.
+- You can see your document attributes in the bottom attributes window. You
+can also see, if you didn't select already some top section out of the terminology,
+that the sections and the properties window of the odML-Editor are empty.
 
-Creating a document
--------------------
-As already mentioned the document-object is the root of the odML-file. It 
-is possible to create a document-object with no attributes given.
+... using Python
+****************
+First open a Python shell and import the odml package::
 
-But to be able to identify the author of the odML-file, the date the odML-file
-was generated and the current version of the odML-file, it is helpful to 
-give these attributes to the document-object::
+	>>> import odml
 
-	>>> document = odml.Document(author="Arthur Dent", date="2014-03-05", version=0.1)
-	>>> document
-	<Doc 0.1 by Arthur Dent (0 sections)>
-	>>> document.author
-	'Arthur Dent'
-	>>> document.version
-	0.1
+You can create a new odML document with its attributes using the following
+command::
+
+	>>> document = odml.Document(author = "Arthur Dent", 
+	                             date = "2014-03-20", 
+	                             version = 4.7)
 	
-If a common terminology (e.g. the terminology provided by the G-Node) is 
-used for the odML-file (how to use the attached terminology see ???), one 
-can also already provide the URL to the terminology.odml in the document::
-	
-	>>> gnode_terminology = "http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml"
-	>>> document = odml.Document(author="Arthur Dent", date="2014-03-05", version=0.1, repository=gnode_terminology)
-	>>> document
-	<Doc 0.1 by Arthur Dent (0 sections)>
-	>>> document.repository
-	'https://github.com/G-Node/odml-terminologies/blob/master/v1.0/odMLTerminologies.xml'
-	
-	
-Creating a section
-------------------
-The sections are the branches of the odML-file tree structure. The can either
-have section- or property-objects as childrens. The 'name' of a section-object
-is a required attribute and has to be given::
-	
-Other important attributes of a section-object are type and definition::
+Creating a section ...
+----------------------
+... using the odML-Editor
+*************************
+- In the odML-Editor, you can create a new (unnamed) section in three ways
+	- Press the 'add a section to the current selected one' button in the menu bar
+	- Select 'Edit/Add/Add Section' in the menu
+	- Click the right mice button in the Sections window and then selecting 'Add Section/Empty Section'
+- In all cases appears a new unnamed section in the Sections window
+- To name this section you have again two options.
+	- Click on the unnamed section in the sections windows, rename it and press 'Enter'
+	- First, select the section you want to rename in the Sections window, then select the attribute 'name' in the Attributes window, click on its 'Value' cell ("unnamed section"), rename it and press 'Enter'.
+	- In our intro-example.odml we named the section "Setup".
+- If you want to change the attributes of a section you have to do it in the Attributes window
+	- First, select the section you want to modify in the Sections window, then select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
+	- In our intro_example.odml we changed
+		- the attribute 'type' to "setup"
+		- the attribute 'definition' to "Description of the used experimental setup."
 
-	>>> section_1 = odml.Section("Subject", type="subject", definition="The investigated experimental subject (animal or person).")
-	>>> section_1
-	<Section Subject[subject] (0)>
-	>>> section_1.type
-	'subject'
-	>>> section_1.definition
-	'The investigated experimental subject (animal or person).'
-	
-As above mentioned, it is possible to append a section to another section 
-creating a subsection::
+... using Python
+****************
+You can create a new odML section with its attributes using the following
+command::
 
-	>>> section_2 = odml.Section("Preparation", type="subject", definition="Description of the preparation procedure.")
-	>>> section_2
-	<Section Preparation[subject] (0)>
-	>>> section_2.type
-	'subject'
-	>>> section_2.definition
-	'Description of the preparation procedure.'
-	>>> section_1.append(section_2)
-	>>> section_1
-	<Section Subject[subject] (1)>
-	>>> section_1.sections
-	[<Section Preparation[subject] (0)>]
-	
-Note that the number in the round brackets of section-object 'Subject' 
-increased by one. It corresponds to the number of section-objects below 
-the current section-object.
+	>>> top_section_1 = odml.Section(name = "Setup",
+                                     definition = "Description of the used experimental setup.",
+                                     type = "setup")
 
+Creating a property with a value ...
+------------------------------------
+Since a property must contain at least one value, it is best to show you
+how you create and combine these two odML objects directly.
 
-A tree with branches: a document with sections
-----------------------------------------------
-Let's create first a third section-object before creating a first tree 
-structure::
+... using the odML-Editor
+*************************
+- If you want to create a property in the odML-Editor, first select the section
+you want to add the property to.
+- You can create then a new (unnamed) property in three ways.
+	- Press the 'add a property to the current section' button in the menu bar.
+	- Select 'Edit/Add/Add Property' in the menu.
+	- Click the right mice button in the Properties window and then selecting 'Add Property'.
+- In all cases appears a new unnamed property in the Properties window.
+- To name this property you have again two options.
+	- Select the unnamed property in the Properties window, click on its 'Name' cell ("unnamed property"), rename it and press 'Enter'.
+	- First, select the unnamed property in the Properties window, then select the attribute 'name' in the Attributes window, click on its 'Value' cell ("unnamed property"), rename it and press 'Enter'.
+	- In our intro-example.odml we named the property "Creator".
+- If you want to change the attributes of a property you have to do it in the Attributes window.
+	- First, select the property you want to modify in the Properties window, then select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
+	- In our intro_example.odml we changed
+		- the attribute 'definition' to "The person/s who built the setup."
+- Each new property has directly one value attached to it, which needs to be
+defined.
+- To define a value click on the 'Value' cell of the property in the Properties window, enter a value and press 'Enter'.
+	- In our case we entered the value "Arthur Dent" to the property "Creator".
+- To change the attributes of this value click in the row of this value on the corresponding cell, change the attribute and press 'Enter'.
+	- In our case we changed
+		- the 'Definition' of the value "Arthur Dent" of the property "Creator" to "First and last name of a person."
+		- the 'Type' of the the value "Arthur Dent" of the property "Creator" to "person"
+- You can also add multiple values to a selected property. This is possible in three ways.
+	- Press the 'add a value to the current selected property' button in the menu bar.
+	- Select 'Edit/Add/Add Value' in the menu.
+	- Click the right mice button on the property of the Properties window and then selecting 'Add Value'.
 
-	>>> section_3 = odml.Section("Electrode", type="electrode", definition="Properties to describe an electrode.")
-	>>> section_3
-	<Section Electrode[electrode] (0)>
-	>>> section_3.type
-	'electrode'
-	>>> section_3.definition
-	'Properties to describe an electrode.'
-	
-Now one append all created section-objects to the document-object::
+... using Python
+****************
+First we create the value with its attributes using the following command::
 
-	>>> document.append(section_1)
-	>>> document.append(section_2)
-	>>> document
-	<Doc 0.1 by Arthur Dent (2 sections)>
-	>>> document.sections
-	[<Section Subject[subject] (1)>, <Section Electrode[electrode] (0)>]
+	>>> value_1 = odml.Value(data = "Arthur Dent",
+	                         dtype = "person",
+	                         definition = "First and last name of a person.")
+	                       
+Then we create the property with its attributes and its value with::
 
-Note that the section-object 'Subject' still has one subsection. Appending
-a section-object always includes all of its appended children (subsections
-and/or properties).
+	>>> property_1 = odml.Property(name = "Creator",
+	                               definition = "The person/s who built the setup.",
+	                               value = value_1)
+	                             
+The resulting odML property object contains now the first generated odML
+value object. Note that you can also enter multiple value objects to one 
+property::
 
+	>>> value_2 = odml.Value(data = "",
+	                         dtype = "person",
+	                         definition = "First and last name of a person.")
+	>>> value_3 = odml.Value(data = "",
+	                         dtype = "person",
+	                         definition = "First and last name of a person.")
+	>>> value_4 = odml.Value(data = "",
+	                         dtype = "person",
+	                         definition = "First and last name of a person.")
+	                         
+	>>> property_2 = odml.Property(name = "User",
+		                           definition = "The person/s who use the setup.",
+		                           value = [value_2, value_3, value_4])
 
-Creating properties with values
--------------------------------
-Before one creates a property-object one should create a value-object. The 
-'data' of a value-object is a required attribute and has to be given::
-
-	>>> value_1 = odml.Value(14)
-	>>> value_1
-	<int 14>
-	>>> value_1.data
-	14
-	>>> value_1.dtype
-	'int'
-	
-Note that the data type 'int' of the given 'data' of value_1 is automatically 
-assigned. This odml data type guessing only works for 'data' of python type 
-int, float, str, datetime-objects (date, time, datetime) and bool. One 
-can also directly specify the odml data type while creating a value-object
-via the 'dtype' attribute. Possible odml data types are 'int', 'float', 
-'string', 'date', 'time', 'datetime', 'booleans', 'person', 'text' and 'URL' 
-(for details see odml.Value documentation). 
-
-It is also possible to specify in the attributes the uncertainty, the unit 
-and the definition of a value-object ::
-
-	>>> value_1 = odml.Value(14, unit="day")
-	>>> value_1.unit
-	'day'
-	>>> value_2 = odml.Value(258.4, uncertainty=1.4, unit="g")
-	>>> value_2
-	<float 258.4>
-	>>> value_2.uncertainty
-	1.4
-	>>> value_2.unit
-	'g'
-	>>> value_3 = odml.Value("Rattus norvegicus", definition="Species of the genus Rattus")
-	>>> value_3
-	<string Rattus norvegicus>
-	>>> value_3.definition
-	'Species of the genus Rattus'
-	
-Note that every attribute of a value-object can be overwritten afterwards, 
-but the type guessing only works while creating the value-object. If one
-changes the data afterwards one needs to change the dtype as well if 
-neccessary.
-
-Now let's create a property-object. The name and the value are required
-attributes of a property-object. Optional one can give also a definition
-to a property-object::
-
-	>>> property_1 = odml.Property("Age", value_1, definition="The age of the subject since birth.")
-	>>> property_1
-	<Property Age>
-	>>> property_1.value
-	<int 14>
-	>>> property_1.value.data
-	14
-	>>> property_1.value.dtype
-	'int'
-	>>> property_1.value.unit
-	'day'
-	>>> property_1.definition
-	'The age of the subject since birth.'
-	
-	>>> property_2 = odml.Property("Weight", value_2, defintion="The weigth of this subject.")
-	>>> property_2
-	<Property Weight>
-	>>> property_2.value
-	<float 258.4>
-	>>> property_2.value.data
-	258.4
-	>>> property_2.value.uncertainty
-	1.4	
-	>>> property_2.value.dtype
-	'float'
-	>>> property_2.value.unit
-	'g'
-	>>> property_2.definition
-	'The weigth of this subject.'
-	
-	>>> property_3 = odml.Property("Species", value_3, definition="The scientific name of the species.")
-	>>> property_3
-	<Property Species>
-	>>> property_3.value
-	<string Rattus norvegicus>
-	>>> property_2.value.data
-	'Rattus norvegicus'
-	>>> property_2.value.dtype
-	'string'
-	>>> property_2.value.definition
-	'Species of the genus Rattus'
-	>>> property_2.definition
-	'The scientific name of the species.'
-
-Note that the value of a property-object is usually given as value-object.
-All attributes specified in the value-object remain intact. The value-object
-is accessable via 'property.value'.
-
-
-
-
-
-
-
-
-
-
-
-    
-Properties and Values
----------------------
-
-Now we have a section and can create a property. Keep in mind that a property always
-needs a value. Values are typed data.:: 
-
-    >>> v = Value(data=144, dtype="int")
-    >>> p1 = Property(name="property1", value=v)
-    >>> p1.value
-    <int 144>
-
-If the supplied value is not a :py:mod:`odml.value.Value` it will be converted to one::
-
-    >>> p1 = Property(name="property1", value=144, dtype="int")
-    >>> p1.value
-    <int 144>
-
-A property can also contain multiple values::
-
-    >>> v1 = Value(data=1, dtype="int")
-    >>> v2 = Value(data=2, dtype="int")
-    >>> v3 = Value(data=3, dtype="int")
-    >>> p2 = Property(name="property2", value=[v1, v2, v3])
-    >>> p2.values
-    [<int 1>, <int 2>, <int 3>]
-    
-Note: If a Property has multiple values, ``p.value`` returns a list
-If the Property has only one, ``p.value`` will directly return this value.
-In contrast ``p.values`` will always return the list of values, even if it’s only one::
-
-	>>> p1.value
-    <int 144>
-    >>> p1.values
-    [<int 144>]
-    >>> p2.value
-    [<int 1>, <int 2>, <int 3>]
-    >>> p2.values
-    [<int 1>, <int 2>, <int 3>]
-      
-If the supplied value list is not a list of :py:mod:`odml.value.Value` 
-each element will be converted to a :py:mod:`odml.value.Value`::
-
-    >>> p2 = Property(name="property2", value=[1, 2, 3], dtype="int")
-    >>> p2.values
-    [<int 1>, <int 2>, <int 3>]
-    
-Note: If the supplied value list is not a list of :py:mod:`odml.value.Value` 
-all elements are set to the given ``dtype``, but in general a property
-can contain multiple values with different ``dtype``::
-
-    >>> v1 = Value(data=1, dtype="int")
-    >>> v2 = Value(data=2.0, dtype="float")
-    >>> v3 = Value(data="3", dtype="string")
-    >>> p2 = Property(name="property2", value=[v1, v2, v3])
-    >>> p2.values
-    [<int 1>, <float 2.0>, <string 3>]
-
-You can also use the ``append`` function to add a value to an existing property::
-
-	>>> v = Value(data=155, dtype="int")
-	>>> p1.append(v)
-	>>> p1.values
-	[<int 144>, <int 155>]
-	
-If the supplied value is not a :py:mod:`odml.value.Value` it will be converted to one::
-
-	>>> p1.append(155, dtype="int")
-	>>> p1.values
-	[<int 144>, <int 155>]
-	
-As you can see, the ``append`` function is also used to attach a property to a section::
-
-	>>> s.append(p1)
-	>>> s.append(p2)
-	s.properties
-	[<Property property1>, <Property property2>]
-	
+------------------------------------------------------------------------
 
 
 Working with files
