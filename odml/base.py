@@ -127,6 +127,17 @@ class SmartList(SafeList):
         # and fail eventually
         raise KeyError(key)
 
+    def __contains__(self, key):
+        for obj in self:
+            if (hasattr(obj, "name") and obj.name == key) or key == obj:
+                return True
+
+    def append(self, obj):
+        if obj.name in self:
+            raise KeyError("Object with the same name already exists! " + str(obj))
+        else:
+            super(SmartList, self).append(obj)
+
 @allow_inherit_docstring
 class sectionable(baseobject, mapping.mapped):
     def __init__(self):
