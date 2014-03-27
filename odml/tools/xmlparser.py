@@ -26,13 +26,14 @@ format.Section._xml_name = "section"
 format.Property._xml_name = "property"
 format.Value._xml_name = "value"
 
-format.Document._xml_attributes = {'version': 'version'}
-format.Section._xml_attributes = {'name': None} # attribute 'name' maps to 'name', but writing it as a tag is preferred
+format.Document._xml_attributes = {}
+format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Property._xml_attributes = {}
 format.Value._xml_attributes = {}
 format.Value._xml_content = 'value'
 
 XML_VERSION = "1"
+
 
 class XMLWriter:
     """
@@ -59,6 +60,9 @@ class XMLWriter:
             cur = E(fmt._name)
 
         # generate attributes
+        if isinstance(fmt, format.Document.__class__):
+            cur.attrib['version'] = XML_VERSION
+
         for k,v in fmt._xml_attributes.iteritems():
             if not v or not hasattr(e, fmt.map(v)): continue
 
@@ -182,6 +186,7 @@ class XMLReader(object):
         for k, v in root.attrib.iteritems():
             k = k.lower()
             self.is_valid_argument(k, fmt, root)
+            if k == 'version' and root.tag == 'odML': continue  # special case for XML version
             if k not in fmt._xml_attributes:
                 self.error("<%s %s=...>: is not a valid attribute for %s" % (root.tag, k, root.tag), root)
             else:
@@ -199,10 +204,8 @@ class XMLReader(object):
                         children.append(sub_obj)
                 else:
                     tag = fmt.map(node.tag)
-                    if tag in arguments and not (tag == 'version' and root.tag == 'odML'):
+                    if tag in arguments:
                         # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
-                        # asobolev: where does another "version" comes from?
-                        # debugging the 3-stage recursion is .. hard
                         self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
                     arguments[tag] = node.text.strip() if node.text else None
 
