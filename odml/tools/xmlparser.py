@@ -206,6 +206,8 @@ class XMLReader(object):
                     tag = fmt.map(node.tag)
                     if tag in arguments:
                         # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
+                        # asobolev: where does another "version" comes from?
+                        # debugging the 3-stage recursion is .. hard
                         self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
                     arguments[tag] = node.text.strip() if node.text else None
 
