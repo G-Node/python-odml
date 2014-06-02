@@ -26,13 +26,14 @@ format.Section._xml_name = "section"
 format.Property._xml_name = "property"
 format.Value._xml_name = "value"
 
-format.Document._xml_attributes = {'version': '_xml_version'} # attribute 'version' maps to _xml_version
-format.Section._xml_attributes = {'name': None} # attribute 'name' maps to 'name', but writing it as a tag is preferred
+format.Document._xml_attributes = {}
+format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Property._xml_attributes = {}
 format.Value._xml_attributes = {}
 format.Value._xml_content = 'value'
 
 XML_VERSION = "1"
+
 
 class XMLWriter:
     """
@@ -44,9 +45,6 @@ class XMLWriter:
 """
     def __init__(self, odml_document):
         self.doc = odml_document
-        if hasattr(odml_document, "_xml_version") and odml_document._xml_version != XML_VERSION:
-            sys.stderr.write("warning: this document will be saved as version %s instead of %s" % (XML_VERSION, odml_document._xml_version))
-        odml_document._xml_version = XML_VERSION
 
     @staticmethod
     def save_element(e):
@@ -62,6 +60,9 @@ class XMLWriter:
             cur = E(fmt._name)
 
         # generate attributes
+        if isinstance(fmt, format.Document.__class__):
+            cur.attrib['version'] = XML_VERSION
+
         for k,v in fmt._xml_attributes.iteritems():
             if not v or not hasattr(e, fmt.map(v)): continue
 
@@ -175,7 +176,7 @@ class XMLReader(object):
         parse an odml node based on the format description *fmt*
         and a function *create* to instantiate a corresponding object
         """
-        args = {}
+        arguments = {}
         extra_args = {}
         children = []
         text = []
@@ -185,11 +186,12 @@ class XMLReader(object):
         for k, v in root.attrib.iteritems():
             k = k.lower()
             self.is_valid_argument(k, fmt, root)
+            if k == 'version' and root.tag == 'odML': continue  # special case for XML version
             if k not in fmt._xml_attributes:
                 self.error("<%s %s=...>: is not a valid attribute for %s" % (root.tag, k, root.tag), root)
             else:
                 k = fmt._xml_attributes[k] or k
-                args[k] = v
+                arguments[k] = v
 
         for node in root:
             node.tag = node.tag.lower()
@@ -202,10 +204,11 @@ class XMLReader(object):
                         children.append(sub_obj)
                 else:
                     tag = fmt.map(node.tag)
-                    if tag in args:
+                    if tag in arguments:
                         # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
                         self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
-                    args[tag] = node.text.strip() if node.text else None
+                    arguments[tag] = node.text.strip() if node.text else None
+
             else:
                 self.error("Invalid element <%s> in odML document section <%s>" % (node.tag, root.tag), node)
             if node.tail: text.append(node.tail.strip())
@@ -213,12 +216,12 @@ class XMLReader(object):
         if create is None:
             obj = fmt.create()
         else:
-            obj = create(args=args, text=''.join(text), children=children)
+            obj = create(args=arguments, text=''.join(text), children=children)
 
-        self.check_mandatory_arguments(dict(args.items() + extra_args.items())
-, fmt, root.tag, root)
+        self.check_mandatory_arguments(dict(arguments.items() + extra_args.items()),
+            fmt, root.tag, root)
 
-        for k, v in args.iteritems():
+        for k, v in arguments.iteritems():
             if hasattr(obj, k):
                 try:
                     setattr(obj, k, v)
@@ -234,15 +237,7 @@ class XMLReader(object):
         return obj
 
     def parse_odML(self, root, fmt):
-        def create(**kargs): # need to make _xml_version an existing attribute first
-            res = fmt.create()
-            res._xml_version = None
-            return res
-        doc = self.parse_tag(root, fmt, create=create)
-        if not hasattr(doc, '_xml_version'):
-            self.warn('unknown document version', root)
-        elif doc._xml_version != XML_VERSION:
-            self.warn('unsupport document version: %s' % doc._xml_version, root)
+        doc = self.parse_tag(root, fmt)
         return doc
 
     def parse_section(self, root, fmt):
