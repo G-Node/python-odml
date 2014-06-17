@@ -271,17 +271,22 @@ class sectionable(baseobject, mapping.mapped):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
-    def _matches(self, obj, key=None, type=None):
+    def _matches(self, obj, key=None, type=None, include_subtype=False):
         """
         find out
         * if the *key* matches obj.name (if key is not None)
         * or if *type* matches obj.type (if type is not None)
-
-        comparisms are caseinsensitive, however both key and type
+        * if type does not match exactly, test for subtype. (e.g.stimulus/white_noise)
+        comparisons are case-insensitive, however both key and type
         MUST be lower-case.
         """
-        return (key is None or (key is not None and hasattr(obj, "name") and obj.name == key)) \
-            and (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
+        name_match = (key is None or (key is not None and hasattr(obj, "name") and obj.name == key))
+        exact_type_match = (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
+        if not include_subtype:
+            return name_match and exact_type_match
+        subtype_match = type is None or (type is not None and hasattr(obj, "type") and
+                                         type in obj.type.lower().split('/')[:-1])
+        return name_match and (exact_type_match or subtype_match)
 
     def get_section_by_path(self, path):
         """
@@ -341,14 +346,14 @@ class sectionable(baseobject, mapping.mapped):
         else:
             return self._match_iterable(self.sections, pathlist[0])
 
-    def find(self, key=None, type=None, findAll=False):
+    def find(self, key=None, type=None, findAll=False, include_subtype=False):
         """return the first subsection named *key* of type *type*"""
         ret = []
         if type:
             type = type.lower()
 
         for s in self._sections:
-            if self._matches(s, key, type):
+            if self._matches(s, key, type, include_subtype=include_subtype):
                 if findAll:
                     ret.append(s)
                 else:
