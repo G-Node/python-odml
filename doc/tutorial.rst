@@ -45,11 +45,11 @@ Key features of odML
 	- open, XML based language, to collect, store and share metadata
 	- Machine- and human-readable
 	- Interactive odML-Editor for interactive exploration and generation 
-	of odML files
+	  of odML files
 	- Python odML library with integrated helper functions
 		- to generate an odML file
 		- to screen metadata content independent from the structure 
-		of an odML file
+		  of an odML file
 
 ------------------------------------------------------------------------
 
