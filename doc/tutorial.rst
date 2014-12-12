@@ -42,15 +42,14 @@ What are metadata and why are they needed?
 	maintaining their relation to the actual raw-data.
 
 Key features of odML
-	- open, XML based language, to collect, store and share metadata
-	- Machine- and human-readable
-	- Interactive odML-Editor for interactive exploration and generation 
-	  of odML files
-	- Python odML library with integrated helper functions
-		- to generate an odML file
-		- to screen metadata content independent from the structure 
-		  of an odML file
-
+	- Open, XML based language, to collect, store and share metadata.
+	- Machine- and human-readable metadata collection.
+	- odML-Editor enables interactive exploration and generation of odML 
+	  files.
+	- Common standard keys can be defined in odML-terminologies for 
+	  guaranteeing interoperability.
+	- Exchange and reuse of odML-template files support a common standard 
+	  of metadata management in the neuroscientific community.
 ------------------------------------------------------------------------
 
 
