@@ -63,12 +63,19 @@ never learned a programming language.
 
 To cover the different demands of all user types, we first provide a slow 
 introduction to odML that allows programming beginners to learn the basic 
-concepts behind odML and how to generate and use their own odML files either 
-using the interactive odML-Editor or the Python library. In later chapters 
-we present the more advanced possibilies of the Python odML library.
+concepts behind odML. We will first examine a simple odML file using the 
+interactive odML-Editor. In a next step, we will demonstrat how to generate 
+the same odML file via the Python-odml library. In later chapters we present 
+more advanced possibilies of the Python-odML library (e.g. how to search for
+a certain metadata within an odML file). At the end, we will provide a few
+examples on how you can construct an odML depending on different use case 
+scenarios.
 
-A set of example odML files, which we use within this tutorial are part of
-the documentation package (see example_odMLs folder).
+The set of example odML files, which we use within this tutorial are part of
+the documentation package (see example_odMLs folder). 
+
+Templates for general usable odML files can be downloaded (soon) from the 
+following website: $$$
 
 ------------------------------------------------------------------------
 
