@@ -3,46 +3,53 @@ odML Tutorial
 =============
 
 :Author:
-	Lyuba Zehl
+	Lyuba Zehl;
 	based on work by Hagen Fritsch
 :Release:
 	0.1
 :License:
-	Creative Commons Attribution-ShareAlike 4.0 International License http://creativecommons.org/licenses/by-sa/4.0/
+	Creative Commons Attribution-ShareAlike 4.0 International 
+	License http://creativecommons.org/licenses/by-sa/4.0/
 ------------------------------------------------------------------------
 
-odML Description
-================
+odML (open metadata Markup Language)
+====================================
 
-odML (open metadata Markup Language) helps to collect, store and share
-metadata. It is an open, flexible, easy-to-use, machine-, but also 
-human-readable format based on XML. Developed in the German Neuroinformatics 
-Node (G-Node) of the International Neuroinformatics Coordinating Facility 
-(INCF) in Munich, odML was a first initiative to connect electrophysiological
-recorded data to the documentation of the project the data belong to and 
-to all metadata describing the experimental conditions the data were acquired
-from.
+odML (open metadata Markup Language) is an XML based file format, 
+proposed by [Grewe et al. (2011) Front Neuroinform 5:16], in order 
+to provide metadata in an organized, human- and machine-readable way. 
+We illustrate the conceptual design of an odML metadata structure and 
+offer templates to facilitate the usage of odML in different laboratories 
+and experimental contexts. In addition, we demonstrate the advantages of 
+using odML to screen large numbers of data sets according to selection 
+criteria relevant for subsequent analyses. Well organized metadata 
+management is a key component to guarantee reproducibility of experiments 
+and to track provenance of performed analyses.
+
 
 What are metadata and why are they needed?
-	Metadata are data about data, and describing therefore the conditions under 
-	which the actual raw-data of an experiment were acquired. A simple example 
-	in an electrophysiological context is the sampling-rate which was used 
-	recording the raw-data. This may sound ridiculous for everyone doing such 
-	an experiment should know how the raw-data were acquired, but what if the 
-	data have to be shared in a collaboration and a complete description about 
-	how and under which conditions the data were recorded is required?
+	Metadata are data about data, and describing therefore the 
+	conditions under which the actual raw-data of an experiment were 
+	acquired. A simple example in an electrophysiological context is the 
+	sampling-rate which was used to record the raw-data. This may sound 
+	ridiculous, but what if the data have to be shared in a collaboration 
+	or time passes until the data are analysed and a complete description 
+	about how and under which conditions the data were recorded is then 
+	required to understand and interprete them?
 
-	odML can help to collect all metadata which are usually distributed over 
-	several files and formats, store and share them, while maintaining 
-	their relation to the actual raw-data.
+	odML can help to collect all metadata which are usually distributed 
+	over several files and formats, store and share them, while 
+	maintaining their relation to the actual raw-data.
 
 Key features of odML
 	- open, XML based language, to collect, store and share metadata
 	- Machine- and human-readable
-	- Interactive odML-Editor for interactive exploration and generation of odML files
+	- Interactive odML-Editor for interactive exploration and generation 
+	of odML files
 	- Python odML library with integrated helper functions
 		- to generate an odML file
-		- to screen metadata content independent from the structure of an odML file
+		- to screen metadata content independent from the structure 
+		of an odML file
 
 ------------------------------------------------------------------------
 
