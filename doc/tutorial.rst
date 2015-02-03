@@ -3,15 +3,30 @@ odML Tutorial
 =============
 
 :Author:
-	Lyuba Zehl
+	Lyuba Zehl;
+	based on work by Hagen Fritsch
 :Release:
-	xxx
-
+	0.1
+:License:
+	Creative Commons Attribution-ShareAlike 4.0 International 
+	License http://creativecommons.org/licenses/by-sa/4.0/
 ------------------------------------------------------------------------
 
-odML Description
-================
+odML (open metadata Markup Language)
+====================================
 
+odML (open metadata Markup Language) is an XML based file format, 
+proposed by [Grewe et al. (2011) Front Neuroinform 5:16], in order 
+to provide metadata in an organized, human- and machine-readable way. 
+We illustrate the conceptual design of an odML metadata structure and 
+offer templates to facilitate the usage of odML in different laboratories 
+and experimental contexts. In addition, we demonstrate the advantages of 
+using odML to screen large numbers of data sets according to selection 
+criteria relevant for subsequent analyses. Well organized metadata 
+management is a key component to guarantee reproducibility of experiments 
+and to track provenance of performed analyses.
+
+<<<<<<< HEAD
 odML (open metadata Markup Language) helps to collect, store and share
 metadata. It is an open, flexible, easy-to-use, machine-, but also 
 human-readable format based on XML, developed in the German 
@@ -37,7 +52,6 @@ Key features of odML
 	- Machine- and human-readable
 	- Interactive odML-Editor
 	- Python odML library
-
 ------------------------------------------------------------------------
 
 
@@ -51,12 +65,19 @@ never learned a programming language.
 
 To cover the different demands of all users, we first provide a slow 
 introduction to odML that allows programming beginners to learn the basic 
-concepts behind odML and how to generate and use their own odML files either 
-using the interactive odML-Editor or the Python library. In later chapters 
-we present the more advanced possibilies of the Python odML library.
+concepts behind odML. We will first examine a simple odML file using the 
+interactive odML-Editor. In a next step, we will demonstrat how to generate 
+the same odML file via the Python-odml library. In later chapters we present 
+more advanced possibilies of the Python-odML library (e.g. how to search for
+a certain metadata within an odML file). At the end, we will provide a few
+examples on how you can construct an odML depending on different use case 
+scenarios.
 
-A set of example odML files, which we use within this tutorial are part of
-the documentation package (see example_odMLs folder).
+The set of example odML files, which we use within this tutorial are part of
+the documentation package (see example_odMLs folder). 
+
+Templates for general usable odML files can be downloaded (soon) from the 
+following website: $$$
 
 ------------------------------------------------------------------------
 
