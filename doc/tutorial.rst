@@ -5,7 +5,7 @@ odML Tutorial
 :Author:
 	Lyuba Zehl
 :Release:
-	0.1
+	xxx
 
 ------------------------------------------------------------------------
 
@@ -14,33 +14,29 @@ odML Description
 
 odML (open metadata Markup Language) helps to collect, store and share
 metadata. It is an open, flexible, easy-to-use, machine-, but also 
-human-readable format based on XML. Developed in the German Neuroinformatics 
-Node (G-Node) of the International Neuroinformatics Coordinating Facility 
-(INCF) in Munich, odML was a first initiative to connect electrophysiological
-recorded data to the documentation of the project the data belong to and 
-to all metadata describing the experimental conditions the data were acquired
-from.
+human-readable format based on XML, developed in the German 
+Neuroinformatics Node (G-Node) of the International Neuroinformatics 
+Coordinating Facility (INCF) in Munich. odML connects 
+electrophysiological recorded data to the corresponding metadata.
 
 What are metadata and why are they needed?
-	Metadata are data about data, and describing therefore the conditions under 
-	which the actual raw-data of an experiment were acquired. A simple example 
-	in an electrophysiological context is the sampling-rate which was used 
-	recording the raw-data. This may sound ridiculous for everyone doing such 
-	an experiment should know how the raw-data were acquired, but what if the 
-	data have to be shared in a collaboration and a complete description about 
-	how and under which conditions the data were recorded is required?
+	Metadata are data about data, and describing the conditions under 
+	which the actual raw-data of an experiment were acquired. A simple 
+	example in an electrophysiological context is the sampling-rate 
+	which was used to record the raw-data. This may sound ridiculous for 
+	everyone doing such an experiment, but what if the data have to be 
+	shared in a collaboration and a complete description about how and 
+	under which conditions the data were recorded is required?
 
-	odML can help to collect all metadata which are usually distributed over 
-	several files and formats, store and share them, while maintaining 
-	their relation to the actual raw-data.
+	While maintaining their relation to the actual raw-data, odML can 
+	help to collect all metadata which are usually distributed over 
+	several files and formats, store and share them.
 
 Key features of odML
 	- open, XML based language, to collect, store and share metadata
 	- Machine- and human-readable
-	- Interactive odML-Editor for interactive exploration and generation of odML files
-	- Python odML library with integrated helper functions
-		- to generate an odML file
-		- to screen metadata content independent from the structure of an odML file
+	- Interactive odML-Editor
+	- Python odML library
 
 ------------------------------------------------------------------------
 
@@ -53,7 +49,7 @@ enormously (e.g. physics, informatics, mathematics, biology, medicine,
 psychology). Some users will be trained programmers, others probably have
 never learned a programming language. 
 
-To cover the different demands of all user types, we first provide a slow 
+To cover the different demands of all users, we first provide a slow 
 introduction to odML that allows programming beginners to learn the basic 
 concepts behind odML and how to generate and use their own odML files either 
 using the interactive odML-Editor or the Python library. In later chapters 
@@ -76,19 +72,6 @@ Windows
 
 Debian/Ubuntu
 -------------
-Should be easy using::
-
-    $ python setup.py install
-
-You should be able to just test the library using the following::
-
-    $ export PYTHONPATH=.
-    $ python
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> import odml
-
-See `github:python-odml#Installation <https://github.com/G-Node/python-odml#installation>`_
-for more descriptions including setup on Windows and Debian/Ubuntu.
 
 ------------------------------------------------------------------------
 
@@ -105,11 +88,11 @@ structure which consists of four different odML objects.
 	- parent: no parent
 	- children: section
 - 'section':
-	- corresponds to branches of the tree
+	- corresponds to (big) branches of the tree
 	- parent: section or document
 	- children: section and/or property
 - 'property':
-	- are possible at every node of the tree
+	- corresponds to (small) branches of the tree (groups values)
 	- parent: section
 	- children: at least one value
 - 'value':
