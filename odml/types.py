@@ -18,7 +18,7 @@ class DType(str, Enum):
     text = 'text'
     int = 'int'
     float = 'float'
-    URL = 'url'
+    url = 'url'
     datetime = 'datetime'
     date = 'date'
     time = 'time'
@@ -50,7 +50,6 @@ def valid_type(dtype):
     """
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
-
     if hasattr(DType, dtype):
         return True
     if dtype is None:
@@ -146,9 +145,9 @@ def str_set(value):
 def time_get(string):
     if not string: return None
     if type(string) is datetime.time:
-        return datetime.strptime(string.isoformat(), '%H:%M:%S').time()
+        return datetime.datetime.strptime(string.isoformat(), '%H:%M:%S').time()
     else:
-        return datetime.strptime(string, '%H:%M:%S').time()
+        return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
 
 def time_set(value):
