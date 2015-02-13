@@ -5,6 +5,9 @@ import odml
 import datetime
 
 class TestTypes(unittest.TestCase):
+    def setUp(self):
+        pass
+
     def test_date(self):
         date = datetime.date(2011, 12, 1)
         date_string = '2011-12-01'

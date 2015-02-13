@@ -467,7 +467,7 @@ def unmap_document(doc):
         for prop in sec.properties:
             del prop._active_mapping
     del doc._active_mapping
-            
+
 def get_object_from_mapped_equivalent(mobj):
     """
     This function tries to find out which object was responsible for
@@ -478,11 +478,11 @@ def get_object_from_mapped_equivalent(mobj):
     """
     if isinstance(mobj, proxy.BaseProxy):
         return mobj._proxy_obj
-        
+
     # TODO which other cases may we have?
     assert isinstance(mobj, proxy.NonexistantSection)
     # get the first property (TODO this may not always be the one who caused the section to be created)
     for mprop in mobj.properties:
         return get_object_from_mapped_equivalent(mprop)
-        
+
     return None
