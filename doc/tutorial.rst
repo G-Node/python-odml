@@ -99,9 +99,10 @@ Debian/Ubuntu
 Introduction to odml
 ====================
 
-Before we start, it is important to know the basic structure of an odML file. 
-Within an odML file metadata are grouped and stored in a hierachical tree 
-structure which consists of four different odML objects.
+Before we start, it is important to know the basic structure of an odML 
+file. Within an odML file metadata are grouped and stored in a 
+hierachical tree structure which consists of four different odML 
+objects.
 
 - 'document':
 	- corresponds to the root of the tree (groups everything together)
@@ -120,50 +121,58 @@ structure which consists of four different odML objects.
 	- parent: property
 	- children: no children
 			
-Each of these odML objects has a certain set of attributes where the user
-can describe the object and its contents. Which attribute belongs to which
-object and the meaning of each attribute are better explained in an example
-odML file (e.g., "intro-example.odml").
+Each of these odML objects has a certain set of attributes where the 
+user can describe the object and its contents. Which attribute belongs 
+to which object and what is each attribute used for, is better explained 
+using an example odML file (e.g., "intro-example.odml").
 
 A first look with the odML-Editor
 ---------------------------------
-The best way to get familiar how the different odML objects are linked to 
-a complete structure of an odML file, which attribute belongs to which object 
-and what each attribute means, is to open one of the example odML files 
-in the odML-Editor.
+The best way to get familiar with how the different odML objects are 
+linked to a complete tree structure of an odML file, which attribute 
+belongs to which object and what each attribute means, is to open one 
+of the example odML files in the odML-Editor.
 
-Open the odML-Editor and use the "open files" button in the menu bar (top
-of the editor window) to select and open the odML example file "intro-example.odml".
+The odML-Editor ('odml-gui') is based on and part of the python-odml 
+library. You can find it in the python-odml folder. If you are used to
+a file browser just open the directory and use double left klick on 
+odml-gui to open the odML-Editor. If you prefer using the command line 
+use the command 'python odml-gui' instead.
 
-You should then see that the editor window is subdivided into three parts.
+When you opened the odML-Editor use the "open files" button in the menu 
+bar (top of the editor window) to select and open the odML example file 
+"intro-example.odml".
+
+You should then see that the editor window is subdivided into three 
+parts:
 	
 - Sections window:
-	The part on the upper left displays a tree view starting from the top 
-	section level of the document.
+	The part on the upper left displays a tree view starting from the 
+	top section level of the document.
 	
 - Properties window:
-	If you select one section in the tree view, the part on the upper right 
-	will display a table containing the name, value and value attributes of 
-	each property (row) belonging to the selected section.
+	If you select one section in the tree view, the part on the upper 
+	right will display a table containing the name, value and value 
+	attributes of each property (row) belonging to the selected section.
 	
 - Attributes window:
-	The part on the bottom shows you the attributes of the current selected 
-	section or property or of the document. As header above the values of 
-	the attributes the path to the selected section or property is displayed 
-	in red starting from the document. 
+	The part on the bottom shows you the attributes of the current 
+	selected section, property or document. As header above the values 
+	of the attributes the path to the selected section or property is 
+	displayed in red starting from the document. 
 
-Below the attributes window the file path to the currently loaded odML file 
-is displayed ("file:///.../doc/example_odMLs/intro-example.odml").
+Below the attributes window the file path to the currently loaded odML 
+file is displayed ("file:///.../doc/example_odMLs/intro-example.odml").
 	
-A more detailed look at the different objects and their attributes of the 
-example odML file ("intro-example.odml") is given in subchapters for each
-odML object type (document, section, property, value).
+If you are up to a more detailed look at the different objects and their 
+attributes jump to the subchapters for each odML object (document, 
+section, property, value).
 
 A first look with Python
 ------------------------
 If you are already a little bit familiar with the concept behind an odML
-file and you can also have a first look at the example odML file "intro-example.odml"
-in Python.
+file and you can also have a first look at the same example odML file 
+("intro-example.odml") in Python.
 
 If you open a Python shell, first, import the odml package::
 
@@ -171,11 +180,13 @@ If you open a Python shell, first, import the odml package::
 	
 You can load an odML file with the following command lines::
 	
-	>>> odmlfile = odml.tools.xmlparser.load("/doc/example_odMLs/intro-example.odml")
+	>>> odmlfile = "/doc/example_odMLs/intro-example.odml"
+	>>> exodml1 = odml.tools.xmlparser.load(odmlfile)
 	
-How you can access the attributes of the different odML objects is described
-in more detail in the subchapters for each odML object type (document, 
-section, property, value).
+How you can access the different odML objects and their attributes and 
+how you can use the attributes is described in more detail in the 
+subchapters for each odML object type (document, section, property, 
+value).
 
 The document
 ------------
