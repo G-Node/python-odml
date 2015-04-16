@@ -245,9 +245,8 @@ Document attributes:
 Let's have a more detailed look on the document attributes.
 Please note that some attributes are obligatory, some are recommended 
 and others are optional. The optional attributes are important for the 
-advanced odML possibilies and can for now be ignored by odML beginners. 
-You can find an example of their usage in later chapters where the more 
-advanced possibilies of the Python-odML library are described.
+advanced odML possibilities and can for now be ignored by odML 
+beginners. You can find an example of their usage in later chapters.
 
 - author
 	- recommended document attribute
@@ -258,42 +257,69 @@ advanced possibilies of the Python-odML library are described.
 	- recommended document attribute
 	- The date this odML file was created (yyyy-mm-dd format). 
 	- In our example 'Lyuba Zehl' created the "intro-example.odml" file 
-	  at 1st of Januarary 2015 (2014-03-20).
+	  at 1st of Januarary 2015 (2015-01-01).
+- repository
+	- optional document attribute
+	- The URL to the repository of terminologies used in this odML file. 
+	- In our example 'Lyuba Zehl' used the repository of the odML 
+	  terminologies (see link above).  
 - version
 	- recommended document attribute
 	- The version of this odML file. 
 	- In our example 'Lyuba Zehl' created version 1.0 of the 
 	  "intro-example.odml" file.
-- repository
-	- optional document attribute
-	- The URL to the repository of terminologies used in this odML file. 
-	- In our example 'Lyuba Zehl' used the repository of the odML 
-	  terminologies (see link above).
+
 		
 The sections
 ------------
 Display attributes using the odML-Editor
 ****************************************
 To display the attribute of a section of the example odML file click on 
-the section 'Person' in the sections window (upper left) and a have a 
-look at the attributes window (bottom) of the odML-Editor.
+the section 'Person' in the Sections window (upper left) and a have a 
+look at the Attributes window (bottom) of the odML-Editor.
+
+	+--------------+---------------------+
+	| Attributes   | Document:Person     |
+	+--------------+---------------------+
+	| Attribute    | Value               |
+	+==============+=====================+
+	| definition   | Information about a |
+	|              | person. E.g. as     |
+	|              | Experimenter,       |
+	|              | Author, etc.        |
+	+--------------+---------------------+
+	| include      |                     |
+	+--------------+---------------------+
+	| link         |                     |
+	+--------------+---------------------+
+	| mapping      |                     |
+	+--------------+---------------------+
+	| name         | Person              |
+	+--------------+---------------------+
+	| reference    |                     |
+	+--------------+---------------------+
+	| repository   |                     |
+	+--------------+---------------------+
+	| type         | person              |
+	+--------------+---------------------+
+
 
 Display attributes using Python
 *******************************
 To print out the attributes of a section, e.g. section 'Setup' of the 
 example odML file, use the following commands::
 
-	>>> odmlfile.sections['Setup'].name
-	'Setup'
-	>>> odmlfile.sections['Setup'].definition
+	>>> odmlfile.sections['Person'].name
+	'Person'
+	>>> odmlfile.sections['Person'].definition
 	'Description of the used experimental setup.'
-	>>> odmlfile.sections['Setup'].type
+	>>> odmlfile.sections['Person'].type
 	'setup'
-	>>> odmlfile.sections['Setup'].reference
-	>>> odmlfile.sections['Setup'].link
-	>>> odmlfile.sections['Setup'].include
-	>>> odmlfile.sections['Setup'].repository
-	>>> odmlfile.sections['Setup'].mapping
+	>>> odmlfile.sections['Person'].reference
+	>>> odmlfile.sections['Person'].link
+	>>> odmlfile.sections['Person'].include
+	>>> odmlfile.sections['Person'].repository
+	>>> odmlfile.sections['Person'].mapping
 
 Section attributes:
 *******************
