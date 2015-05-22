@@ -25,3 +25,6 @@ pip-log.txt
 # idea / pycharm files
 .idea
 *.iml
+
+# doc/_build files
+doc/_build/
