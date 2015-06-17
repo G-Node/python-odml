@@ -66,6 +66,11 @@ To build the windows package from source, follow these instructions:
    The provided standalone package is created on linux using the `gen-win32-package.sh`
    script on the win32 branch. It requires wine though for extraction of msi-installers.
 
+Documentation
+-------------
+
+[Documentation](http://g-node.github.io/python-odml)
+
 Bugs & Questions
 ----------------
 
