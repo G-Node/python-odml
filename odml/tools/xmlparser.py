@@ -82,6 +82,7 @@ class XMLWriter:
 
             if isinstance(val, list):
                 for v in val:
+                    if v is None: continue
                     ele = XMLWriter.save_element(v)
                     cur.append(ele)
             else:
