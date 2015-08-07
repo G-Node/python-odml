@@ -50,5 +50,5 @@ property_2 = odml.Property(name = "User",
 top_section_1.append(property_1)
 top_section_1.append(property_2)
 
-save_to = "/home/zehl/projects/toolbox/python-odml/doc/example_odMLs/intro-example.odml"
+save_to = "/home/zehl/Projects/toolbox/python-odml/doc/example_odMLs/intro-example.odml"
 odml.tools.xmlparser.XMLWriter(document).write_file(save_to)
