@@ -159,7 +159,7 @@ beginners. You can find an example of their usage in later chapters.
 
 
 The document
-############
+~~~~~~~~~~~~
 Attributes:
 ***********
 Let's have a more detailed look on the document attributes:
@@ -200,7 +200,7 @@ use the following commands::
 		
 		
 The sections
-############
+~~~~~~~~~~~~
 Attributes:
 ***********
 The meaning of the section attributes are described in the following.
@@ -261,7 +261,7 @@ example odML file, use the following commands::
 	
 	
 The properties
-##############	
+~~~~~~~~~~~~~~
 Attributes:
 ***********
 The meaning of the property attributes are described in the following.
@@ -313,7 +313,7 @@ commands::
 
 		
 The values
-##########
+~~~~~~~~~~
 Value attributes:
 *****************
 The meaning of the value attributes are described in the following.
