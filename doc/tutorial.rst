@@ -161,9 +161,6 @@ beginners. You can find an example of their usage in later chapters.
 The document
 ************
 
-Attribute list:
-^^^^^^^^^^^^^^^
-
 Let's have a more detailed look on the document attributes:
 
 - author
@@ -186,9 +183,6 @@ Let's have a more detailed look on the document attributes:
 	- The version of this odML file. 
 	- In our example 'Lyuba Zehl' created version 1.0 of the 
 	  "intro-example.odml" file.
-	  
-Access attributes:
-^^^^^^^^^^^^^^^^^^
 
 To print out the attributes of the document of the example odML file,
 use the following commands::
@@ -205,9 +199,6 @@ use the following commands::
 		
 The sections
 ************
-
-Attribute list:
-^^^^^^^^^^^^^^^
 
 The meaning of the section attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
@@ -259,9 +250,6 @@ of the Python odML library are described.
 	  requested, should be transferred to, as long as the children not 
 	  themselves define a mapping.
 	- In our example the section 'Setup' has no mapping.
-	
-Access attributes:
-^^^^^^^^^^^^^^^^^^
 
 To print out the attributes of a section, e.g. section 'Setup' of the 
 example odML file, use the following commands::
@@ -281,9 +269,6 @@ example odML file, use the following commands::
 	
 The properties
 **************
-
-Attributes list:
-^^^^^^^^^^^^^^^^
 
 The meaning of the property attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
@@ -324,9 +309,6 @@ of the Python odML library are described.
 	  requested, should be transferred to, as long as the children not 
 	  themselves define a mapping.
 	- In our example the property 'Creator' has no mapping.
-	
-Access attributes:
-^^^^^^^^^^^^^^^^^^
 
 To print out the attributes of a property of a section, e.g. property
 'Creator' of the section 'Setup' of the example odML file, use the following 
@@ -345,9 +327,6 @@ commands::
 		
 The values
 **********
-
-Attribute list:
-^^^^^^^^^^^^^^^
 
 The meaning of the value attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
@@ -398,9 +377,6 @@ of the Python odML library are described.
 	  given value (algorithm$checksum format)
 	- In our example there was no checksum calculated for the value 
 	  'Arthur Dent'.
-	
-Access attributes:
-^^^^^^^^^^^^^^^^^^
 
 To print out the attributes of a value of a property of a section, e.g. 
 value of property 'Creator' of the section 'Setup' of the example odML 
