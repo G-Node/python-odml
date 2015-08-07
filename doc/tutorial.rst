@@ -160,8 +160,10 @@ beginners. You can find an example of their usage in later chapters.
 
 The document
 ~~~~~~~~~~~~
+
 Attributes:
 ***********
+
 Let's have a more detailed look on the document attributes:
 
 - author
@@ -184,8 +186,10 @@ Let's have a more detailed look on the document attributes:
 	- The version of this odML file. 
 	- In our example 'Lyuba Zehl' created version 1.0 of the 
 	  "intro-example.odml" file.
+	  
 Access attributes:
 ******************
+
 To print out the attributes of the document of the example odML file,
 use the following commands::
 
@@ -201,8 +205,10 @@ use the following commands::
 		
 The sections
 ~~~~~~~~~~~~
+
 Attributes:
 ***********
+
 The meaning of the section attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
 others are optional. The optional attributes are important for the advanced 
@@ -212,38 +218,51 @@ of the Python odML library are described.
 
 - name
 	- obligatory section attribute
-	- The name of the section. Should describe what kind of information can be found in this section.
+	- The name of the section. Should describe what kind of information can be 
+	  found in this section.
 	- In our example 'Arthur Dent' used the section name 'Setup'.
 - definition
 	- recommended section attribute
 	- The definition of the content within this section. 
-	- In our example 'Arthur Dent' defines the 'Setup' section with the following sentence 'Description of the used experimental setup.'.
+	- In our example 'Arthur Dent' defines the 'Setup' section with the 
+	  following sentence 'Description of the used experimental setup.'.
 - type
 	- recommended section attribute
-	- The category type of this section which allows to group related sections due to a superior semantic context.
-	- In our example 'Arthur Dent' chose 'setup' as superior categorization type of section 'Setup'.
+	- The category type of this section which allows to group related sections 
+	  due to a superior semantic context.
+	- In our example 'Arthur Dent' chose 'setup' as superior categorization 
+	  type of section 'Setup'.
 - reference
 	- optional section attribute
 	- The ? 
 	- In our example the section 'Setup' has no reference.
 - link
 	- optional section attribute
-	- The odML path within the same odML file (internal link) to another section from which this section should 'inherit' information.
-	- In our example the section 'Setup' is not linked from another section in the odML file.
+	- The odML path within the same odML file (internal link) to another 
+	  section from which this section should 'inherit' information.
+	- In our example the section 'Setup' is not linked from another section 
+	  in the odML file.
 - include
 	- optional section attribute
-	- The URL to an other odML file or a section within this external odML file from which this section should 'inherit' information.	
-	- In our example  the section 'Setup' is not included from another section of another odML file.
+	- The URL to an other odML file or a section within this external odML 
+	  file from which this section should 'inherit' information.	
+	- In our example  the section 'Setup' is not included from another section 
+	  of another odML file.
 - repository
 	- optional section attribute
 	- The URL to the repository of terminologies used in this odML file. 
 	- In our example the section 'Setup' is not linked to a terminology.
 - mapping
 	- optional section attribute
-	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
+	- The odML path within the same odML file (internal link) to another 
+	  section to which all children of this section, if a conversion is 
+	  requested, should be transferred to, as long as the children not 
+	  themselves define a mapping.
 	- In our example the section 'Setup' has no mapping.
+	
 Access attributes
 *****************
+
 To print out the attributes of a section, e.g. section 'Setup' of the 
 example odML file, use the following commands::
 
@@ -262,8 +281,10 @@ example odML file, use the following commands::
 	
 The properties
 ~~~~~~~~~~~~~~
+
 Attributes:
 ***********
+
 The meaning of the property attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
 others are optional. The optional attributes are important for the advanced 
@@ -273,30 +294,40 @@ of the Python odML library are described.
 
 - name
 	- obligatory property attribute
-	- The name of the property. Should describe what kind of values can be found in this property.
+	- The name of the property. Should describe what kind of values can be 
+	  found in this property.
 	- In our example 'Creator' is the property name.
 - value
 	- obligatory property attribute
-	- The value (containing the metadata) of this property. A property can have multiple values.		
+	- The value (containing the metadata) of this property. A property can 
+	  have multiple values.		
 	- In our example the person 'Arthur Dent' created the setup.
 - definition
 	- recommended property attribute
 	- The definition of this property.
-	- In our example 'Arthur Dent' defines the property 'Creator' as 'The person/s who built the setup.'.
+	- In our example 'Arthur Dent' defines the property 'Creator' as 
+	  'The person/s who built the setup.'.
 - dependency
 	- optional property attribute
 	- A name of a propery within the same section, which this property depends on.
 	- In our example the property 'Creator' has no dependency.
 - dependency value
 	- optional property attribute
-	- Restriction of the dependency of this property to the property specified in 'dependency' to the very value given in this field.		
-	- In our example the property 'Creator' has no dependency, and therefore no dependency value.
+	- Restriction of the dependency of this property to the property specified 
+	  in 'dependency' to the very value given in this field.		
+	- In our example the property 'Creator' has no dependency, and therefore 
+	  no dependency value.
 - mapping
 	- recommended property attribute
-	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
+	- The odML path within the same odML file (internal link) to another 
+	  section to which all children of this section, if a conversion is 
+	  requested, should be transferred to, as long as the children not 
+	  themselves define a mapping.
 	- In our example the property 'Creator' has no mapping.
+	
 Access attributes
 *****************
+
 To print out the attributes of a property of a section, e.g. property
 'Creator' of the section 'Setup' of the example odML file, use the following 
 commands::
@@ -314,8 +345,10 @@ commands::
 		
 The values
 ~~~~~~~~~~
+
 Value attributes:
 *****************
+
 The meaning of the value attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
 others are optional. The optional attributes are important for the advanced 
@@ -330,15 +363,19 @@ of the Python odML library are described.
 - dtype
 	- recommended value attribute
 	- The data-type of the given metadata value.		
-	- In our example 'Arthur Dent' sets the data-type of the given value for the property 'Creator' to 'person'.
+	- In our example 'Arthur Dent' sets the data-type of the given value for 
+	  the property 'Creator' to 'person'.
 - definition
 	- recommended value attribute
 	- The definition of the given metadata value.
-	- In our example 'Arthur Dent' defines the value as 'First and last name of a person.'.
+	- In our example 'Arthur Dent' defines the value as 'First and last name 
+	  of a person.'.
 - uncertainty
 	- recommended value attribute
-	- Specifies the uncertainty of the given metadata value, if it has an uncertainty.
-	- In our example the given value of the property 'Creator' has no uncertainty.
+	- Specifies the uncertainty of the given metadata value, if it has an 
+	  uncertainty.
+	- In our example the given value of the property 'Creator' has no 
+	  uncertainty.
 - unit
 	- recommended value attribute
 	- The unit of the given metadata value, if it has a unit.
@@ -357,10 +394,14 @@ of the Python odML library are described.
 	- In our example the value 'Arthur Dent' do not need an encoder.
 - checksum
 	- optional value attribute
-	- Checksum and name of the algorithm that calculated the checksum of a given value (algorithm$checksum format)
-	- In our example there was no checksum calculated for the value 'Arthur Dent'.
+	- Checksum and name of the algorithm that calculated the checksum of a 
+	  given value (algorithm$checksum format)
+	- In our example there was no checksum calculated for the value 
+	  'Arthur Dent'.
+	
 Access attributes
 *****************
+
 To print out the attributes of a value of a property of a section, e.g. 
 value of property 'Creator' of the section 'Setup' of the example odML 
 file, use the following commands::
@@ -381,6 +422,7 @@ file, use the following commands::
 Note that these commands are for properties containing one value. For
 accessing attributes of one value of a property with multiple values,
 see chapter ?.
+
 ------------------------------------------------------------------------
 
 
