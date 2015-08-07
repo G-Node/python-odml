@@ -159,10 +159,10 @@ beginners. You can find an example of their usage in later chapters.
 
 
 The document
-~~~~~~~~~~~~
+************
 
-Attributes:
-***********
+Attribute list:
+>>>>>>>>>>>>>>>
 
 Let's have a more detailed look on the document attributes:
 
@@ -188,7 +188,7 @@ Let's have a more detailed look on the document attributes:
 	  "intro-example.odml" file.
 	  
 Access attributes:
-******************
+>>>>>>>>>>>>>>>>>>
 
 To print out the attributes of the document of the example odML file,
 use the following commands::
@@ -204,10 +204,10 @@ use the following commands::
 		
 		
 The sections
-~~~~~~~~~~~~
+************
 
-Attributes:
-***********
+Attribute list:
+>>>>>>>>>>>>>>>
 
 The meaning of the section attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
@@ -260,8 +260,8 @@ of the Python odML library are described.
 	  themselves define a mapping.
 	- In our example the section 'Setup' has no mapping.
 	
-Access attributes
-*****************
+Access attributes:
+>>>>>>>>>>>>>>>>>>
 
 To print out the attributes of a section, e.g. section 'Setup' of the 
 example odML file, use the following commands::
@@ -280,10 +280,10 @@ example odML file, use the following commands::
 	
 	
 The properties
-~~~~~~~~~~~~~~
+**************
 
-Attributes:
-***********
+Attributes list:
+>>>>>>>>>>>>>>>>
 
 The meaning of the property attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
@@ -325,8 +325,8 @@ of the Python odML library are described.
 	  themselves define a mapping.
 	- In our example the property 'Creator' has no mapping.
 	
-Access attributes
-*****************
+Access attributes:
+>>>>>>>>>>>>>>>>>>
 
 To print out the attributes of a property of a section, e.g. property
 'Creator' of the section 'Setup' of the example odML file, use the following 
@@ -344,10 +344,10 @@ commands::
 
 		
 The values
-~~~~~~~~~~
+**********
 
-Value attributes:
-*****************
+Attribute list:
+>>>>>>>>>>>>>>>
 
 The meaning of the value attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
@@ -399,8 +399,8 @@ of the Python odML library are described.
 	- In our example there was no checksum calculated for the value 
 	  'Arthur Dent'.
 	
-Access attributes
-*****************
+Access attributes:
+>>>>>>>>>>>>>>>>>>
 
 To print out the attributes of a value of a property of a section, e.g. 
 value of property 'Creator' of the section 'Setup' of the example odML 
@@ -436,37 +436,9 @@ with their obligatory and recommended attributes using the odML-Editor and
 Python. Please have a look at the tutorial part describing the advanced 
 possibilities of the Python odML library for the usage of the optional attributes.
 
-Creating a document ...
------------------------
-... using the odML-Editor
-*************************
-You can create then a new document in three ways. In all cases a new window the "New Document Wizard" will open guiding you through the first steps of creating a new odML document.
+Create a document
+*****************
 
-- If you newly open the odML-Editor, you can also use the link "create a new document" in the "Welcome to the odML-Editor" window. 
-- If the odML-Editor is already open use the "create a new document" button in the menu bar (top of the editor window).
-- You can also select 'File/New' in the menu of the odML-Editor.
-
-If you click on the 'Forward' button at the right bottom corner, the wizard will display the document attributes with default entries.
-
-- Date: the current date (yyyy-mm-dd format)
-- Version: 1.0
-- Repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
-- Author: your user name
-
-You can easily change the attributes. For our intro-example.odml we chose the following entries.
-
-- Date: 2014-03-20
-- Version: 4.7
-- Repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
-- Author: Arthur Dent
-
-If you changed the entries to your needs, you get with the 'Forward' button to the next window, where you can chose, if you provided a link to a terminology repository as document attribute, a set of top section out of your specified terminology. You don't need to select a section. This is optional.
-
-If you click then 'Forward' and 'Apply' you will get back to the actual odML-Editor window, which we described in the 'Introduction to odml'.
-You can see your document attributes in the Attributes window at the bottom. You can also see, if you didn't select already some top section out of the terminology, that the sections and the properties window of the odML-Editor are empty.
-
-... using Python
-****************
 First open a Python shell and import the odml package::
 
 	>>> import odml
@@ -478,29 +450,10 @@ command::
 	                             date = "2014-03-20", 
 	                             version = 4.7)
 	
-Creating a section ...
-----------------------
-... using the odML-Editor
-*************************
-In the odML-Editor, you can create a new (unnamed) section in three ways. In all cases appears a new unnamed section in the Sections window.
 
-- Press the 'add a section to the current selected one' button in the menu bar.
-- Select 'Edit/Add/Add Section' in the menu.
-- Click the right mice button in the Sections window and then selecting 'Add Section/Empty Section'.
-
-To name this section you have again two options.
-
-- Click on the unnamed section in the sections windows, rename it and press 'Enter'.
-- First, select the section you want to rename in the Sections window, then select the attribute 'name' in the Attributes window, click on its 'Value' cell ("unnamed section"), rename it and press 'Enter'.
-- In our intro-example.odml we named the section "Setup".
-
-You can change the attributes of a in the Sections window selected section in the Attributes window.
-
-- Select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
-- In our intro_example.odml we changed the attribute 'type' to "setup" and the attribute 'definition' to "Description of the used experimental setup."
-
-... using Python
+Create a section
 ****************
+
 You can create a new odML section with its attributes using the following
 command::
 
@@ -508,49 +461,10 @@ command::
                                      definition = "Description of the used experimental setup.",
                                      type = "setup")
 
-Creating a property with a value ...
-------------------------------------
-Since a property must contain at least one value, it is best to show you
-how you create and combine these two odML objects directly.
 
-... using the odML-Editor
-*************************
-If you want to create a property in the odML-Editor, first select the section you want to add the property to.
-You can create then a new (unnamed) property in three ways. In all cases appears a new unnamed property in the Properties window.
+Create a property-value(s) pair:
+********************************
 
-- Press the 'add a property to the current section' button in the menu bar.
-- Select 'Edit/Add/Add Property' in the menu.
-- Click the right mice button in the Properties window and then selecting 'Add Property'.
-
-To name this property you have again two options.
-
-- Select the unnamed property in the Properties window, click on its 'Name' cell ("unnamed property"), rename it and press 'Enter'.
-- First, select the unnamed property in the Properties window, then select the attribute 'name' in the Attributes window, click on its 'Value' cell ("unnamed property"), rename it and press 'Enter'.
-- In our intro-example.odml we named the property "Creator".
-
-If you want to change the attributes of a property you have to do it in the Attributes window.
-
-- First, select the property you want to modify in the Properties window, then select the attribute you want to change, click on its 'Value' cell, change it and press 'Enter'.
-- In our intro_example.odml we changed the attribute 'definition' to "The person/s who built the setup."
-
-Each new property has directly one value attached to it, which needs to be defined.
-
-- To define a value click on the 'Value' cell of the property in the Properties window, enter a value and press 'Enter'.
-- In our intro_example.odml we entered the value "Arthur Dent" to the property "Creator".
-
-To change the attributes of this value stay in the Properties window.
-
-- Click in the row of the value on the cell of the corresponding attribute, change it and press 'Enter'.
-- In our intro_example.odml we changed the 'Definition' of the value "Arthur Dent" of the property "Creator" to "First and last name of a person." and the 'Type' of the the value "Arthur Dent" of the property "Creator" to "person"
-
-You can also add multiple values to a selected property. This is possible in three ways.
-
-- Press the 'add a value to the current selected property' button in the menu bar.
-- Select 'Edit/Add/Add Value' in the menu.
-- Click the right mice button on the property of the Properties window and then selecting 'Add Value'.
-
-... using Python
-****************
 First we create the value with its attributes using the following command::
 
 	>>> value_1 = odml.Value(data = "Arthur Dent",
@@ -581,20 +495,8 @@ property::
 		                           definition = "The person/s who use the setup.",
 		                           value = [value_2, value_3, value_4])
 
-Creating the odML tree
-----------------------
-... using the odML-Editor
-*************************
-In the odML-Editor the tree structure is directly created by the user by 
-creating top sections and subsections interactively. After creating all
-sections, properties and values you can validate your document by pressing
-the 'Validate the document and check for errors' button in the menu bar or
-by selecting 'Edit/Validate' in the menu. The odML-Editor will present you
-a list of error notifications in a new window, if you generated your document
-wrongly or if you still forgot some obligatory entries.
-
-... using Python
-****************
+Build the tree structure
+************************
 In Python you need to link the created document to the created sections, and
 the properties with their already included values to the corresponding sections.
 
