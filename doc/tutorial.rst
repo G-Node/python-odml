@@ -133,6 +133,7 @@ user can describe the object and its contents. Which attribute belongs
 to which object and what each attribute is used for, is better explained 
 using an example odML file (e.g., "intro-example.odml").
 
+
 A first look
 ------------
 If you want to get familiar with the concept behind an odML file and you can 
@@ -156,10 +157,11 @@ and others are optional. The optional attributes are important for the
 advanced odML possibilities and can for now be ignored by odML 
 beginners. You can find an example of their usage in later chapters.
 
+
 The document
-------------
-Possible attributes:
-********************
+############
+Attributes:
+***********
 Let's have a more detailed look on the document attributes:
 
 - author
@@ -182,7 +184,6 @@ Let's have a more detailed look on the document attributes:
 	- The version of this odML file. 
 	- In our example 'Lyuba Zehl' created version 1.0 of the 
 	  "intro-example.odml" file.
-	  
 Access attributes:
 ******************
 To print out the attributes of the document of the example odML file,
@@ -196,62 +197,12 @@ use the following commands::
 	1.0
 	>>> odmlfile.document.repository
 	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
-
-
+		
 		
 The sections
-------------
-Display attributes using the odML-Editor
-****************************************
-To display the attribute of a section of the example odML file click on 
-the section 'Person' in the Sections window (upper left) and a have a 
-look at the Attributes window (bottom) of the odML-Editor.
-
-	+--------------+---------------------+
-	| Attributes   | Document:Person     |
-	+--------------+---------------------+
-	| Attribute    | Value               |
-	+==============+=====================+
-	| definition   | Information about a |
-	|              | person. E.g. as     |
-	|              | Experimenter,       |
-	|              | Author, etc.        |
-	+--------------+---------------------+
-	| include      |                     |
-	+--------------+---------------------+
-	| link         |                     |
-	+--------------+---------------------+
-	| mapping      |                     |
-	+--------------+---------------------+
-	| name         | Person              |
-	+--------------+---------------------+
-	| reference    |                     |
-	+--------------+---------------------+
-	| repository   |                     |
-	+--------------+---------------------+
-	| type         | person              |
-	+--------------+---------------------+
-
-
-Display attributes using Python
-*******************************
-To print out the attributes of a section, e.g. section 'Setup' of the 
-example odML file, use the following commands::
-
-	>>> odmlfile.sections['Person'].name
-	'Person'
-	>>> odmlfile.sections['Person'].definition
-	'Description of the used experimental setup.'
-	>>> odmlfile.sections['Person'].type
-	'setup'
-	>>> odmlfile.sections['Person'].reference
-	>>> odmlfile.sections['Person'].link
-	>>> odmlfile.sections['Person'].include
-	>>> odmlfile.sections['Person'].repository
-	>>> odmlfile.sections['Person'].mapping
-
-Section attributes:
-*******************
+############
+Attributes:
+***********
 The meaning of the section attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
 others are optional. The optional attributes are important for the advanced 
@@ -291,35 +242,28 @@ of the Python odML library are described.
 	- optional section attribute
 	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
 	- In our example the section 'Setup' has no mapping.
-		
+Access attributes
+*****************
+To print out the attributes of a section, e.g. section 'Setup' of the 
+example odML file, use the following commands::
+
+	>>> odmlfile.sections['Person'].name
+	'Person'
+	>>> odmlfile.sections['Person'].definition
+	'Description of the used experimental setup.'
+	>>> odmlfile.sections['Person'].type
+	'setup'
+	>>> odmlfile.sections['Person'].reference
+	>>> odmlfile.sections['Person'].link
+	>>> odmlfile.sections['Person'].include
+	>>> odmlfile.sections['Person'].repository
+	>>> odmlfile.sections['Person'].mapping
+	
+	
 The properties
---------------
-Display attributes using the odML-Editor
-****************************************
-To display the attribute of a property of the example odML file click on 
-the section 'Setup' in the sections window (upper left) and then on the 
-the property 'Creator' in the properties window (upper right). The attributes
-of this property are then displayed in the attributes window (bottom) of 
-the odML-Editor.
-
-Display attributes using Python
-*******************************
-To print out the attributes of a property of a section, e.g. property
-'Creator' of the section 'Setup' of the example odML file, use the following 
-commands::
-
-	>>> odmlfile.sections['Setup'].properties['Creator'].name
-	'Creator'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value
-	<person Arthur Dent>
-	>>> odmlfile.sections['Setup'].properties['Creator'].definition
-	'The person who built the setup.'
-	>>> odmlfile.sections['Setup'].properties['Creator'].dependency
-	>>> odmlfile.sections['Setup'].properties['Creator'].dependency_value
-	>>> odmlfile.sections['Setup'].properties['Creator'].mapping	
-
-Property attributes:
-********************
+##############	
+Attributes:
+***********
 The meaning of the property attributes are described in the following.
 Please note that some attributes are obligatory, some are recommended and 
 others are optional. The optional attributes are important for the advanced 
@@ -351,39 +295,25 @@ of the Python odML library are described.
 	- recommended property attribute
 	- The odML path within the same odML file (internal link) to another section to which all children of this section, if a conversion is requested, should be transferred to, as long as the children not themselves define a mapping.
 	- In our example the property 'Creator' has no mapping.
+Access attributes
+*****************
+To print out the attributes of a property of a section, e.g. property
+'Creator' of the section 'Setup' of the example odML file, use the following 
+commands::
+
+	>>> odmlfile.sections['Setup'].properties['Creator'].name
+	'Creator'
+	>>> odmlfile.sections['Setup'].properties['Creator'].value
+	<person Arthur Dent>
+	>>> odmlfile.sections['Setup'].properties['Creator'].definition
+	'The person who built the setup.'
+	>>> odmlfile.sections['Setup'].properties['Creator'].dependency
+	>>> odmlfile.sections['Setup'].properties['Creator'].dependency_value
+	>>> odmlfile.sections['Setup'].properties['Creator'].mapping
+
 		
 The values
-----------
-Display attributes using the odML-Editor:
-*****************************************
-To display the attribute of a value of the example odML file click on 
-the section 'Setup' in the sections window (upper left). The attributes
-of the value of the property 'Creator' are displayed in the row of the 
-property in the properties window (upper right) of the odML-Editor.
-
-Display attributes using Python:
-********************************
-To print out the attributes of a value of a property of a section, e.g. 
-value of property 'Creator' of the section 'Setup' of the example odML 
-file, use the following commands::
-
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.data
-	u'Arthur Dent'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.dtype
-	'person'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.definition
-	'First and last name of a person.'	
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.uncertainty
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.unit
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.reference
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.filename
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.encoder
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.checksum
-	
-Note that these commands are for properties containing one value. For
-accessing attributes of one value of a property with multiple values,
-see chapter ?.
-	
+##########
 Value attributes:
 *****************
 The meaning of the value attributes are described in the following.
@@ -429,7 +359,28 @@ of the Python odML library are described.
 	- optional value attribute
 	- Checksum and name of the algorithm that calculated the checksum of a given value (algorithm$checksum format)
 	- In our example there was no checksum calculated for the value 'Arthur Dent'.
+Access attributes
+*****************
+To print out the attributes of a value of a property of a section, e.g. 
+value of property 'Creator' of the section 'Setup' of the example odML 
+file, use the following commands::
 
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.data
+	u'Arthur Dent'
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.dtype
+	'person'
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.definition
+	'First and last name of a person.'	
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.uncertainty
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.unit
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.reference
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.filename
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.encoder
+	>>> odmlfile.sections['Setup'].properties['Creator'].value.checksum
+	
+Note that these commands are for properties containing one value. For
+accessing attributes of one value of a property with multiple values,
+see chapter ?.
 ------------------------------------------------------------------------
 
 
