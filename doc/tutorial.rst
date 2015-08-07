@@ -161,7 +161,33 @@ beginners. You can find an example of their usage in later chapters.
 The document
 ************
 
-Let's have a more detailed look on the document attributes:
+If you loaded an odML file, have a look the document object either by 
+explicitely calling the document object,...:
+
+	>>> odmlEX1.document
+	<Doc 4.7 by Arthur Dent (1 sections)>
+	
+... or using a short cut, by just typing:
+
+	>>> odmlEX1
+	<Doc 4.7 by Arthur Dent (1 sections)>
+	
+Both commands will print out the same short summary about the document object 
+of the loaded odML file. Here an explanation for the print out:
+
+- '<...>' indicates that you are looking at an object
+- 'Doc' tells you that you are looking at an odML document object
+- '4.7' is the version of the odML file
+- 'by Arthur Dent' states the author of the odML file
+- '(1 sections)' tells you that this odML Document has exactly 1 section 
+  directly appended
+  
+Note that the print out of the document tells you nothing about the depth of
+the complete tree structure, because it is not displaying the children of its 
+directly appended sections.
+	
+The document is defined by its attributes, which occur only partially in its 
+print out. In total a document object has the following attributes:
 
 - author
 	- recommended document attribute
@@ -184,15 +210,15 @@ Let's have a more detailed look on the document attributes:
 	- In our example 'Lyuba Zehl' created version 1.0 of the 
 	  "intro-example.odml" file.
 
-To print out the attributes of the document of the example odML file,
-use the following commands::
+To explicitely print out or access the attributes of the document of the 
+example odML file, use the following commands::
 
 	>>> odmlfile.document.author
-	'Lyuba Zehl'
+	'Arthur Dent'
 	>>> odmlfile.document.date
 	'2015-01-01'
 	>>> odmlfile.document.version
-	1.0
+	4.7 
 	>>> odmlfile.document.repository
 	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
 		
