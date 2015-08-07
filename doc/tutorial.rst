@@ -58,9 +58,8 @@ have never learned a programming language.
 
 To cover the different demands of all users, we first provide a slow 
 introduction to odML that allows programming beginners to learn the 
-basic concepts behind odML. We will first examine a simple odML file 
-using the interactive odML-Editor. In a next step, we will demonstrate 
-how to generate the same odML file via the Python-odML library. In 
+basic concepts behind odML. In a next step, we will demonstrate 
+how to generate an odML file via the Python-odML library. In 
 later chapters we present more advanced possibilies of the Python-odML
 library (e.g. how to search for a certain metadata within an odML file). 
 
@@ -109,7 +108,7 @@ Introduction to odml
 
 Before we start, it is important to know the basic structure of an odML 
 file. Within an odML file metadata are grouped and stored in a 
-hierachical tree structure which consists of four different odML 
+hierarchical tree structure which consists of four different odML 
 objects.
 
 - 'document':
@@ -131,59 +130,14 @@ objects.
 			
 Each of these odML objects has a certain set of attributes where the 
 user can describe the object and its contents. Which attribute belongs 
-to which object and what is each attribute used for, is better explained 
+to which object and what each attribute is used for, is better explained 
 using an example odML file (e.g., "intro-example.odml").
 
-A first look with the odML-Editor
----------------------------------
-The best way to get familiar with how the different odML objects are 
-linked to a complete tree structure of an odML file, which attribute 
-belongs to which object and what each attribute means, is to open one 
-of the example odML files in the odML-Editor.
-
-The odML-Editor ('odml-gui') is based on and part of the python-odml 
-library. You can find it in the python-odml folder. If you are used to
-a file browser just open the directory and use double left klick on 
-odml-gui to open the odML-Editor. If you prefer using the command line 
-use the command 'python odml-gui' instead.
-
-When you opened the odML-Editor use the "open files" button in the menu 
-bar (top of the editor window) to select and open the odML example file 
-"intro-example.odml".
-
-You should then see that the editor window is subdivided into three 
-parts:
-	
-- Sections window:
-	The part on the upper left displays a tree view starting from the 
-	top section level of the document.
-	
-- Properties window:
-	If you select one section in the tree view, the part on the upper 
-	right will display a table containing the name, value and value 
-	attributes of each property (row) belonging to the selected section.
-	
-- Attributes window:
-	The part on the bottom shows you the attributes of the current 
-	selected section, property or document. As header above the values 
-	of the attributes the path to the selected section or property is 
-	displayed in red starting from the document. 
-
-Below the odML Attributes window the file path to the currently loaded 
-odML file is displayed ("file:///.../doc/example_odMLs/intro-example.
-odml"). Directly above the attribute table of the odML Attributes 
-window is in red the odML tree path to the latest selected object 
-displayed. 
-	
-If you are up to a more detailed look at the different objects and their 
-attributes jump to the subchapters for each odML object (document, 
-section, property, value).
-
-A first look with Python
-------------------------
-If you are already a little bit familiar with the concept behind an odML
-file and you can also have a first look at the same example odML file 
-("intro-example.odml") in Python.
+A first look
+------------
+If you want to get familiar with the concept behind an odML file and you can 
+have a first look at the same example odML file  ("intro-example.odml") in 
+Python.
 
 If you open a Python shell, first, import the odml package::
 
@@ -192,61 +146,21 @@ If you open a Python shell, first, import the odml package::
 You can load an odML file with the following command lines::
 	
 	>>> odmlfile = "/doc/example_odMLs/intro-example.odml"
-	>>> exodml1 = odml.tools.xmlparser.load(odmlfile)
+	>>> odmlEX1 = odml.tools.xmlparser.load(odmlfile)
 	
 How you can access the different odML objects and their attributes and 
-how you can use the attributes is described in more detail in the 
+how you can use the attributes is described in more detail in the following
 subchapters for each odML object type (document, section, property, 
-value).
-
-The document
-------------
-Display attributes using the odML-Editor:
-*****************************************
-If you just opened the example odML file you should see the following 
-table in the odML Attributes window:
-
-	+--------------+--------------+
-	| Attributes   | Document     |
-	+--------------+--------------+
-	| Attribute    | Value        |
-	+==============+==============+
-	| author       | Lyuba Zehl   |
-	+--------------+--------------+
-	| date         | 2015-01-01   |
-	+--------------+--------------+
-	| repository   | 'http://...' |
-	+--------------+--------------+
-	| version      | 1.0          |
-	+--------------+--------------+
-	
-If you already selected, e.g. the section 'Person' in the odML Sections 
-window, you have to select the 'Document' of the tree path above the 
-attribute table to display again the attributes of the document. The 
-tree path will remain the path to the previous selected odML object 
-(e.g. Document:Person).
-	
-Display attributes using Python:
-********************************
-To print out the attributes of the document of the example odML file,
-use the following commands::
-
-	>>> odmlfile.document.author
-	'Lyuba Zehl'
-	>>> odmlfile.document.date
-	'2015-01-01'
-	>>> odmlfile.document.version
-	1.0
-	>>> odmlfile.document.repository
-	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
-
-Document attributes:
-********************
-Let's have a more detailed look on the document attributes.
-Please note that some attributes are obligatory, some are recommended 
+value). Please note that some attributes are obligatory, some are recommended 
 and others are optional. The optional attributes are important for the 
 advanced odML possibilities and can for now be ignored by odML 
 beginners. You can find an example of their usage in later chapters.
+
+The document
+------------
+Possible attributes:
+********************
+Let's have a more detailed look on the document attributes:
 
 - author
 	- recommended document attribute
@@ -268,6 +182,21 @@ beginners. You can find an example of their usage in later chapters.
 	- The version of this odML file. 
 	- In our example 'Lyuba Zehl' created version 1.0 of the 
 	  "intro-example.odml" file.
+	  
+Access attributes:
+******************
+To print out the attributes of the document of the example odML file,
+use the following commands::
+
+	>>> odmlfile.document.author
+	'Lyuba Zehl'
+	>>> odmlfile.document.date
+	'2015-01-01'
+	>>> odmlfile.document.version
+	1.0
+	>>> odmlfile.document.repository
+	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+
 
 		
 The sections
