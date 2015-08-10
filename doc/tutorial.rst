@@ -10,7 +10,7 @@ odML Tutorial
 :License:
 	Creative Commons Attribution-ShareAlike 4.0 International 
 	License http://creativecommons.org/licenses/by-sa/4.0/
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 odML (open metadata Markup Language)
 ====================================
@@ -45,7 +45,7 @@ Key features of odML
 	- Machine- and human-readable
 	- Interactive odML-Editor
 	- Python-odML library
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 
 Structure of this tutorial
@@ -78,7 +78,7 @@ make use of these terminologies as templates for generating your own
 odML. 
 
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 
 Download and Installation
@@ -100,7 +100,7 @@ Mac OSX
 -------
 
 
-------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 
 Introduction to odml
@@ -131,16 +131,17 @@ objects.
 Each of these odML objects has a certain set of attributes where the 
 user can describe the object and its contents. Which attribute belongs 
 to which object and what each attribute is used for, is better explained 
-using an example odML file (e.g., "intro-example.odml").
+in an example odML file (e.g., "intro-example.odml").
 
 
 A first look
 ------------
-If you want to get familiar with the concept behind an odML file and you can 
-have a first look at the same example odML file  ("intro-example.odml") in 
-Python.
+If you want to get familiar with the concept behind an odML and how to handle 
+odML files in Python, you can have a first look at the example odML file 
+("doc/example_odMLs/intro-example.odml") provided in the Python-odML library.
 
-If you open a Python shell, first, import the odml package::
+If you open a Python shell within the Python-odML library directory, first, 
+import the odml package::
 
 	>>> import odml
 	
@@ -149,31 +150,38 @@ You can load an odML file with the following command lines::
 	>>> odmlfile = "/doc/example_odMLs/intro-example.odml"
 	>>> odmlEX1 = odml.tools.xmlparser.load(odmlfile)
 	
-How you can access the different odML objects and their attributes and 
-how you can use the attributes is described in more detail in the following
-subchapters for each odML object type (document, section, property, 
-value). Please note that some attributes are obligatory, some are recommended 
-and others are optional. The optional attributes are important for the 
-advanced odML possibilities and can for now be ignored by odML 
-beginners. You can find an example of their usage in later chapters.
+If you open a Python shell outside of the Python-odML library directory, please
+adapt your Python-Path and the path to the "intro-example.odml" file 
+accordingly.
+	
+How you can access the different odML objects and their attributes once you 
+loaded an odML file and how you can make use of the attributes is described in 
+more detail in the following subchapters for each odML object type (document, 
+section, property, value). Please note that some attributes are obligatory, 
+some are recommended and others are optional. The optional attributes are 
+important for the advanced odML possibilities and can for now be ignored by 
+odML beginners. You can find an example of their usage in later chapters.
 
 
 The document
 ************
 
-If you loaded an odML file, have a look the document object either by 
-explicitely calling the document object,...:
+If you loaded an odML file, you can access the document object either by 
+explicitely calling the document object,...::
 
 	>>> odmlEX1.document
 	<Doc 4.7 by Arthur Dent (1 sections)>
 	
-... or using a short cut, by just typing:
+... or using a short cut, by just typing::
 
 	>>> odmlEX1
 	<Doc 4.7 by Arthur Dent (1 sections)>
 	
-Both commands will print out the same short summary about the document object 
-of the loaded odML file. Here an explanation for the print out:
+As you can see, both commands will print out the same short summary about the 
+document object of the loaded odML file. In the following we will only use the 
+short cut notation. 
+
+The print out gives you already the follwing information about the odML file:
 
 - '<...>' indicates that you are looking at an object
 - 'Doc' tells you that you are looking at an odML document object
@@ -184,10 +192,10 @@ of the loaded odML file. Here an explanation for the print out:
   
 Note that the print out of the document tells you nothing about the depth of
 the complete tree structure, because it is not displaying the children of its 
-directly appended sections.
+directly appended sections. 
 	
-The document is defined by its attributes, which occur only partially in its 
-print out. In total a document object has the following attributes:
+The document is defined by its attributes, which occur only partially in the 
+document print out. In total a document object has the following attributes:
 
 - author
 	- recommended document attribute
@@ -213,25 +221,61 @@ print out. In total a document object has the following attributes:
 To explicitely print out or access the attributes of the document of the 
 example odML file, use the following commands::
 
-	>>> odmlfile.document.author
+	>>> odmlEX1.document.author
 	'Arthur Dent'
 	>>> odmlfile.document.date
 	'2015-01-01'
-	>>> odmlfile.document.version
+	>>> odmlEX1.document.version
 	4.7 
-	>>> odmlfile.document.repository
+	>>> odmlEX1.document.repository
 	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
-		
-		
+	
+Besides the document attributes, the document object also provides multiple 
+functions which can be used to screen through the content of the odML file.
+One of them returns a list of all section objects which are directly attached
+to the document object::
+
+	>>> odmlEX1.sections
+	[<Section Setup[setup] (0)>]
+	
+The print out of the section object is explained in the next subchapter.
+	
+	
 The sections
 ************
 
-The meaning of the section attributes are described in the following.
-Please note that some attributes are obligatory, some are recommended and 
-others are optional. The optional attributes are important for the advanced 
-odML possibilies and can for now be ignored by odML beginners. You can find 
-an example of their usage in later chapters where the more advanced possibilies 
-of the Python odML library are described.
+Similar to the different ways how you access and print out a document object, 
+there are several ways to access and print out section objects. You can either 
+call them by name or by index using, by either explicitely calling the 
+function that returns the list of section objects or using again a short cut 
+notation. Here all the different ways to access the same sectio object of the 
+odML example file::
+
+	>>> odmlEX1.sections['Setup']
+	<Section Setup[setup] (0)>
+	>>> odmlEX1.sections[0]
+	<Section Setup[setup] (0)>
+	>>> odmlEX1['Setup']
+	<Section Setup[setup] (0)>
+	>>> odmlEX1[0]
+	<Section Setup[setup] (0)>
+	
+In the following we will only use the again the short cut notation and calling 
+section objects explicetely by there name.
+
+The print out is similar to the document print out and gives you already the 
+follwing information about the odML section object:
+
+- '<...>' indicates that you are looking at an object
+- 'Section' tells you that you are looking at an odML section object
+- 'Setup' tells you that the section you are looking at was named 'Setup'
+- '[...]' highlights the classification type of the section (here 'setup')
+- '(0)' states that this section has zero subsections attached to it
+
+Note that the print out of the section tells you nothing about the number of
+properties, and, except the classification type of the section, nothing about 
+the remaining section attributes. The section object can be defined by the 
+following attributes:
 
 - name
 	- obligatory section attribute
@@ -253,44 +297,35 @@ of the Python odML library are described.
 	- optional section attribute
 	- The ? 
 	- In our example the section 'Setup' has no reference.
-- link
-	- optional section attribute
-	- The odML path within the same odML file (internal link) to another 
-	  section from which this section should 'inherit' information.
-	- In our example the section 'Setup' is not linked from another section 
-	  in the odML file.
-- include
-	- optional section attribute
-	- The URL to an other odML file or a section within this external odML 
-	  file from which this section should 'inherit' information.	
-	- In our example  the section 'Setup' is not included from another section 
-	  of another odML file.
 - repository
 	- optional section attribute
 	- The URL to the repository of terminologies used in this odML file. 
 	- In our example the section 'Setup' is not linked to a terminology.
-- mapping
-	- optional section attribute
-	- The odML path within the same odML file (internal link) to another 
-	  section to which all children of this section, if a conversion is 
-	  requested, should be transferred to, as long as the children not 
-	  themselves define a mapping.
-	- In our example the section 'Setup' has no mapping.
 
-To print out the attributes of a section, e.g. section 'Setup' of the 
+
+To explicitely print out or access the attributes of the section of the 
 example odML file, use the following commands::
 
-	>>> odmlfile.sections['Person'].name
-	'Person'
-	>>> odmlfile.sections['Person'].definition
+	>>> odmlEX1['Setup'].name
+	'Setup'
+	>>> odmlEX1['Setup'].definition
 	'Description of the used experimental setup.'
-	>>> odmlfile.sections['Person'].type
+	>>> odmlEX1['Setup'].type
 	'setup'
-	>>> odmlfile.sections['Person'].reference
-	>>> odmlfile.sections['Person'].link
-	>>> odmlfile.sections['Person'].include
-	>>> odmlfile.sections['Person'].repository
-	>>> odmlfile.sections['Person'].mapping
+	>>> odmlEX1['Setup'].reference
+	>>> odmlEX1['Setup'].repository
+
+Besides the section attributes, the section object also provides multiple 
+functions. Two of them return either a list of all sub section objects, or a 
+list of all properties objects, which are directly attached to this section 
+object::
+
+	>>> odmlEX1['Setup'].sections
+	[]
+	>>> odmlEX1['Setup'].properties
+	[<Property Creator>, <Property User>]
+	
+The print out of the property objects is explained in the next subchapter.
 	
 	
 The properties
