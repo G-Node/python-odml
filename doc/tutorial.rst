@@ -71,8 +71,8 @@ case scenarios.
 The set of example odML files, which we use within this tutorial are 
 part of the documentation package (see doc/example_odMLs/). 
 
-A summary of available odML Terminologies can be found here:
-'<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>'. 
+A summary of available odML Terminologies can be found `here
+<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_. 
 In the later chapters of this tutorial we will show you how one can 
 make use of these terminologies as templates for generating your own 
 odML. 
@@ -85,7 +85,7 @@ Download and Installation
 =========================
 
 The Python-odML library (including the odML-Editor) is available
-on GitHub: '<https://github.com/G-Node/python-odml>'
+on `GitHub <https://github.com/G-Node/python-odml>`_:
 
 Dependencies
 ------------
@@ -111,22 +111,22 @@ file. Within an odML file metadata are grouped and stored in a
 hierarchical tree structure which consists of four different odML 
 objects.
 
-- 'document':
+- **Document**:
 	- corresponds to the root of the tree (groups everything together)
-	- parent: no parent
-	- children: section
-- 'section':
+	- *parent*: no parent
+	- *children*: Section
+- **Section**:
 	- corresponds to (big) branches of the tree
-	- parent: section or document
-	- children: section and/or property
-- 'property':
+	- *parent*: Section or Document
+	- *children*: Section and/or Property
+- **Property**:
 	- corresponds to (small) branches of the tree (groups values)
-	- parent: section
-	- children: at least one value
-- 'value':
+	- *parent*: Section
+	- *children*: at least one Value
+- **Value**:
 	- corresponds to leaf of the tree (contains metadata)
-	- parent: property
-	- children: no children
+	- *parent*: Property
+	- *children*: no children
 			
 Each of these odML objects has a certain set of attributes where the 
 user can describe the object and its contents. Which attribute belongs 
@@ -163,11 +163,11 @@ important for the advanced odML possibilities and can for now be ignored by
 odML beginners. You can find an example of their usage in later chapters.
 
 
-The document
+The Document
 ************
 
-If you loaded an odML file, you can access the document object either by 
-explicitely calling the document object,...::
+If you loaded an odML file, you can access the Document either by 
+explicitely calling the object,...::
 
 	>>> odmlEX1.document
 	<Doc 4.7 by Arthur Dent (1 sections)>
@@ -177,63 +177,62 @@ explicitely calling the document object,...::
 	>>> odmlEX1
 	<Doc 4.7 by Arthur Dent (1 sections)>
 	
-As you can see, both commands will print out the same short summary about the 
-document object of the loaded odML file. In the following we will only use the 
+As you can see, both commands will printout the same short summary about the 
+Document of the loaded odML file. In the following we will only use the 
 short cut notation. 
 
 The print out gives you already the follwing information about the odML file:
 
 - '<...>' indicates that you are looking at an object
-- 'Doc' tells you that you are looking at an odML document object
+- 'Doc' tells you that you are looking at an odML Document
 - '4.7' is the version of the odML file
 - 'by Arthur Dent' states the author of the odML file
-- '(1 sections)' tells you that this odML Document has exactly 1 section 
+- '(1 sections)' tells you that this odML Document has exactly 1 Section
   directly appended
   
-Note that the print out of the document tells you nothing about the depth of
+Note that the print out of the Document tells you nothing about the depth of
 the complete tree structure, because it is not displaying the children of its 
-directly appended sections. 
+directly appended Sections. 
 	
-The document is defined by its attributes, which occur only partially in the 
-document print out. In total a document object has the following attributes:
+The Document is defined by its attributes, which occur only partially in the 
+Document printout. In total a Document has the following attributes:
 
-- author
-	- recommended document attribute
+- **author**
+	- recommended Document attribute
 	- The author of this odML file. 
-	- In our example 'Lyuba Zehl' is the author of the 
+	- In our example 'Arthur Dent' is the author of the 
 	  "intro-example.odml" file.
-- date
-	- recommended document attribute
+- **date**
+	- recommended Document attribute
 	- The date this odML file was created (yyyy-mm-dd format). 
-	- In our example 'Lyuba Zehl' created the "intro-example.odml" file 
+	- In our example 'Arthur Dent' created the "intro-example.odml" file 
 	  at 1st of Januarary 2015 (2015-01-01).
-- repository
-	- optional document attribute
+- **repository**
+	- optional Document attribute
 	- The URL to the repository of terminologies used in this odML file. 
-	- In our example 'Lyuba Zehl' used the repository of the odML 
+	- In our example 'Arthur Dent' used the repository of the odML 
 	  terminologies (see link above).  
-- version
-	- recommended document attribute
+- **version**
+	- recommended Document attribute
 	- The version of this odML file. 
-	- In our example 'Lyuba Zehl' created version 1.0 of the 
+	- In our example 'Arthur Dent' created version 1.0 of the 
 	  "intro-example.odml" file.
 
-To explicitely print out or access the attributes of the document of the 
+To explicitely print out or access the attributes of the Document of the 
 example odML file, use the following commands::
 
-	>>> odmlEX1.document.author
+	>>> odmlEX1.author
 	'Arthur Dent'
-	>>> odmlfile.document.date
+	>>> odmlfile.date
 	'2015-01-01'
-	>>> odmlEX1.document.version
+	>>> odmlEX1.version
 	4.7 
-	>>> odmlEX1.document.repository
+	>>> odmlEX1.repository
 	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
 	
-Besides the document attributes, the document object also provides multiple 
-functions which can be used to screen through the content of the odML file.
-One of them returns a list of all section objects which are directly attached
-to the document object::
+Besides the Document attributes, there are also multiple functions which can be 
+used to screen through the content of the odML file. One of them returns a list 
+of all section objects which are directly attached to the Document::
 
 	>>> odmlEX1.sections
 	[<Section Setup[setup] (0)>]
@@ -241,15 +240,14 @@ to the document object::
 The print out of the section object is explained in the next subchapter.
 	
 	
-The sections
+The Sections
 ************
 
-Similar to the different ways how you access and print out a document object, 
-there are several ways to access and print out section objects. You can either 
-call them by name or by index using, by either explicitely calling the 
-function that returns the list of section objects or using again a short cut 
-notation. Here all the different ways to access the same sectio object of the 
-odML example file::
+Similar to the different ways how you access and print out a Document, there 
+are several ways to access and print out Sections. You can either call them by 
+name or by index using, by either explicitely calling the function that returns 
+the list of Sections or using again a short cut notation. Here are all the 
+different ways to access the same Section of the odML example file::
 
 	>>> odmlEX1.sections['Setup']
 	<Section Setup[setup] (0)>
@@ -261,50 +259,50 @@ odML example file::
 	<Section Setup[setup] (0)>
 	
 In the following we will only use the again the short cut notation and calling 
-section objects explicetely by there name.
+Sections explicitely by their name.
 
-The print out is similar to the document print out and gives you already the 
-follwing information about the odML section object:
+The printout is similar to the Document printout and gives you already the 
+follwing information about the odML Section:
 
-- '<...>' indicates that you are looking at an object
-- 'Section' tells you that you are looking at an odML section object
-- 'Setup' tells you that the section you are looking at was named 'Setup'
-- '[...]' highlights the classification type of the section (here 'setup')
-- '(0)' states that this section has zero subsections attached to it
+- '<...>' indicates again that you are looking at an object
+- 'Section' tells you that you are looking at an odML Section
+- 'Setup' tells you that the Section you are looking at was named 'Setup'
+- '[...]' highlights the classification type of the Section (here 'setup')
+- '(0)' states that this Section has zero sub-Sections attached to it
 
-Note that the print out of the section tells you nothing about the number of
-properties, and, except the classification type of the section, nothing about 
-the remaining section attributes. The section object can be defined by the 
-following attributes:
+Note that the printout of the Section tells you nothing about the number of
+Properties, and, except the classification type of the Section, nothing about 
+the remaining Section attributes. 
 
-- name
+The Section can be defined by the following 5 attributes:
+
+- **name**
 	- obligatory section attribute
 	- The name of the section. Should describe what kind of information can be 
 	  found in this section.
 	- In our example 'Arthur Dent' used the section name 'Setup'.
-- definition
+- **definition**
 	- recommended section attribute
 	- The definition of the content within this section. 
 	- In our example 'Arthur Dent' defines the 'Setup' section with the 
 	  following sentence 'Description of the used experimental setup.'.
-- type
+- **type**
 	- recommended section attribute
 	- The category type of this section which allows to group related sections 
 	  due to a superior semantic context.
 	- In our example 'Arthur Dent' chose 'setup' as superior categorization 
 	  type of section 'Setup'.
-- reference
+- **reference**
 	- optional section attribute
 	- The ? 
 	- In our example the section 'Setup' has no reference.
-- repository
+- **repository**
 	- optional section attribute
 	- The URL to the repository of terminologies used in this odML file. 
 	- In our example the section 'Setup' is not linked to a terminology.
 
-
-To explicitely print out or access the attributes of the section of the 
-example odML file, use the following commands::
+To explicitely printout or access the attributes of the Section of the example 
+odML file, use the following commands::
 
 	>>> odmlEX1['Setup'].name
 	'Setup'
@@ -316,55 +314,71 @@ example odML file, use the following commands::
 	>>> odmlEX1['Setup'].repository
 
 Besides the section attributes, the section object also provides multiple 
-functions. Two of them return either a list of all sub section objects, or a 
-list of all properties objects, which are directly attached to this section 
-object::
+functions. Two of them return either a list of all sub-Sections, or a list of 
+all Properties, which are directly attached to this Section::
 
 	>>> odmlEX1['Setup'].sections
 	[]
 	>>> odmlEX1['Setup'].properties
 	[<Property Creator>, <Property User>]
 	
-The print out of the property objects is explained in the next subchapter.
+The printout of the Properties is explained in the next subchapter.
 	
 	
-The properties
+The Properties
 **************
 
-The meaning of the property attributes are described in the following.
-Please note that some attributes are obligatory, some are recommended and 
-others are optional. The optional attributes are important for the advanced 
-odML possibilies and can for now be ignored by odML beginners. You can find 
-an example of their usage in later chapters where the more advanced possibilies 
-of the Python odML library are described.
+Properties need to called explicitely via the properties function of a Section.
+You can then either call a Property by name or by index. Here are all the 
+different ways to access the same Property of the Section 'Setup' of the odML 
+example file::
 
-- name
+	>>> odmlEX1['Setup'].properties['Creator']
+	<Property Creator>
+	>>> odmlEX1['Setup'].properties[0]
+	<Property Creator>
+
+In the following we will only call Properties explicitely by their name.
+
+The Property printout is reduced and only gives you information about the 
+following:
+
+- '<...>' indicates that you are looking at an object
+- 'Property' tells you that you are looking at an odML Property
+- 'Creator' tells you that the Property you are looking at was named 'Creator'
+
+Note that the printout of the Property tells you nothing about the number of
+Values, and nothing about the remaining Property attributes. 
+
+The Property can be defined by the following 6 attributes:
+
+- **name**
 	- obligatory property attribute
 	- The name of the property. Should describe what kind of values can be 
 	  found in this property.
 	- In our example 'Creator' is the property name.
-- value
+- **value**
 	- obligatory property attribute
 	- The value (containing the metadata) of this property. A property can 
 	  have multiple values.		
 	- In our example the person 'Arthur Dent' created the setup.
-- definition
+- **definition**
 	- recommended property attribute
 	- The definition of this property.
 	- In our example 'Arthur Dent' defines the property 'Creator' as 
 	  'The person/s who built the setup.'.
-- dependency
+- **dependency**
 	- optional property attribute
 	- A name of a propery within the same section, which this property depends on.
 	- In our example the property 'Creator' has no dependency.
-- dependency value
+- **dependency value**
 	- optional property attribute
 	- Restriction of the dependency of this property to the property specified 
 	  in 'dependency' to the very value given in this field.		
 	- In our example the property 'Creator' has no dependency, and therefore 
 	  no dependency value.
-- mapping
-	- recommended property attribute
+- **mapping**
+	- optional property attribute
 	- The odML path within the same odML file (internal link) to another 
 	  section to which all children of this section, if a conversion is 
 	  requested, should be transferred to, as long as the children not 
@@ -375,26 +389,54 @@ To print out the attributes of a property of a section, e.g. property
 'Creator' of the section 'Setup' of the example odML file, use the following 
 commands::
 
-	>>> odmlfile.sections['Setup'].properties['Creator'].name
+	>>> odmlEX1['Setup'].properties['Creator'].name
 	'Creator'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value
+	>>> odmlEX1['Setup'].properties['Creator'].value
 	<person Arthur Dent>
-	>>> odmlfile.sections['Setup'].properties['Creator'].definition
+	>>> odmlEX1['Setup'].properties['Creator'].definition
 	'The person who built the setup.'
-	>>> odmlfile.sections['Setup'].properties['Creator'].dependency
-	>>> odmlfile.sections['Setup'].properties['Creator'].dependency_value
-	>>> odmlfile.sections['Setup'].properties['Creator'].mapping
+	>>> odmlEX1['Setup'].properties['Creator'].dependency
+	>>> odmlEX1['Setup'].properties['Creator'].dependency_value
+	>>> odmlEX1['Setup'].properties['Creator'].mapping
+
+Besides the Property attributes, the Property also provides multiple functions. 
+Two of them return either a list of odML Values or a single Value, attached to 
+this Property::
+
+	>>> odmlEX1['Setup'].sections
+	[]
+	>>> odmlEX1['Setup'].properties
+	[<Property Creator>, <Property User>]
+	
+The printout of the Properties is explained in the next subchapter.
 
 		
-The values
+The Values
 **********
 
-The meaning of the value attributes are described in the following.
-Please note that some attributes are obligatory, some are recommended and 
-others are optional. The optional attributes are important for the advanced 
-odML possibilies and can for now be ignored by odML beginners. You can find 
-an example of their usage in later chapters where the more advanced possibilies 
-of the Python odML library are described.
+Values can be accessed and printed out in two different ways. The first 
+You can then either call a Property by name or by index. Here are all the 
+different ways to access the same Property of the Section 'Setup' of the odML 
+example file::
+
+	>>> odmlEX1['Setup'].properties['Creator']
+	<Property Creator>
+	>>> odmlEX1['Setup'].properties[0]
+	<Property Creator>
+
+In the following we will only call Properties explicitely by their name.
+
+The Property printout is reduced and only gives you information about the 
+following:
+
+- '<...>' indicates that you are looking at an object
+- 'Property' tells you that you are looking at an odML Property
+- 'Creator' tells you that the Property you are looking at was named 'Creator'
+
+Note that the printout of the Property tells you nothing about the number of
+Values, and nothing about the remaining Property attributes. 
+
+The Property can be defined by the following 6 attributes:
 
 - data
 	- obligatory value attribute
