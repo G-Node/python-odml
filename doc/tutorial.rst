@@ -10,8 +10,9 @@ odML Tutorial
 	0.1
 :License:
 	Creative Commons Attribution-ShareAlike 4.0 International 
-	License http://creativecommons.org/licenses/by-sa/4.0/
+	License `http://creativecommons.org/licenses/by-sa/4.0/`
 -------------------------------------------------------------------------------
+
 
 odML (open metadata Markup Language)
 ====================================
@@ -165,7 +166,7 @@ odML beginners. You can find an example of their usage in later chapters.
 
 
 The Document
-************
+------------
 
 If you loaded an odML file, you can access the Document either by 
 explicitely calling the object,...::
@@ -242,7 +243,7 @@ The print out of the section object is explained in the next subchapter.
 	
 	
 The Sections
-************
+------------
 
 Similar to the different ways how you access and print out a Document, there 
 are several ways to access and print out Sections. You can either call them by 
@@ -327,7 +328,7 @@ The printout of the Properties is explained in the next subchapter.
 	
 	
 The Properties
-**************
+--------------
 
 Properties need to called explicitely via the properties function of a Section.
 You can then either call a Property by name or by index. Here are all the 
@@ -413,7 +414,7 @@ The printout of the Properties is explained in the next subchapter.
 
 		
 The Values
-**********
+----------
 
 Values can be accessed and printed out in two different ways. The first 
 You can then either call a Property by name or by index. Here are all the 
@@ -517,7 +518,7 @@ Python. Please have a look at the tutorial part describing the advanced
 possibilities of the Python odML library for the usage of the optional attributes.
 
 Create a document
-*****************
+-----------------
 
 First open a Python shell and import the odml package::
 
@@ -532,7 +533,7 @@ command::
 	
 
 Create a section
-****************
+----------------
 
 You can create a new odML section with its attributes using the following
 command::
@@ -543,7 +544,7 @@ command::
 
 
 Create a property-value(s) pair:
-********************************
+--------------------------------
 
 First we create the value with its attributes using the following command::
 
