@@ -10,7 +10,7 @@ odML Tutorial
 	0.1
 :License:
 	Creative Commons Attribution-ShareAlike 4.0 International 
-	License `http://creativecommons.org/licenses/by-sa/4.0/`
+	License `http://creativecommons.org/licenses/by-sa/4.0/`_
 -------------------------------------------------------------------------------
 
 
@@ -21,7 +21,7 @@ odML (open metadata Markup Language) is an XML based file format,
 proposed by [Grewe et al. (2011) Front Neuroinform 5:16], in order 
 to provide metadata in an organized, human- and machine-readable way. 
 In this tutorial we will illustrate the conceptual design of odML and 
-show handson how you can generate your own odML metadata collection. 
+show hands-on how you can generate your own odML metadata collection. 
 In addition, we demonstrate the advantages of using odML to screen 
 large numbers of data sets according to selection criteria relevant for 
 subsequent analyses. Well organized metadata management is a key 
@@ -29,18 +29,19 @@ component to guarantee reproducibility of experiments and to track
 provenance of performed analyses.
 
 What are metadata and why are they needed?
-	Metadata are data about data, and describing the conditions under 
-	which the actual raw-data of an experiment were acquired. A simple 
-	example in an electrophysiological context is the sampling-rate 
-	which was used to record the raw-data. This may sound ridiculous for 
-	everyone doing such an experiment, but what if the data have to be 
-	shared in a collaboration and a complete description about how and 
-	under which conditions the data were recorded is required?
+	Metadata are data about data. They describe the conditions under which the 
+	actual raw-data of an experimental study were acquired. The organization of 
+	such metadata and their accessibility may sound like a trivial task, and 
+	most laboratories developed their home-made solutions to keep track of 
+	their metadata. Most of these solutions, however, break down if data and 
+	metadata need to be shared within a collaboration, because implicit 
+	knowledge of what is important and how it is organized is often 
+	underestimated.
 
-	While maintaining their relation to the actual raw-data, odML can 
-	help to collect all metadata which are usually distributed over 
-	several files and formats, and to store them unitetly which 
-	facilitates sharing data and metadata.
+	While maintaining the relation to the actual raw-data, odML can help to 
+	collect all metadata which are usually distributed over several files and 
+	formats, and to store them unitetly which facilitates sharing data and 
+	metadata.
 
 Key features of odML
 	- open, XML based language, to collect, store and share metadata
@@ -55,29 +56,24 @@ Structure of this tutorial
 
 The scientific background of the possible user community of odML varies 
 enormously (e.g. physics, informatics, mathematics, biology, medicine,
-psychology). Some users will be trained programmers, others probably 
-have never learned a programming language. 
+psychology). Some users will be trained programmers, others probably have never 
+learned a programming language. 
 
 To cover the different demands of all users, we first provide a slow 
-introduction to odML that allows programming beginners to learn the 
-basic concepts behind odML. In a next step, we will demonstrate 
-how to generate an odML file via the Python-odML library. In 
-later chapters we present more advanced possibilies of the Python-odML
-library (e.g. how to search for a certain metadata within an odML file). 
+introduction to odML that allows programming beginners to learn the basic 
+concepts. In a next step, we will demonstrate how to generate an odML file via 
+the Python-odML library. In later chapters we present more advanced possibilies 
+of the Python-odML library (e.g. how to search for certain metadata or how to
+integrate existing terminologies or templates). 
 
-Although the structure of an odML is depending on the needs of each 
-individual user, we would like to provide at the end of this tutorial a 
-few examples on how you can construct an odML assuming a set of use 
-case scenarios.
+Although the structure of an odML is depending on the needs of each individual 
+user, we would like to provide at the end of this tutorial a few guidelines.
 
 The set of example odML files, which we use within this tutorial are 
 part of the documentation package (see doc/example_odMLs/). 
 
-A summary of available odML Terminologies can be found `here
+A summary of available odML terminologies and templates can be found `here
 <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_. 
-In the later chapters of this tutorial we will show you how one can 
-make use of these terminologies as templates for generating your own 
-odML. 
 
 
 -------------------------------------------------------------------------------
@@ -86,17 +82,31 @@ odML.
 Download and Installation
 =========================
 
-The Python-odML library (including the odML-Editor) is available
-on `GitHub <https://github.com/G-Node/python-odml>`_:
+The Python-odML library (including the odML-Editor) is available on 
+`GitHub <https://github.com/G-Node/python-odml>`_.
+
 
 Dependencies
 ------------
+There are a few dependecies which need to be fulfilled in order to use the 
+Python-odML library:
+- **Cairo**
+- **Pango**
+- **Atk**
+- **GObject**
+- **Gio**
+- **lxml**
+- **gzip**
+- **Enum34**
 
 Windows
 -------
 
 Linux (Debian/Ubuntu)
 ---------------------
+To install the Python-odML library please clone the repository from GitHub to 
+your computer. Enter the directory (.../python-odml/) and run:
+	$ sudo python setup.py install --prefix /usr
 
 Mac OSX
 -------
