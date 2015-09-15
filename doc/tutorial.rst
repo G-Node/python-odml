@@ -9,8 +9,8 @@ odML Tutorial
 :Release:
 	0.1
 :License:
-	Creative Commons Attribution-ShareAlike 4.0 International 
-	License `http://creativecommons.org/licenses/by-sa/4.0/`_
+	`Creative Commons Attribution-ShareAlike 4.0 International 
+	License http://creativecommons.org/licenses/by-sa/4.0/`_
 -------------------------------------------------------------------------------
 
 
@@ -73,7 +73,7 @@ The set of example odML files, which we use within this tutorial are
 part of the documentation package (see doc/example_odMLs/). 
 
 A summary of available odML terminologies and templates can be found `here
-<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_. 
+<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`. 
 
 
 -------------------------------------------------------------------------------
