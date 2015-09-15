@@ -73,7 +73,7 @@ The set of example odML files, which we use within this tutorial are
 part of the documentation package (see doc/example_odMLs/). 
 
 A summary of available odML terminologies and templates can be found `here
-<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`. 
+<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_. 
 
 
 -------------------------------------------------------------------------------
