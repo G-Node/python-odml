@@ -26,16 +26,16 @@ document.append(top_section_1)
 
 # Define values and their attributes for properties of top_section_1
 value_1 = odml.Value(data = "Arthur Dent",
-                     dtype = "person",
+                     dtype = odml.DType.person,
                      definition = "First and last name of a person.")
 value_2 = odml.Value(data = "Zaphod Beeblebrox",
-                     dtype = "person",
+                     dtype = odml.DType.person,
                      definition = "First and last name of a person.")
 value_3 = odml.Value(data = "Trillian Astra",
-                     dtype = "person",
+                     dtype = odml.DType.person,
                      definition = "First and last name of a person.")
 value_4 = odml.Value(data = "Ford Prefect",
-                     dtype = "person",
+                     dtype =  odml.DType.person,
                      definition = "First and last name of a person.")
 
 # Define properties and their attributes and values of top_section_1
@@ -50,5 +50,5 @@ property_2 = odml.Property(name = "User",
 top_section_1.append(property_1)
 top_section_1.append(property_2)
 
-save_to = "/home/zehl/projects/toolbox/python-odml/doc/example_odMLs/intro-example.odml"
+save_to = "/home/zehl/Projects/odML_teststuff/example_odmls/intro-example.odml"
 odml.tools.xmlparser.XMLWriter(document).write_file(save_to)
