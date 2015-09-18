@@ -50,13 +50,13 @@ parent.append(odml.Section(name="Ford Prefect",
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(name="NameCrewMembers",
                             value=[odml.Value(data="Arthur Philip Dent",
-                                              dtype=odml.DType.string),
+                                              dtype=odml.DType.person),
                                    odml.Value(data="Zaphod Beeblebrox",
-                                              dtype=odml.DType.string),
+                                              dtype=odml.DType.person),
                                    odml.Value(data="Tricia Marie McMillan",
-                                              dtype=odml.DType.string),
+                                              dtype=odml.DType.person),
                                    odml.Value(data="Ford Prefect",
-                                              dtype=odml.DType.string)],
+                                              dtype=odml.DType.person)],
                             definition="List of crew members names"))
 
 parent.append(odml.Property(name="NoCrewMembers",

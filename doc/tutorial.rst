@@ -102,11 +102,14 @@ Python-odML library:
 Windows
 -------
 
+
 Linux (Debian/Ubuntu)
 ---------------------
 To install the Python-odML library please clone the repository from GitHub to 
-your computer. Enter the directory (.../python-odml/) and run:
+your computer. Enter the directory (.../python-odml/) and run::v
+
 	$ sudo python setup.py install --prefix /usr
+
 
 Mac OSX
 -------
@@ -160,7 +163,7 @@ import the odml package::
 You can load an odML file with the following command lines::
 	
 	>>> odmlfile = "/doc/example_odMLs/intro-example.odml"
-	>>> odmlEX1 = odml.tools.xmlparser.load(odmlfile)
+	>>> odmlEX = odml.tools.xmlparser.load(odmlfile)
 	
 If you open a Python shell outside of the Python-odML library directory, please
 adapt your Python-Path and the path to the "intro-example.odml" file 
@@ -181,13 +184,13 @@ The Document
 If you loaded an odML file, you can access the Document either by 
 explicitely calling the object,...::
 
-	>>> odmlEX1.document
-	<Doc 4.7 by Arthur Dent (1 sections)>
+	>>> odmlEX.document
+	<Doc 42 by Douglas Adams (2 sections)>
 	
 ... or using a short cut, by just typing::
 
-	>>> odmlEX1
-	<Doc 4.7 by Arthur Dent (1 sections)>
+	>>> odmlEX
+	<Doc 42 by Douglas Adams (2 sections)>
 	
 As you can see, both commands will printout the same short summary about the 
 Document of the loaded odML file. In the following we will only use the 
@@ -197,10 +200,10 @@ The print out gives you already the follwing information about the odML file:
 
 - '<...>' indicates that you are looking at an object
 - 'Doc' tells you that you are looking at an odML Document
-- '4.7' is the version of the odML file
-- 'by Arthur Dent' states the author of the odML file
-- '(1 sections)' tells you that this odML Document has exactly 1 Section
-  directly appended
+- '42' is the version of the odML file
+- 'by Douglas Adams' states the author of the odML file
+- '(2 sections)' tells you that this odML Document has 2 Section directly 
+  appended
   
 Note that the print out of the Document tells you nothing about the depth of
 the complete tree structure, because it is not displaying the children of its 
@@ -212,42 +215,32 @@ Document printout. In total a Document has the following attributes:
 - **author**
 	- recommended Document attribute
 	- The author of this odML file. 
-	- In our example 'Arthur Dent' is the author of the 
-	  "intro-example.odml" file.
 - **date**
 	- recommended Document attribute
 	- The date this odML file was created (yyyy-mm-dd format). 
-	- In our example 'Arthur Dent' created the "intro-example.odml" file 
-	  at 1st of Januarary 2015 (2015-01-01).
 - **repository**
 	- optional Document attribute
 	- The URL to the repository of terminologies used in this odML file. 
-	- In our example 'Arthur Dent' used the repository of the odML 
-	  terminologies (see link above).  
 - **version**
 	- recommended Document attribute
 	- The version of this odML file. 
-	- In our example 'Arthur Dent' created version 1.0 of the 
-	  "intro-example.odml" file.
 
-To explicitely print out or access the attributes of the Document of the 
-example odML file, use the following commands::
+To find out what attributes were defined for our example Document, we print out 
+or access the attributes using the following commands::
 
-	>>> odmlEX1.author
-	'Arthur Dent'
+	>>> odmlEX.author
+	'Douglas Adams'
 	>>> odmlfile.date
-	'2015-01-01'
-	>>> odmlEX1.version
-	4.7 
-	>>> odmlEX1.repository
-	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
-	
-Besides the Document attributes, there are also multiple functions which can be 
-used to screen through the content of the odML file. One of them returns a list 
-of all section objects which are directly attached to the Document::
+	'1979-10-12'
+	>>> odmlEX.version
+	42 
+	>>> odmlEX.repository
 
-	>>> odmlEX1.sections
-	[<Section Setup[setup] (0)>]
+To list all two Sections which are directly attached to our example odML file 
+use the following command::
+
+	>>> odmlEX.sections
+	[<Section TheCrew[crew] (4)>, <Section TheStarship[crew] (1)>]
 	
 The print out of the section object is explained in the next subchapter.
 	
@@ -259,16 +252,16 @@ Similar to the different ways how you access and print out a Document, there
 are several ways to access and print out Sections. You can either call them by 
 name or by index using, by either explicitely calling the function that returns 
 the list of Sections or using again a short cut notation. Here are all the 
-different ways to access the same Section of the odML example file::
+different ways to access a Section of the odML example file::
 
-	>>> odmlEX1.sections['Setup']
-	<Section Setup[setup] (0)>
-	>>> odmlEX1.sections[0]
-	<Section Setup[setup] (0)>
-	>>> odmlEX1['Setup']
-	<Section Setup[setup] (0)>
-	>>> odmlEX1[0]
-	<Section Setup[setup] (0)>
+	>>> odmlEX.sections['TheCrew']
+	<Section TheCrew[crew] (4)>
+	>>> odmlEX.sections[0]
+	<Section TheCrew[crew] (4)>
+	>>> odmlEX['TheCrew']
+	<Section TheCrew[crew] (4)>
+	>>> odmlEX[0]
+	<Section TheCrew[crew] (4)>
 	
 In the following we will only use the again the short cut notation and calling 
 Sections explicitely by their name.
@@ -276,15 +269,16 @@ Sections explicitely by their name.
 The printout is similar to the Document printout and gives you already the 
 follwing information about the odML Section:
 
-- '<...>' indicates again that you are looking at an object
+- '<...>' indicates that you are looking at an object
 - 'Section' tells you that you are looking at an odML Section
-- 'Setup' tells you that the Section you are looking at was named 'Setup'
-- '[...]' highlights the classification type of the Section (here 'setup')
-- '(0)' states that this Section has zero sub-Sections attached to it
+- 'TheCrew' tells you that the Section was named 'TheCrew'
+- '[...]' highlights the classification type of the Section (here 'crew')
+- '(4)' states that this Section has four sub-Sections directly attached to it
 
 Note that the printout of the Section tells you nothing about the number of
 Properties, and, except the classification type of the Section, nothing about 
-the remaining Section attributes. 
+the remaining Section attributes or again the depth of a possible sub-section
+tree below the directly attached ones.
 
 The Section can be defined by the following 5 attributes:
 
@@ -292,63 +286,72 @@ The Section can be defined by the following 5 attributes:
 	- obligatory section attribute
 	- The name of the section. Should describe what kind of information can be 
 	  found in this section.
-	- In our example 'Arthur Dent' used the section name 'Setup'.
 - **definition**
 	- recommended section attribute
 	- The definition of the content within this section. 
-	- In our example 'Arthur Dent' defines the 'Setup' section with the 
-	  following sentence 'Description of the used experimental setup.'.
 - **type**
 	- recommended section attribute
 	- The category type of this section which allows to group related sections 
 	  due to a superior semantic context.
-	- In our example 'Arthur Dent' chose 'setup' as superior categorization 
-	  type of section 'Setup'.
 - **reference**
 	- optional section attribute
 	- The ? 
-	- In our example the section 'Setup' has no reference.
 - **repository**
 	- optional section attribute
 	- The URL to the repository of terminologies used in this odML file. 
-	- In our example the section 'Setup' is not linked to a terminology.
 
-To explicitely printout or access the attributes of the Section of the example 
-odML file, use the following commands::
+To find out what attributes were defined for the Section "TheCrew", we print 
+out or access the attributes using the following commands::
 
-	>>> odmlEX1['Setup'].name
-	'Setup'
-	>>> odmlEX1['Setup'].definition
-	'Description of the used experimental setup.'
-	>>> odmlEX1['Setup'].type
-	'setup'
-	>>> odmlEX1['Setup'].reference
-	>>> odmlEX1['Setup'].repository
+	>>> odmlEX['TheCrew'].name
+	'TheCrew'
+	>>> odmlEX['TheCrew'].definition
+	'Information on the crew'
+	>>> odmlEX['TheCrew'].type
+	'crew'
+	>>> odmlEX['TheCrew'].reference
+	>>> odmlEX['TheCrew'].repository
 
-Besides the section attributes, the section object also provides multiple 
-functions. Two of them return either a list of all sub-Sections, or a list of 
-all Properties, which are directly attached to this Section::
+To list all two Sections which are directly attached to the Section 'TheCrew'  
+use again the following command::
 
-	>>> odmlEX1['Setup'].sections
-	[]
-	>>> odmlEX1['Setup'].properties
-	[<Property Creator>, <Property User>]
+	>>> odmlEX['TheCrew'].sections
+	[<Section Arthur Philip Dent[crew/person] (0)>, 
+	 <Section Zaphod Beeblebrox[crew/person] (0)>, 
+	 <Section Tricia Marie McMillan[crew/person] (0)>, 
+	 <Section Ford Prefect[crew/person] (0)>]
+	 
+For accessing sub-sections you can use again all the following commands::
+
+	>>> odmlEX['TheCrew'].sections['Ford Prefect']
+	<Section Ford Prefect[crew/person] (0)>
+	>>> odmlEX['TheCrew'].sections[3]
+	<Section Ford Prefect[crew/person] (0)>
+	>>> odmlEX['TheCrew']['Ford Prefect']
+	<Section Ford Prefect[crew/person] (0)>
+	>>> odmlEX['TheCrew'][3]
+	<Section Ford Prefect[crew/person] (0)>
+	 
+To list all two Properties which are directly attached to the Section 
+'TheCrew', you always have to use the following command::
+
+	>>> odmlEX['TheCrew'].properties
+	[<Property NameCrewMembers>, <Property NoCrewMembers>]
 	
-The printout of the Properties is explained in the next subchapter.
+The printout of the Properties is explained in the next chapter.
 	
 	
 The Properties
 --------------
 
 Properties need to called explicitely via the properties function of a Section.
-You can then either call a Property by name or by index. Here are all the 
-different ways to access the same Property of the Section 'Setup' of the odML 
-example file::
+You can then, either call a Property by name or by index. To access a Property 
+of the Section 'TheCrew' in our example you can use the following commands::
 
-	>>> odmlEX1['Setup'].properties['Creator']
-	<Property Creator>
-	>>> odmlEX1['Setup'].properties[0]
-	<Property Creator>
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers']
+	<Property NoCrewMembers>
+	>>> odmlEX['Setup'].properties[1]
+	<Property NoCrewMembers>
 
 In the following we will only call Properties explicitely by their name.
 
@@ -357,7 +360,7 @@ following:
 
 - '<...>' indicates that you are looking at an object
 - 'Property' tells you that you are looking at an odML Property
-- 'Creator' tells you that the Property you are looking at was named 'Creator'
+- 'NoCrewMembers' tells you that the Property was named 'NoCrewMembers'
 
 Note that the printout of the Property tells you nothing about the number of
 Values, and nothing about the remaining Property attributes. 
@@ -368,17 +371,13 @@ The Property can be defined by the following 6 attributes:
 	- obligatory property attribute
 	- The name of the property. Should describe what kind of values can be 
 	  found in this property.
-	- In our example 'Creator' is the property name.
 - **value**
 	- obligatory property attribute
 	- The value (containing the metadata) of this property. A property can 
 	  have multiple values.		
-	- In our example the person 'Arthur Dent' created the setup.
 - **definition**
 	- recommended property attribute
 	- The definition of this property.
-	- In our example 'Arthur Dent' defines the property 'Creator' as 
-	  'The person/s who built the setup.'.
 - **dependency**
 	- optional property attribute
 	- A name of a propery within the same section, which this property depends on.
@@ -387,132 +386,144 @@ The Property can be defined by the following 6 attributes:
 	- optional property attribute
 	- Restriction of the dependency of this property to the property specified 
 	  in 'dependency' to the very value given in this field.		
-	- In our example the property 'Creator' has no dependency, and therefore 
-	  no dependency value.
 - **mapping**
 	- optional property attribute
 	- The odML path within the same odML file (internal link) to another 
 	  section to which all children of this section, if a conversion is 
 	  requested, should be transferred to, as long as the children not 
 	  themselves define a mapping.
-	- In our example the property 'Creator' has no mapping.
 
-To print out the attributes of a property of a section, e.g. property
-'Creator' of the section 'Setup' of the example odML file, use the following 
-commands::
+To find out what attributes were defined for the Property "NoCrewMembers", we 
+print out or access the attributes using the following commands::
 
-	>>> odmlEX1['Setup'].properties['Creator'].name
-	'Creator'
-	>>> odmlEX1['Setup'].properties['Creator'].value
-	<person Arthur Dent>
-	>>> odmlEX1['Setup'].properties['Creator'].definition
-	'The person who built the setup.'
-	>>> odmlEX1['Setup'].properties['Creator'].dependency
-	>>> odmlEX1['Setup'].properties['Creator'].dependency_value
-	>>> odmlEX1['Setup'].properties['Creator'].mapping
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].name
+	'NoCrewMembers'
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].definition
+	'Number of crew members'
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].dependency
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].dependency_value
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].mapping
 
-Besides the Property attributes, the Property also provides multiple functions. 
-Two of them return either a list of odML Values or a single Value, attached to 
-this Property::
+To list all Values which are directly attached to the Property 'NoCrewMembers', 
+you can use two different commands. The first command returns directly a value 
+object, if only one value object was attached to the property, while it will 
+return a list of value objects if more than one value object was attached::
 
-	>>> odmlEX1['Setup'].sections
-	[]
-	>>> odmlEX1['Setup'].properties
-	[<Property Creator>, <Property User>]
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value
+	<int 4>
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].value
+    [<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
+     <string Tricia Marie McMillan>, <string Ford Prefect>]
+     
+The second command will always return a list independent of the number of value
+objects attached::
+
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].values
+	[<int 4>]
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values
+    [<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
+     <string Tricia Marie McMillan>, <string Ford Prefect>]
 	
-The printout of the Properties is explained in the next subchapter.
+The printout of the Value is explained in the next chapter.
 
 		
 The Values
 ----------
 
-Values can be accessed and printed out in two different ways. The first 
-You can then either call a Property by name or by index. Here are all the 
-different ways to access the same Property of the Section 'Setup' of the odML 
-example file::
+Depending on how many Values are attached to a Property, it can be accessed 
+and printed out in two different ways. If you know, only one value is attached,
+you can use the following command::
 
-	>>> odmlEX1['Setup'].properties['Creator']
-	<Property Creator>
-	>>> odmlEX1['Setup'].properties[0]
-	<Property Creator>
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value
+	<int 4>
+	
+If you know, more then one Value is attached, and you would like for e.g., 
+access the first one you can use::
 
-In the following we will only call Properties explicitely by their name.
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3]
+	<string Ford Prefect>
 
-The Property printout is reduced and only gives you information about the 
+The Value printout is reduced and only gives you information about the 
 following:
 
 - '<...>' indicates that you are looking at an object
-- 'Property' tells you that you are looking at an odML Property
-- 'Creator' tells you that the Property you are looking at was named 'Creator'
+- 'int' tells you that the value has the odml data type (dtype) 'int'
+- '4' is the actual data stored within the value object
 
-Note that the printout of the Property tells you nothing about the number of
-Values, and nothing about the remaining Property attributes. 
-
-The Property can be defined by the following 6 attributes:
+The Value can be defined by the following 6 attributes:
 
 - data
 	- obligatory value attribute
 	- The actual metadata value.
-	- In our example 'Arthur Dent' is the 'Creator'.
 - dtype
 	- recommended value attribute
 	- The data-type of the given metadata value.		
-	- In our example 'Arthur Dent' sets the data-type of the given value for 
-	  the property 'Creator' to 'person'.
 - definition
 	- recommended value attribute
 	- The definition of the given metadata value.
-	- In our example 'Arthur Dent' defines the value as 'First and last name 
-	  of a person.'.
 - uncertainty
 	- recommended value attribute
 	- Specifies the uncertainty of the given metadata value, if it has an 
 	  uncertainty.
-	- In our example the given value of the property 'Creator' has no 
-	  uncertainty.
 - unit
 	- recommended value attribute
 	- The unit of the given metadata value, if it has a unit.
-	- In our example the given value of the property 'Creator' has no unit.
 - reference
 	- optional value attribute
 	- The ?
-	- In our example the value 'Arthur Dent' has no reference.
 - filename
 	- optional value attribute
 	- The ?
-	- In our example the value 'Arthur Dent' has no connection to a file.
 - encoder
 	- optional value attribute
 	- Name of the applied encoder used to encode a binary value into ascii.
-	- In our example the value 'Arthur Dent' do not need an encoder.
 - checksum
 	- optional value attribute
 	- Checksum and name of the algorithm that calculated the checksum of a 
 	  given value (algorithm$checksum format)
-	- In our example there was no checksum calculated for the value 
-	  'Arthur Dent'.
 
 To print out the attributes of a value of a property of a section, e.g. 
 value of property 'Creator' of the section 'Setup' of the example odML 
 file, use the following commands::
 
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.data
-	u'Arthur Dent'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.dtype
-	'person'
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.definition
-	'First and last name of a person.'	
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.uncertainty
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.unit
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.reference
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.filename
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.encoder
-	>>> odmlfile.sections['Setup'].properties['Creator'].value.checksum
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.data
+	4
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.dtype
+	'int'
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.definition
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.uncertainty
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.unit
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.reference
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.filename
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.encoder
+	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.checksum
 	
 Note that these commands are for properties containing one value. For
-accessing attributes of one value of a property with multiple values,
-see chapter ?.
+accessing attributes of a value of a property with multiple values use::
+
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].data
+	'Ford Prefect'
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].dtype
+	'person'
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].definition
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].uncertainty
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].unit
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].reference
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].filename
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].encoder
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].checksum
+	
+If you would like to get the data back from a Property with multiple values,
+iterate over the values list::
+
+    >>> all_data = []
+	>>> for val in doc['TheCrew'].properties['NameCrewMembers'].values:
+	...     all_data.append(val.data)
+	... 
+	>>> all_data
+		['Arthur Philip Dent', 'Zaphod Beeblebrox', 
+		 'Tricia Marie McMillan', 'Ford Prefect']
+	
 
 ------------------------------------------------------------------------
 
@@ -520,12 +531,14 @@ see chapter ?.
 Generating an odML-file
 =======================
 
-After getting familiar with the different odml objects and their attributes
-during the introduction to odML, you will now learn how to generate your 
-own odML file. We will show you first how to create the different odML objects 
-with their obligatory and recommended attributes using the odML-Editor and 
-Python. Please have a look at the tutorial part describing the advanced 
-possibilities of the Python odML library for the usage of the optional attributes.
+After getting familiar with the different odml objects and their attributes, 
+you will now learn how to generate your own odML file by reproducing the 
+example odml file we presented before.
+
+We will show you first how to create the different odML objects with their 
+obligatory and recommended attributes. Please have a look at the tutorial part 
+describing the advanced possibilities of the Python odML library for the usage 
+of all other attributes.
 
 Create a document
 -----------------
@@ -533,73 +546,276 @@ Create a document
 First open a Python shell and import the odml package::
 
 	>>> import odml
+	
+Let's start by creating the Document::
+ 
+	>>> MYodML = odml.Document(author='Douglas Adams',
+	                           date='1979-10-12',
+	                           version=42)
 
-You can create a new odML document with its attributes using the following
-command::
+You can check if your new Document contains actually what you created by using
+some of the commands you learned before::
+	                           
+	>>> MYodML
+	>>> <Doc 42 by Douglas Adams (0 sections)>
+	>>> MYodML.date
+	'1979-10-12'
 
-	>>> document = odml.Document(author = "Arthur Dent", 
-	                             date = "2014-03-20", 
-	                             version = 4.7)
+As you can see we created a Document with the same attributes as the example, 
+except for the repository. You can also see that, so far, no sections is 
+attached to it. Let's change this!
 	
 
 Create a section
 ----------------
 
-You can create a new odML section with its attributes using the following
-command::
+We now create a Section by reproducing the Section "TheCrew" of the example 
+odml file from the beginning::
 
-	>>> top_section_1 = odml.Section(name = "Setup",
-                                     definition = "Description of the used experimental setup.",
-                                     type = "setup")
+	>>> sec = odml.Section(name='TheCrew',
+	                       definition='Information on the crew',
+	                       type='crew')
+
+You can check if your new Section contains actually what you created by using
+some of the commands you learned before::
+
+	>>> sec.name
+	'TheCrew'
+	>>> sec.definition
+	'Information on the crew'
+	>>> sec.type
+	'crew'
+
+Now we need to attach the Section to our previously generated Document:
+
+	>>> MYodML.append(sec)
+	
+	>>> MYodML
+	<Doc 42 by Douglas Adams (1 sections)>
+	>>> MYodML.sections
+	[<Section TheCrew[crew] (0)>]
+	
+We repeat the procedure to create a second section and then attach it as a 
+subsection to the section we just created::
+
+	>>> sec = odml.Section(name='Arthur Philip Dent',
+	                       definition='Information on Arthur Dent',
+	                       type='crew/person')
+	>>> sec
+	<Section Arthur Philip Dent[crew/person] (0)>
+	
+	>>> MYodML['TheCrew'].append(sec)
+	
+	>>> MYodML.sections
+	[<Section TheCrew[crew] (0)>]
+	>>> MYodML['TheCrew'].sections
+	[<Section Arthur Philip Dent[crew/person] (0)>]
+	
+Note that all of our created sections do not contain any properties and values, 
+yet. Let's see if we can change this in the next chapter.
 
 
 Create a property-value(s) pair:
 --------------------------------
 
-First we create the value with its attributes using the following command::
+The creation of a property is not independent from creating a value object, 
+because a property always needs at least on value attached. Therefore we will
+demonstrate the creation of value and property objects together.
 
-	>>> value_1 = odml.Value(data = "Arthur Dent",
-	                         dtype = "person",
-	                         definition = "First and last name of a person.")
+Let's first create a property with a single value::
+
+	>>> val = odml.Value(data="male", 
+	                     dtype=odml.DType.string)
+	>>> val
+	<string male>
+	
+	>>> prop = odml.Property(name='Gender',
+	                         definition='Sex of the subject',
+	                         value=val)                     
+	>>> prop
+	<Property Gender>
+	>>> prop.value
+    <string male>
+
+As you can see, we define a odML data type (dtype) for the value. Generally,
+you can use the following odML data types to describe the format of the stored 
+metadata:
+
++-----------------------------------+---------------------------------------+
+| dtype                             | required data examples                |
++===================================+=======================================+
+| odml.DType.int or 'int'           | 42                                    |
++-----------------------------------+---------------------------------------+
+| odml.DType.float or 'float'       | 42.0                                  |
++-----------------------------------+---------------------------------------+
+| odml.DType.boolean or 'boolean'   | True or False                         |
++-----------------------------------+---------------------------------------+
+| odml.DType.string or 'string'     | 'Earth'                               |
++-----------------------------------+---------------------------------------+
+| odml.DType.date or 'date'         | dt.date(1979, 10, 12)                 |
++-----------------------------------+---------------------------------------+
+| odml.DType.datetime or 'datetime' | dt.datetime(1979, 10, 12, 11, 11, 11) |
++-----------------------------------+---------------------------------------+
+| odml.DType.time or 'time'         | dt.time(11, 11, 11)                   |
++-----------------------------------+---------------------------------------+
+| odml.DType.person or 'person'     | 'Zaphod Beeblebrox'                   |
++-----------------------------------+---------------------------------------+
+| odml.DType.text or 'text'         |                                       |
++-----------------------------------+---------------------------------------+
+| odml.DType.url or 'url'           | "https://en.wikipedia.org/wiki/Earth" |
++-----------------------------------+---------------------------------------+
+| odml.DType.binary or 'binary'     | '00101010'                            |
++-----------------------------------+---------------------------------------+
+
+After learning how we create a simple porperty-value-pair, we need to know how
+we can attach it to a section. As exercise, we attach our first porperty-value-
+pair to the subsection 'Arthur Philip Dent'::
+
+	>>> MYodML['TheCrew']['Arthur Philip Dent'].append(prop)
+	
+	>>> MYodML['TheCrew']['Arthur Philip Dent'].properties
+	[<Property Gender>]
 	                       
-Then we create the property with its attributes and its value with::
+If the odML data type of a value is distinctly deducible ('int', 'float', 
+'boolean', 'string', 'date', 'datetime', or 'time'), you can also use a short 
+cut to create a property-value pair::
 
-	>>> property_1 = odml.Property(name = "Creator",
-	                               definition = "The person/s who built the setup.",
-	                               value = value_1)
-	                             
-The resulting odML property object contains now the first generated odML
-value object. Note that you can also enter multiple value objects to one 
-property::
+    >>>> prop = odml.Property(name='Gender',
+	                          definition='Sex of the subject',
+	                          value='male')   
+	>>> prop
+	<Property Gender>
+	>>> prop.value
+    <string male>
+                        
+Mark that this short cut will not work for the following odML data types 
+'person', 'text', 'url', and 'binary', because they are not automatically 
+distinguishable from the odML data type 'string'. 
 
-	>>> value_2 = odml.Value(data = "Zaphod Beeblebrox",
-	                         dtype = "person",
-	                         definition = "First and last name of a person.")
-	>>> value_3 = odml.Value(data = "Trillian Astra",
-	                         dtype = "person",
-	                         definition = "First and last name of a person.")
-	>>> value_4 = odml.Value(data = "Ford Prefect",
-	                         dtype = "person",
-	                         definition = "First and last name of a person.")
-	                         
-	>>> property_2 = odml.Property(name = "User",
-		                           definition = "The person/s who use the setup.",
-		                           value = [value_2, value_3, value_4])
+Next we learn how to create a property with multiple values attached to it::
 
-Build the tree structure
-************************
-In Python you need to link the created document to the created sections, and
-the properties with their already included values to the corresponding sections.
+	>>> vals = [odml.Value(data='Arthur Philip Dent', 
+	                       dtype=odml.DType.person),
+	            odml.Value(data='Zaphod Beeblebrox', 
+	                       dtype=odml.DType.person),
+	            odml.Value(data='Tricia Marie McMillan', 
+	                       dtype=odml.DType.person),
+	            odml.Value(data='Ford Prefect', 
+	                       dtype=odml.DType.person)]
+    >>> vals
+    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
+     <person Tricia Marie McMillan>, <person Ford Prefect>]
 
-For our intro-example.odml, this meant the following commands::
+	>>> prop = odml.Property(name = 'NameCrewMembers',
+	                         definition = 'List of crew members names',
+	                         value = vals)
+	>>> prop
+	<Property NameCrewMembers>
+	>>> prop.values
+    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
+     <person Tricia Marie McMillan>, <person Ford Prefect>]               
 
-	>>> document.append(top_section_1)
-	>>> top_section_1.append(property_1)
-	>>> top_section_1.append(property_2)
+To build up our odML file further, we attach this porperty-values-pair to 
+the section 'TheCrew'::
+
+	>>> MYodML['TheCrew'].append(prop)
 	
-	
+	>>> MYodML['TheCrew'].properties
+	[<Property NameCrewMembers>]
 
-------------------------------------------------------------------------
+Just to illustrate you again, we could also make use again of the short cut 
+notation, if we would agree to use the odML data type 'string' instead of 
+'person' for our second porperty-values-pair::
+
+	>>> prop = odml.Property(name = 'NameCrewMembers',
+	                         definition = 'List of crew members names',
+	                         value = ['Arthur Philip Dent', 
+	                                  'Zaphod Beeblebrox', 
+	                                  'Tricia Marie McMillan', 
+	                                  'Ford Prefect'])
+    >>> prop.value
+	[<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
+	 <string Tricia Marie McMillan>, <string Ford Prefect>]                 
+	                                                           
+A third way to create a porperty with multiple values would be to attach first
+one value and the append further values later on::
+
+    >>> val = odml.Value(data="Arthur Philip Dent",
+                         type=odml.DType.person)
+
+	>>> prop = odml.Property(name = 'NameCrewMembers',
+	                         definition = 'List of crew members names',
+	                         value = val)
+	>>> prop.values
+	[<person Arthur Philip Dent>]
+
+    >>> val = odml.Value(data="Zaphod Beeblebrox",
+                         type=odml.DType.person)	
+    >>> prop.append(val)
+    >>> prop.values
+    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>]
+    
+    >>> val = odml.Value(data="Tricia Marie McMillan",
+                         type=odml.DType.person)	
+    >>> prop.append(val)      
+    >>> prop.values
+    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>,
+     <person Tricia Marie McMillan>]
+    
+    >>> val = odml.Value(data="Ford Prefect",
+                         type=odml.DType.person)	
+    >>> prop.append(val)                                            
+    >>> prop.values
+    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>,
+     <person Tricia Marie McMillan>, <person Ford Prefect>]
+
+
+Printing XML-representation of an odML file:
+--------------------------------------------
+
+Although the XML-representation of an odML file is a bit hard to read, it is 
+sometimes helpful to check, especially during a generation process, how the 
+hierarchical structure of the odML file looks like.
+
+Let's have a look at the XML-representation of our small odML file we just 
+generated::
+
+	>>> print unicode(odml.tools.xmlparser.XMLWriter(MYodML))
+	<odML version="1">
+	  <date>1979-10-12</date>
+	  <section>
+	    <definition>Information on the crew</definition>
+	    <property>
+	      <definition>List of crew members names</definition>
+	      <value>Arthur Philip Dent<type>person</type></value>
+	      <value>Zaphod Beeblebrox<type>person</type></value>
+	      <value>Tricia Marie McMillan<type>person</type></value>
+	      <value>Ford Prefect<type>person</type></value>
+	      <name>NameCrewMembers</name>
+	    </property>
+	    <name>TheCrew</name>
+	    <section>
+	      <definition>Information on Arthur Dent</definition>
+	      <property>
+	        <definition>Sex of the subject</definition>
+	        <value>male<type>string</type></value>
+	        <name>Gender</name>
+	      </property>
+	      <name>Arthur Philip Dent</name>
+	      <type>crew/person</type>
+	    </section>
+	    <type>crew</type>
+	  </section>
+	  <version>42</version>
+	  <author>Douglas Adams</author>
+	</odML>
+
+
+Saving a odML file:
+-------------------
+
+
+-------------------------------------------------------------------------------
 
 
 Working with files
