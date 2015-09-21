@@ -83,21 +83,25 @@ Download and Installation
 =========================
 
 The Python-odML library (including the odML-Editor) is available on 
-`GitHub <https://github.com/G-Node/python-odml>`_.
+`GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with 
+the version control system **git**, but still want to use it, have a look at 
+the documentaion availabel on the `git-scm website <https://git-scm.com/>`_. 
+
 
 
 Dependencies
 ------------
-There are a few dependecies which need to be fulfilled in order to use the 
-Python-odML library:
-- **Cairo**
-- **Pango**
-- **Atk**
-- **GObject**
-- **Gio**
-- **lxml**
-- **gzip**
-- **Enum34**
+
+The Python-odML library runs under Python 2.7. Additionally, there are several
+packages that need to be installed:
+	- **Cairo**
+	- **Pango**
+	- **Atk**
+	- **GObject**
+	- **Gio**
+	- **lxml**
+	- **gzip**
+	- **Enum34**
 
 Windows
 -------
@@ -106,9 +110,17 @@ Windows
 Linux (Debian/Ubuntu)
 ---------------------
 To install the Python-odML library please clone the repository from GitHub to 
-your computer. Enter the directory (.../python-odml/) and run::v
+your computer (e.g. on your home directory under "toolbox" folder)::
 
-	$ sudo python setup.py install --prefix /usr
+	$ cd /home/usr/toolbox/
+	$ git clone https://github.com/G-Node/python-odml.git
+
+
+Enter the directory (in our example here, /home/usr/toolbox/python-odml/) and 
+run::
+
+	$ cd /home/usr/toolbox/python-odml/
+	$ python setup.py install
 
 
 Mac OSX
@@ -153,7 +165,13 @@ A first look
 ------------
 If you want to get familiar with the concept behind an odML and how to handle 
 odML files in Python, you can have a first look at the example odML file 
-("doc/example_odMLs/intro-example.odml") provided in the Python-odML library.
+provided in the Python-odML library. For this you first need to run the python 
+code ("thgttg.py") to generate the example odML file ("THGTTG.odml")::
+
+	$ cd /home/usr/toolbox/python-odml/
+	$ python doc/example_odMLs/thgttg.py
+    $ ls doc/example_odMLs/
+    THGTTG.odml  thgttg.py
 
 If you open a Python shell within the Python-odML library directory, first, 
 import the odml package::
@@ -162,16 +180,15 @@ import the odml package::
 	
 You can load an odML file with the following command lines::
 	
-	>>> odmlfile = "/doc/example_odMLs/intro-example.odml"
+	>>> odmlfile = '/home/usr/toolbox/python-odml/doc/example_odMLs/THGTTG.odml'
 	>>> odmlEX = odml.tools.xmlparser.load(odmlfile)
 	
 If you open a Python shell outside of the Python-odML library directory, please
-adapt your Python-Path and the path to the "intro-example.odml" file 
-accordingly.
+adapt your Python-Path and the path to the "THGTTG.odml" file accordingly.
 	
 How you can access the different odML objects and their attributes once you 
 loaded an odML file and how you can make use of the attributes is described in 
-more detail in the following subchapters for each odML object type (document, 
+more detail in the following chapters for each odML object type (document, 
 section, property, value). Please note that some attributes are obligatory, 
 some are recommended and others are optional. The optional attributes are 
 important for the advanced odML possibilities and can for now be ignored by 
@@ -814,54 +831,12 @@ generated::
 Saving a odML file:
 -------------------
 
+You can save your odML file using the following command::
+
+	>>> save_to = '/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.odml'
+	>>> odml.tools.xmlparser.XMLWriter(MYodML).write_file(save_to)
 
 -------------------------------------------------------------------------------
-
-
-Working with files
-==================
-Currently, odML-Files can be read from and written to XML-files.
-This is provided by the :py:mod:`odml.tools.xmlparser` module::
-
-    >>> from odml.tools.xmlparser import load, XMLReader, XMLWriter
-
-You can write files using the XMLWriter (``d`` is our ODML-Document from the previous examples)::
-
-    >>> writer = XMLWriter(d)
-    >>> writer.write_file('example.odml')
-
-To just print the xml-representation::
-
-    >>> print unicode(writer)
-	<odML version="1">
-	  <section>
-		<property>
-		  <value>144<type>int</type></value>
-		  <value>155<type>int</type></value>
-		  <name>property1</name>
-		</property>
-		<property>
-		  <value>1<type>int</type></value>
-		  <value>2.0<type>float</type></value>
-		  <value>3<type>string</type></value>
-		  <name>property2</name>
-		</property>
-		<name>section1</name>
-		<type>undefined</type>
-	  </section>
-	</odML>
-
-You can read files using the load()-function for convenience::
-
-    >>> document = load('example.odml')
-    <Doc 1.0 by None (1 sections)>
-
-Note: the XML-parser will enforce proper structure.
-
-If you need to parse Strings, you can use the XMLParser, which can also parse odML-objects such as::
-
-    >>> XMLReader().fromString("""<value>13<type>int</type></value>""")
-    <int 13>
 
 Advanced odML-Features
 ======================
