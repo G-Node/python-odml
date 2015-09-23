@@ -11,21 +11,21 @@ Dependencies
 
 The Python-odML library runs under Python 2.7. Additionally, there are several
 packages the library depence on:
-	- **Cairo**
-	- **Pango** 
-	- **Atk**
-	- **GObject**
-	- **Gio**
-	- **lxml**
-	- **gzip**
-	- **Enum** (version 0.4.4)
+* **Cairo**
+* **Pango** 
+* **Atk**
+* **GObject**
+* **Gio**
+* **lxml**
+* **gzip**
+* **Enum** (version 0.4.4)
 
 
 Installation
 ------------
 
 To download the Python-odML library please either use git and clone the 
-repository from GitHub::
+repository from GitHub:
 
 	$ cd /home/usr/toolbox/
 	$ git clone https://github.com/G-Node/python-odml.git
