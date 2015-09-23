@@ -85,46 +85,52 @@ Download and Installation
 The Python-odML library (including the odML-Editor) is available on 
 `GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with 
 the version control system **git**, but still want to use it, have a look at 
-the documentaion availabel on the `git-scm website <https://git-scm.com/>`_. 
-
-
+the documentaion available on the `git-scm website <https://git-scm.com/>`_. 
 
 Dependencies
 ------------
 
 The Python-odML library runs under Python 2.7. Additionally, there are several
-packages that need to be installed:
+packages the library depence on:
 	- **Cairo**
-	- **Pango**
+	- **Pango** 
 	- **Atk**
 	- **GObject**
 	- **Gio**
 	- **lxml**
 	- **gzip**
-	- **Enum34**
-
-Windows
--------
+	- **Enum** (version 0.4.4)
 
 
-Linux (Debian/Ubuntu)
----------------------
-To install the Python-odML library please clone the repository from GitHub to 
-your computer (e.g. on your home directory under "toolbox" folder)::
+Installation
+------------
+
+To download the Python-odML library please either use git and clone the 
+repository from GitHub::
 
 	$ cd /home/usr/toolbox/
 	$ git clone https://github.com/G-Node/python-odml.git
+	
+... or if you don't want to use git download the ZIP file also provided on 
+GitHub to your computer (e.g. as above on your home directory under a "toolbox" 
+folder).
 
-
-Enter the directory (in our example here, /home/usr/toolbox/python-odml/) and 
-run::
+To install the Python-odML library, enter the directory (in our example here, 
+/home/usr/toolbox/python-odml/) and run::
 
 	$ cd /home/usr/toolbox/python-odml/
 	$ python setup.py install
+	
 
+Bugs & Questions
+----------------
 
-Mac OSX
--------
+Should you find a behaviour that is likely a bug, please file a bug report at 
+`the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
+
+If you have questions regarding the use of the library or the editor, ask
+the question on `Stack Overflow <http://stackoverflow.com/>`_, be sure to tag
+it with `odml` and we'll do our best to quickly solve the problem.
 
 
 -------------------------------------------------------------------------------
