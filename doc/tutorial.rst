@@ -760,7 +760,7 @@ Next we learn how to create a Property with multiple Values attached to it::
 	                       dtype=odml.DType.person)]
 	>>> vals
 	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
-     <person Tricia Marie McMillan>, <person Ford Prefect>]
+	 <person Tricia Marie McMillan>, <person Ford Prefect>]
 
 	>>> prop = odml.Property(name = 'NameCrewMembers',
 	                         definition = 'List of crew members names',
@@ -769,7 +769,7 @@ Next we learn how to create a Property with multiple Values attached to it::
 	<Property NameCrewMembers>
 	>>> prop.values
 	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
-     <person Tricia Marie McMillan>, <person Ford Prefect>]               
+	 <person Tricia Marie McMillan>, <person Ford Prefect>]               
 
 To build up our odML file further, we attach this Porperty-Values-pair to 
 the Section 'TheCrew'::
