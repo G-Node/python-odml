@@ -9,16 +9,8 @@ the documentaion available on the `git-scm website <https://git-scm.com/>`_.
 Dependencies
 ------------
 
-The Python-odML library runs under Python 2.7. Additionally, there are several
-packages the library depence on:
-* **Cairo**
-* **Pango** 
-* **Atk**
-* **GObject**
-* **Gio**
-* **lxml**
-* **gzip**
-* **Enum** (version 0.4.4)
+* The Python-odML library runs under Python 2.7. 
+* The Python-odML library depends on Enum (version 0.4.4).
 
 
 Installation
@@ -34,8 +26,7 @@ repository from GitHub:
 GitHub to your computer (e.g. as above on your home directory under a "toolbox" 
 folder).
 
-To install the Python-odML library, enter the directory (in our example here, 
-/home/usr/toolbox/python-odml/) and run::
+To install the Python-odML library, enter the corresponding directory and run::
 
 	$ cd /home/usr/toolbox/python-odml/
 	$ python setup.py install
