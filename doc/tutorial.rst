@@ -450,8 +450,8 @@ If multiple Values were attached to the Property, a list of Values is
 returned::
 
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].value
-    [<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
-     <string Tricia Marie McMillan>, <string Ford Prefect>]
+	[<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
+	 <string Tricia Marie McMillan>, <string Ford Prefect>]
      
 The second command will always return a list independent of the number of 
 Values attached::
@@ -459,8 +459,8 @@ Values attached::
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].values
 	[<int 4>]
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values
-    [<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
-     <string Tricia Marie McMillan>, <string Ford Prefect>]
+	[<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
+	 <string Tricia Marie McMillan>, <string Ford Prefect>]
 	
 The printout of the Value is explained in the next chapter.
 
