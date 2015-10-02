@@ -135,7 +135,7 @@ file. Within an odML file metadata are grouped and stored in a
 hierarchical tree structure which consists of four different odML 
 objects.
 
-*Document*
+Document
 	- corresponds to the root of the tree (groups everything together)
 	- *parent*: no parent
 	- *children*: Section
@@ -492,28 +492,36 @@ In total, a Value can be defined by the following 6 attributes:
 data
 	- obligatory Value attribute
 	- The actual metadata value.
+	
 dtype
 	- recommended Value attribute
-	- The odml data type of the given metadata value.		
+	- The odml data type of the given metadata value.	
+		
 definition
 	- recommended Value attribute
 	- The definition of the given metadata value.
+	
 uncertainty
 	- recommended Value attribute
 	- Can be used to specify the uncertainty of the given metadata value.
+	
 unit
 	- recommended Value attribute
 	- The unit of the given metadata value, if it has a unit.
+	
 reference
 	- optional Value attribute
 	- The ?
+	
 filename
 	- optional Value attribute
 	- The ?
+	
 encoder
 	- optional Value attribute
 	- Name of the applied encoder used to encode a binary metadata value into 
 	  ascii.
+	  
 checksum
 	- optional Value attribute
 	- Checksum and name of the algorithm that calculated the checksum of a 
@@ -552,7 +560,7 @@ accessing attributes of a Value of a Property with multiple Values use::
 If you would like to get all the actual metadata values back from a Property 
 with multiple Values, iterate over the Values list::
 
-    >>> all_metadata = []
+	>>> all_metadata = []
 	>>> for val in doc['TheCrew'].properties['NameCrewMembers'].values:
 	...     all_metadata.append(val.data)
 	... 
