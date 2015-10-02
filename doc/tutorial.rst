@@ -584,12 +584,13 @@ obligatory and recommended attributes. Please have a look at the tutorial part
 describing the advanced possibilities of the Python odML library for the usage 
 of all other attributes.
 
-Create a document
------------------
-
-If you opened a new IPython shell, import first again the odml package::
+If you opened a new IPython shell, please import first again the odml package::
 
 	>>> import odml
+
+
+Create a document
+-----------------
 
 Let's start by creating the Document::
  
@@ -639,7 +640,7 @@ Check if your new Section contains actually what you created::
 	>>> sec.type
 	'crew'
 
-Now we need to attach the Section to our previously generated Document:
+Now we need to attach the Section to our previously generated Document::
 
 	>>> MYodML.append(sec)
 	
@@ -668,7 +669,7 @@ Note that all of our created Sections do not contain any Properties and Values,
 yet. Let's see if we can change this...
 
 
-Create a property-value(s) pair:
+Create a Property-Value(s) pair:
 --------------------------------
 
 The creation of a Property is not independent from creating a Value, because a 
@@ -688,7 +689,7 @@ Let's first create a Property with a single Value::
 	>>> prop
 	<Property Gender>
 	>>> prop.value
-    <string male>
+	<string male>
 
 As you can see, we define a odML data type (dtype) for the Value. Generally,
 you can use the following odML data types to describe the format of the stored 
@@ -720,7 +721,7 @@ metadata:
 | odml.DType.binary or 'binary'     | '00101010'                            |
 +-----------------------------------+---------------------------------------+
 
-The available types are implemented in the :py:mod:`odml.types` Module.
+The available types are implemented in the odml.types Module.
 
 After learning how we create a simple Porperty-Value-pair, we need to know how
 we can attach it to a Section. As exercise, we attach our first Porperty-Value-
@@ -735,13 +736,13 @@ If the odML data type of a Value is distinctly deducible ('int', 'float',
 'boolean', 'string', 'date', 'datetime', or 'time'), you can also use a short 
 cut to create a Property-Value pair::
 
-    >>>> prop = odml.Property(name='Gender',
-	                          definition='Sex of the subject',
-	                          value='male')   
+	>>> prop = odml.Property(name='Gender',
+	                         definition='Sex of the subject',
+	                         value='male')   
 	>>> prop
 	<Property Gender>
 	>>> prop.value
-    <string male>
+	<string male>
                         
 Mark that this short cut will not work for the following odML data types 
 'person', 'text', 'url', and 'binary', because they are not automatically 
@@ -757,8 +758,8 @@ Next we learn how to create a Property with multiple Values attached to it::
 	                       dtype=odml.DType.person),
 	            odml.Value(data='Ford Prefect', 
 	                       dtype=odml.DType.person)]
-    >>> vals
-    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
+	>>> vals
+	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
      <person Tricia Marie McMillan>, <person Ford Prefect>]
 
 	>>> prop = odml.Property(name = 'NameCrewMembers',
@@ -767,7 +768,7 @@ Next we learn how to create a Property with multiple Values attached to it::
 	>>> prop
 	<Property NameCrewMembers>
 	>>> prop.values
-    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
+	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>, 
      <person Tricia Marie McMillan>, <person Ford Prefect>]               
 
 To build up our odML file further, we attach this Porperty-Values-pair to 
@@ -788,7 +789,7 @@ notation, if we would agree to use the odML data type 'string' instead of
 	                                  'Zaphod Beeblebrox', 
 	                                  'Tricia Marie McMillan', 
 	                                  'Ford Prefect'])
-    >>> prop.value
+	>>> prop.value
 	[<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
 	 <string Tricia Marie McMillan>, <string Ford Prefect>]                 
 
@@ -805,7 +806,7 @@ Values of different data types, e.g.::
 	                                  dt.date(1979, 10, 12), 
 	                                  dt.datetime(1979, 10, 12, 11, 11, 11), 
 	                                  dt.time(11, 11, 11)])                         
-    >>> prop.values
+	>>> prop.values
 	[<int 42>, 
 	 <float 42.0>, 
 	 <boolean True>, 
@@ -817,7 +818,7 @@ Values of different data types, e.g.::
 A third way to create a Porperty with multiple Values would be to attach first
 one Value and the append further Values later on::
 
-    >>> val = odml.Value(data="Arthur Philip Dent",
+	>>> val = odml.Value(data="Arthur Philip Dent",
                          type=odml.DType.person)
 
 	>>> prop = odml.Property(name = 'NameCrewMembers',
@@ -826,25 +827,25 @@ one Value and the append further Values later on::
 	>>> prop.values
 	[<person Arthur Philip Dent>]
 
-    >>> val = odml.Value(data="Zaphod Beeblebrox",
-                         type=odml.DType.person)	
-    >>> prop.append(val)
-    >>> prop.values
-    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>]
+	>>> val = odml.Value(data="Zaphod Beeblebrox",
+						 type=odml.DType.person)	
+	>>> prop.append(val)
+	>>> prop.values
+	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>]
     
-    >>> val = odml.Value(data="Tricia Marie McMillan",
+	>>> val = odml.Value(data="Tricia Marie McMillan",
                          type=odml.DType.person)	
-    >>> prop.append(val)      
-    >>> prop.values
-    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>,
-     <person Tricia Marie McMillan>]
+	>>> prop.append(val)      
+	>>> prop.values
+	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>,
+	 <person Tricia Marie McMillan>]
     
-    >>> val = odml.Value(data="Ford Prefect",
-                         type=odml.DType.person)	
-    >>> prop.append(val)                                            
-    >>> prop.values
-    [<person Arthur Philip Dent>, <person Zaphod Beeblebrox>,
-     <person Tricia Marie McMillan>, <person Ford Prefect>]
+	>>> val = odml.Value(data="Ford Prefect",
+						 type=odml.DType.person)	
+	>>> prop.append(val)                                            
+	>>> prop.values
+	[<person Arthur Philip Dent>, <person Zaphod Beeblebrox>,
+	 <person Tricia Marie McMillan>, <person Ford Prefect>]
 
 
 Printing XML-representation of an odML file:
@@ -896,6 +897,7 @@ You can save your odML file using the following command::
 	>>> save_to = '/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.odml'
 	>>> odml.tools.xmlparser.XMLWriter(MYodML).write_file(save_to)
 	
+	
 Loading an odML file:
 ---------------------
 
@@ -904,6 +906,7 @@ you can try to reload your own saved odML file::
 
 	>>> to_load = '/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.odml'
 	>>> my_reloaded_odml = odml.tools.xmlparser.load(to_load)
+
 
 -------------------------------------------------------------------------------
 
@@ -939,12 +942,12 @@ If the conversion is invalid a ValueError is raised::
 	  File "<stdin>", line 1, in <module>
 	  File "/home/zehl/Projects/toolbox/python-odml/odml/value.py", line 163, in dtype
         raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
-    ValueError: cannot convert 'True' from 'boolean' to 'date'
+	ValueError: cannot convert 'True' from 'boolean' to 'date'
        
 Also note, that during such a process, metadata loss may occur if a float is 
 converted to an integer and then back to a float::
 
-    >>> test_value = odml.Value(data=42.42)
+	>>> test_value = odml.Value(data=42.42)
 	>>> test_value
 	<float 42.42>
 	>>> test_value.dtype = odml.DType.int
@@ -989,14 +992,14 @@ Encoder can also be edited later on.
 The checksum of binary metadata is automatically calculated with ``crc32`` as
 default checksum::
 
-    >>> test_value.checksum
-    'crc32$10e6c0cf
+	>>> test_value.checksum
+	'crc32$10e6c0cf
     
 Alternatively, ``md5`` can be used for the checksum calculation::
  
-    >>> test_value.checksum = "md5"
-    >>> test_value.checksum
-    'md5$c1282d5763e2249028047757b6209518'
+	>>> test_value.checksum = "md5"
+	>>> test_value.checksum
+	'md5$c1282d5763e2249028047757b6209518'
 
 
 Advanced knowledge on Properties
@@ -1019,8 +1022,8 @@ external one (``include`` property).
 After parsing a document, these links are not yet resolved, but can be using
 the :py:meth:`odml.doc.BaseDocument.finalize` method::
 
-    >>> d = xmlparser.load("sample.odml")
-    >>> d.finalize()
+	>>> d = xmlparser.load("sample.odml")
+	>>> d.finalize()
 
 Note: Only the parser does not automatically resolve link properties, as the referenced
 sections may not yet be available.
@@ -1035,8 +1038,8 @@ Unresolving means to remove sections and properties that do not differ from thei
 linked equivalents. This should be done globally before saving using the
 :py:meth:`odml.doc.BaseDocument.clean` method::
 
-    >>> d.clean()
-    >>> xmlparser.XMLWriter(d).write_file('sample.odml')
+	>>> d.clean()
+	>>> xmlparser.XMLWriter(d).write_file('sample.odml')
 
 Changing a ``link`` (or ``include``) attribute will first unmerge the section and
 then set merge with the new object.
@@ -1065,14 +1068,14 @@ mapping-process itself.
 
 Mappings are views on documents and are created as follows::
 
-    >>> import odml
-    >>> import odml.mapping as mapping
-    >>> doc = odml.Document()
-    >>> mdoc = mapping.create_mapping(doc)
-    >>> mdoc
-    P(<Doc None by None (0 sections)>)
-    >>> mdoc.__class__
-    <class 'odml.tools.proxy.DocumentProxy'>
+	>>> import odml
+	>>> import odml.mapping as mapping
+	>>> doc = odml.Document()
+	>>> mdoc = mapping.create_mapping(doc)
+	>>> mdoc
+	P(<Doc None by None (0 sections)>)
+	>>> mdoc.__class__
+	<class 'odml.tools.proxy.DocumentProxy'>
 
 Creating a view has the advantage, that changes on a Proxy-object are
 propagated to the original document.
