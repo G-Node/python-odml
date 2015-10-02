@@ -975,7 +975,7 @@ and their binary metadata representation:
 | base64           | Rm9yZCBQcmVmZWN0         |
 +------------------+--------------------------+
 
-Encoder can also be edited later on.
+The encoder can also be edited later on::
 
 	>>> test_value = odml.Value(data='Ford Prefect', 
 	                            dtype=odml.DType.binary, 
