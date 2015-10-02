@@ -90,16 +90,8 @@ the documentaion available on the `git-scm website <https://git-scm.com/>`_.
 Dependencies
 ------------
 
-The Python-odML library runs under Python 2.7. Additionally, there are several
-packages the library depence on:
-	- **Cairo**
-	- **Pango** 
-	- **Atk**
-	- **GObject**
-	- **Gio**
-	- **lxml**
-	- **gzip**
-	- **Enum** (version 0.4.4)
+The Python-odML library runs under Python 2.7. 
+Additionally, the Python-odML library depends on Enum (version 0.4.4).
 
 
 Installation
@@ -115,8 +107,7 @@ repository from GitHub::
 GitHub to your computer (e.g. as above on your home directory under a "toolbox" 
 folder).
 
-To install the Python-odML library, enter the directory (in our example here, 
-/home/usr/toolbox/python-odml/) and run::
+To install the Python-odML library, enter the corresponding directory and run::
 
 	$ cd /home/usr/toolbox/python-odml/
 	$ python setup.py install
@@ -136,7 +127,7 @@ it with `odml` and we'll do our best to quickly solve the problem.
 -------------------------------------------------------------------------------
 
 
-Basic knowledge on odml
+Basic knowledge on odML
 =======================
 
 Before we start, it is important to know the basic structure of an odML 
@@ -144,31 +135,35 @@ file. Within an odML file metadata are grouped and stored in a
 hierarchical tree structure which consists of four different odML 
 objects.
 
-- **Document**:
+Document
 	- corresponds to the root of the tree (groups everything together)
 	- *parent*: no parent
 	- *children*: Section
-- **Section**:
+	
+Section
 	- corresponds to (big) branches of the tree
 	- *parent*: Section or Document
 	- *children*: Section and/or Property
-- **Property**:
+	
+Property
 	- corresponds to (small) branches of the tree (groups values)
 	- *parent*: Section
 	- *children*: at least one Value
-- **Value**:
+	
+Value
 	- corresponds to leaf of the tree (contains metadata)
 	- *parent*: Property
 	- *children*: no children
 			
 Each of these odML objects has a certain set of attributes where the 
 user can describe the object and its contents. Which attribute belongs 
-to which object and what each attribute is used for, is better explained 
-in an example odML file (e.g., "intro-example.odml").
+to which object and what the attributes are used for, is better explained 
+in an example odML file (e.g., "THGTTG.odml").
 
 
 A first look
 ============
+
 If you want to get familiar with the concept behind an odML and how to handle 
 odML files in Python, you can have a first look at the example odML file 
 provided in the Python-odML library. For this you first need to run the python 
@@ -176,10 +171,10 @@ code ("thgttg.py") to generate the example odML file ("THGTTG.odml")::
 
 	$ cd /home/usr/toolbox/python-odml/doc/example_odMLs/
 	$ ls
-	$ thgttg.py
+	thgttg.py
 	$ python thgttg.py
-    $ ls
-    THGTTG.odml  thgttg.py
+	$ ls
+	THGTTG.odml  thgttg.py
 
 Now open a Python shell within the Python-odML library directory, e.g. with
 IPython::
@@ -240,16 +235,19 @@ complete tree structure, because it is not displaying the children of its
 directly attached Sections. It also does not display all Document attributes. 
 In total, a Document has the following 4 attributes:
 
-- **author**
+author
 	- recommended Document attribute
 	- The author of this odML file. 
-- **date**
+	
+date
 	- recommended Document attribute
 	- The date this odML file was created (yyyy-mm-dd format). 
-- **repository**
+	
+repository
 	- optional Document attribute
 	- The URL to the repository of terminologies used in this odML file. 
-- **version**
+	
+version
 	- recommended Document attribute
 	- The version of this odML file. 
 
