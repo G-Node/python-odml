@@ -587,7 +587,7 @@ of all other attributes.
 Create a document
 -----------------
 
-First open a Python shell and import the odml package::
+If you opened a new IPython shell, import first again the odml package::
 
 	>>> import odml
 
