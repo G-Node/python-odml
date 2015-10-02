@@ -1007,14 +1007,14 @@ Advanced knowledge on Properties
 
 Dependencies & dependency values
 ********************************
-
+(coming soon)
 
 Advanced knowledge on Sections
 ------------------------------
 
 Links & Includes
 ****************
-
+(deprecated; new version coming soon)
 Sections can be linked to other Sections, so that they include their defined 
 attributes. A link can be within the document (``link`` property) or to an
 external one (``include`` property).
@@ -1046,7 +1046,7 @@ then set merge with the new object.
 
 Terminologies
 *************
-
+(deprecated; new version coming soon)
 odML supports terminologies that are data structure templates for typical use cases.
 Sections can have a ``repository`` attribute. As repositories can be inherited,
 the current applicable one can be obtained using the :py:meth:`odml.section.BaseSection.get_repository`
@@ -1057,7 +1057,7 @@ method, which returns the corresponding object of the terminology.
 
 Mappings
 ********
-
+(deprecated; new version coming soon)
 A sometimes obscure but very useful feature is the idea of mappings, which can
 be used to write documents in a user-defined terminology, but provide mapping
 information to a standard-terminology that allows the document to be viewed in
