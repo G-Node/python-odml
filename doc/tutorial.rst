@@ -135,7 +135,7 @@ file. Within an odML file metadata are grouped and stored in a
 hierarchical tree structure which consists of four different odML 
 objects.
 
-Document
+*Document*
 	- corresponds to the root of the tree (groups everything together)
 	- *parent*: no parent
 	- *children*: Section
@@ -309,21 +309,25 @@ directly attached ones. It also only list the type of the Section as one of the
 Section attributes. In total, a Section can be defined by the following 5 
 attributes:
 
-- **name**
+name
 	- obligatory Section attribute
 	- The name of the section. Should describe what kind of information can be 
 	  found in this section.
-- **definition**
+	  
+definition
 	- recommended Section attribute
 	- The definition of the content within this section. 
-- **type**
+	
+type
 	- recommended Section attribute
 	- The classification type which allows to connect related Sections due to 
 	  a superior semantic context.
-- **reference**
+	  
+reference
 	- optional Section attribute
 	- The ? 
-- **repository**
+	
+repository
 	- optional Section attribute
 	- The URL to the repository of terminologies used in this odML file. 
 
@@ -393,26 +397,31 @@ Note that the Property printout tells you nothing about the number of Values,
 and very little about the Property attributes. In total, a Property can be 
 defined by the following 6 attributes:
 
-- **name**
+name
 	- obligatory Property attribute
 	- The name of the Property. Should describe what kind of Values can be 
 	  found in this Property.
-- **value**
+	  
+value
 	- obligatory Property attribute
 	- The value container of this property. See in 'The Value' chapter for 
 	  details.		
-- **definition**
+	  
+definition
 	- recommended Property attribute
 	- The definition of this Property.
-- **dependency**
+	
+dependency
 	- optional Property attribute
 	- A name of another Property within the same section, which this property 
 	  depends on.
-- **dependency value**
+	  
+dependency_value
 	- optional Property attribute
 	- Value of the other Property specified in the 'dependency' attribute on 
 	  which this Property depends on.	
-- **mapping**
+	  
+mapping
 	- optional Property attribute
 	- The odML path within the same odML file (internal link) to another 
 	  Section to which all children of this section, if a conversion is 
@@ -480,35 +489,35 @@ following:
 
 In total, a Value can be defined by the following 6 attributes:
 
-- data
+data
 	- obligatory Value attribute
 	- The actual metadata value.
-- dtype
+dtype
 	- recommended Value attribute
 	- The odml data type of the given metadata value.		
-- definition
+definition
 	- recommended Value attribute
 	- The definition of the given metadata value.
-- uncertainty
+uncertainty
 	- recommended Value attribute
 	- Can be used to specify the uncertainty of the given metadata value.
-- unit
+unit
 	- recommended Value attribute
 	- The unit of the given metadata value, if it has a unit.
-- reference
+reference
 	- optional Value attribute
 	- The ?
-- filename
+filename
 	- optional Value attribute
 	- The ?
-- encoder
+encoder
 	- optional Value attribute
 	- Name of the applied encoder used to encode a binary metadata value into 
 	  ascii.
-- checksum
+checksum
 	- optional Value attribute
 	- Checksum and name of the algorithm that calculated the checksum of a 
-	  given metadata value (algorithm$checksum format)
+	  given binary metadata value (algorithm$checksum format)
 
 Let's see which attributes were defined for the Value of the Property 
 'NoCrewMembers' of the Section 'TheCrew'::
