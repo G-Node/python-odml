@@ -32,6 +32,11 @@ To install the Python-odML library, enter the corresponding directory and run::
 	$ python setup.py install
 	
 
+Documentation
+-------------
+
+[Documentation](http://g-node.github.io/python-odml)
+
 Bugs & Questions
 ----------------
 

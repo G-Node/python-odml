@@ -36,7 +36,7 @@ else:
     kwargs['scripts'] = ['odml-gui']
 
 setup(name='odML',
-      version='1.0',
+      version='1.1',
       description='open metadata Markup Language',
       author='Hagen Fritsch',
       author_email='fritsch+gnode@in.tum.de',
