@@ -25,6 +25,8 @@ class DType(str, Enum):
     person = 'person'
     binary = 'binary'
 
+    def __str__(self):
+        return self.name
 
 _dtype_map = {'str': 'string', 'bool': 'boolean'}
 
