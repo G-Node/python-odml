@@ -12,7 +12,6 @@ import binascii
 import hashlib
 from enum import Enum
 
-
 class DType(str, Enum):
     string = 'string'
     text = 'text'
@@ -32,7 +31,6 @@ _dtype_map = {'str': 'string', 'bool': 'boolean'}
 
 def infer_dtype(value):
     dtype = (type(value)).__name__
-
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
 
@@ -48,6 +46,7 @@ def valid_type(dtype):
     """
     checks if *dtype* is a valid type
     """
+    dtype = dtype.lower()
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
     if hasattr(DType, dtype):
