@@ -1,0 +1,1281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>odML Tutorial &mdash; python-odml 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-odml 0.1 documentation" href="index.html" />
+    <link rel="next" title="Class-Reference" href="reference.html" />
+    <link rel="prev" title="Welcome to python-odml’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Class-Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to python-odml’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-odml 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="odml-tutorial">
+<h1>odML Tutorial<a class="headerlink" href="#odml-tutorial" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Lyuba Zehl;
+based on work by Hagen Fritsch</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Release:</th><td class="field-body">0.1</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">License:</th><td class="field-body">Creative Commons Attribution-ShareAlike 4.0 International
+<a class="reference external" href="http://creativecommons.org/licenses/by-sa/4.0/">License</a></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="section" id="odml-open-metadata-markup-language">
+<h2>odML (open metadata Markup Language)<a class="headerlink" href="#odml-open-metadata-markup-language" title="Permalink to this headline">¶</a></h2>
+<p>odML (open metadata Markup Language) is an XML based file format,
+proposed by [Grewe et al. (2011) Front Neuroinform 5:16], in order
+to provide metadata in an organized, human- and machine-readable way.
+In this tutorial we will illustrate the conceptual design of odML and
+show hands-on how you can generate your own odML metadata collection.
+In addition, we demonstrate the advantages of using odML to screen
+large numbers of data sets according to selection criteria relevant for
+subsequent analyses. Well organized metadata management is a key
+component to guarantee reproducibility of experiments and to track
+provenance of performed analyses.</p>
+<dl class="docutils">
+<dt>What are metadata and why are they needed?</dt>
+<dd><p class="first">Metadata are data about data. They describe the conditions under which the
+actual raw-data of an experimental study were acquired. The organization of
+such metadata and their accessibility may sound like a trivial task, and
+most laboratories developed their home-made solutions to keep track of
+their metadata. Most of these solutions, however, break down if data and
+metadata need to be shared within a collaboration, because implicit
+knowledge of what is important and how it is organized is often
+underestimated.</p>
+<p class="last">While maintaining the relation to the actual raw-data, odML can help to
+collect all metadata which are usually distributed over several files and
+formats, and to store them unitetly which facilitates sharing data and
+metadata.</p>
+</dd>
+<dt>Key features of odML</dt>
+<dd><ul class="first last simple">
+<li>open, XML based language, to collect, store and share metadata</li>
+<li>Machine- and human-readable</li>
+<li>Interactive odML-Editor</li>
+<li>Python-odML library</li>
+</ul>
+</dd>
+</dl>
+</div>
+<hr class="docutils" />
+<div class="section" id="structure-of-this-tutorial">
+<h2>Structure of this tutorial<a class="headerlink" href="#structure-of-this-tutorial" title="Permalink to this headline">¶</a></h2>
+<p>The scientific background of the possible user community of odML varies
+enormously (e.g. physics, informatics, mathematics, biology, medicine,
+psychology). Some users will be trained programmers, others probably have never
+learned a programming language.</p>
+<p>To cover the different demands of all users, we first provide a slow
+introduction to odML that allows programming beginners to learn the basic
+concepts. In a next step, we will demonstrate how to generate an odML file via
+the Python-odML library. In later chapters we present more advanced possibilies
+of the Python-odML library (e.g. how to search for certain metadata or how to
+integrate existing terminologies or templates).</p>
+<p>Although the structure of an odML is depending on the needs of each individual
+user, we would like to provide at the end of this tutorial a few guidelines.</p>
+<p>The code for the example odML files, which we use within this tutorial is part
+of the documentation package (see doc/example_odMLs/).</p>
+<p>A summary of available odML terminologies and templates can be found <a class="reference external" href="http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml">here</a>.</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="download-and-installation">
+<h2>Download and Installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h2>
+<p>The Python-odML library (including the odML-Editor) is available on
+<a class="reference external" href="https://github.com/G-Node/python-odml">GitHub</a>. If you are not familiar with
+the version control system <strong>git</strong>, but still want to use it, have a look at
+the documentaion available on the <a class="reference external" href="https://git-scm.com/">git-scm website</a>.</p>
+<div class="section" id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h3>
+<p>The Python-odML library runs under Python 2.7.</p>
+<p>Additionally, the Python-odML library depends on Enum (version 0.4.4).</p>
+</div>
+<div class="section" id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<p>To download the Python-odML library please either use git and clone the
+repository from GitHub:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /home/usr/toolbox/
+$ git clone https://github.com/G-Node/python-odml.git
+</pre></div>
+</div>
+<p>... or if you don&#8217;t want to use git download the ZIP file also provided on
+GitHub to your computer (e.g. as above on your home directory under a &#8220;toolbox&#8221;
+folder).</p>
+<p>To install the Python-odML library, enter the corresponding directory and run:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /home/usr/toolbox/python-odml/
+$ python setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="bugs-questions">
+<h3>Bugs &amp; Questions<a class="headerlink" href="#bugs-questions" title="Permalink to this headline">¶</a></h3>
+<p>Should you find a behaviour that is likely a bug, please file a bug report at
+<a class="reference external" href="https://github.com/G-Node/python-odml/issues">the github bug tracker</a>.</p>
+<p>If you have questions regarding the use of the library or the editor, ask
+the question on <a class="reference external" href="http://stackoverflow.com/">Stack Overflow</a>, be sure to tag
+it with <cite>odml</cite> and we&#8217;ll do our best to quickly solve the problem.</p>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="basic-knowledge-on-odml">
+<h2>Basic knowledge on odML<a class="headerlink" href="#basic-knowledge-on-odml" title="Permalink to this headline">¶</a></h2>
+<p>Before we start, it is important to know the basic structure of an odML
+file. Within an odML file metadata are grouped and stored in a
+hierarchical tree structure which consists of four different odML
+objects.</p>
+<dl class="docutils">
+<dt>Document</dt>
+<dd><ul class="first last simple">
+<li>corresponds to the root of the tree (groups everything together)</li>
+<li><em>parent</em>: no parent</li>
+<li><em>children</em>: Section</li>
+</ul>
+</dd>
+<dt>Section</dt>
+<dd><ul class="first last simple">
+<li>corresponds to (big) branches of the tree</li>
+<li><em>parent</em>: Section or Document</li>
+<li><em>children</em>: Section and/or Property</li>
+</ul>
+</dd>
+<dt>Property</dt>
+<dd><ul class="first last simple">
+<li>corresponds to (small) branches of the tree (groups values)</li>
+<li><em>parent</em>: Section</li>
+<li><em>children</em>: at least one Value</li>
+</ul>
+</dd>
+<dt>Value</dt>
+<dd><ul class="first last simple">
+<li>corresponds to leaf of the tree (contains metadata)</li>
+<li><em>parent</em>: Property</li>
+<li><em>children</em>: no children</li>
+</ul>
+</dd>
+</dl>
+<p>Each of these odML objects has a certain set of attributes where the
+user can describe the object and its contents. Which attribute belongs
+to which object and what the attributes are used for, is better explained
+in an example odML file (e.g., &#8220;THGTTG.odml&#8221;).</p>
+</div>
+<div class="section" id="a-first-look">
+<h2>A first look<a class="headerlink" href="#a-first-look" title="Permalink to this headline">¶</a></h2>
+<p>If you want to get familiar with the concept behind an odML and how to handle
+odML files in Python, you can have a first look at the example odML file
+provided in the Python-odML library. For this you first need to run the python
+code (&#8220;thgttg.py&#8221;) to generate the example odML file (&#8220;THGTTG.odml&#8221;):</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /home/usr/toolbox/python-odml/doc/example_odMLs/
+$ ls
+thgttg.py
+$ python thgttg.py
+$ ls
+THGTTG.odml  thgttg.py
+</pre></div>
+</div>
+<p>Now open a Python shell within the Python-odML library directory, e.g. with
+IPython:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /home/usr/toolbox/python-odml/
+$ ipython
+</pre></div>
+</div>
+<p>In the IPython shell, first import the odml package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">odml</span>
+</pre></div>
+</div>
+<p>Second, load the example odML file with the following command lines:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">to_load</span> <span class="o">=</span> <span class="s">&#39;/home/usr/toolbox/python-odml/doc/example_odMLs/THGTTG.odml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">xmlparser</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">to_load</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you open a Python shell outside of the Python-odML library directory, please
+adapt your Python-Path and the path to the &#8220;THGTTG.odml&#8221; file accordingly.</p>
+<p>How you can access the different odML objects and their attributes once you
+loaded an odML file and how you can make use of the attributes is described in
+more detail in the following chapters for each odML object type (document,
+section, property, value). Please note that some attributes are obligatory,
+some are recommended and others are optional. The optional attributes are
+important for the advanced odML possibilities and can for now be ignored by
+odML beginners. You can find an example of their usage in later chapters.</p>
+<div class="section" id="the-document">
+<h3>The Document<a class="headerlink" href="#the-document" title="Permalink to this headline">¶</a></h3>
+<p>If you loaded the example odML file, you can have a first look at the Document
+either by explicitely calling the odml object,...:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">odmlEX</span><span class="o">.</span><span class="n">document</span>
+<span class="go">&lt;Doc 42 by Douglas Adams (2 sections)&gt;</span>
+</pre></div>
+</div>
+<p>... or using the following short cut:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">odmlEX</span>
+<span class="go">&lt;Doc 42 by Douglas Adams (2 sections)&gt;</span>
+</pre></div>
+</div>
+<p>As you can see, both commands will printout the same short summary about the
+Document of the loaded example odML file. In the following we will only use the
+short cut notation.</p>
+<p>The print out gives you already the follwing information about the odML file:</p>
+<ul class="simple">
+<li>&#8216;&lt;...&gt;&#8217; indicates that you are looking at an object</li>
+<li>&#8216;Doc&#8217; tells you that you are looking at an odML Document</li>
+<li>&#8216;42&#8217; is the version of the odML file</li>
+<li>&#8216;by D. N. Adams&#8217; states the author of the odML file</li>
+<li>&#8216;(2 sections)&#8217; tells you that this odML Document has 2 Section directly
+appended</li>
+</ul>
+<p>Note that the Document printout tells you nothing about the depth of the
+complete tree structure, because it is not displaying the children of its
+directly attached Sections. It also does not display all Document attributes.
+In total, a Document has the following 4 attributes:</p>
+<dl class="docutils">
+<dt>author</dt>
+<dd><ul class="first last simple">
+<li>recommended Document attribute</li>
+<li>The author of this odML file.</li>
+</ul>
+</dd>
+<dt>date</dt>
+<dd><ul class="first last simple">
+<li>recommended Document attribute</li>
+<li>The date this odML file was created (yyyy-mm-dd format).</li>
+</ul>
+</dd>
+<dt>repository</dt>
+<dd><ul class="first last simple">
+<li>optional Document attribute</li>
+<li>The URL to the repository of terminologies used in this odML file.</li>
+</ul>
+</dd>
+<dt>version</dt>
+<dd><ul class="first last simple">
+<li>recommended Document attribute</li>
+<li>The version of this odML file.</li>
+</ul>
+</dd>
+</dl>
+<p>Let&#8217;s find out what attributes were defined for our example Document using the
+following commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="o">.</span><span class="n">author</span>
+<span class="go">&#39;D. N. Adams&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlfile</span><span class="o">.</span><span class="n">date</span>
+<span class="go">&#39;1979-10-12&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="o">.</span><span class="n">version</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="o">.</span><span class="n">repository</span>
+</pre></div>
+</div>
+<p>As you learned in the beginning, Sections can be attached to a Document, as the
+first hierarchy level of the odML file. Let&#8217;s have a look which Sections were
+attached to the Document of our example odML file using the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="o">.</span><span class="n">sections</span>
+<span class="go">[&lt;Section TheCrew[crew] (4)&gt;, &lt;Section TheStarship[crew] (1)&gt;]</span>
+</pre></div>
+</div>
+<p>The printout of a Section is explained in the next chapter.</p>
+</div>
+<div class="section" id="the-sections">
+<h3>The Sections<a class="headerlink" href="#the-sections" title="Permalink to this headline">¶</a></h3>
+<p>There are several ways to access Sections. You can either call them by name or
+by index using either explicitely the function that returns the list of
+Sections (see last part of &#8216;The Document&#8217; chapter) or using again a short cut
+notation. Let&#8217;s test all the different ways to access a Section, by having a
+look at the first Section in the sections list attached to the Document in our
+example odML file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span>
+<span class="go">&lt;Section TheCrew[crew] (4)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;Section TheCrew[crew] (4)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span>
+<span class="go">&lt;Section TheCrew[crew] (4)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;Section TheCrew[crew] (4)&gt;</span>
+</pre></div>
+</div>
+<p>In the following we will use the short cut notation and calling Sections
+explicitely by their name.</p>
+<p>The printout of a Section is similar to the Document printout and gives you
+already the following information:</p>
+<ul class="simple">
+<li>&#8216;&lt;...&gt;&#8217; indicates that you are looking at an object</li>
+<li>&#8216;Section&#8217; tells you that you are looking at an odML Section</li>
+<li>&#8216;TheCrew&#8217; tells you that the Section was named &#8216;TheCrew&#8217;</li>
+<li>&#8216;[...]&#8217; highlights the type of the Section (here &#8216;crew&#8217;)</li>
+<li>&#8216;(4)&#8217; states that this Section has four sub-Sections directly attached to it</li>
+</ul>
+<p>Note that the Section printout tells you nothing about the number of attached
+Properties or again about the depth of a possible sub-Section tree below the
+directly attached ones. It also only list the type of the Section as one of the
+Section attributes. In total, a Section can be defined by the following 5
+attributes:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><ul class="first last simple">
+<li>obligatory Section attribute</li>
+<li>The name of the section. Should describe what kind of information can be
+found in this section.</li>
+</ul>
+</dd>
+<dt>definition</dt>
+<dd><ul class="first last simple">
+<li>recommended Section attribute</li>
+<li>The definition of the content within this section.</li>
+</ul>
+</dd>
+<dt>type</dt>
+<dd><ul class="first last simple">
+<li>recommended Section attribute</li>
+<li>The classification type which allows to connect related Sections due to
+a superior semantic context.</li>
+</ul>
+</dd>
+<dt>reference</dt>
+<dd><ul class="first last simple">
+<li>optional Section attribute</li>
+<li>The ?</li>
+</ul>
+</dd>
+<dt>repository</dt>
+<dd><ul class="first last simple">
+<li>optional Section attribute</li>
+<li>The URL to the repository of terminologies used in this odML file.</li>
+</ul>
+</dd>
+</dl>
+<p>Let&#8217;s have a look what attributes were defined for the Section &#8220;TheCrew&#8221; using
+the following commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;TheCrew&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span>
+<span class="go">&#39;Information on the crew&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&#39;crew&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reference</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">repository</span>
+</pre></div>
+</div>
+<p>To see which Sections are directly attached to the Section &#8216;TheCrew&#8217; use again
+the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sections</span>
+<span class="go">[&lt;Section Arthur Philip Dent[crew/person] (0)&gt;,</span>
+<span class="go"> &lt;Section Zaphod Beeblebrox[crew/person] (0)&gt;,</span>
+<span class="go"> &lt;Section Tricia Marie McMillan[crew/person] (0)&gt;,</span>
+<span class="go"> &lt;Section Ford Prefect[crew/person] (0)&gt;]</span>
+</pre></div>
+</div>
+<p>For accessing these sub-Sections you can use again all the following commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s">&#39;Ford Prefect&#39;</span><span class="p">]</span>
+<span class="go">&lt;Section Ford Prefect[crew/person] (0)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">&lt;Section Ford Prefect[crew/person] (0)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">][</span><span class="s">&#39;Ford Prefect&#39;</span><span class="p">]</span>
+<span class="go">&lt;Section Ford Prefect[crew/person] (0)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">&lt;Section Ford Prefect[crew/person] (0)&gt;</span>
+</pre></div>
+</div>
+<p>Besides sub-Sections a Section can also have Properties attached. To see if and
+which Properties are attached to the Section &#8216;TheCrew&#8217; you have to use the
+following command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">[&lt;Property NameCrewMembers&gt;, &lt;Property NoCrewMembers&gt;]</span>
+</pre></div>
+</div>
+<p>The printout of a Property is explained in the next chapter.</p>
+</div>
+<div class="section" id="the-properties">
+<h3>The Properties<a class="headerlink" href="#the-properties" title="Permalink to this headline">¶</a></h3>
+<p>Properties need to be called explicitely via the properties function of a
+Section. You can then, either call a Property by name or by index:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span>
+<span class="go">&lt;Property NoCrewMembers&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;Setup&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&lt;Property NoCrewMembers&gt;</span>
+</pre></div>
+</div>
+<p>In the following we will only call Properties explicitely by their name.</p>
+<p>The Property printout is reduced and only gives you information about the
+following:</p>
+<ul class="simple">
+<li>&#8216;&lt;...&gt;&#8217; indicates that you are looking at an object</li>
+<li>&#8216;Property&#8217; tells you that you are looking at an odML Property</li>
+<li>&#8216;NoCrewMembers&#8217; tells you that the Property was named &#8216;NoCrewMembers&#8217;</li>
+</ul>
+<p>Note that the Property printout tells you nothing about the number of Values,
+and very little about the Property attributes. In total, a Property can be
+defined by the following 6 attributes:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><ul class="first last simple">
+<li>obligatory Property attribute</li>
+<li>The name of the Property. Should describe what kind of Values can be
+found in this Property.</li>
+</ul>
+</dd>
+<dt>value</dt>
+<dd><ul class="first last simple">
+<li>obligatory Property attribute</li>
+<li>The value container of this property. See in &#8216;The Value&#8217; chapter for
+details.</li>
+</ul>
+</dd>
+<dt>definition</dt>
+<dd><ul class="first last simple">
+<li>recommended Property attribute</li>
+<li>The definition of this Property.</li>
+</ul>
+</dd>
+<dt>dependency</dt>
+<dd><ul class="first last simple">
+<li>optional Property attribute</li>
+<li>A name of another Property within the same section, which this property
+depends on.</li>
+</ul>
+</dd>
+<dt>dependency_value</dt>
+<dd><ul class="first last simple">
+<li>optional Property attribute</li>
+<li>Value of the other Property specified in the &#8216;dependency&#8217; attribute on
+which this Property depends on.</li>
+</ul>
+</dd>
+<dt>mapping</dt>
+<dd><ul class="first last simple">
+<li>optional Property attribute</li>
+<li>The odML path within the same odML file (internal link) to another
+Section to which all children of this section, if a conversion is
+requested, should be transferred to, as long as the children not
+themselves define a mapping.</li>
+</ul>
+</dd>
+</dl>
+<p>Let&#8217;s check which attributes were defined for the Property &#8220;NoCrewMembers&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;NoCrewMembers&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span>
+<span class="go">&#39;Number of crew members&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dependency</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dependency_value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mapping</span>
+</pre></div>
+</div>
+<p>The Value or Values attached to a Property can be accessed via two different
+commands. If only one value object was attached to the Property, the first
+command returns directly a Value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+<span class="go">&lt;int 4&gt;</span>
+</pre></div>
+</div>
+<p>If multiple Values were attached to the Property, a list of Values is
+returned:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+<span class="go">[&lt;string Arthur Philip Dent&gt;, &lt;string Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;string Tricia Marie McMillan&gt;, &lt;string Ford Prefect&gt;]</span>
+</pre></div>
+</div>
+<p>The second command will always return a list independent of the number of
+Values attached:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;int 4&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;string Arthur Philip Dent&gt;, &lt;string Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;string Tricia Marie McMillan&gt;, &lt;string Ford Prefect&gt;]</span>
+</pre></div>
+</div>
+<p>The printout of the Value is explained in the next chapter.</p>
+</div>
+<div class="section" id="the-values">
+<h3>The Values<a class="headerlink" href="#the-values" title="Permalink to this headline">¶</a></h3>
+<p>Depending on how many Values are attached to a Property, it can be accessed
+in two different ways. If you know, only one value is attached, you can use the
+following command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+<span class="go">&lt;int 4&gt;</span>
+</pre></div>
+</div>
+<p>If you know, more then one Value is attached, and you would like for e.g.,
+access the forth one you can use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">&lt;string Ford Prefect&gt;</span>
+</pre></div>
+</div>
+<p>The Value printout is reduced and only gives you information about the
+following:</p>
+<ul class="simple">
+<li>&#8216;&lt;...&gt;&#8217; indicates that you are looking at an object</li>
+<li>&#8216;int&#8217; tells you that the value has the odml data type (dtype) &#8216;int&#8217;</li>
+<li>&#8216;4&#8217; is the actual data stored within the value object</li>
+</ul>
+<p>In total, a Value can be defined by the following 6 attributes:</p>
+<dl class="docutils">
+<dt>data</dt>
+<dd><ul class="first last simple">
+<li>obligatory Value attribute</li>
+<li>The actual metadata value.</li>
+</ul>
+</dd>
+<dt>dtype</dt>
+<dd><ul class="first last simple">
+<li>recommended Value attribute</li>
+<li>The odml data type of the given metadata value.</li>
+</ul>
+</dd>
+<dt>definition</dt>
+<dd><ul class="first last simple">
+<li>recommended Value attribute</li>
+<li>The definition of the given metadata value.</li>
+</ul>
+</dd>
+<dt>uncertainty</dt>
+<dd><ul class="first last simple">
+<li>recommended Value attribute</li>
+<li>Can be used to specify the uncertainty of the given metadata value.</li>
+</ul>
+</dd>
+<dt>unit</dt>
+<dd><ul class="first last simple">
+<li>recommended Value attribute</li>
+<li>The unit of the given metadata value, if it has a unit.</li>
+</ul>
+</dd>
+<dt>reference</dt>
+<dd><ul class="first last simple">
+<li>optional Value attribute</li>
+<li>The ?</li>
+</ul>
+</dd>
+<dt>filename</dt>
+<dd><ul class="first last simple">
+<li>optional Value attribute</li>
+<li>The ?</li>
+</ul>
+</dd>
+<dt>encoder</dt>
+<dd><ul class="first last simple">
+<li>optional Value attribute</li>
+<li>Name of the applied encoder used to encode a binary metadata value into
+ascii.</li>
+</ul>
+</dd>
+<dt>checksum</dt>
+<dd><ul class="first last simple">
+<li>optional Value attribute</li>
+<li>Checksum and name of the algorithm that calculated the checksum of a
+given binary metadata value (algorithm$checksum format)</li>
+</ul>
+</dd>
+</dl>
+<p>Let&#8217;s see which attributes were defined for the Value of the Property
+&#8216;NoCrewMembers&#8217; of the Section &#8216;TheCrew&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">data</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">&#39;int&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">definition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">uncertainty</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">unit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">reference</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">filename</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">encoder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NoCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">checksum</span>
+</pre></div>
+</div>
+<p>Note that these commands are for Properties containing one Value. For
+accessing attributes of a Value of a Property with multiple Values use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&#39;Ford Prefect&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">&#39;person&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">uncertainty</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">reference</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">encoder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odmlEX</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">checksum</span>
+</pre></div>
+</div>
+<p>If you would like to get all the actual metadata values back from a Property
+with multiple Values, iterate over the Values list:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">all_metadata</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s">&#39;NameCrewMembers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">all_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">all_metadata</span>
+<span class="go">        [&#39;Arthur Philip Dent&#39;, &#39;Zaphod Beeblebrox&#39;,</span>
+<span class="go">         &#39;Tricia Marie McMillan&#39;, &#39;Ford Prefect&#39;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="generating-an-odml-file">
+<h2>Generating an odML-file<a class="headerlink" href="#generating-an-odml-file" title="Permalink to this headline">¶</a></h2>
+<p>After getting familiar with the different odml objects and their attributes,
+you will now learn how to generate your own odML file by reproducing some parts
+of the example odml file we presented before.</p>
+<p>We will show you first how to create the different odML objects with their
+obligatory and recommended attributes. Please have a look at the tutorial part
+describing the advanced possibilities of the Python odML library for the usage
+of all other attributes.</p>
+<p>If you opened a new IPython shell, please import first again the odml package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">odml</span>
+</pre></div>
+</div>
+<div class="section" id="create-a-document">
+<h3>Create a document<a class="headerlink" href="#create-a-document" title="Permalink to this headline">¶</a></h3>
+<p>Let&#8217;s start by creating the Document:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="s">&#39;Douglas Adams&#39;</span><span class="p">,</span>
+<span class="go">                           version=42)</span>
+</pre></div>
+</div>
+<p>You can check if your new Document contains actually what you created by using
+some of the commands you learned before:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">Doc</span> <span class="mi">42</span> <span class="n">by</span> <span class="n">Douglas</span> <span class="n">Adams</span> <span class="p">(</span><span class="mi">0</span> <span class="n">sections</span><span class="p">)</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="o">.</span><span class="n">date</span>
+</pre></div>
+</div>
+<p>As you can see, we created a Document with the same attributes as the example,
+except that we forgot to define the date. Note that you can always edit
+attributes of generated odml objects. For this let&#8217;s first import the Python
+package datetime:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+</pre></div>
+</div>
+<p>Now we edit the date attribute of the Document:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1979</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="o">.</span><span class="n">date</span>
+<span class="go">&#39;1979-10-12&#39;</span>
+</pre></div>
+</div>
+<p>Another part which is still missing is that so far we have no Sections attached
+to our Document. Let&#8217;s change this!</p>
+</div>
+<div class="section" id="create-a-section">
+<h3>Create a section<a class="headerlink" href="#create-a-section" title="Permalink to this headline">¶</a></h3>
+<p>We now create a Section by reproducing the Section &#8220;TheCrew&#8221; of the example
+odml file from the beginning:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;TheCrew&#39;</span><span class="p">,</span>
+<span class="go">                       definition=&#39;Information on the crew&#39;,</span>
+<span class="go">                       type=&#39;crew&#39;)</span>
+</pre></div>
+</div>
+<p>Check if your new Section contains actually what you created:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;TheCrew&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="o">.</span><span class="n">definition</span>
+<span class="go">&#39;Information on the crew&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&#39;crew&#39;</span>
+</pre></div>
+</div>
+<p>Now we need to attach the Section to our previously generated Document:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span>
+<span class="go">&lt;Doc 42 by Douglas Adams (1 sections)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="o">.</span><span class="n">sections</span>
+<span class="go">[&lt;Section TheCrew[crew] (0)&gt;]</span>
+</pre></div>
+</div>
+<p>We repeat the procedure to create now a second Section which we will attach as
+a sub-Section to the Section &#8216;TheCrew&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Arthur Philip Dent&#39;</span><span class="p">,</span>
+<span class="go">                       definition=&#39;Information on Arthur Dent&#39;,</span>
+<span class="go">                       type=&#39;crew/person&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span>
+<span class="go">&lt;Section Arthur Philip Dent[crew/person] (0)&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="o">.</span><span class="n">sections</span>
+<span class="go">[&lt;Section TheCrew[crew] (0)&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sections</span>
+<span class="go">[&lt;Section Arthur Philip Dent[crew/person] (0)&gt;]</span>
+</pre></div>
+</div>
+<p>Note that all of our created Sections do not contain any Properties and Values,
+yet. Let&#8217;s see if we can change this...</p>
+</div>
+<div class="section" id="create-a-property-value-s-pair">
+<h3>Create a Property-Value(s) pair:<a class="headerlink" href="#create-a-property-value-s-pair" title="Permalink to this headline">¶</a></h3>
+<p>The creation of a Property is not independent from creating a Value, because a
+Property always needs at least on Value attached. Therefore we will demonstrate
+the creation of Value and Property together.</p>
+<p>Let&#8217;s first create a Property with a single Value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&quot;male&quot;</span><span class="p">,</span>
+<span class="go">                     dtype=odml.DType.string)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span>
+<span class="go">&lt;string male&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Gender&#39;</span><span class="p">,</span>
+<span class="go">                         definition=&#39;Sex of the subject&#39;,</span>
+<span class="go">                         value=val)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span>
+<span class="go">&lt;Property Gender&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">value</span>
+<span class="go">&lt;string male&gt;</span>
+</pre></div>
+</div>
+<p>As you can see, we define a odML data type (dtype) for the Value. Generally,
+you can use the following odML data types to describe the format of the stored
+metadata:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">dtype</th>
+<th class="head">required data examples</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>odml.DType.int or &#8216;int&#8217;</td>
+<td>42</td>
+</tr>
+<tr class="row-odd"><td>odml.DType.float or &#8216;float&#8217;</td>
+<td>42.0</td>
+</tr>
+<tr class="row-even"><td>odml.DType.boolean or &#8216;boolean&#8217;</td>
+<td>True or False</td>
+</tr>
+<tr class="row-odd"><td>odml.DType.string or &#8216;string&#8217;</td>
+<td>&#8216;Earth&#8217;</td>
+</tr>
+<tr class="row-even"><td>odml.DType.date or &#8216;date&#8217;</td>
+<td>dt.date(1979, 10, 12)</td>
+</tr>
+<tr class="row-odd"><td>odml.DType.datetime or &#8216;datetime&#8217;</td>
+<td>dt.datetime(1979, 10, 12, 11, 11, 11)</td>
+</tr>
+<tr class="row-even"><td>odml.DType.time or &#8216;time&#8217;</td>
+<td>dt.time(11, 11, 11)</td>
+</tr>
+<tr class="row-odd"><td>odml.DType.person or &#8216;person&#8217;</td>
+<td>&#8216;Zaphod Beeblebrox&#8217;</td>
+</tr>
+<tr class="row-even"><td>odml.DType.text or &#8216;text&#8217;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>odml.DType.url or &#8216;url&#8217;</td>
+<td>&#8220;<a class="reference external" href="https://en.wikipedia.org/wiki/Earth">https://en.wikipedia.org/wiki/Earth</a>&#8220;</td>
+</tr>
+<tr class="row-even"><td>odml.DType.binary or &#8216;binary&#8217;</td>
+<td>&#8216;00101010&#8217;</td>
+</tr>
+</tbody>
+</table>
+<p>The available types are implemented in the odml.types Module.</p>
+<p>After learning how we create a simple Porperty-Value-pair, we need to know how
+we can attach it to a Section. As exercise, we attach our first Porperty-Value-
+pair to the sub-Section &#8216;Arthur Philip Dent&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">][</span><span class="s">&#39;Arthur Philip Dent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">][</span><span class="s">&#39;Arthur Philip Dent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">[&lt;Property Gender&gt;]</span>
+</pre></div>
+</div>
+<p>If the odML data type of a Value is distinctly deducible (&#8216;int&#8217;, &#8216;float&#8217;,
+&#8216;boolean&#8217;, &#8216;string&#8217;, &#8216;date&#8217;, &#8216;datetime&#8217;, or &#8216;time&#8217;), you can also use a short
+cut to create a Property-Value pair:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Gender&#39;</span><span class="p">,</span>
+<span class="go">                         definition=&#39;Sex of the subject&#39;,</span>
+<span class="go">                         value=&#39;male&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span>
+<span class="go">&lt;Property Gender&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">value</span>
+<span class="go">&lt;string male&gt;</span>
+</pre></div>
+</div>
+<p>Mark that this short cut will not work for the following odML data types
+&#8216;person&#8217;, &#8216;text&#8217;, &#8216;url&#8217;, and &#8216;binary&#8217;, because they are not automatically
+distinguishable from the odML data type &#8216;string&#8217;.</p>
+<p>Next we learn how to create a Property with multiple Values attached to it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&#39;Arthur Philip Dent&#39;</span><span class="p">,</span>
+<span class="go">                       dtype=odml.DType.person),</span>
+<span class="go">            odml.Value(data=&#39;Zaphod Beeblebrox&#39;,</span>
+<span class="go">                       dtype=odml.DType.person),</span>
+<span class="go">            odml.Value(data=&#39;Tricia Marie McMillan&#39;,</span>
+<span class="go">                       dtype=odml.DType.person),</span>
+<span class="go">            odml.Value(data=&#39;Ford Prefect&#39;,</span>
+<span class="go">                       dtype=odml.DType.person)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vals</span>
+<span class="go">[&lt;person Arthur Philip Dent&gt;, &lt;person Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;person Tricia Marie McMillan&gt;, &lt;person Ford Prefect&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;NameCrewMembers&#39;</span><span class="p">,</span>
+<span class="go">                         definition = &#39;List of crew members names&#39;,</span>
+<span class="go">                         value = vals)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span>
+<span class="go">&lt;Property NameCrewMembers&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;person Arthur Philip Dent&gt;, &lt;person Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;person Tricia Marie McMillan&gt;, &lt;person Ford Prefect&gt;]</span>
+</pre></div>
+</div>
+<p>To build up our odML file further, we attach this Porperty-Values-pair to
+the Section &#8216;TheCrew&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MYodML</span><span class="p">[</span><span class="s">&#39;TheCrew&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">[&lt;Property NameCrewMembers&gt;]</span>
+</pre></div>
+</div>
+<p>Just to illustrate you again, we could also make use again of the short cut
+notation, if we would agree to use the odML data type &#8216;string&#8217; instead of
+&#8216;person&#8217; for our Porperty-Values-pair:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;NameCrewMembers&#39;</span><span class="p">,</span>
+<span class="go">                         definition = &#39;List of crew members names&#39;,</span>
+<span class="go">                         value = [&#39;Arthur Philip Dent&#39;,</span>
+<span class="go">                                  &#39;Zaphod Beeblebrox&#39;,</span>
+<span class="go">                                  &#39;Tricia Marie McMillan&#39;,</span>
+<span class="go">                                  &#39;Ford Prefect&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">value</span>
+<span class="go">[&lt;string Arthur Philip Dent&gt;, &lt;string Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;string Tricia Marie McMillan&gt;, &lt;string Ford Prefect&gt;]</span>
+</pre></div>
+</div>
+<p>Note that this short cut also works for creating a Property with a list of
+Values of different data types, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;TestMultipleValueList&#39;</span><span class="p">,</span>
+<span class="go">                         definition = &#39;List of Values of with different &#39;</span>
+<span class="go">                                      &#39;odML data types&#39;,</span>
+<span class="go">                         value = [42,</span>
+<span class="go">                                  42.0,</span>
+<span class="go">                                  True,</span>
+<span class="go">                                  &quot;Don&#39;t Panic&quot;,</span>
+<span class="go">                                  dt.date(1979, 10, 12),</span>
+<span class="go">                                  dt.datetime(1979, 10, 12, 11, 11, 11),</span>
+<span class="go">                                  dt.time(11, 11, 11)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;int 42&gt;,</span>
+<span class="go"> &lt;float 42.0&gt;,</span>
+<span class="go"> &lt;boolean True&gt;,</span>
+<span class="go"> &lt;string Don&#39;t Panic&gt;,</span>
+<span class="go"> &lt;date 1979-10-12&gt;,</span>
+<span class="go"> &lt;datetime 1979-10-12 11:11:11&gt;,</span>
+<span class="go"> &lt;time 11:11:11&gt;]</span>
+</pre></div>
+</div>
+<p>A third way to create a Porperty with multiple Values would be to attach first
+one Value and the append further Values later on:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&quot;Arthur Philip Dent&quot;</span><span class="p">,</span>
+<span class="go">                 type=odml.DType.person)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Property</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;NameCrewMembers&#39;</span><span class="p">,</span>
+<span class="go">                         definition = &#39;List of crew members names&#39;,</span>
+<span class="go">                         value = val)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;person Arthur Philip Dent&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&quot;Zaphod Beeblebrox&quot;</span><span class="p">,</span>
+<span class="go">                                         type=odml.DType.person)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;person Arthur Philip Dent&gt;, &lt;person Zaphod Beeblebrox&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&quot;Tricia Marie McMillan&quot;</span><span class="p">,</span>
+<span class="go">                 type=odml.DType.person)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;person Arthur Philip Dent&gt;, &lt;person Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;person Tricia Marie McMillan&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&quot;Ford Prefect&quot;</span><span class="p">,</span>
+<span class="go">                                         type=odml.DType.person)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prop</span><span class="o">.</span><span class="n">values</span>
+<span class="go">[&lt;person Arthur Philip Dent&gt;, &lt;person Zaphod Beeblebrox&gt;,</span>
+<span class="go"> &lt;person Tricia Marie McMillan&gt;, &lt;person Ford Prefect&gt;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="printing-xml-representation-of-an-odml-file">
+<h3>Printing XML-representation of an odML file:<a class="headerlink" href="#printing-xml-representation-of-an-odml-file" title="Permalink to this headline">¶</a></h3>
+<p>Although the XML-representation of an odML file is a bit hard to read, it is
+sometimes helpful to check, especially during a generation process, how the
+hierarchical structure of the odML file looks like.</p>
+<p>Let&#8217;s have a look at the XML-representation of our small odML file we just
+generated:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">odml</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">xmlparser</span><span class="o">.</span><span class="n">XMLWriter</span><span class="p">(</span><span class="n">MYodML</span><span class="p">))</span>
+<span class="go">&lt;odML version=&quot;1&quot;&gt;</span>
+<span class="go">  &lt;date&gt;1979-10-12&lt;/date&gt;</span>
+<span class="go">  &lt;section&gt;</span>
+<span class="go">    &lt;definition&gt;Information on the crew&lt;/definition&gt;</span>
+<span class="go">    &lt;property&gt;</span>
+<span class="go">      &lt;definition&gt;List of crew members names&lt;/definition&gt;</span>
+<span class="go">      &lt;value&gt;Arthur Philip Dent&lt;type&gt;person&lt;/type&gt;&lt;/value&gt;</span>
+<span class="go">      &lt;value&gt;Zaphod Beeblebrox&lt;type&gt;person&lt;/type&gt;&lt;/value&gt;</span>
+<span class="go">      &lt;value&gt;Tricia Marie McMillan&lt;type&gt;person&lt;/type&gt;&lt;/value&gt;</span>
+<span class="go">      &lt;value&gt;Ford Prefect&lt;type&gt;person&lt;/type&gt;&lt;/value&gt;</span>
+<span class="go">      &lt;name&gt;NameCrewMembers&lt;/name&gt;</span>
+<span class="go">    &lt;/property&gt;</span>
+<span class="go">    &lt;name&gt;TheCrew&lt;/name&gt;</span>
+<span class="go">    &lt;section&gt;</span>
+<span class="go">      &lt;definition&gt;Information on Arthur Dent&lt;/definition&gt;</span>
+<span class="go">      &lt;property&gt;</span>
+<span class="go">        &lt;definition&gt;Sex of the subject&lt;/definition&gt;</span>
+<span class="go">        &lt;value&gt;male&lt;type&gt;string&lt;/type&gt;&lt;/value&gt;</span>
+<span class="go">        &lt;name&gt;Gender&lt;/name&gt;</span>
+<span class="go">      &lt;/property&gt;</span>
+<span class="go">      &lt;name&gt;Arthur Philip Dent&lt;/name&gt;</span>
+<span class="go">      &lt;type&gt;crew/person&lt;/type&gt;</span>
+<span class="go">    &lt;/section&gt;</span>
+<span class="go">    &lt;type&gt;crew&lt;/type&gt;</span>
+<span class="go">  &lt;/section&gt;</span>
+<span class="go">  &lt;version&gt;42&lt;/version&gt;</span>
+<span class="go">  &lt;author&gt;Douglas Adams&lt;/author&gt;</span>
+<span class="go">&lt;/odML&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="saving-an-odml-file">
+<h3>Saving an odML file:<a class="headerlink" href="#saving-an-odml-file" title="Permalink to this headline">¶</a></h3>
+<p>You can save your odML file using the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">save_to</span> <span class="o">=</span> <span class="s">&#39;/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.odml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odml</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">xmlparser</span><span class="o">.</span><span class="n">XMLWriter</span><span class="p">(</span><span class="n">MYodML</span><span class="p">)</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">save_to</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loading-an-odml-file">
+<h3>Loading an odML file:<a class="headerlink" href="#loading-an-odml-file" title="Permalink to this headline">¶</a></h3>
+<p>You already learned how to load the example odML file. Here just as a reminder
+you can try to reload your own saved odML file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">to_load</span> <span class="o">=</span> <span class="s">&#39;/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.odml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_reloaded_odml</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">xmlparser</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">to_load</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="advanced-odml-features">
+<h2>Advanced odML-Features<a class="headerlink" href="#advanced-odml-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="advanced-knowledge-on-values">
+<h3>Advanced knowledge on Values<a class="headerlink" href="#advanced-knowledge-on-values" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="data-type-conversions">
+<h4>Data type conversions<a class="headerlink" href="#data-type-conversions" title="Permalink to this headline">¶</a></h4>
+<p>After creating a Value the data type can be changed and the corresponding Value
+will converted to the new data type, if the new format is valid for the given
+metadata:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;float 1.0&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">DType</span><span class="o">.</span><span class="n">int</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;int 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">DType</span><span class="o">.</span><span class="n">boolean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;boolean True&gt;</span>
+</pre></div>
+</div>
+<p>If the conversion is invalid a ValueError is raised:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt;&gt;&gt; test_value.dtype = odml.DType.date
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/home/zehl/Projects/toolbox/python-odml/odml/value.py&quot;, line 163, in dtype
+raise ValueError(&quot;cannot convert &#39;%s&#39; from &#39;%s&#39; to &#39;%s&#39;&quot; % (self.value, old_type, new_type))
+ValueError: cannot convert &#39;True&#39; from &#39;boolean&#39; to &#39;date&#39;
+</pre></div>
+</div>
+<p>Also note, that during such a process, metadata loss may occur if a float is
+converted to an integer and then back to a float:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="mf">42.42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;float 42.42&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">DType</span><span class="o">.</span><span class="n">int</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;int 42&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">DType</span><span class="o">.</span><span class="n">float</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;float 42.0&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="binary-metadata">
+<h4>Binary metadata<a class="headerlink" href="#binary-metadata" title="Permalink to this headline">¶</a></h4>
+<p>For metadata of binary data type you also need to be specify the correct
+encoder. The following table lists all possible encoders of the odML-libarary
+and their binary metadata representation:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">binary encoder</th>
+<th class="head">binary metadata example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>quoted-printable</td>
+<td>Ford Prefect</td>
+</tr>
+<tr class="row-odd"><td>hexadecimal</td>
+<td>466f72642050726566656374</td>
+</tr>
+<tr class="row-even"><td>base64</td>
+<td>Rm9yZCBQcmVmZWN0</td>
+</tr>
+</tbody>
+</table>
+<p>The encoder can also be edited later on:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">&#39;Ford Prefect&#39;</span><span class="p">,</span>
+<span class="go">                            dtype=odml.DType.binary,</span>
+<span class="go">                            encoder=&#39;quoted-printable&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;binary Ford Prefect&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="s">&#39;hexadecimal&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;binary 466f72642050726566656374&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="s">&#39;base64&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span>
+<span class="go">&lt;binary Rm9yZCBQcmVmZWN0&gt;</span>
+</pre></div>
+</div>
+<p>The checksum of binary metadata is automatically calculated with <tt class="docutils literal"><span class="pre">crc32</span></tt> as
+default checksum:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">checksum</span>
+<span class="go">&#39;crc32$10e6c0cf</span>
+</pre></div>
+</div>
+<p>Alternatively, <tt class="docutils literal"><span class="pre">md5</span></tt> can be used for the checksum calculation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">checksum</span> <span class="o">=</span> <span class="s">&quot;md5&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_value</span><span class="o">.</span><span class="n">checksum</span>
+<span class="go">&#39;md5$c1282d5763e2249028047757b6209518&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="advanced-knowledge-on-properties">
+<h3>Advanced knowledge on Properties<a class="headerlink" href="#advanced-knowledge-on-properties" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="dependencies-dependency-values">
+<h4>Dependencies &amp; dependency values<a class="headerlink" href="#dependencies-dependency-values" title="Permalink to this headline">¶</a></h4>
+<p>(coming soon)</p>
+</div>
+</div>
+<div class="section" id="advanced-knowledge-on-sections">
+<h3>Advanced knowledge on Sections<a class="headerlink" href="#advanced-knowledge-on-sections" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="links-includes">
+<h4>Links &amp; Includes<a class="headerlink" href="#links-includes" title="Permalink to this headline">¶</a></h4>
+<p>(deprecated; new version coming soon)
+Sections can be linked to other Sections, so that they include their defined
+attributes. A link can be within the document (<tt class="docutils literal"><span class="pre">link</span></tt> property) or to an
+external one (<tt class="docutils literal"><span class="pre">include</span></tt> property).</p>
+<p>After parsing a document, these links are not yet resolved, but can be using
+the <a class="reference internal" href="base-classes.html#odml.doc.BaseDocument.finalize" title="odml.doc.BaseDocument.finalize"><tt class="xref py py-meth docutils literal"><span class="pre">odml.doc.BaseDocument.finalize()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">xmlparser</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;sample.odml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Note: Only the parser does not automatically resolve link properties, as the referenced
+sections may not yet be available.
+However, when manually setting the <tt class="docutils literal"><span class="pre">link</span></tt> (or <tt class="docutils literal"><span class="pre">include</span></tt>) attribute, it will
+be immediately resolved. To avoid this behaviour, set the <tt class="docutils literal"><span class="pre">_link</span></tt> (or <tt class="docutils literal"><span class="pre">_include</span></tt>)
+attribute instead.
+The object remembers to which one it is linked in its <tt class="docutils literal"><span class="pre">_merged</span></tt> attribute.
+The link can be unresolved manually using <a class="reference internal" href="base-classes.html#odml.section.BaseSection.unmerge" title="odml.section.BaseSection.unmerge"><tt class="xref py py-meth docutils literal"><span class="pre">odml.section.BaseSection.unmerge()</span></tt></a>
+and merged again using <a class="reference internal" href="base-classes.html#odml.section.BaseSection.merge" title="odml.section.BaseSection.merge"><tt class="xref py py-meth docutils literal"><span class="pre">odml.section.BaseSection.merge()</span></tt></a>.</p>
+<p>Unresolving means to remove sections and properties that do not differ from their
+linked equivalents. This should be done globally before saving using the
+<a class="reference internal" href="base-classes.html#odml.doc.BaseDocument.clean" title="odml.doc.BaseDocument.clean"><tt class="xref py py-meth docutils literal"><span class="pre">odml.doc.BaseDocument.clean()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmlparser</span><span class="o">.</span><span class="n">XMLWriter</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s">&#39;sample.odml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Changing a <tt class="docutils literal"><span class="pre">link</span></tt> (or <tt class="docutils literal"><span class="pre">include</span></tt>) attribute will first unmerge the section and
+then set merge with the new object.</p>
+</div>
+<div class="section" id="terminologies">
+<h4>Terminologies<a class="headerlink" href="#terminologies" title="Permalink to this headline">¶</a></h4>
+<p>(deprecated; new version coming soon)
+odML supports terminologies that are data structure templates for typical use cases.
+Sections can have a <tt class="docutils literal"><span class="pre">repository</span></tt> attribute. As repositories can be inherited,
+the current applicable one can be obtained using the <a class="reference internal" href="base-classes.html#odml.section.BaseSection.get_repository" title="odml.section.BaseSection.get_repository"><tt class="xref py py-meth docutils literal"><span class="pre">odml.section.BaseSection.get_repository()</span></tt></a>
+method.</p>
+<p>To see whether an object has a terminology equivalent, use the <a class="reference internal" href="base-classes.html#odml.property.BaseProperty.get_terminology_equivalent" title="odml.property.BaseProperty.get_terminology_equivalent"><tt class="xref py py-meth docutils literal"><span class="pre">odml.property.BaseProperty.get_terminology_equivalent()</span></tt></a>
+method, which returns the corresponding object of the terminology.</p>
+</div>
+<div class="section" id="mappings">
+<h4>Mappings<a class="headerlink" href="#mappings" title="Permalink to this headline">¶</a></h4>
+<p>(deprecated; new version coming soon)
+A sometimes obscure but very useful feature is the idea of mappings, which can
+be used to write documents in a user-defined terminology, but provide mapping
+information to a standard-terminology that allows the document to be viewed in
+the standard-terminology (provided that adequate mapping-information is provided).</p>
+<p>See <a class="reference internal" href="mappings.html#test.mapping.TestMapping" title="test.mapping.TestMapping"><tt class="xref py py-class docutils literal"><span class="pre">test.mapping.TestMapping</span></tt></a> if you need to understand the
+mapping-process itself.</p>
+<p>Mappings are views on documents and are created as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">odml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">odml.mapping</span> <span class="kn">as</span> <span class="nn">mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">odml</span><span class="o">.</span><span class="n">Document</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mdoc</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">create_mapping</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mdoc</span>
+<span class="go">P(&lt;Doc None by None (0 sections)&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mdoc</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;class &#39;odml.tools.proxy.DocumentProxy&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Creating a view has the advantage, that changes on a Proxy-object are
+propagated to the original document.
+This works quite well and is extensively used in the GUI.
+However, be aware that you are typically dealing with proxy objects only
+and not all API methods may be available.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">odML Tutorial</a><ul>
+<li><a class="reference internal" href="#odml-open-metadata-markup-language">odML (open metadata Markup Language)</a></li>
+<li><a class="reference internal" href="#structure-of-this-tutorial">Structure of this tutorial</a></li>
+<li><a class="reference internal" href="#download-and-installation">Download and Installation</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#bugs-questions">Bugs &amp; Questions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-knowledge-on-odml">Basic knowledge on odML</a></li>
+<li><a class="reference internal" href="#a-first-look">A first look</a><ul>
+<li><a class="reference internal" href="#the-document">The Document</a></li>
+<li><a class="reference internal" href="#the-sections">The Sections</a></li>
+<li><a class="reference internal" href="#the-properties">The Properties</a></li>
+<li><a class="reference internal" href="#the-values">The Values</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generating-an-odml-file">Generating an odML-file</a><ul>
+<li><a class="reference internal" href="#create-a-document">Create a document</a></li>
+<li><a class="reference internal" href="#create-a-section">Create a section</a></li>
+<li><a class="reference internal" href="#create-a-property-value-s-pair">Create a Property-Value(s) pair:</a></li>
+<li><a class="reference internal" href="#printing-xml-representation-of-an-odml-file">Printing XML-representation of an odML file:</a></li>
+<li><a class="reference internal" href="#saving-an-odml-file">Saving an odML file:</a></li>
+<li><a class="reference internal" href="#loading-an-odml-file">Loading an odML file:</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-odml-features">Advanced odML-Features</a><ul>
+<li><a class="reference internal" href="#advanced-knowledge-on-values">Advanced knowledge on Values</a><ul>
+<li><a class="reference internal" href="#data-type-conversions">Data type conversions</a></li>
+<li><a class="reference internal" href="#binary-metadata">Binary metadata</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-knowledge-on-properties">Advanced knowledge on Properties</a><ul>
+<li><a class="reference internal" href="#dependencies-dependency-values">Dependencies &amp; dependency values</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-knowledge-on-sections">Advanced knowledge on Sections</a><ul>
+<li><a class="reference internal" href="#links-includes">Links &amp; Includes</a></li>
+<li><a class="reference internal" href="#terminologies">Terminologies</a></li>
+<li><a class="reference internal" href="#mappings">Mappings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to python-odml&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Class-Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Class-Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to python-odml’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">python-odml 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Hagen Fritsch.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

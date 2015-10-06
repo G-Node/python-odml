@@ -1,0 +1,773 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mappings &mdash; python-odml 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-odml 0.1 documentation" href="index.html" />
+    <link rel="up" title="Class-Reference" href="reference.html" />
+    <link rel="next" title="Data Types" href="tools.html" />
+    <link rel="prev" title="odML-Base Classes" href="base-classes.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tools.html" title="Data Types"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="base-classes.html" title="odML-Base Classes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-odml 0.1 documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Class-Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mappings">
+<h1>Mappings<a class="headerlink" href="#mappings" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-odml.mapping">
+<span id="mapping-module"></span><h2>Mapping-Module<a class="headerlink" href="#module-odml.mapping" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="odml.mapping.MappingError">
+<em class="property">exception </em><tt class="descclassname">odml.mapping.</tt><tt class="descname">MappingError</tt><a class="headerlink" href="#odml.mapping.MappingError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.can_unmap_all_properties">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">can_unmap_all_properties</tt><big>(</big><em>msec</em>, <em>top</em><big>)</big><a class="headerlink" href="#odml.mapping.can_unmap_all_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>find out if the mapped section <em>msec</em> contains any property whose origin (its proxied object)
+is not within the subtree indicated by section <em>top</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.can_unmap_section">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">can_unmap_section</tt><big>(</big><em>sec</em>, <em>top</em><big>)</big><a class="headerlink" href="#odml.mapping.can_unmap_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>check if a section including its subsections, properties and properties of
+mapped subsections (i.e. NonexistantSections) can safely be unmapped</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.create_mapping">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">create_mapping</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#odml.mapping.create_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>install the mapping for the document</p>
+<ol class="arabic simple">
+<li>recursively map all sections</li>
+<li>afterwards map all their properties</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.create_property_mapping">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">create_property_mapping</tt><big>(</big><em>sec</em>, <em>prop</em><big>)</big><a class="headerlink" href="#odml.mapping.create_property_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>map a property to its destination place using the mapping rules (see test/mapping.py)</p>
+<p>Note: all sections of the document need already to be mapped</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.create_section_mapping">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">create_section_mapping</tt><big>(</big><em>sec</em><big>)</big><a class="headerlink" href="#odml.mapping.create_section_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>recursively install the mapping for a section</p>
+<p>Note: the mappings for the properties contained in the sections need to be
+installed afterwards (after all sections have been mapped) manually</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.get_object_from_mapped_equivalent">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">get_object_from_mapped_equivalent</tt><big>(</big><em>mobj</em><big>)</big><a class="headerlink" href="#odml.mapping.get_object_from_mapped_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function tries to find out which object was responsible for
+creating the <em>mobj</em>.
+This is straightforward in several cases (i.e. <em>mobj</em> being a BaseProxy instance)
+but is not for others (e.g. <em>mobj</em> being a section solely created
+for mapping of a property).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.mapping.mapable">
+<em class="property">class </em><tt class="descclassname">odml.mapping.</tt><tt class="descname">mapable</tt><a class="headerlink" href="#odml.mapping.mapable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides assisting functionality for objects that support
+the mapping attribute (i.e. sections and properties)</p>
+<dl class="method">
+<dt id="odml.mapping.mapable.get_mapping">
+<tt class="descname">get_mapping</tt><big>(</big><big>)</big><a class="headerlink" href="#odml.mapping.mapable.get_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current valid mapping for this section / property
+which may be defined by the object itsself, by its terminology equivalent
+or inherited from its parent</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="odml.mapping.mapable.get_mapping_object">
+<em class="property">static </em><tt class="descname">get_mapping_object</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#odml.mapping.mapable.get_mapping_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object instance a mapping-url points to</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="odml.mapping.mapable.mapped_object">
+<tt class="descname">mapped_object</tt><a class="headerlink" href="#odml.mapping.mapable.mapped_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>if there is a mapping defined (or inherited), returns the corresponding
+mapping object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="odml.mapping.mapable.mapping">
+<tt class="descname">mapping</tt><a class="headerlink" href="#odml.mapping.mapable.mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the applicable mapping-url (which may be provided by the terminology)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="odml.mapping.mapable.parse_mapping">
+<em class="property">static </em><tt class="descname">parse_mapping</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#odml.mapping.mapable.parse_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>parse u url of format <a class="reference external" href="http://host/file.xml#section_type:property_name">http://host/file.xml#section_type:property_name</a></p>
+<p>returns a 3-tuple: (url, stype, prop_name)
+where stype or prop_name may be None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.mapping.mapable.remap">
+<tt class="descname">remap</tt><big>(</big><em>mobj</em><big>)</big><a class="headerlink" href="#odml.mapping.mapable.remap" title="Permalink to this definition">¶</a></dt>
+<dd><p>reestablish the mapping for this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.mapping.mapable.unmap">
+<tt class="descname">unmap</tt><big>(</big><big>)</big><a class="headerlink" href="#odml.mapping.mapable.unmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>unestablish the mapping for this object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.mapping.mapableProperty">
+<em class="property">class </em><tt class="descclassname">odml.mapping.</tt><tt class="descname">mapableProperty</tt><a class="headerlink" href="#odml.mapping.mapableProperty" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="odml.mapping.mapableProperty.remap">
+<tt class="descname">remap</tt><big>(</big><em>mprop</em><big>)</big><a class="headerlink" href="#odml.mapping.mapableProperty.remap" title="Permalink to this definition">¶</a></dt>
+<dd><p>install the mapping for this property</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.mapping.mapableProperty.unmap">
+<tt class="descname">unmap</tt><big>(</big><big>)</big><a class="headerlink" href="#odml.mapping.mapableProperty.unmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>uninstall the property mapping by removing its proxy object from its mapped section</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.mapping.mapableSection">
+<em class="property">class </em><tt class="descclassname">odml.mapping.</tt><tt class="descname">mapableSection</tt><a class="headerlink" href="#odml.mapping.mapableSection" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="odml.mapping.mapableSection.remap">
+<tt class="descname">remap</tt><big>(</big><em>msec</em><big>)</big><a class="headerlink" href="#odml.mapping.mapableSection.remap" title="Permalink to this definition">¶</a></dt>
+<dd><p>reestablish a mapping assuming that this section was successfully unmapped
+earlier. To avoid undefined side-effects, only call this, if this section
+is the only section without an established mapping.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.mapping.mapableSection.unmap">
+<tt class="descname">unmap</tt><big>(</big><big>)</big><a class="headerlink" href="#odml.mapping.mapableSection.unmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>recursively unmap this section</p>
+<p>in certain configurations, a mapping cannot be completely removed for a
+whole section. In this case, this will raise a MappingError-Exception.</p>
+<p>To still do it, unmap the whole document (or destroy the mapped view)
+prior to the change execution.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.mapping.mapped">
+<em class="property">class </em><tt class="descclassname">odml.mapping.</tt><tt class="descname">mapped</tt><a class="headerlink" href="#odml.mapping.mapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keeps information for objects that can have a current mapped object associated
+with them</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.remapable_append">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">remapable_append</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#odml.mapping.remapable_append" title="Permalink to this definition">¶</a></dt>
+<dd><p>decorator for append-functions to deal with Proxy objects</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.remapable_insert">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">remapable_insert</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#odml.mapping.remapable_insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>decorator for insert-functions to deal with Proxy objects</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.remapable_remove">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">remapable_remove</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#odml.mapping.remapable_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>decorator for remove-functions to deal with Proxy objects</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.unmap_document">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">unmap_document</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#odml.mapping.unmap_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>clear all mappings from the document</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.unmap_property">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">unmap_property</tt><big>(</big><em>prop=None</em>, <em>mprop=None</em><big>)</big><a class="headerlink" href="#odml.mapping.unmap_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>uninstall the property mapping by removing its proxy object from its mapped section</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="odml.mapping.unmap_section">
+<tt class="descclassname">odml.mapping.</tt><tt class="descname">unmap_section</tt><big>(</big><em>sec</em>, <em>check=True</em><big>)</big><a class="headerlink" href="#odml.mapping.unmap_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>try to unmap the section (including its children),
+but make sure, that there are no dependencies:
+i.e. we cannot unmap a section if properties
+from other sections are mapped here, this would break stuff</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-test.mapping">
+<span id="mapping-architecture"></span><h2>Mapping-Architecture<a class="headerlink" href="#module-test.mapping" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="test.mapping.TestMapping">
+<em class="property">class </em><tt class="descclassname">test.mapping.</tt><tt class="descname">TestMapping</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="headerlink" href="#test.mapping.TestMapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Testcases for the mapping mechanisms and rules.</p>
+<p>Also useful to understand, how mappings work.</p>
+<p>Also have a look at the actual sourcefile (<tt class="docutils literal"><span class="pre">test/mapping.py</span></tt>)
+which provides illustrations to the rule-definitions.</p>
+<dl class="method">
+<dt id="test.mapping.TestMapping.check">
+<tt class="descname">check</tt><big>(</big><em>src</em>, <em>dst</em>, <em>map=True</em><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>check if the mappingn of <em>src</em> is equivalent to <em>dst</em></p>
+<p>if map is False, just compare src to dst, assuming the mapping
+has already been applied manually</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.map_rule4">
+<tt class="descname">map_rule4</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.map_rule4" title="Permalink to this definition">¶</a></dt>
+<dd><p>set up the terminology for rule4 tests</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_editing">
+<tt class="descname">test_editing</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_editing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_moving_property">
+<tt class="descname">test_moving_property</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_moving_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>moving a mapped property should unmap it, move it and then remap it</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_moving_section">
+<tt class="descname">test_moving_section</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_moving_section" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_multiple">
+<tt class="descname">test_multiple</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_multiple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_parse">
+<tt class="descname">test_parse</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule1">
+<tt class="descname">test_rule1</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule1" title="Permalink to this definition">¶</a></dt>
+<dd><ol class="arabic simple">
+<li>Sections und Properties koennen Mapping Information tragen. Wenn keine
+vorhanden ist, kann diese auch in einer eventuell angegebenen Terminologie
+zu finden sein.</li>
+</ol>
+<ol class="arabic simple">
+<li>Enthält eine Section ein Mapping, dann ändert sich der Typ der Section,
+der Name wird übernommen.
+s1[t1] mapping [T1] &#8211;&gt; s1[T1]</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule1_SectionNotFound">
+<tt class="descname">test_rule1_SectionNotFound</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule1_SectionNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>a MappingError is raised when the mapping cannot be resolved</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule2">
+<tt class="descname">test_rule2</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule2" title="Permalink to this definition">¶</a></dt>
+<dd><ol class="arabic simple" start="2">
+<li>Enthält eine Section kein Mapping und es gibt auch keines in der
+Terminologie, dann bleibt alles beim alten</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule3">
+<tt class="descname">test_rule3</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>3: Enthält eine Property kein Mapping und es ist auch keines in der</dt>
+<dd>Terminologie vorhanden, so bleibt alles beim Alten. Die Property landet
+in der Section, in die sein Elternteil gemappt wurde.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule4c">
+<tt class="descname">test_rule4c</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule4c" title="Permalink to this definition">¶</a></dt>
+<dd><ol class="arabic simple" start="4">
+<li>Wenn ein mapping vorhanden ist, dann gilt es verschiedenes zu überprüfen.
+Hier muss beachtet werden, ob es eine Abhängigkeit gibt die beachtet
+werden und erhalten werden müssen...</li>
+</ol>
+<dl class="docutils">
+<dt>4c: Ist der Zieltyp gleich dem der Elternsection, oder nicht?</dt>
+<dd>Wenn ja, dann einfach hinzufügen. (s3.p1 und s3.p2)</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule4d1">
+<tt class="descname">test_rule4d1</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule4d1" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>4d: Wenn dem nicht so ist (Elternsection != Zieltyp), dann wird zunächst</dt>
+<dd>überprüft, ob eine Kindsection der gemappten Elternsection dem
+geforderten Typ entspricht.</dd>
+</dl>
+<p>4d1: Wenn ja, dann dahin (wenn eindeutig TODO) weil dies die stärkste Verwandschaftsbeziehung darstellt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule4d2">
+<tt class="descname">test_rule4d2</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule4d2" title="Permalink to this definition">¶</a></dt>
+<dd><p>4d2: Wenn nicht (mehrere Kinder des Typs), MappingError</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule4e1">
+<tt class="descname">test_rule4e1</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule4e1" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>4d3: Wenn nicht (keine Kinder des Typs), dann gehe ich im Moment nur</dt>
+<dd>einen Schritt nach oben und überprüfe,</dd>
+<dt>4e:  ob eine Geschwistersection der gemappten Elternsection dem Property</dt>
+<dd>Zieltypen entspricht.</dd>
+<dt>4e1: Wenn ja und diese nur eine related-section des Typs der gemappten</dt>
+<dd>Elternsection hat, dort hinzufügen</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule4e2">
+<tt class="descname">test_rule4e2</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule4e2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>4e2: Wenn ja und diese mehrere related-section des Typs der gemappten</dt>
+<dd>Elternsection hat, die Section mit einem link erstellen</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="test.mapping.TestMapping.test_rule4f">
+<tt class="descname">test_rule4f</tt><big>(</big><big>)</big><a class="headerlink" href="#test.mapping.TestMapping.test_rule4f" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>4f: Wenn nicht (kein Geschwister des Typs),</dt>
+<dd>dann erstelle eine entsprechende Section, füge sie mit Property der
+Elternsection hinzu
+(TODO oder auch nur wenn nicht mehr als eine related section der gemappten Elternsection?)</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-odml.tools.proxy">
+<span id="proxy-objects"></span><h2>Proxy-Objects<a class="headerlink" href="#module-odml.tools.proxy" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="odml.tools.proxy.BaseProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">BaseProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.BaseProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A nonfunctional proxy, having only the delegate
+self._proxy_obj</p>
+<p>Comparism is hooked, so the following always holds</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">BaseProxy</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">==</span> <span class="n">o</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.BaseSectionProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">BaseSectionProxy</tt><big>(</big><em>name</em>, <em>type='undefined'</em>, <em>parent=None</em>, <em>definition=None</em>, <em>mapping=None</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.BaseSectionProxy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.ChangeAbleProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">ChangeAbleProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ChangeAbleProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A notifying PassProxy with a change handler, attached to original object
+and passing events on modifying them in such that they appear to originate
+from the Proxy object.</p>
+<p>Change handlers are installed as weak references, s.t. the installed change
+handlers don&#8217;t solely cause the Proxy object to stay in memory</p>
+<dl class="method">
+<dt id="odml.tools.proxy.ChangeAbleProxy.change_handler">
+<tt class="descname">change_handler</tt><big>(</big><em>context</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ChangeAbleProxy.change_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>redo the change handler but replace the proxied object
+with our instance</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.ChangeAbleProxy.personal">
+<tt class="descname">personal</tt><em class="property"> = set(['_change_handler'])</em><a class="headerlink" href="#odml.tools.proxy.ChangeAbleProxy.personal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.DocumentProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">DocumentProxy</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.DocumentProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A bare bones DocumentProxy not yet proxing actually much. TODO make it a HookProxy?</p>
+<dl class="method">
+<dt id="odml.tools.proxy.DocumentProxy.proxy_append">
+<tt class="descname">proxy_append</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.DocumentProxy.proxy_append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.DocumentProxy.proxy_remove">
+<tt class="descname">proxy_remove</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.DocumentProxy.proxy_remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.EqualityBaseProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">EqualityBaseProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.EqualityBaseProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A BaseProxy that uses a set of attributes (defined in self._format)
+to compare to other objects</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.HookProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">HookProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.HookProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A proxy that only intercepts certain attributes</p>
+<dl class="attribute">
+<dt id="odml.tools.proxy.HookProxy.hooks">
+<tt class="descname">hooks</tt><em class="property"> = set([])</em><a class="headerlink" href="#odml.tools.proxy.HookProxy.hooks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.MappedSection">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">MappedSection</tt><big>(</big><em>obj</em>, <em>template=None</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.MappedSection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like a fake section, but we reference a concrete section
+and forward changes to it</p>
+<p>TODO stuff works, but clear to account for proxy_append/insert/remove</p>
+<dl class="method">
+<dt id="odml.tools.proxy.MappedSection.append">
+<tt class="descname">append</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.MappedSection.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.MappedSection.change_handler">
+<tt class="descname">change_handler</tt><big>(</big><em>context</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.MappedSection.change_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.MappedSection.hooks">
+<tt class="descname">hooks</tt><em class="property"> = set(['name'])</em><a class="headerlink" href="#odml.tools.proxy.MappedSection.hooks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.MappedSection.mkproxy">
+<tt class="descname">mkproxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.MappedSection.mkproxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a proxy equivalent of obj</p>
+<p>obj is either a Section (-&gt; MappedSection) or a Property (-&gt; PropertyProxy)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.MappedSection.remove">
+<tt class="descname">remove</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.MappedSection.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.NonexistantSection">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">NonexistantSection</tt><big>(</big><em>name</em>, <em>type='undefined'</em>, <em>parent=None</em>, <em>definition=None</em>, <em>mapping=None</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.NonexistantSection" title="Permalink to this definition">¶</a></dt>
+<dd><p>A NonexistantSection is a fake section that only exists
+in the mapping. However it has real children.</p>
+<dl class="method">
+<dt id="odml.tools.proxy.NonexistantSection.merge">
+<tt class="descname">merge</tt><big>(</big><em>section=None</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.NonexistantSection.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs the merge operation, briefly disables read_protection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.NonexistantSection.unmerge">
+<tt class="descname">unmerge</tt><big>(</big><em>section</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.NonexistantSection.unmerge" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs the unmerge operation, briefly disables read_protection</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.NotifyingProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">NotifyingProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.NotifyingProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hooks the personal attributes to cause change events</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.PassProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">PassProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.PassProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple Proxy forwarding all attribute access to the delegate</p>
+<p>It can have inaccessable values (write protected):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">inaccessable</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;default name&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Attributes indicated in the dictionary <em>personal</em> are stored in the proxy
+and not in the delegate, however note: functions not defined in the proxy
+are actually attributes of the delegate and executed on it, so they will not
+work on the <em>personal</em> attributes, but on the delegates ones.</p>
+<dl class="attribute">
+<dt id="odml.tools.proxy.PassProxy.PASS_THROUGH">
+<tt class="descname">PASS_THROUGH</tt><em class="property"> = 'PASS_THROUGH'</em><a class="headerlink" href="#odml.tools.proxy.PassProxy.PASS_THROUGH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.PassProxy.inaccessable">
+<tt class="descname">inaccessable</tt><em class="property"> = {}</em><a class="headerlink" href="#odml.tools.proxy.PassProxy.inaccessable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.PassProxy.personal">
+<tt class="descname">personal</tt><em class="property"> = set([])</em><a class="headerlink" href="#odml.tools.proxy.PassProxy.personal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.PropertyProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">PropertyProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.PropertyProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A PropertyProxy provides transparent access to a Property,
+blocking only the &#8216;mapping&#8217; attribute.</p>
+<p>It has however to take care, that when accessing its values, appropriate
+proxy objects are returned, as otherwise gui functionality breaks</p>
+<dl class="method">
+<dt id="odml.tools.proxy.PropertyProxy.change_handler">
+<tt class="descname">change_handler</tt><big>(</big><em>context</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.PropertyProxy.change_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>we need to fix append/insert/remove notifications
+so that they deal with ProxyObjects instead</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.PropertyProxy.inaccessable">
+<tt class="descname">inaccessable</tt><em class="property"> = {'mapping': None}</em><a class="headerlink" href="#odml.tools.proxy.PropertyProxy.inaccessable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.PropertyProxy.parent">
+<tt class="descname">parent</tt><a class="headerlink" href="#odml.tools.proxy.PropertyProxy.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.PropertyProxy.path_to">
+<tt class="descname">path_to</tt><big>(</big><em>child</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.PropertyProxy.path_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>override this, to account for proxy objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.PropertyProxy.personal">
+<tt class="descname">personal</tt><em class="property"> = set(['_p_values', '_section', 'name', '_change_handler'])</em><a class="headerlink" href="#odml.tools.proxy.PropertyProxy.personal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.PropertyProxy.values">
+<tt class="descname">values</tt><a class="headerlink" href="#odml.tools.proxy.PropertyProxy.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>provide transparent access to values as Proxy objects</p>
+<p>use &#8220;caching&#8221; to return the same proxy object for the same value
+as other functionality needs to be able to identify a certain object
+exactly (TODO append/insert/remove invalidates the cache and might still
+break stuff)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.Proxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">Proxy</tt><a class="headerlink" href="#odml.tools.proxy.Proxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>common interface</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.ReadOnlyObject">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">ReadOnlyObject</tt><a class="headerlink" href="#odml.tools.proxy.ReadOnlyObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>An odml-object whose properties (according to <em>_format</em>)
+cannot be modified if <em>enable_protection</em> is set.</p>
+<dl class="attribute">
+<dt id="odml.tools.proxy.ReadOnlyObject.enable_protection">
+<tt class="descname">enable_protection</tt><em class="property"> = False</em><a class="headerlink" href="#odml.tools.proxy.ReadOnlyObject.enable_protection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.ReadOnlySection">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">ReadOnlySection</tt><big>(</big><em>name</em>, <em>type='undefined'</em>, <em>parent=None</em>, <em>definition=None</em>, <em>mapping=None</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ReadOnlySection" title="Permalink to this definition">¶</a></dt>
+<dd><p>A protected section, that cannot be modified</p>
+<dl class="method">
+<dt id="odml.tools.proxy.ReadOnlySection.append">
+<tt class="descname">append</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ReadOnlySection.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.ReadOnlySection.insert">
+<tt class="descname">insert</tt><big>(</big><em>index</em>, <em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ReadOnlySection.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.ReadOnlySection.parent">
+<tt class="descname">parent</tt><a class="headerlink" href="#odml.tools.proxy.ReadOnlySection.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.ReadOnlySection.remove">
+<tt class="descname">remove</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ReadOnlySection.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.SectionProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">SectionProxy</tt><big>(</big><em>name</em>, <em>type='undefined'</em>, <em>parent=None</em>, <em>definition=None</em>, <em>mapping=None</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.SectionProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Section that will also pass as a Proxy</p>
+<dl class="method">
+<dt id="odml.tools.proxy.SectionProxy.proxy_append">
+<tt class="descname">proxy_append</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.SectionProxy.proxy_append" title="Permalink to this definition">¶</a></dt>
+<dd><p>explicitly append a proxy object without side-effects</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="odml.tools.proxy.SectionProxy.proxy_remove">
+<tt class="descname">proxy_remove</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.SectionProxy.proxy_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>explicitly remove a proxy object without side-effects</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="odml.tools.proxy.ValueProxy">
+<em class="property">class </em><tt class="descclassname">odml.tools.proxy.</tt><tt class="descname">ValueProxy</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#odml.tools.proxy.ValueProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A ValueProxy provides transparent access to a Value,
+but has its own parent (_property)</p>
+<dl class="attribute">
+<dt id="odml.tools.proxy.ValueProxy.parent">
+<tt class="descname">parent</tt><a class="headerlink" href="#odml.tools.proxy.ValueProxy.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="odml.tools.proxy.ValueProxy.personal">
+<tt class="descname">personal</tt><em class="property"> = set(['_property', '_change_handler'])</em><a class="headerlink" href="#odml.tools.proxy.ValueProxy.personal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Mappings</a><ul>
+<li><a class="reference internal" href="#module-odml.mapping">Mapping-Module</a></li>
+<li><a class="reference internal" href="#module-test.mapping">Mapping-Architecture</a></li>
+<li><a class="reference internal" href="#module-odml.tools.proxy">Proxy-Objects</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="base-classes.html"
+                        title="previous chapter">odML-Base Classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tools.html"
+                        title="next chapter">Data Types</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/mappings.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tools.html" title="Data Types"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="base-classes.html" title="odML-Base Classes"
+             >previous</a> |</li>
+        <li><a href="index.html">python-odml 0.1 documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Class-Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Hagen Fritsch.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
