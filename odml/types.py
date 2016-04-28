@@ -7,18 +7,17 @@ import sys
 
 self = sys.modules[__name__].__dict__
 
-from datetime import datetime, date, time
+import datetime
 import binascii
 import hashlib
 from enum import Enum
-
 
 class DType(str, Enum):
     string = 'string'
     text = 'text'
     int = 'int'
     float = 'float'
-    URL = 'url'
+    url = 'url'
     datetime = 'datetime'
     date = 'date'
     time = 'time'
@@ -26,13 +25,14 @@ class DType(str, Enum):
     person = 'person'
     binary = 'binary'
 
+    def __str__(self):
+        return self.name
 
 _dtype_map = {'str': 'string', 'bool': 'boolean'}
 
 
 def infer_dtype(value):
     dtype = (type(value)).__name__
-
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
 
@@ -48,9 +48,9 @@ def valid_type(dtype):
     """
     checks if *dtype* is a valid type
     """
+    dtype = dtype.lower()
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
-
     if hasattr(DType, dtype):
         return True
     if dtype is None:
@@ -145,11 +145,10 @@ def str_set(value):
 
 def time_get(string):
     if not string: return None
-
-    try:
-        return datetime.strptime(string, '%H:%M:%S.%f').time()
-    except ValueError:
-        return datetime.strptime(string, '%H:%M:%S').time()
+    if type(string) is datetime.time:
+        return datetime.datetime.strptime(string.isoformat(), '%H:%M:%S').time()
+    else:
+        return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
 
 def time_set(value):
@@ -159,7 +158,10 @@ def time_set(value):
 
 def date_get(string):
     if not string: return None
-    return datetime.strptime(string, '%Y-%m-%d').date()
+    if type(string) is datetime.date:
+        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d').date()
+    else:
+        return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
 
 date_set = time_set
@@ -167,11 +169,10 @@ date_set = time_set
 
 def datetime_get(string):
     if not string: return None
-
-    try:
-        return datetime.strptime(string, '%Y-%m-%d %H:%M:%S.%f')
-    except ValueError:
-        return datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+    if type(string) is datetime.datetime:
+        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 
 def datetime_set(value):
@@ -181,6 +182,8 @@ def datetime_set(value):
 
 def boolean_get(string):
     if not string: return None
+    if type(string) is bool:
+        string = str(string)
     string = string.lower()
     truth = ["true", "t", "1"] # be kind, spec only accepts True / False
     if string in truth: return True

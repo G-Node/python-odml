@@ -135,6 +135,6 @@ class SectionView(TerminologyPopupTreeView):
             errors = doc.validation_result[obj]
             if errors:
                 error = "\n\nErrors:\n" + "\n".join([e.msg for e in errors])
-    
+
         tooltip.set_text(text + error)
         return True
