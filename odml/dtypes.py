@@ -146,7 +146,7 @@ def str_set(value):
 def time_get(string):
     if not string: return None
     if type(string) is datetime.time:
-        string.strftime('%H:%M:%S').time()
+        return string.strftime('%H:%M:%S').time()
     else:
         return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
