@@ -1,5 +1,5 @@
 import doc, section, property, value
-from odml.types import DType
+from odml.dtypes import DType
 
 # the original property-function is overwritten
 # so get it back!

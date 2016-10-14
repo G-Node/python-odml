@@ -1,5 +1,5 @@
 #-*- coding: utf-8
-import types
+import dtypes
 import base
 import format
 import terminology
@@ -56,11 +56,11 @@ class BaseDocument(base.sectionable, Document):
         """
         The date the document was created.
         """
-        return types.set(self._date, "date")
+        return dtypes.set(self._date, "date")
 
     @date.setter
     def date(self, new_value):
-        self._date = types.get(new_value, "date")
+        self._date = dtypes.get(new_value, "date")
 
     @property
     def parent(self):

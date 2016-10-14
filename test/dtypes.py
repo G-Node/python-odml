@@ -1,6 +1,6 @@
 import unittest
 
-import odml.types as typ
+import odml.dtypes as typ
 import odml
 import datetime
 
