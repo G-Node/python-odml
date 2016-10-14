@@ -146,13 +146,15 @@ def str_set(value):
 def time_get(string):
     if not string: return None
     if type(string) is datetime.time:
-        return datetime.datetime.strptime(string.isoformat(), '%H:%M:%S').time()
+        string.strftime('%H:%M:%S').time()
     else:
         return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
 
 def time_set(value):
     if not value: return None
+    if type(value) is datetime.time:
+        return value.strftime("%H:%M:%S")
     return value.isoformat()
 
 
@@ -170,14 +172,17 @@ date_set = time_set
 def datetime_get(string):
     if not string: return None
     if type(string) is datetime.datetime:
-        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d %H:%M:%S')
+        return string.strftime('%Y-%m-%d %H:%M:%S')
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 
 def datetime_set(value):
     if not value: return None
-    return value.isoformat(' ')
+    if type(value) is datetime.datetime:
+        return value.strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
 
 
 def boolean_get(string):

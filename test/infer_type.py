@@ -57,11 +57,9 @@ class TestInferType(unittest.TestCase):
         sec.append(Property("txtprop", "some\ntext"))
         sec.append(Property("intprop", 200))
         sec.append(Property("floatprop", 2.00))
-        from IPython import embed
-        # embed()
-        # sec.append(Property("datetimeprop", dt.now())) probably just an isoformat issue ... ValueError: unconverted data remains: .613725
+        sec.append(Property("datetimeprop", dt.now()))
         sec.append(Property("dateprop", dt.now().date()))
-        # sec.append(Property("timeprop", dt.now().time()))
+        sec.append(Property("timeprop", dt.now().time()))
         sec.append(Property("boolprop", True))
 
         str_doc = unicode(XMLWriter(doc))
@@ -84,17 +82,17 @@ class TestInferType(unittest.TestCase):
         assert(v.dtype == "float")
         assert(type(v.data) == float)
 
-        # v = new_sec.properties["datetimeprop"].value
-        # assert(v.dtype == "datetime")
-        # assert(type(v.data) == dt)
+        v = new_sec.properties["datetimeprop"].value
+        assert(v.dtype == "datetime")
+        assert(type(v.data) == dt)
 
         v = new_sec.properties["dateprop"].value
         assert(v.dtype == "date")
         assert(type(v.data) == date)
 
-        # v = new_sec.properties["timeprop"].value
-        # assert(v.dtype == "time")
-        # assert(type(v.data) == time)
+        v = new_sec.properties["timeprop"].value
+        assert(v.dtype == "time")
+        assert(type(v.data) == time)
 
         v = new_sec.properties["boolprop"].value
         assert(v.dtype == "boolean")
