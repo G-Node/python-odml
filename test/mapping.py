@@ -2,8 +2,6 @@
 import unittest
 
 import odml
-import odml.gui.treemodel.mixin
-import odml.gui.commands as commands
 import odml.terminology
 import odml.tools.dumper as dumper
 import samplefile
@@ -407,61 +405,6 @@ s3[T3]
         """)
         self.check(map, dst, map=False) # see above if this fails
 
-    def test_moving_property(self):
-        """
-        moving a mapped property should unmap it, move it and then remap it
-        """
-        self.map_rule4()
-        src = parse("""
-        s1[t1]
-        - p2 mapping [T2:P1]
-        s2[t2] mapping [T2]
-        """)
-        map = mapping.create_mapping(src)
-        # now move p2 -> s2[t2]
-        cmd = commands.MoveObject(obj=src['s1'].properties['p2'], dst=src['s2'])
-        cmd()
-        dst = parse("""
-        s1[t1]
-        s2[T2]
-        - P1
-        """)
-        self.check(map, dst, map=False)
-
-    def test_moving_section(self):
-        self.map_rule4()
-        src = parse("""
-        s1[t1]
-        - p2 mapping [T2:P1]
-        s2[t2] mapping [T2]
-        """)
-        map = mapping.create_mapping(src)
-        # now move s1 -> s2[t2]
-        cmd = commands.MoveObject(obj=src['s1'], dst=src['s2'])
-        cmd()
-
-        # now src should look like this
-        dst = parse("""
-        s2[t2] mapping [T2]
-        - s1[t1]
-          - p2 mapping [T2:P1]
-        """)
-        self.check(src, dst, map=False)
-
-        # and the mapping should have been updated, so that
-        # it is equal to executing mapping directly
-        dst = mapping.create_mapping(dst)
-        self.check(map, dst, map=False)
-
-        cmd.undo()
-        # here again we lose the order
-        dst = parse("""
-        s2[t2] mapping [T2]
-        s1[t1]
-        - p2 mapping [T2:P1]
-        """)
-        dst = mapping.create_mapping(dst)
-        self.check(map, dst, map=False)
 
 if __name__ == '__main__':
     unittest.main()

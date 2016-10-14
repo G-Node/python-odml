@@ -1,11 +1,9 @@
-import odml.gui.treemodel.mixin #this also provides event functionality, and we also test tree-based event passing
 import odml.tools.event
 
 import unittest
 from mapping import parse
 
 import odml
-from odml import doc, section, property, value
 from odml.tools import proxy
 
 class TestProxy(unittest.TestCase):
