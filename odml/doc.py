@@ -1,12 +1,14 @@
-#-*- coding: utf-8
-import dtypes
-import base
-import format
-import terminology
-from tools.doc_inherit import *
+# -*- coding: utf-8
+import odml.dtypes as dtypes
+import odml.base as base
+import odml.format as format
+import odml.terminology as terminology
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
 
 class Document(base._baseobj):
     pass
+
 
 @allow_inherit_docstring
 class BaseDocument(base.sectionable, Document):

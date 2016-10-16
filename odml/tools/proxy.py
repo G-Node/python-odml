@@ -1,7 +1,7 @@
 import odml
-import event
-import weakmeth, weakref
-import nodes
+import odml.tools.event as event
+import odml.tools.weakmeth as weakmeth
+import odml.tools.nodes as nodes
 
 # events are required for proxy objects 
 odml.setMinimumImplementation('event')

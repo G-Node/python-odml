@@ -1,5 +1,5 @@
 from samplefile import *
-from commands import *
+# from commands import *
 from links import *
 from mapping import *
 from proxy import *

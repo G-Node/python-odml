@@ -1,5 +1,5 @@
 import odml
-import terminology
+import odml.terminology as terminology
 import weakref
 from functools import wraps
 

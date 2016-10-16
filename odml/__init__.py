@@ -1,9 +1,16 @@
-import doc, section, property, value
+import sys
+from odml import doc
+from odml import property
+from odml import section
+from odml import value
 from odml.dtypes import DType
 
 # the original property-function is overwritten
 # so get it back!
-from __builtin__ import property as _property
+if sys.version_info < (3, 0):
+    from __builtin__ import property as _property
+else:
+    from builtins import property as _property
 
 
 class odml_implementation(object):
@@ -43,6 +50,7 @@ current_implementation = BasicImplementation()
 minimum_implementation = current_implementation
 
 
+#   todo: check if key is needed
 def addImplementation(implementation, make_minimum=False, make_default=False):
     """register a new available implementation"""
     impls[implementation.name] = implementation

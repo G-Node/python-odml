@@ -2,9 +2,9 @@
 """
 generic odml validation framework
 """
-import format
-import mapping
-import tools.event
+import odml.format as format
+import odml.mapping as mapping
+import odml.tools.event as event
 import odml
 
 # event capabilities are needed for mappings

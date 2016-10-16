@@ -1,10 +1,10 @@
 #-*- coding: utf8
-import dtypes
-import base
-import format
+import odml.dtypes as dtypes
+import odml.base as base
+import odml.format as format
 
 import string
-from tools.doc_inherit import *
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Value(base._baseobj):

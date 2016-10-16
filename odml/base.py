@@ -2,11 +2,13 @@
 """
 collects common base functionality
 """
-import doc
+import sys
 import posixpath
-import terminology
-import mapping
-from tools.doc_inherit import *
+from odml import terminology
+from odml import mapping
+# from odml import doc
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
 
 class _baseobj(object):
     pass

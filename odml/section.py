@@ -1,11 +1,11 @@
 #-*- coding: utf-8
-import base
-import format
-import terminology
-import mapping
-from property import Property # this is supposedly ok, as we only use it for an isinstance check
-                              # it MUST however not be used to create any Property objects
-from tools.doc_inherit import *
+import odml.base as base
+import odml.format as format
+import odml.terminology as terminology
+import odml.mapping as mapping
+from odml.property import Property  # this is supposedly ok, as we only use it for an isinstance check
+                                    # it MUST however not be used to create any Property objects
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 class Section(base._baseobj):
     pass

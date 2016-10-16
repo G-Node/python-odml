@@ -9,8 +9,8 @@ Parses odML files. Can be invoked standalone:
 #TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 
 import odml
-from .. import format
-from dumper import dumpSection
+from odml import format
+from odml.tools.dumper import dumpSection
 from lxml import etree as ET
 from lxml.builder import E
 
@@ -18,8 +18,10 @@ from lxml.builder import E
 from lxml import _elementpath as _dummy
 
 import sys
-
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 format.Document._xml_name = "odML"
 format.Section._xml_name = "section"
