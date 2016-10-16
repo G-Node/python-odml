@@ -113,8 +113,12 @@ def set(value, dtype=None, encoding=None):
         return tuple_set(value)
     if dtype == "binary":
         return binary_set(value, encoding)
-    if type(value) in (str, unicode):
-        return str_set(value)
+    if sys.version_info > (3, 0):
+        if isinstance(value, str):
+            return str_set(value)
+    else:
+        if type(value) in (str, unicode):
+            return str_set(value)
     return self.get(dtype + "_set", str_set)(value)
 
 
@@ -138,7 +142,10 @@ def str_get(string):
 
 def str_set(value):
     try:
-        return unicode(value)
+        if sys.version_info < (3, 0):
+            return unicode(value)
+        else:
+            return str(value)
     except Exception as ex:
         fail = ex
         raise fail
@@ -231,6 +238,8 @@ class Encoder(object):
         self._decode = decode
 
     def encode(self, data):
+        if sys.version_info > (3, 0) and isinstance(data, str):
+            data = str.encode(data)
         return self._encode(data)
 
     def decode(self, string):
@@ -262,7 +271,13 @@ def binary_set(value, encoding=None):
 
 
 def calculate_crc32_checksum(data):
-    return "%08x" % (binascii.crc32(data) & 0xffffffff)
+    if sys.version_info < (3, 0):
+        return "%08x" % (binascii.crc32(data) & 0xffffffff)
+    else:
+        if isinstance(data, str):
+            data = str.encode(data)
+        return "%08x" % (binascii.crc32(data) & 0xffffffff)
+
 
 
 checksums = {
@@ -270,7 +285,10 @@ checksums = {
 }
 
 # allow to use any available algorithm
-if not sys.version_info < (2, 7):
+if sys.version_info > (3, 0):
+    for algo in hashlib.algorithms_guaranteed:
+        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
+elif not sys.version_info < (2, 7):
     for algo in hashlib.algorithms:
         checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
 
@@ -281,4 +299,6 @@ def valid_checksum_type(checksum_type):
 
 def calculate_checksum(data, checksum_type):
     if data is None: data = ''
+    if isinstance(data, str):
+        data = str.encode(data)
     return checksums[checksum_type](data)

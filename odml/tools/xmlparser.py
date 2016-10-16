@@ -88,10 +88,17 @@ class XMLWriter:
                     ele = XMLWriter.save_element(v)
                     cur.append(ele)
             else:
-                ele = E(k, unicode(val))
+                if sys.version_info < (3,):
+                    ele = E(k, unicode(val))
+                else:
+                    ele = E(k, str(val))
+                # ele = E(k, unicode(val))
                 cur.append(ele)
 
         return cur
+
+    def __str__(self):
+        return ET.tounicode(self.save_element(self.doc), pretty_print=True)
 
     def __unicode__(self):
         return ET.tounicode(self.save_element(self.doc), pretty_print=True)
@@ -99,7 +106,11 @@ class XMLWriter:
     def write_file(self, filename):
         # calculate the data before opening the file in case we get any
         # exception
-        data = unicode(self).encode('utf-8')
+        if sys.version_info < (3, ):
+            data = unicode(self).encode('utf-8')
+        else:
+            data = str(self)
+
         f = open(filename, "w")
         f.write(self.header)
         f.write(data)
