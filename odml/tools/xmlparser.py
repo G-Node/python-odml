@@ -65,7 +65,7 @@ class XMLWriter:
         if isinstance(fmt, format.Document.__class__):
             cur.attrib['version'] = XML_VERSION
 
-        for k,v in fmt._xml_attributes.iteritems():
+        for k,v in fmt._xml_attributes.items():
             if not v or not hasattr(e, fmt.map(v)): continue
 
             val = getattr(e, fmt.map(v))
@@ -146,7 +146,7 @@ class XMLReader(object):
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
-        for k, v in ArgClass._args.iteritems():
+        for k, v in ArgClass._args.items():
             if v != 0 and not ArgClass.map(k) in data:
                 self.error("missing element <%s> within <%s> tag" % (k, tag_name) + repr(data), node)
 
@@ -220,11 +220,14 @@ class XMLReader(object):
             obj = fmt.create()
         else:
             obj = create(args=arguments, text=''.join(text), children=children)
+        if sys.version_info > (3,):
+            self.check_mandatory_arguments(dict(list(arguments.items()) + list(extra_args.items())),
+                                           fmt, root.tag, root)
+        else:
+            self.check_mandatory_arguments(dict(arguments.items() + extra_args.items()),
+                                           fmt, root.tag, root)
 
-        self.check_mandatory_arguments(dict(arguments.items() + extra_args.items()),
-            fmt, root.tag, root)
-
-        for k, v in arguments.iteritems():
+        for k, v in arguments.items():
             if hasattr(obj, k):
                 try:
                     setattr(obj, k, v)

@@ -12,7 +12,7 @@ it finds.
 
 def allow_inherit_docstring(cls):
     bases = cls.__bases__
-    for attr, attribute in cls.__dict__.iteritems():
+    for attr, attribute in cls.__dict__.items():
         if hasattr(attribute, "inherit_docstring"):
             if not attribute.__doc__:
                 for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()
