@@ -44,7 +44,7 @@ def parse(data):
         try:
             m = pat.match(line).groupdict()
         except:
-            print "error parsing", repr(line)
+            print("error parsing", repr(line))
             raise
         if m['type'] is None:
             obj = odml.Property(name=m['name'], value="[val]")

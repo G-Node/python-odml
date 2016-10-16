@@ -466,7 +466,7 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
     def remove(self, obj):
         # we should only contain proxy objects (unless a link is present TODO)
         if not isinstance(obj, Proxy):
-            print "%s should only contain proxy objects, but then look at this" % repr(self), obj
+            print("%s should only contain proxy objects, but then look at this" % repr(self), obj)
             obj = self.contains(obj)
         assert isinstance(obj, Proxy)
 

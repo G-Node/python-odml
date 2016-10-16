@@ -33,7 +33,7 @@ class TestMapping(unittest.TestCase):
             map = src
         if map != dst:
             dumper.dumpDoc(map)
-            print "---- vs ----"
+            print("---- vs ----")
             dumper.dumpDoc(dst)
         self.assertEqual(map, dst)
         self.assertEqual(dst, map) # do the vice versa test too

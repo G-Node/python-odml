@@ -34,11 +34,11 @@ def cache_load(url):
             try:
                 data = urllib2.urlopen(url).read() # read data first, so we don't have empty files on error
             except Exception, e:
-                print "failed loading '%s': %s" % (url, e.message)
                 return
             fp = open(cache_file, "w")
             fp.write(data)
             fp.close()
+            print("failed loading '%s': %s" % (url, e.message))
     return open(cache_file)
 
 class Terminologies(dict):
@@ -65,14 +65,14 @@ class Terminologies(dict):
         # if url.startswith("http"): return None
         fp = cache_load(url)
         if fp is None:
-            print "did not successfully load '%s'" % url
+            print("did not successfully load '%s'" % url)
             return
         try:
             term = tools.xmlparser.XMLReader(filename=url, ignore_errors=True).fromFile(fp)
             term.finalize()
-        except tools.xmlparser.ParserException, e:
-            print "Failed to load %s due to parser errors" % url
-            print ' "%s"' % e.message
+        except odml.tools.xmlparser.ParserException as e:
+            print("Failed to load %s due to parser errors" % url)
+            print(' "%s"' % e.message)
             term = None
         self[url] = term
         return term
