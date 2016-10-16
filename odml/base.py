@@ -158,6 +158,7 @@ class sectionable(baseobject, mapping.mapped):
         p = self
         while p.parent:
             p = p.parent
+        import odml.doc as doc
         if isinstance(p, doc.Document):
             return p
 
@@ -221,7 +222,7 @@ class sectionable(baseobject, mapping.mapped):
         """
         stack = []
         # below: never yield self if self is a Document
-        if self == self.document and (max_depth > 0 or max_depth is None):
+        if self == self.document and ((max_depth is None) or (max_depth > 0)):
             for sec in self.sections:
                 stack.append((sec, 1))  # (<section>, <level in a tree>)
         elif not self == self.document:

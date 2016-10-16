@@ -7,7 +7,10 @@ class Event (object):
         self.name = name
 
     def add_handler(self, handler):
-        self.handlers.add(handler)
+        try:
+            self.handlers.add(handler)
+        except:
+            print("cannot add handler.")
         return self
 
     def remove_handler(self, handler):
