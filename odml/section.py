@@ -143,12 +143,12 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
     @property
     def properties(self):
         """the list of all properties contained in this section"""
-    	return self._props
+        return self._props
 
     @property
     def sections(self):
         """the list of all child-sections of this section"""
-    	return self._sections
+        return self._sections
 
     @property
     def parent(self):
@@ -297,7 +297,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         """
         if self == section:
             raise RuntimeException("cannot unmerge myself?")
-            return #self._sections
         removals = []
         for obj in section:
             mine = self.contains(obj)

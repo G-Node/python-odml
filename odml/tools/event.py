@@ -1,5 +1,6 @@
 import odml
 
+
 class Event (object):
     def __init__(self, name):
         self.handlers = set()
@@ -39,6 +40,7 @@ class Event (object):
     __iadd__ = add_handler
     __isub__ = remove_handler
     __call__ = fire
+
 
 class ChangeContext(object):
     """
@@ -141,9 +143,11 @@ class ChangeContext(object):
     def dump(self):
         return repr(self) + "\nObject stack:\n\t" + "\n\t".join(map(repr, self._obj))
 
+
 class ChangedEvent(object):
     def __init__(self):
         pass
+
 
 class EventHandler(object):
     def __init__(self, func):
@@ -151,6 +155,7 @@ class EventHandler(object):
 
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
+
 
 class ChangeHandlable(object):
     """
@@ -168,6 +173,7 @@ class ChangeHandlable(object):
         self._change_handler -= func
         if len(self._change_handler) == 0:
             del self._change_handler
+
 
 class ModificationNotifier(ChangeHandlable):
     """
@@ -219,14 +225,19 @@ class ModificationNotifier(ChangeHandlable):
 # and provide ModificationNotifier Capabilities
 name = "event"
 provides = odml.getImplementation().provides + ["event"]
+
+
 class Value(ModificationNotifier, odml.getImplementation().Value):
     _Changed = Event("value")
+
 
 class Property(ModificationNotifier, odml.getImplementation().Property):
     _Changed = Event("prop")
 
+
 class Section(ModificationNotifier, odml.getImplementation().Section):
     _Changed = Event("sec")
+
 
 class Document(ModificationNotifier, odml.getImplementation().Document):
     _Changed = Event("doc")
@@ -238,6 +249,7 @@ def pass_on_change(context):
     parent = context.cur.parent
     if parent is not None:
         context.passOn(parent)
+
 
 def pass_on_change_section(context):
     """

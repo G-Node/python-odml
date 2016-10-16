@@ -8,6 +8,7 @@ from functools import wraps
 # were directly imported in the beginning
 proxy = None
 
+
 class mapped(object):
     """
     Keeps information for objects that can have a current mapped object associated
@@ -27,6 +28,7 @@ class mapped(object):
     def _active_mapping(self):
         if not self.__active_mapping is None:
             del self.__active_mapping
+
 
 class mapable(mapped):
     """
@@ -143,6 +145,7 @@ class mapable(mapped):
         """
         raise NotImplementedError
 
+
 class mapableProperty(mapable):
     def unmap(self):
         """
@@ -155,6 +158,7 @@ class mapableProperty(mapable):
         install the mapping for this property
         """
         create_property_mapping(self.parent, self)
+
 
 class mapableSection(mapable):
     def unmap(self):
@@ -182,6 +186,7 @@ class mapableSection(mapable):
         for child in self.itersections(recursive=True, yield_self=True):
             for prop in child.properties:
                 create_property_mapping(child, prop)
+
 
 def remapable_append(func):
     """
@@ -218,6 +223,7 @@ def remapable_remove(func):
             obj._remap_info = obj.unmap()
         return func(self, obj)
     return f
+
 
 class MappingError(TypeError):
     pass

@@ -7,12 +7,14 @@ from odml.tools import xmlparser
 from odml.tools import jsonparser
 from odml.tools import dumper
 
+
 def dump(doc, filename):
     """
     helper function to dump a document for debugging purposes
     """
     open(filename, "w").write(unicode(xmlparser.XMLWriter(doc)))
     
+
 def parse(data):
     """
     parses strings to quickly create odml-documents
@@ -85,10 +87,12 @@ class SampleFileCreator:
     def create_value(self, content):
         return odml.Value(content)
 
+
 class SampleFileCreatorTest(unittest.TestCase):
     def test_samplefile(self):
         doc = SampleFileCreator().create_document()
-        #dumper.dumpDoc(doc)
+        # dumper.dumpDoc(doc)
+
 
 class SampleFileOperationTest(unittest.TestCase):
     def setUp(self):
@@ -126,7 +130,7 @@ class SampleFileOperationTest(unittest.TestCase):
         self.assertIn('version="%s"' % xmlparser.XML_VERSION, val)
         doc = xmlparser.XMLReader().fromString(val)
         # this test is switched off until the XML versioning support is implemented
-        #self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
+        # self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
 
     def test_save(self):
         for module in [xmlparser.XMLWriter, jsonparser.JSONWriter]:
@@ -156,24 +160,30 @@ class SampleFileOperationTest(unittest.TestCase):
 #            xmlparser.dumpSection(sec)
 #        print "-----------------------------------"
 
+
 class AttributeTest(unittest.TestCase):
+
     def test_value_int(self):
         v = odml.Value(value="1", dtype="int")
         self.assertEqual(v.data, 1)
+
     def test_conversion_int_to_float(self):
         v = odml.Value(value="1", dtype="int")
-        v.dtype = "float" #change dtype
+        v.dtype = "float"  # change dtype
         self.assertEqual(v.dtype, "float")
         self.assertEqual(v.data, 1.0)
         self.assertEqual(v.value, "1.0")
+
     def test_conversion_float_to_int(self):
         v = odml.Value(value="1.5", dtype="float")
         v.dtype = "int"
         self.assertEqual(v.dtype, "int")
         self.assertEqual(v.data, 1)
+
     def test_value_float(self):
         v = odml.Value(value="1.5", dtype="float")
         self.assertEqual(v.data, 1.5)
+
 
 class CopyTest(unittest.TestCase):
     def setUp(self):
@@ -193,8 +203,8 @@ class CopyTest(unittest.TestCase):
         self.assertEqual(a, b)
         a.value = odml.Value(5)
         self.assertNotEqual(a, b)
+        # self.assertUn
 
-        #self.assertUn
 
 class MiscTest(unittest.TestCase):
     def setUp(self):

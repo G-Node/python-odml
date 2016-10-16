@@ -12,6 +12,7 @@ import binascii
 import hashlib
 from enum import Enum
 
+
 class DType(str, Enum):
     string = 'string'
     text = 'text'
@@ -267,6 +268,7 @@ def calculate_crc32_checksum(data):
 checksums = {
     'crc32': calculate_crc32_checksum,
 }
+
 # allow to use any available algorithm
 if not sys.version_info < (2, 7):
     for algo in hashlib.algorithms:
