@@ -219,7 +219,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
             obj._section = None
             # also: TODO unmap the property
         else:
-            raise ValueError, "Can only remove sections and properties"
+            raise ValueError("Can only remove sections and properties")
 
     def __iter__(self):
         """iterate over each section and property contained in this section"""
