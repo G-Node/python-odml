@@ -134,14 +134,14 @@ class XMLReader(object):
         """
         try:
             root = ET.parse(xml_file, self.parser).getroot()
-        except ET.XMLSyntaxError, e:
+        except ET.XMLSyntaxError as e:
             raise ParserException(e.message)
         return self.parse_element(root)
 
     def fromString(self, string):
         try:
             root = ET.XML(string, self.parser)
-        except ET.XMLSyntaxError, e:
+        except ET.XMLSyntaxError as e:
             raise ParserException(e.message)
         return self.parse_element(root)
 
@@ -228,7 +228,7 @@ class XMLReader(object):
             if hasattr(obj, k):
                 try:
                     setattr(obj, k, v)
-                except Exception, e:
+                except Exception as e:
                     self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
                     if not self.ignore_errors:
                         raise

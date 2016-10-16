@@ -33,11 +33,11 @@ def cache_load(url):
         or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < datetime.datetime.now() - CACHE_AGE:
             try:
                 data = urllib2.urlopen(url).read() # read data first, so we don't have empty files on error
-            except Exception, e:
                 return
             fp = open(cache_file, "w")
             fp.write(data)
             fp.close()
+        except Exception as e:
             print("failed loading '%s': %s" % (url, e.message))
     return open(cache_file)
 

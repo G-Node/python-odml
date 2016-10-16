@@ -118,7 +118,7 @@ def section_repository_should_be_present(sec):
 
     try:
         tsec = sec.get_terminology_equivalent()
-    except Exception, e:
+    except Exception as e:
         yield ValidationError(sec, 'Could not load terminology: ' + e.message, 'warning')
         return
 
@@ -192,7 +192,7 @@ def odML_mapped_document_be_valid(doc):
     try:
         if mdoc is None:
             mdoc = mapping.create_mapping(doc)
-    except mapping.MappingError, e:
+    except mapping.MappingError as e:
         yield ValidationError(doc, 'mapping: %s' % str(e), 'error')
         return
 
