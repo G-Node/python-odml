@@ -7,18 +7,19 @@ from odml.property import Property  # this is supposedly ok, as we only use it f
                                     # it MUST however not be used to create any Property objects
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
+
 class Section(base._baseobj):
     pass
 
 @allow_inherit_docstring
 class BaseSection(base.sectionable, mapping.mapableSection, Section):
     """An odML Section"""
-    type       = None
-    id         = None
-    _link      = None
-    _include    = None
-    _mapping    = None
-    reference  = None # the *import* property
+    type = None
+    id = None
+    _link = None
+    _include = None
+    _mapping = None
+    reference = None  # the *import* property
 
     _merged = None
 
