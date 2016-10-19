@@ -2,6 +2,7 @@
 Dumps ODML-Structures
 """
 
+
 def get_props(obj, props):
     out = []
     for p in props:
@@ -10,6 +11,7 @@ def get_props(obj, props):
             if not x is None:
                 out.append("%s=%s" % (p, repr(x)))
     return ", ".join(out)
+
 
 def dumpSection(section, indent=1):
     if section is None:
@@ -24,6 +26,7 @@ def dumpSection(section, indent=1):
 
     for sub in section.sections:
         dumpSection(sub, indent * 2)
+
 
 def dumpDoc(doc):
     for sec in doc:
