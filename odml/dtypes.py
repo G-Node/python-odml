@@ -137,7 +137,9 @@ def float_get(string):
 
 
 def str_get(string):
-    return unicode(string)
+    if sys.version_info < (3, 0):
+        return unicode(string)
+    return str(string)
 
 
 def str_set(value):
