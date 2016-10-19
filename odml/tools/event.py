@@ -1,29 +1,29 @@
+import sys
 import odml
 
 
 class Event (object):
     def __init__(self, name):
-        self.handlers = set()
+        self.handlers = []
         self.name = name
 
     def add_handler(self, handler):
         try:
-            self.handlers.add(handler)
+            if handler not in self.handlers:
+                self.handlers.append(handler)
         except:
             print("cannot add handler.")
         return self
 
     def remove_handler(self, handler):
-        try:
+        if handler in self.handlers:
             self.handlers.remove(handler)
-        except:
-            raise ValueError("No such handler: %s" % repr(handler))
         return self
 
     def fire(self, *args, **kargs):
         for handler in set(self.handlers):
-            if not handler in self.handlers:
-                continue # don't fire to unsubscribed handlers
+            if handler not in self.handlers:
+                continue  # don't fire to unsubscribed handlers
             handler(*args, **kargs)
         self.finish(*args, **kargs)
 
@@ -38,7 +38,7 @@ class Event (object):
         return len(self.handlers)
 
     def __repr__(self):
-        return "<%sEvent>" % (self.name)
+        return "<%sEvent>" % self.name
 
     __iadd__ = add_handler
     __isub__ = remove_handler
@@ -173,7 +173,8 @@ class ChangeHandlable(object):
         self._change_handler += func
 
     def remove_change_handler(self, func):
-        self._change_handler -= func
+        if self._change_handler is not None:
+            self._change_handler -= func
         if len(self._change_handler) == 0:
             del self._change_handler
 
@@ -245,6 +246,7 @@ class Section(ModificationNotifier, odml.getImplementation().Section):
 class Document(ModificationNotifier, odml.getImplementation().Document):
     _Changed = Event("doc")
 
+
 def pass_on_change(context):
     """
     pass the change event to the parent node
@@ -267,5 +269,4 @@ Value._Changed.finish    = pass_on_change
 Property._Changed.finish = pass_on_change
 Section._Changed.finish  = pass_on_change_section
 
-import sys
 odml.addImplementation(sys.modules[__name__])
