@@ -150,8 +150,10 @@ class ChangeAbleProxy(NotifyingProxy):
 
         # use a weak ref and detach at some point
         weak_change_handler = weakmeth.WeakMethod(self.change_handler)
+
         def call(context):
-            if weak_change_handler() is None: return
+            if weak_change_handler() is None:
+                return
             return weak_change_handler()(context)
 
         self._weak_change_handler = call
@@ -209,7 +211,7 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
         break stuff)
         """
         # do some caching
-        if len(list(self._p_values)) == len(list(self._proxy_obj.values)):
+        if len(self._p_values) == len(self._proxy_obj.values):
             cached = True
 
             for i, val in enumerate(self._p_values):
@@ -221,10 +223,7 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
                 return self._p_values
 
         # transparently create proxy objects
-        if sys.version_info < (3,):
-            self._p_values = map(ValueProxy, self._proxy_obj.values)
-        else:
-            self._p_values = list(map(ValueProxy, self._proxy_obj.values))
+        self._p_values = list(map(ValueProxy, self._proxy_obj.values))
         for i in self._p_values:  # and make them remember to which property they belong
             i._property = self
         return self._p_values
@@ -281,6 +280,7 @@ class ReadOnlyObject(object):
     cannot be modified if *enable_protection* is set.
     """
     enable_protection = False
+
     def __setattr__(self, name, value):
         if self.enable_protection and name in self._format._args:
             raise AttributeError("attribute '%s' is read-only" % name)
