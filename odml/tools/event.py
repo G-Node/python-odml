@@ -21,9 +21,7 @@ class Event (object):
         return self
 
     def fire(self, *args, **kargs):
-        for handler in set(self.handlers):
-            if handler not in self.handlers:
-                continue  # don't fire to unsubscribed handlers
+        for handler in self.handlers:
             handler(*args, **kargs)
         self.finish(*args, **kargs)
 
