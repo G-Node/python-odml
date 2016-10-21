@@ -5,7 +5,7 @@ Document, Section, Property and Value
 additionally implements change notifications up to the corresponding section
 """
 import odml.property
-import event
+import odml.tools.event as event
 
 def identity_index(obj, val):
     """

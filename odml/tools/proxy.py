@@ -1,10 +1,12 @@
+import sys
 import odml
-import event
-import weakmeth, weakref
-import nodes
+import odml.tools.event as event
+import odml.tools.weakmeth as weakmeth
+import odml.tools.nodes as nodes
 
-# events are required for proxy objects 
+# events are required for proxy objects
 odml.setMinimumImplementation('event')
+
 
 class Proxy(object):
     """common interface"""
@@ -13,12 +15,15 @@ class Proxy(object):
 # here we hook the base-class-comparism functionality to
 # prefer comparism provided by the proxy obj
 _odml_base___eq__ = odml.base.baseobject.__eq__
+
+
 def _proxy___eq__(self, obj):
     if isinstance(obj, Proxy) and not isinstance(self, Proxy):
         return obj == self
     return _odml_base___eq__(self, obj)
 
 odml.base.baseobject.__eq__ = _proxy___eq__
+
 
 class BaseProxy(Proxy):
     """
@@ -48,6 +53,7 @@ class BaseProxy(Proxy):
     def __repr__(self):
         return "P(%s)" % repr(self._proxy_obj)
 
+
 class EqualityBaseProxy(BaseProxy):
     """
     A BaseProxy that uses a set of attributes (defined in self._format)
@@ -60,6 +66,7 @@ class EqualityBaseProxy(BaseProxy):
             if getattr(self, key) != getattr(obj, key):
                 return False
         return True
+
 
 class PassProxy(BaseProxy):
     """
@@ -97,6 +104,7 @@ class PassProxy(BaseProxy):
     def __len__(self):
         return self._proxy_obj.__len__()
 
+
 class NotifyingProxy(event.ModificationNotifier, PassProxy):
     """
     Hooks the personal attributes to cause change events
@@ -105,6 +113,7 @@ class NotifyingProxy(event.ModificationNotifier, PassProxy):
         if name in self.personal:
             return super(NotifyingProxy, self).__setattr__(name, value)
         return PassProxy.__setattr__(self, name, value)
+
 
 class HookProxy(BaseProxy):
     """
@@ -123,6 +132,7 @@ class HookProxy(BaseProxy):
         else:
             super(HookProxy, self).__setattr__(name, value)
 
+
 class ChangeAbleProxy(NotifyingProxy):
     """
     A notifying PassProxy with a change handler, attached to original object
@@ -140,12 +150,15 @@ class ChangeAbleProxy(NotifyingProxy):
 
         # use a weak ref and detach at some point
         weak_change_handler = weakmeth.WeakMethod(self.change_handler)
+
         def call(context):
-            if weak_change_handler() is None: return
+            if weak_change_handler() is None:
+                return
             return weak_change_handler()(context)
 
         self._weak_change_handler = call
-        obj.add_change_handler(call)
+        if hasattr(obj, "add_change_handler"):
+            obj.add_change_handler(call)
 
     @property
     def _Changed(self):
@@ -165,7 +178,9 @@ class ChangeAbleProxy(NotifyingProxy):
         our object is no longer needed, so we can also remove the change handler
         from the original object
         """
-        self._proxy_obj.remove_change_handler(self._weak_change_handler)
+        if hasattr(self._proxy_obj, "remove_change_handler"):
+            self._proxy_obj.remove_change_handler(self._weak_change_handler)
+
 
 class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, nodes.PropertyNode):
     """
@@ -200,7 +215,7 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
             cached = True
 
             for i, val in enumerate(self._p_values):
-                if not val._proxy_obj is self._proxy_obj.values[i]:
+                if val._proxy_obj is not self._proxy_obj.values[i]:
                     cached = False
                     break
 
@@ -208,8 +223,8 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
                 return self._p_values
 
         # transparently create proxy objects
-        self._p_values = map(ValueProxy, self._proxy_obj.values)
-        for i in self._p_values: # and make them remember to which property they belong
+        self._p_values = list(map(ValueProxy, self._proxy_obj.values))
+        for i in self._p_values:  # and make them remember to which property they belong
             i._property = self
         return self._p_values
 
@@ -226,7 +241,7 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
                 assert oval.parent is not None
                 i = self.values.index(oval)
                 context.val = self.values[i]
-            else: # the val does not yet/anymore exist
+            else:  # the val does not yet/anymore exist
                 assert oval.parent is None
                 context.val = ValueProxy(oval)
             context.val._property = self
@@ -244,6 +259,7 @@ class PropertyProxy(EqualityBaseProxy, ChangeAbleProxy, odml.property.Property, 
             if obj is child._proxy_obj: return (i,)
         raise ValueError("%s does not contain the item %s" % (repr(self), repr(child)))
 
+
 class ValueProxy(EqualityBaseProxy, ChangeAbleProxy, odml.value.Value, nodes.ValueNode):
     """
     A ValueProxy provides transparent access to a Value,
@@ -257,16 +273,19 @@ class ValueProxy(EqualityBaseProxy, ChangeAbleProxy, odml.value.Value, nodes.Val
     def parent(self):
         return self._property
 
+
 class ReadOnlyObject(object):
     """
     An odml-object whose properties (according to *_format*)
     cannot be modified if *enable_protection* is set.
     """
     enable_protection = False
+
     def __setattr__(self, name, value):
         if self.enable_protection and name in self._format._args:
             raise AttributeError("attribute '%s' is read-only" % name)
         object.__setattr__(self, name, value)
+
 
 class SectionProxy(odml.getImplementation().Section, Proxy):
     """
@@ -286,8 +305,10 @@ class SectionProxy(odml.getImplementation().Section, Proxy):
         assert isinstance(obj, Proxy)
         super(SectionProxy, self).append(obj)
 
+
 class BaseSectionProxy(SectionProxy):
     pass
+
 
 class ReadOnlySection(SectionProxy, ReadOnlyObject):
     """
@@ -325,6 +346,7 @@ class ReadOnlySection(SectionProxy, ReadOnlyObject):
         ret = func()
         self.enable_protection = p
         return ret
+
 
 class NonexistantSection(ReadOnlySection):
     """
@@ -368,6 +390,7 @@ class NonexistantSection(ReadOnlySection):
     def __repr__(self):
         return super(NonexistantSection, self).__repr__().replace("<Section", "<?Section")
 
+
 class DocumentProxy(EqualityBaseProxy, odml.getImplementation().Document):
     """
     A bare bones DocumentProxy not yet proxing actually much. TODO make it a HookProxy?
@@ -404,6 +427,7 @@ class DocumentProxy(EqualityBaseProxy, odml.getImplementation().Document):
 #    def proxy_append(self, obj):
 #        self.append(obj)
 
+
 class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
     """
     Like a fake section, but we reference a concrete section
@@ -418,7 +442,8 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
         if template is not None:
             obj = template
         super(ReadOnlySection, self).__init__(obj.name, obj.type)
-        obj.add_change_handler(self.change_handler)
+        if hasattr(obj, "add_change_handler"):
+            obj.add_change_handler(self.change_handler)
 
     def change_handler(self, context):
         if context.postChange and context.obj is context.cur:
@@ -466,7 +491,7 @@ class MappedSection(EqualityBaseProxy, HookProxy, ReadOnlySection):
     def remove(self, obj):
         # we should only contain proxy objects (unless a link is present TODO)
         if not isinstance(obj, Proxy):
-            print "%s should only contain proxy objects, but then look at this" % repr(self), obj
+            print("%s should only contain proxy objects, but then look at this" % repr(self), obj)
             obj = self.contains(obj)
         assert isinstance(obj, Proxy)
 

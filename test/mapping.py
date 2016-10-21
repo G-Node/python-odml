@@ -1,16 +1,10 @@
 #-*- coding: utf-8
 import unittest
-
 import odml
-import odml.gui.treemodel.mixin
-import odml.gui.commands as commands
 import odml.terminology
 import odml.tools.dumper as dumper
-import samplefile
-from samplefile import parse
-
+from test.samplefile import parse
 import odml.mapping as mapping
-
 
 
 class TestMapping(unittest.TestCase):
@@ -22,24 +16,26 @@ class TestMapping(unittest.TestCase):
     Also have a look at the actual sourcefile (``test/mapping.py``)
     which provides illustrations to the rule-definitions.
     """
-    def check(self, src, dst, map=True):
+    def check(self, src, dst, do_map=True):
         """
-        check if the mappingn of *src* is equivalent to *dst*
+        check if the mapping of *src* is equivalent to *dst*
 
         if map is False, just compare src to dst, assuming the mapping
         has already been applied manually
         """
-        if map:
-            map = mapping.create_mapping(src)
+        if do_map:
+            mapped = mapping.create_mapping(src)
         else:
-            map = src
-        if map != dst:
-            dumper.dumpDoc(map)
-            print "---- vs ----"
+            mapped = src
+        if mapped != dst:
+            print('\n')
+            dumper.dumpDoc(mapped)
+            print("---- vs ----")
             dumper.dumpDoc(dst)
-        self.assertEqual(map, dst)
-        self.assertEqual(dst, map) # do the vice versa test too
-        return map
+            print('\n')
+        self.assertEqual(mapped, dst)
+        self.assertEqual(dst, mapped)  # do the vice versa test too
+        return mapped
 
     def test_parse(self):
         s = """
@@ -363,10 +359,11 @@ s3[T3]
     def test_editing(self):
         self.map_rule4()
         src = parse("""
-        s1[t1]
-        - p2 mapping [T2:P1]
-        s2[t2] mapping [T2]
-        """)
+       s1[t1]
+       - p2 mapping [T2:P1]
+       s2[t2] mapping [T2]
+       """)
+
         map = mapping.create_mapping(src)
 
         src['s1'].properties['p2'].mapping = 'map#T3:P1'
@@ -376,7 +373,7 @@ s3[T3]
           - P1
         s2[T2]
         """)
-        self.check(map, dst, map=False)
+        self.check(map, dst, do_map=False)
 
         src['s1'].properties['p2'].mapping = 'map#T2:P1'
         dst = parse("""
@@ -384,7 +381,7 @@ s3[T3]
         s2[T2]
         - P1
         """)
-        self.check(map, dst, map=False)
+        self.check(map, dst, do_map=False)
 
         with self.assertRaises(mapping.MappingError):
             src['s2'].mapping = 'map#T3'
@@ -395,7 +392,7 @@ s3[T3]
         - p2
         s2[T2]
         """)
-        self.check(map, dst, map=False)
+        self.check(map, dst, do_map=False)
 
         src['s1'].mapping = 'map#T1'
         # this currently changes the order of the sections in the mapping
@@ -405,63 +402,7 @@ s3[T3]
         s1[T1]
         - p2
         """)
-        self.check(map, dst, map=False) # see above if this fails
-
-    def test_moving_property(self):
-        """
-        moving a mapped property should unmap it, move it and then remap it
-        """
-        self.map_rule4()
-        src = parse("""
-        s1[t1]
-        - p2 mapping [T2:P1]
-        s2[t2] mapping [T2]
-        """)
-        map = mapping.create_mapping(src)
-        # now move p2 -> s2[t2]
-        cmd = commands.MoveObject(obj=src['s1'].properties['p2'], dst=src['s2'])
-        cmd()
-        dst = parse("""
-        s1[t1]
-        s2[T2]
-        - P1
-        """)
-        self.check(map, dst, map=False)
-
-    def test_moving_section(self):
-        self.map_rule4()
-        src = parse("""
-        s1[t1]
-        - p2 mapping [T2:P1]
-        s2[t2] mapping [T2]
-        """)
-        map = mapping.create_mapping(src)
-        # now move s1 -> s2[t2]
-        cmd = commands.MoveObject(obj=src['s1'], dst=src['s2'])
-        cmd()
-
-        # now src should look like this
-        dst = parse("""
-        s2[t2] mapping [T2]
-        - s1[t1]
-          - p2 mapping [T2:P1]
-        """)
-        self.check(src, dst, map=False)
-
-        # and the mapping should have been updated, so that
-        # it is equal to executing mapping directly
-        dst = mapping.create_mapping(dst)
-        self.check(map, dst, map=False)
-
-        cmd.undo()
-        # here again we lose the order
-        dst = parse("""
-        s2[t2] mapping [T2]
-        s1[t1]
-        - p2 mapping [T2:P1]
-        """)
-        dst = mapping.create_mapping(dst)
-        self.check(map, dst, map=False)
+        self.check(map, dst, do_map=False)  # see above if this fails
 
 if __name__ == '__main__':
     unittest.main()

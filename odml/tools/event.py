@@ -1,25 +1,27 @@
+import sys
 import odml
+
 
 class Event (object):
     def __init__(self, name):
-        self.handlers = set()
+        self.handlers = []
         self.name = name
 
     def add_handler(self, handler):
-        self.handlers.add(handler)
+        try:
+            if handler not in self.handlers:
+                self.handlers.append(handler)
+        except:
+            print("cannot add handler.")
         return self
 
     def remove_handler(self, handler):
-        try:
+        if handler in self.handlers:
             self.handlers.remove(handler)
-        except:
-            raise ValueError("No such handler: %s" % repr(handler))
         return self
 
     def fire(self, *args, **kargs):
-        for handler in set(self.handlers):
-            if not handler in self.handlers:
-                continue # don't fire to unsubscribed handlers
+        for handler in self.handlers:
             handler(*args, **kargs)
         self.finish(*args, **kargs)
 
@@ -34,11 +36,12 @@ class Event (object):
         return len(self.handlers)
 
     def __repr__(self):
-        return "<%sEvent>" % (self.name)
+        return "<%sEvent>" % self.name
 
     __iadd__ = add_handler
     __isub__ = remove_handler
     __call__ = fire
+
 
 class ChangeContext(object):
     """
@@ -141,9 +144,11 @@ class ChangeContext(object):
     def dump(self):
         return repr(self) + "\nObject stack:\n\t" + "\n\t".join(map(repr, self._obj))
 
+
 class ChangedEvent(object):
     def __init__(self):
         pass
+
 
 class EventHandler(object):
     def __init__(self, func):
@@ -151,6 +156,7 @@ class EventHandler(object):
 
     def __call__(self, *args, **kargs):
         return self._func(*args, **kargs)
+
 
 class ChangeHandlable(object):
     """
@@ -165,9 +171,11 @@ class ChangeHandlable(object):
         self._change_handler += func
 
     def remove_change_handler(self, func):
-        self._change_handler -= func
+        if self._change_handler is not None:
+            self._change_handler -= func
         if len(self._change_handler) == 0:
             del self._change_handler
+
 
 class ModificationNotifier(ChangeHandlable):
     """
@@ -219,17 +227,23 @@ class ModificationNotifier(ChangeHandlable):
 # and provide ModificationNotifier Capabilities
 name = "event"
 provides = odml.getImplementation().provides + ["event"]
+
+
 class Value(ModificationNotifier, odml.getImplementation().Value):
     _Changed = Event("value")
+
 
 class Property(ModificationNotifier, odml.getImplementation().Property):
     _Changed = Event("prop")
 
+
 class Section(ModificationNotifier, odml.getImplementation().Section):
     _Changed = Event("sec")
 
+
 class Document(ModificationNotifier, odml.getImplementation().Document):
     _Changed = Event("doc")
+
 
 def pass_on_change(context):
     """
@@ -238,6 +252,7 @@ def pass_on_change(context):
     parent = context.cur.parent
     if parent is not None:
         context.passOn(parent)
+
 
 def pass_on_change_section(context):
     """
@@ -252,5 +267,4 @@ Value._Changed.finish    = pass_on_change
 Property._Changed.finish = pass_on_change
 Section._Changed.finish  = pass_on_change_section
 
-import sys
 odml.addImplementation(sys.modules[__name__])

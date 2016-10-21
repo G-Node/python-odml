@@ -3,8 +3,10 @@
 The JSON import/export module.
 This is rudimentary for now, assuming everything is well-formed.
 """
+import sys
 import odml
 import json
+
 
 class OdmlSerializer(object):
     """
@@ -27,30 +29,45 @@ class OdmlSerializer(object):
                 continue
 
             val = getattr(e, fmt.map(k))
-            if val is None: continue
+            if val is None:
+                continue
 
             if isinstance(val, list):
                 for v in val:
                     ele = OdmlSerializer.save_element(v)
                     cur.setdefault(k, []).append(ele)
             else:
-                cur[k] = unicode(val)
+                if sys.version_info < (3, 0):
+                    cur[k] = unicode(val)
+                else:
+                    cur[k] = str(val)
 
         return cur
 
 JSON_VERSION = "1"
 
+
 class JSONWriter(OdmlSerializer):
     def __unicode__(self):
+        doc = self.save_element(self.doc)
+        doc['_version'] = JSON_VERSION
+        temp = "here i am"
+        return json.dumps(doc)
+
+    def __str__(self):
         doc = self.save_element(self.doc)
         doc['_version'] = JSON_VERSION
         return json.dumps(doc)
 
     def write_file(self, filename):
-        data = unicode(self)
+        if sys.version_info < (3, 0):
+            data = unicode(self)
+        else:
+            data = str(self)
         f = open(filename, "w")
         f.write(data)
         f.close()
+
 
 class OdmlReader(object):
     """
@@ -83,6 +100,7 @@ class OdmlReader(object):
         kargs['value'] = children
         return self.create_odML(fmt, kargs, obj, [])
 
+
 class JSONReader(OdmlReader):
     def fromString(self, data):
         obj = json.loads(data)
@@ -91,7 +109,8 @@ class JSONReader(OdmlReader):
     def fromFile(self, infile):
         return self.fromString(infile.read())
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     import sys
     y = JSONReader().fromFile(sys.stdin)
     import dumper

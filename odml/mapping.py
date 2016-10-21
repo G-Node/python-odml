@@ -1,5 +1,5 @@
 import odml
-import terminology
+import odml.terminology as terminology
 import weakref
 from functools import wraps
 
@@ -7,6 +7,7 @@ from functools import wraps
 # concrete odml-class implementations, that would not be available if they
 # were directly imported in the beginning
 proxy = None
+
 
 class mapped(object):
     """
@@ -27,6 +28,7 @@ class mapped(object):
     def _active_mapping(self):
         if not self.__active_mapping is None:
             del self.__active_mapping
+
 
 class mapable(mapped):
     """
@@ -143,6 +145,7 @@ class mapable(mapped):
         """
         raise NotImplementedError
 
+
 class mapableProperty(mapable):
     def unmap(self):
         """
@@ -155,6 +158,7 @@ class mapableProperty(mapable):
         install the mapping for this property
         """
         create_property_mapping(self.parent, self)
+
 
 class mapableSection(mapable):
     def unmap(self):
@@ -183,6 +187,7 @@ class mapableSection(mapable):
             for prop in child.properties:
                 create_property_mapping(child, prop)
 
+
 def remapable_append(func):
     """
     decorator for append-functions to deal with Proxy objects
@@ -194,6 +199,7 @@ def remapable_append(func):
             obj.remap(obj._remap_info)
         return ret
     return f
+
 
 def remapable_insert(func):
     """
@@ -207,6 +213,7 @@ def remapable_insert(func):
         return ret
     return f
 
+
 def remapable_remove(func):
     """
     decorator for remove-functions to deal with Proxy objects
@@ -219,8 +226,10 @@ def remapable_remove(func):
         return func(self, obj)
     return f
 
+
 class MappingError(TypeError):
     pass
+
 
 def create_mapping(doc):
     """
@@ -229,8 +238,8 @@ def create_mapping(doc):
     1. recursively map all sections
     2. afterwards map all their properties
     """
-    global proxy # we install the proxy only late time
-    import tools.proxy as proxy
+    global proxy  # we install the proxy only late time
+    import odml.tools.proxy as proxy
     mdoc = proxy.DocumentProxy(doc)
     # TODO copy attributes, but also make this generic
     mdoc._proxy_obj = doc
@@ -239,13 +248,14 @@ def create_mapping(doc):
     # iterate each section and property
     # take the mapped object and try to put it at a meaningful place
     for sec in doc.sections:
-        create_section_mapping(sec) # this recurses on its own
+        create_section_mapping(sec)  # this recurses on its own
 
     for sec in doc.itersections(recursive=True):
-        for prop in sec.properties: # not needed anymore: [:]:
+        for prop in sec.properties:  # not needed anymore: [:]:
             create_property_mapping(sec, prop)
 
     return mdoc
+
 
 def create_section_mapping(sec):
     """
@@ -269,6 +279,7 @@ def create_section_mapping(sec):
         create_section_mapping(child)
 
     return msec
+
 
 def create_property_mapping(sec, prop):
     """
@@ -339,6 +350,7 @@ def create_property_mapping(sec, prop):
     child.proxy_append(mprop)
     return mprop
 
+
 def unmap_property(prop=None, mprop=None):
     """
     uninstall the property mapping by removing its proxy object from its mapped section
@@ -377,6 +389,7 @@ def unmap_property(prop=None, mprop=None):
     del prop._active_mapping
     return mprop
 
+
 def can_unmap_section(sec, top):
     """
     check if a section including its subsections, properties and properties of
@@ -398,6 +411,7 @@ def can_unmap_section(sec, top):
 
     return True
 
+
 def can_unmap_all_properties(msec, top):
     """
     find out if the mapped section *msec* contains any property whose origin (its proxied object)
@@ -415,6 +429,7 @@ def can_unmap_all_properties(msec, top):
             return False
 
     return True
+
 
 def unmap_section(sec, check=True):
     """
@@ -455,8 +470,8 @@ def unmap_section(sec, check=True):
     assert isinstance(msec.parent, proxy.Proxy)
     msec.parent.proxy_remove(msec)
 
-
     return msec
+
 
 def unmap_document(doc):
     """
@@ -467,6 +482,7 @@ def unmap_document(doc):
         for prop in sec.properties:
             del prop._active_mapping
     del doc._active_mapping
+
 
 def get_object_from_mapped_equivalent(mobj):
     """

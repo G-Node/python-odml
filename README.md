@@ -1,7 +1,7 @@
-odML libraries and editor
-=========================
+odML libraries
+==============
 
-The Python-odML library (including the odML-Editor) is available on 
+The Python-odML library is available on
 `GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with 
 the version control system **git**, but still want to use it, have a look at 
 the documentaion available on the `git-scm website <https://git-scm.com/>`_. 

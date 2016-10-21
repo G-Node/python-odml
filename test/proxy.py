@@ -1,15 +1,13 @@
-import odml.gui.treemodel.mixin #this also provides event functionality, and we also test tree-based event passing
-import odml.tools.event
-
 import unittest
-from mapping import parse
-
+import odml.tools.event
+from test.samplefile import parse
 import odml
-from odml import doc, section, property, value
 from odml.tools import proxy
+
 
 class TestProxy(unittest.TestCase):
     maxDiff = None
+
     def setUp(self):
         self.doc = parse("""
         s1[t1]
@@ -19,6 +17,7 @@ class TestProxy(unittest.TestCase):
 
     def test_private_events(self):
         event_log = []
+
         def record(context):
             event_log.append((context.obj, context.action, context.val))
 
@@ -51,6 +50,7 @@ class TestProxy(unittest.TestCase):
         s.append(p)
 
         event_log = []
+
         def record(context):
             event_log.append((context.obj, context.action, context.val))
 

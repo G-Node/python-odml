@@ -12,6 +12,7 @@ import binascii
 import hashlib
 from enum import Enum
 
+
 class DType(str, Enum):
     string = 'string'
     text = 'text'
@@ -112,8 +113,12 @@ def set(value, dtype=None, encoding=None):
         return tuple_set(value)
     if dtype == "binary":
         return binary_set(value, encoding)
-    if type(value) in (str, unicode):
-        return str_set(value)
+    if sys.version_info > (3, 0):
+        if isinstance(value, str):
+            return str_set(value)
+    else:
+        if type(value) in (str, unicode):
+            return str_set(value)
     return self.get(dtype + "_set", str_set)(value)
 
 
@@ -132,12 +137,17 @@ def float_get(string):
 
 
 def str_get(string):
-    return unicode(string)
+    if sys.version_info < (3, 0):
+        return unicode(string)
+    return str(string)
 
 
 def str_set(value):
     try:
-        return unicode(value)
+        if sys.version_info < (3, 0):
+            return unicode(value)
+        else:
+            return str(value)
     except Exception as ex:
         fail = ex
         raise fail
@@ -146,13 +156,15 @@ def str_set(value):
 def time_get(string):
     if not string: return None
     if type(string) is datetime.time:
-        return datetime.datetime.strptime(string.isoformat(), '%H:%M:%S').time()
+        return string.strftime('%H:%M:%S').time()
     else:
         return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
 
 def time_set(value):
     if not value: return None
+    if type(value) is datetime.time:
+        return value.strftime("%H:%M:%S")
     return value.isoformat()
 
 
@@ -170,14 +182,17 @@ date_set = time_set
 def datetime_get(string):
     if not string: return None
     if type(string) is datetime.datetime:
-        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d %H:%M:%S')
+        return string.strftime('%Y-%m-%d %H:%M:%S')
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 
 def datetime_set(value):
     if not value: return None
-    return value.isoformat(' ')
+    if type(value) is datetime.datetime:
+        return value.strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
 
 
 def boolean_get(string):
@@ -225,6 +240,8 @@ class Encoder(object):
         self._decode = decode
 
     def encode(self, data):
+        if sys.version_info > (3, 0) and isinstance(data, str):
+            data = str.encode(data)
         return self._encode(data)
 
     def decode(self, string):
@@ -256,14 +273,24 @@ def binary_set(value, encoding=None):
 
 
 def calculate_crc32_checksum(data):
-    return "%08x" % (binascii.crc32(data) & 0xffffffff)
+    if sys.version_info < (3, 0):
+        return "%08x" % (binascii.crc32(data) & 0xffffffff)
+    else:
+        if isinstance(data, str):
+            data = str.encode(data)
+        return "%08x" % (binascii.crc32(data) & 0xffffffff)
+
 
 
 checksums = {
     'crc32': calculate_crc32_checksum,
 }
+
 # allow to use any available algorithm
-if not sys.version_info < (2, 7):
+if sys.version_info > (3, 0):
+    for algo in hashlib.algorithms_guaranteed:
+        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
+elif not sys.version_info < (2, 7):
     for algo in hashlib.algorithms:
         checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
 
@@ -274,4 +301,6 @@ def valid_checksum_type(checksum_type):
 
 def calculate_checksum(data, checksum_type):
     if data is None: data = ''
+    if isinstance(data, str):
+        data = str.encode(data)
     return checksums[checksum_type](data)

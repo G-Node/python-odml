@@ -1,11 +1,12 @@
 #-*- coding: utf-8
-import base
-import format
-import terminology
-import mapping
-from property import Property # this is supposedly ok, as we only use it for an isinstance check
-                              # it MUST however not be used to create any Property objects
-from tools.doc_inherit import *
+import odml.base as base
+import odml.format as format
+import odml.terminology as terminology
+import odml.mapping as mapping
+from odml.property import Property  # this is supposedly ok, as we only use it for an isinstance check
+                                    # it MUST however not be used to create any Property objects
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
 
 class Section(base._baseobj):
     pass
@@ -13,12 +14,12 @@ class Section(base._baseobj):
 @allow_inherit_docstring
 class BaseSection(base.sectionable, mapping.mapableSection, Section):
     """An odML Section"""
-    type       = None
-    id         = None
-    _link      = None
-    _include    = None
-    _mapping    = None
-    reference  = None # the *import* property
+    type = None
+    id = None
+    _link = None
+    _include = None
+    _mapping = None
+    reference = None  # the *import* property
 
     _merged = None
 
@@ -143,12 +144,12 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
     @property
     def properties(self):
         """the list of all properties contained in this section"""
-    	return self._props
+        return self._props
 
     @property
     def sections(self):
         """the list of all child-sections of this section"""
-    	return self._sections
+        return self._sections
 
     @property
     def parent(self):
@@ -219,7 +220,7 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
             obj._section = None
             # also: TODO unmap the property
         else:
-            raise ValueError, "Can only remove sections and properties"
+            raise ValueError("Can only remove sections and properties")
 
     def __iter__(self):
         """iterate over each section and property contained in this section"""
@@ -297,7 +298,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         """
         if self == section:
             raise RuntimeException("cannot unmerge myself?")
-            return #self._sections
         removals = []
         for obj in section:
             mine = self.contains(obj)

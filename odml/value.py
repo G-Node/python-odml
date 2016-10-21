@@ -1,10 +1,10 @@
 #-*- coding: utf8
-import types
-import base
-import format
+import odml.dtypes as dtypes
+import odml.base as base
+import odml.format as format
 
 import string
-from tools.doc_inherit import *
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Value(base._baseobj):
@@ -75,10 +75,10 @@ class BaseValue(base.baseobject, Value):
 
         if value is not None:
             # assign value directly (through property would raise a change-event)
-            self._value = types.get(value, self._dtype, self._encoder)
+            self._value = dtypes.get(value, self._dtype, self._encoder)
         elif data is not None:
             if dtype is None:
-                self._dtype = types.infer_dtype(data)
+                self._dtype = dtypes.infer_dtype(data)
             self._value = data
 
         self._checksum_type = None
@@ -124,11 +124,11 @@ class BaseValue(base.baseobject, Value):
         >>> v.data
         2.0
         """
-        return types.set(self._value, self._dtype, self._encoder)
+        return dtypes.set(self._value, self._dtype, self._encoder)
 
     @value.setter
     def value(self, new_string):
-        self._value = types.get(new_string, self._dtype, self._encoder)
+        self._value = dtypes.get(new_string, self._dtype, self._encoder)
 
     @property
     def dtype(self):
@@ -146,18 +146,18 @@ class BaseValue(base.baseobject, Value):
     @dtype.setter
     def dtype(self, new_type):
         # check if this is a valid type
-        if not types.valid_type(new_type):
+        if not dtypes.valid_type(new_type):
             raise AttributeError("'%s' is not a valid type." % new_type)
         # we convert the value if possible
         old_type = self._dtype
-        old_value = types.set(self._value, self._dtype, self._encoder)
+        old_value = dtypes.set(self._value, self._dtype, self._encoder)
         try:
-            new_value = types.get(old_value,  new_type, self._encoder)
+            new_value = dtypes.get(old_value, new_type, self._encoder)
         except:
             # cannot convert, try the other way around
             try:
-                old_value = types.set(self._value, new_type, self._encoder)
-                new_value = types.get(old_value,   new_type, self._encoder)
+                old_value = dtypes.set(self._value, new_type, self._encoder)
+                new_value = dtypes.get(old_value, new_type, self._encoder)
             except:
                 #doesn't work either, therefore refuse
                 raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
@@ -183,7 +183,7 @@ class BaseValue(base.baseobject, Value):
         if not encoding:
             encoding = None
 
-        if not types.valid_encoding(encoding):
+        if not dtypes.valid_encoding(encoding):
             raise AttributeError("'%s' is not a valid encoding" % encoding)
 
         # no need to cast anything here, because the encoding
@@ -253,7 +253,7 @@ class BaseValue(base.baseobject, Value):
             raise AttributeError("attribute 'checksum' can only be set for binary types, not for '%s'" % self._dtype)
 
         data = value.split("$", 1)
-        if not types.valid_checksum_type(data[0]):
+        if not dtypes.valid_checksum_type(data[0]):
             raise AttributeError("unsupported checksum type '%s'" % data[0])
         self._checksum_type = data[0]
 
@@ -263,7 +263,7 @@ class BaseValue(base.baseobject, Value):
 
         *cs_type* is the checksum mechanism (e.g. 'crc32' or 'md5')
         """
-        return types.calculate_checksum(self._value, cs_type)
+        return dtypes.calculate_checksum(self._value, cs_type)
 
     def can_display(self, text=None, max_length=-1):
         """
