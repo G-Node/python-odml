@@ -15,7 +15,7 @@ except ImportError:
 import threading
 
 
-CACHE_AGE = datetime.timedelta(minutes=1)
+CACHE_AGE = datetime.timedelta(days=1)
 
 
 def cache_load(url):
