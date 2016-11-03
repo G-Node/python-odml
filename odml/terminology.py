@@ -14,7 +14,8 @@ except ImportError:
     import urllib2
 import threading
 
-CACHE_AGE = datetime.timedelta(days=1)
+
+CACHE_AGE = datetime.timedelta(minutes=1)
 
 
 def cache_load(url):
@@ -22,7 +23,7 @@ def cache_load(url):
     load the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version
     """
-    filename = md5(url).hexdigest() + '.' + os.path.basename(url)
+    filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
     cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
     if not os.path.exists(cache_dir):
         try:
@@ -32,14 +33,15 @@ def cache_load(url):
                 raise
     cache_file = os.path.join(cache_dir, filename)
     if not os.path.exists(cache_file) \
-        or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < datetime.datetime.now() - CACHE_AGE:
+       or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
+       datetime.datetime.now() - CACHE_AGE:
         try:
-            data = urllib2.urlopen(url).read()  # read data first, so we don't have empty files on error
+            data = urllib2.urlopen(url).read()
         except Exception as e:
-            print("failed loading '%s': %s" % (url, e.message))
+            print("failed loading '%s': %s" % (url, e))
             return
         fp = open(cache_file, "w")
-        fp.write(data)
+        fp.write(str(data))
         fp.close()
     return open(cache_file)
 
@@ -84,10 +86,15 @@ class Terminologies(dict):
         """
         start a thread to load the terminology in background
         """
-        if url in self or url in self.loading: return
+        if url in self or url in self.loading:
+            return
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
+
+
+if __name__ == "__main__":
+    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/analysis.xml')
