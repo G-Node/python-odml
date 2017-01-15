@@ -9,8 +9,17 @@ the documentaion available on the `git-scm website <https://git-scm.com/>`_.
 Dependencies
 ------------
 
-* The Python-odML library runs under Python 2.7.
-* The Python-odML library depends on Enum (version 0.4.4) and lxml.
+* Python 2.7.
+* Python packages:
+
+    * Enum (version 0.4.4)
+    * lxml (version 3.7.2)
+
+* The following packages are required to install the lxml Python package on Ubuntu:
+
+    * libxml2-dev
+    * libxslt1-dev
+    * lib32z1-dev
 
 
 Installation
