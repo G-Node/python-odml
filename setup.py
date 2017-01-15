@@ -36,19 +36,19 @@ else:
     kwargs['scripts'] = ['odml-gui']
 
 setup(name='odML',
-      version='1.1',
+      version='1.2.1',
       description='open metadata Markup Language',
       author='Hagen Fritsch',
       author_email='fritsch+gnode@in.tum.de',
       url='http://www.g-node.org/projects/odml',
       packages=packages,
-      test_suite = 'test',
+      test_suite='test',
       options={
           'py2exe': {
               'packages': 'odml',
               'includes': 'cairo, pango, pangocairo, atk, gobject, gio, lxml, gzip, enum34',
           }
       },
+      install_requires=["enum", "lxml"],
       **kwargs
-)
-
+      )
