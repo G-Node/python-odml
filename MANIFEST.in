@@ -1,0 +1,4 @@
+include LICENSE INSTALL
+include README.md
+include odml.desktop
+recursive-include images *
