@@ -1,5 +1,6 @@
 import unittest
-import samplefile
+from . import samplefile
+
 
 class TestLinks(unittest.TestCase):
     def setUp(self):
@@ -26,14 +27,14 @@ class TestLinks(unittest.TestCase):
         obj = self.doc.sections[0].sections[0]
         dst = self.doc.sections[0]
 
-        samplefile.xmlparser.dumpSection(dst)
+        samplefile.dumper.dumpSection(dst)
 
         obj.link = "/sec 0"
-        #self.assertEqual(obj.sections, dst.sections) # this will FAIL
-        #self.assertEqual(obj.properties, dst.properties)
+        # self.assertEqual(obj.sections, dst.sections) # this will FAIL
+        # self.assertEqual(obj.properties, dst.properties)
         obj.clean()
 
-        samplefile.xmlparser.dumpSection(dst)
+        samplefile.dumper.dumpSection(dst)
 
     def test_merge(self):
         obj = self.doc.sections[0].sections[0] # must be an empty section

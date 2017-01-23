@@ -1,11 +1,12 @@
 import unittest
-import samplefile
 import odml
 import odml.validation
 import odml.terminology
 import odml.mapping
+from . import samplefile
 
 validate = odml.validation.Validation
+
 
 class TestValidation(unittest.TestCase):
 

@@ -1,4 +1,5 @@
 import odml
+
 import unittest
 import os
 import sys
@@ -7,6 +8,11 @@ import re
 from odml.tools import xmlparser
 from odml.tools import jsonparser
 from odml.tools import dumper
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
 
 
 def dump(doc, filename):

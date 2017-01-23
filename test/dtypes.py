@@ -4,6 +4,7 @@ import odml.dtypes as typ
 import odml
 import datetime
 
+
 class TestTypes(unittest.TestCase):
     def setUp(self):
         pass
