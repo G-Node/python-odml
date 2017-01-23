@@ -22,7 +22,7 @@ class TestValidation(unittest.TestCase):
 
     def test_errorfree(self):
         res = validate(self.doc)
-        self.assertEqual(self.filter_repository_errors(res.errors), [])
+        self.assertEqual(list(self.filter_repository_errors(res.errors)), [])
         
     def assertError(self, res, err, filter_rep=True, filter_map=False):
         """
@@ -56,7 +56,7 @@ class TestValidation(unittest.TestCase):
         res = validate(doc)
         # TODO: mappings don't take over the repository attribute yet
         #       thus the mapped equivalent of the document would still raise the error
-        self.assertEqual(self.filter_mapping_errors(res.errors), [])
+        self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
         
     def test_uniques(self):
         doc = samplefile.parse("""
