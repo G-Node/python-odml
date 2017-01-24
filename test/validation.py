@@ -59,21 +59,17 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
         
     def test_uniques(self):
-        doc = samplefile.parse("""
+        self.assertRaises(KeyError, samplefile.parse, """
             s1[t1]
             s1[t1]
             """)
-        res = validate(doc)
-        self.assertError(res, "name/type combination must be unique")
 
-        doc = samplefile.parse("""
+        self.assertRaises(KeyError, samplefile.parse, """
             s1[t1]
             - p1
             - p1
             """)
-        res = validate(doc)
-        self.assertError(res, "Object names must be unique")
-        
+
     def test_mapping_errors(self):
         # 1. mappings don't resolve
         doc = samplefile.parse("""s1[t1] mapping [T2]""")
@@ -101,9 +97,8 @@ class TestValidation(unittest.TestCase):
             S1[T1]
             - P1
             """)
-        res = validate(doc)
-        self.assertError(res, "mapping: Object names must be unique")
-        
+        self.assertRaises(KeyError, validate, doc)
+
     def test_property_in_terminology(self):
         doc = samplefile.parse("""
             s1[t1]
