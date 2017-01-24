@@ -1,5 +1,9 @@
 odML libraries and editor
 =========================
+.. image:: https://travis-ci.org/G-Node/python-odml.svg?branch=master
+    :target: https://travis-ci.org/G-Node/python-odml
+.. image:: https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master
+    :target: https://coveralls.io/github/G-Node/python-odml?branch=master
 
 The Python-odML library (including the odML-Editor) is available on
 `GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with
