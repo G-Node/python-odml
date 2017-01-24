@@ -13,13 +13,10 @@ matrix:
           env: COVERALLS=1
         - python: "3.4"
         - python: "3.5"
-        # - python: "3.6"
 
-addons:
-  apt:
-    packages:
-      - python-enum
-      - python-lxml
+before_install:
+  - sudo apt-get -qq  update
+  - sudo apt-get install -y python-enum python-lxml
 
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
