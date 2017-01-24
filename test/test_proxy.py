@@ -1,6 +1,6 @@
 import unittest
 import odml.tools.event
-from test.samplefile import parse
+from .test_samplefile import parse
 import odml
 from odml.tools import proxy
 

@@ -1,5 +1,5 @@
 import unittest
-from . import samplefile
+from . import test_samplefile as samplefile
 
 
 class TestLinks(unittest.TestCase):

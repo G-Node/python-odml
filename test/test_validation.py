@@ -3,7 +3,7 @@ import odml
 import odml.validation
 import odml.terminology
 import odml.mapping
-from . import samplefile
+from . import test_samplefile as samplefile
 
 validate = odml.validation.Validation
 

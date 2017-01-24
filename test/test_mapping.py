@@ -3,7 +3,7 @@ import unittest
 import odml
 import odml.terminology
 import odml.tools.dumper as dumper
-from test.samplefile import parse
+from .test_samplefile import parse
 import odml.mapping as mapping
 
 
