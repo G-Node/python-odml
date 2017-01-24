@@ -28,8 +28,8 @@ class WeakMethod(object):
 
     def __init__(self, fn):
         try:
-            self._obj = ref(fn.im_self)
-            self._meth = fn.im_func
+            self._obj = ref(fn.__self__)
+            self._meth = fn.__func__
         except AttributeError:
             # It's not a bound method.
             self._obj = None
