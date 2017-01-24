@@ -362,12 +362,3 @@ class MiscTest(unittest.TestCase):
 
         restored = xmlparser.load("/tmp/example.odml")
         self.assertEqual(self.doc.version, restored.version)
-
-
-if __name__ == '__main__':
-    import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--dump":
-        dump(SampleFileCreator().create_document(), sys.argv[2])
-        sys.exit(0)
-    unittest.main()
-

@@ -50,6 +50,3 @@ class TestLinks(unittest.TestCase):
         self.assertIsNone(obj._merged)
         self.assertEqual(obj.sections, org.sections)
         self.assertEqual(obj.properties, org.properties)
-
-if __name__ == '__main__':
-    unittest.main()

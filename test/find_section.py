@@ -34,7 +34,3 @@ class TestFindSections(unittest.TestCase):
 
         ret = self.root_section.find(key="sub_1", type="sub_2")
         self.assertIsNone(ret)
-
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestFindSections)
-    unittest.TextTestRunner(verbosity=2).run(suite)

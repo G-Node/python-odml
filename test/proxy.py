@@ -164,7 +164,3 @@ class TestProxy(unittest.TestCase):
         # and we can remove it again
         ps.remove(s2)
         self.assertNotIn(ps2, ps)
-
-if __name__ == '__main__':
-    unittest.main()
-

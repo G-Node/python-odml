@@ -10,6 +10,3 @@ class BugTests(unittest.TestCase):
                          "Document needs to init its baseclass first, "
                          "as it overwrites the repository attribute")
         self.assertEqual(doc.repository, repo)
-
-if __name__ == '__main__':
-    unittest.main()

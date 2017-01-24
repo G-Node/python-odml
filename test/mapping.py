@@ -403,6 +403,3 @@ s3[T3]
         - p2
         """)
         self.check(map, dst, do_map=False)  # see above if this fails
-
-if __name__ == '__main__':
-    unittest.main()

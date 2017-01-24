@@ -87,6 +87,3 @@ class TestValidation(unittest.TestCase):
 
         val_filt = self.doc.itervalues(filter_func=filter_func, max_depth=1)
         assert(len([v for v in val_filt]) == 1)
-
-if __name__ == '__main__':
-    unittest.main()

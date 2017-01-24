@@ -136,7 +136,3 @@ class TestValidation(unittest.TestCase):
         p.dependency = "p2"
         res = validate(doc)
         self.assertError(res, "non-existant dependency object")
-        
-
-if __name__ == '__main__':
-    unittest.main()
