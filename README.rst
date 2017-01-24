@@ -9,7 +9,7 @@ the documentaion available on the `git-scm website <https://git-scm.com/>`_.
 Dependencies
 ------------
 
-* Python 2.7.
+* Python 2.7 or 3.5
 * Python packages:
 
   * enum (version 0.4.4)
