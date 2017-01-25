@@ -1,6 +1,6 @@
 import unittest
 import odml.tools.event
-from test.samplefile import parse
+from .test_samplefile import parse
 import odml
 from odml.tools import proxy
 
@@ -164,7 +164,3 @@ class TestProxy(unittest.TestCase):
         # and we can remove it again
         ps.remove(s2)
         self.assertNotIn(ps2, ps)
-
-if __name__ == '__main__':
-    unittest.main()
-

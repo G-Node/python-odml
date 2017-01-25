@@ -1,11 +1,12 @@
 import unittest
-import samplefile
 import odml
 import odml.validation
 import odml.terminology
 import odml.mapping
+from . import test_samplefile as samplefile
 
 validate = odml.validation.Validation
+
 
 class TestValidation(unittest.TestCase):
 
@@ -21,7 +22,7 @@ class TestValidation(unittest.TestCase):
 
     def test_errorfree(self):
         res = validate(self.doc)
-        self.assertEqual(self.filter_repository_errors(res.errors), [])
+        self.assertEqual(list(self.filter_repository_errors(res.errors)), [])
         
     def assertError(self, res, err, filter_rep=True, filter_map=False):
         """
@@ -55,24 +56,20 @@ class TestValidation(unittest.TestCase):
         res = validate(doc)
         # TODO: mappings don't take over the repository attribute yet
         #       thus the mapped equivalent of the document would still raise the error
-        self.assertEqual(self.filter_mapping_errors(res.errors), [])
+        self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
         
     def test_uniques(self):
-        doc = samplefile.parse("""
+        self.assertRaises(KeyError, samplefile.parse, """
             s1[t1]
             s1[t1]
             """)
-        res = validate(doc)
-        self.assertError(res, "name/type combination must be unique")
 
-        doc = samplefile.parse("""
+        self.assertRaises(KeyError, samplefile.parse, """
             s1[t1]
             - p1
             - p1
             """)
-        res = validate(doc)
-        self.assertError(res, "Object names must be unique")
-        
+
     def test_mapping_errors(self):
         # 1. mappings don't resolve
         doc = samplefile.parse("""s1[t1] mapping [T2]""")
@@ -100,9 +97,8 @@ class TestValidation(unittest.TestCase):
             S1[T1]
             - P1
             """)
-        res = validate(doc)
-        self.assertError(res, "mapping: Object names must be unique")
-        
+        self.assertRaises(KeyError, validate, doc)
+
     def test_property_in_terminology(self):
         doc = samplefile.parse("""
             s1[t1]
@@ -140,7 +136,3 @@ class TestValidation(unittest.TestCase):
         p.dependency = "p2"
         res = validate(doc)
         self.assertError(res, "non-existant dependency object")
-        
-
-if __name__ == '__main__':
-    unittest.main()

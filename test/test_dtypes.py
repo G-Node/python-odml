@@ -4,6 +4,7 @@ import odml.dtypes as typ
 import odml
 import datetime
 
+
 class TestTypes(unittest.TestCase):
     def setUp(self):
         pass
@@ -84,6 +85,3 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(v.data, -123456789012345678901)
         v = odml.Value(value="123.45", dtype="int")
         self.assertEqual(v.data, 123)
-
-if __name__ == '__main__':
-    unittest.main()

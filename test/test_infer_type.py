@@ -106,7 +106,3 @@ class TestInferType(unittest.TestCase):
         v = new_sec.properties["boolprop"].value
         assert(v.dtype == "boolean")
         assert(type(v.data) == bool)
-
-
-if __name__ == '__main__':
-    unittest.main()

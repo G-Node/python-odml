@@ -3,7 +3,7 @@ import unittest
 import odml
 import odml.terminology
 import odml.tools.dumper as dumper
-from test.samplefile import parse
+from .test_samplefile import parse
 import odml.mapping as mapping
 
 
@@ -403,6 +403,3 @@ s3[T3]
         - p2
         """)
         self.check(map, dst, do_map=False)  # see above if this fails
-
-if __name__ == '__main__':
-    unittest.main()
