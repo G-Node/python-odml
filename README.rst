@@ -73,6 +73,4 @@ Bugs & Questions
 Should you find a behaviour that is likely a bug, please file a bug report at
 `the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
 
-If you have questions regarding the use of the library or the editor, ask
-the question on `Stack Overflow <http://stackoverflow.com/>`_, be sure to tag
-it with :code:`odml` and we'll do our best to quickly solve the problem.
+If you have questions regarding the use of the library or the editor, feel free to join the #gnode IRC channel on freenode.
