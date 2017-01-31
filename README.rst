@@ -49,7 +49,6 @@ Building from source
 To download the Python-odML library please either use git and clone the
 repository from GitHub::
 
-  $ cd /home/usr/toolbox/
   $ git clone https://github.com/G-Node/python-odml.git
 
 If you don't want to use git download the ZIP file also provided on
@@ -58,7 +57,7 @@ folder).
 
 To install the Python-odML library, enter the corresponding directory and run::
 
-  $ cd /home/usr/toolbox/python-odml/
+  $ cd python-odml
   $ python setup.py install
 
 
@@ -73,4 +72,4 @@ Bugs & Questions
 Should you find a behaviour that is likely a bug, please file a bug report at
 `the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
 
-If you have questions regarding the use of the library or the editor, feel free to join the #gnode IRC channel on freenode.
+If you have questions regarding the use of the library or the editor, feel free to join the `#gnode <http://webchat.freenode.net?channels=%23gnode>`_ IRC channel on freenode.
