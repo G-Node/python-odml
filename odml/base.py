@@ -1,6 +1,6 @@
 # -*- coding: utf-8
 """
-collects common base functionality
+Collects common base functionality
 """
 import sys
 import posixpath

@@ -1,6 +1,6 @@
-#-*- coding: utf-8
+# -*- coding: utf-8
 """
-generic odml validation framework
+Generic odML validation framework
 """
 import odml.format as format
 import odml.mapping as mapping
@@ -14,7 +14,7 @@ class ValidationError(object):
     """
     Represents an error found in the validation process
     
-    The error is bound to an odml-object (*obj*) or a list of those
+    The error is bound to an odML-object (*obj*) or a list of those
     and contains a message and a type which may be one of:
     'error', 'warning', 'info'
     """
@@ -42,11 +42,13 @@ class ValidationError(object):
     
 
 class Validation(object):
+
     _handlers = {}
+
     @staticmethod
     def register_handler(klass, handler):
         """
-        Add a validation handler for a odml-class.
+        Add a validation handler for a odml class.
         *type* may be one of the following:
          * odML
          * section
@@ -64,6 +66,7 @@ class Validation(object):
         the handler twice.
         """
         Validation._handlers.setdefault(klass, set()).add(handler)
+
     def __init__(self, doc):
         self.doc = doc # may also be a section
         self.errors = []
@@ -96,6 +99,7 @@ class Validation(object):
                 errors.append(err)
         return errors
 
+
 # ------------------------------------------------
 # validation rules
 
@@ -105,6 +109,7 @@ def section_type_must_be_defined(sec):
         yield ValidationError(sec, 'Section type undefined', 'warning')
 
 Validation.register_handler('section', section_type_must_be_defined)
+
 
 def section_repository_should_be_present(sec):
     """
@@ -127,6 +132,7 @@ def section_repository_should_be_present(sec):
 
 Validation.register_handler('section', section_repository_should_be_present)
 
+
 def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names must be unique"):
     """
     test that object names within one section are unique
@@ -146,11 +152,13 @@ def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names 
             yield ValidationError(s, msg, 'error')
         names.add(attr(s))
 
+
 def section_unique_name_type_combination(obj):
-    for i in object_unique_names(obj,
-        attr=lambda x: (x.name, x.type),
-        children=lambda x: x.sections,
-        msg="name/type combination must be unique"):
+    for i in object_unique_names(
+            obj,
+            attr=lambda x: (x.name, x.type),
+            children=lambda x: x.sections,
+            msg="name/type combination must be unique"):
             yield i
         
 def property_unique_names(obj):
@@ -214,6 +222,7 @@ def property_values_same_unit(prop, tprop=None):
 
 Validation.register_handler('property', property_values_same_unit)
 
+
 def property_terminology_check(prop):
     """
     executes a couple of checks:
@@ -233,6 +242,7 @@ def property_terminology_check(prop):
         yield err
 
 Validation.register_handler('property', property_terminology_check)
+
 
 def property_dependency_check(prop):
     """
