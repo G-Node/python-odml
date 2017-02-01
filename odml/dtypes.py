@@ -1,5 +1,5 @@
 """
-Provides functionality for validation of the data-types specified for odml
+Provides functionality for validation of the data-types specified for odML
 """
 
 import sys
@@ -276,35 +276,3 @@ def binary_set(value, encoding=None):
     return encodings[encoding].encode(value)
 
 
-def calculate_crc32_checksum(data):
-    if sys.version_info < (3, 0):
-        return "%08x" % (binascii.crc32(data) & 0xffffffff)
-    else:
-        if isinstance(data, str):
-            data = str.encode(data)
-        return "%08x" % (binascii.crc32(data) & 0xffffffff)
-
-
-
-checksums = {
-    'crc32': calculate_crc32_checksum,
-}
-
-# allow to use any available algorithm
-if sys.version_info > (3, 0):
-    for algo in hashlib.algorithms_guaranteed:
-        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
-elif not sys.version_info < (2, 7):
-    for algo in hashlib.algorithms:
-        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
-
-
-def valid_checksum_type(checksum_type):
-    return checksum_type in checksums
-
-
-def calculate_checksum(data, checksum_type):
-    if data is None: data = ''
-    if isinstance(data, str):
-        data = str.encode(data)
-    return checksums[checksum_type](data)
