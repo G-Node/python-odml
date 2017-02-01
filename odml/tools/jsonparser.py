@@ -7,6 +7,11 @@ import sys
 import odml
 import json
 
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+
 
 class OdmlSerializer(object):
     """

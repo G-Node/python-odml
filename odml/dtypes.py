@@ -1,6 +1,5 @@
 """
-Provides functionality for validation of the data-types specified
-for odml
+Provides functionality for validation of the data-types specified for odml
 """
 
 import sys
@@ -11,6 +10,11 @@ import datetime
 import binascii
 import hashlib
 from enum import Enum
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
 
 
 class DType(str, Enum):
