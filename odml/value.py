@@ -197,12 +197,6 @@ class BaseValue(base.baseobject, Value):
         if max_length != -1 and len(text) > max_length:
             return False
 
-        if self._dtype == "binary":
-            unprintable = list(filter(lambda x: x not in string.printable,
-                                      text))
-            if len(unprintable) > 0:
-                return False
-
         if "\n" in text or "\t" in text:
             return False
 
