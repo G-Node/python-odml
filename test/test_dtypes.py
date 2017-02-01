@@ -36,9 +36,6 @@ class TestTypes(unittest.TestCase):
         self.assertIsNone(v.value)
         v.encoding = "hexadecimal"
         self.assertIsNone(v.value)
-        self.assertEqual(v.checksum, 'crc32$00000000')
-        v.checksum = "md5"
-        self.assertEqual(v.checksum, 'md5$d41d8cd98f00b204e9800998ecf8427e')
 
     def test_8bit_binary(self):
         """
