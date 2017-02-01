@@ -2,7 +2,6 @@
 
 import odml.base as base
 import odml.format as format
-import odml.mapping as mapping
 import odml.value as odml_value
 import odml
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
@@ -13,11 +12,11 @@ class Property(base._baseobj):
 
 
 @allow_inherit_docstring
-class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
+class BaseProperty(base.baseobject, Property):
     """An odML Property"""
     _format = format.Property
 
-    def __init__(self, name, value, definition=None, dependency=None, dependency_value=None, mapping=None):
+    def __init__(self, name, value, definition=None, dependency=None, dependency_value=None):
         """
         Create a new Property with one single or multiple values. If something is passed as value that
         is not a Value object, the method will try to infer the values dtype from the type of the
@@ -36,7 +35,6 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         :param definition: The definition of the property.
         :param dependency: Another property this property depends on.
         :param dependency_value: Dependency on a certain value.
-        :param mapping: Mapping information of the property.
         """
         #TODO doc description for arguments
         #TODO validate arguments
@@ -47,7 +45,6 @@ class BaseProperty(base.baseobject, mapping.mapableProperty, Property):
         self.definition = definition
         self.dependency = dependency
         self.dependency_value = dependency_value
-        self._mapping = mapping
 
         if isinstance(value, list):
             for v in value:

@@ -2,13 +2,8 @@
 """
 Generic odML validation framework
 """
-import odml.format as format
-import odml.mapping as mapping
-import odml.tools.event as event
 import odml
 
-# event capabilities are needed for mappings
-odml.setMinimumImplementation('event')
 
 class ValidationError(object):
     """
@@ -169,49 +164,6 @@ Validation.register_handler('odML',    section_unique_name_type_combination)
 Validation.register_handler('section', section_unique_name_type_combination)
 Validation.register_handler('section', property_unique_names)
 
-def odML_mapped_document_be_valid(doc):
-    """
-    try to create a mapping of the document and if that succeeds
-    validate the mapped document according to the validation rules
-    """
-    if mapping.proxy is not None and isinstance(doc, mapping.proxy.Proxy):
-        return # don't try to map already mapped documents
-
-    # first check if any object has a mapping attribute
-    for sec in doc.itersections(recursive=True):
-        if sec.mapping is not None:
-            break
-        for prop in sec.properties:
-            if prop.mapping is not None:
-                break
-        else: # no break in the loop, continue with next section
-            continue
-        break # found a mapping can stop searching
-    else:
-        return # no mapping found
-
-    mdoc = doc._active_mapping
-    if mdoc is not None:
-        mapping.unmap_document(doc)
-        mdoc = None
-    # TODO: if mdoc is set there is already a mapping present. However, this
-    # TODO  may have been corrupted by user interaction, thus we should actually
-    # TODO  unmap the document, create a new one and then remap the original one
-    try:
-        if mdoc is None:
-            mdoc = mapping.create_mapping(doc)
-    except mapping.MappingError as e:
-        yield ValidationError(doc, 'mapping: %s' % str(e), 'error')
-        return
-
-    v = Validation(mdoc)
-    for err in v.errors:
-        err.mobj = err.obj
-        err.obj = mapping.get_object_from_mapped_equivalent(err.obj)
-        err.msg = "mapping: " + err.msg
-        yield err
-        
-Validation.register_handler('odML', odML_mapped_document_be_valid)
 
 def property_values_same_unit(prop, tprop=None):
     units = set(map(lambda x: x.unit, prop.values))

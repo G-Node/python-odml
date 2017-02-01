@@ -5,7 +5,6 @@ Collects common base functionality
 import sys
 import posixpath
 from odml import terminology
-from odml import mapping
 # from odml import doc
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
@@ -145,7 +144,8 @@ class SmartList(SafeList):
 
 
 @allow_inherit_docstring
-class sectionable(baseobject, mapping.mapped):
+class sectionable(baseobject):
+
     def __init__(self):
         self._sections = SmartList()
         self._repository = None
@@ -167,7 +167,6 @@ class sectionable(baseobject, mapping.mapped):
         """the list of sections contained in this section/document"""
         return self._sections
 
-    @mapping.remapable_insert
     def insert(self, position, section):
         """
         adds the section to the section-list and makes this document the section’s parent
@@ -177,7 +176,6 @@ class sectionable(baseobject, mapping.mapped):
         self._sections.append(section)
         section._parent = self
 
-    @mapping.remapable_append
     def append(self, section):
         """adds the section to the section-list and makes this document the section’s parent"""
         self._sections.append(section)
@@ -187,7 +185,6 @@ class sectionable(baseobject, mapping.mapped):
     def reorder(self, new_index):
         return self._reorder(self.parent.sections, new_index)
 
-    @mapping.remapable_remove
     def remove(self, section):
         """removes the specified child-section"""
         self._sections.remove(section)
