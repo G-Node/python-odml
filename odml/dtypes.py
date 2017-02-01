@@ -116,7 +116,7 @@ def set(value, dtype=None, encoding=None):
     if dtype.endswith("-tuple"):
         return tuple_set(value)
     if dtype == "binary":
-        return binary_set(value, encoding)
+        return binary_set(value)
     if sys.version_info > (3, 0):
         if isinstance(value, str):
             return str_set(value)
