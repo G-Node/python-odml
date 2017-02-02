@@ -1,6 +1,5 @@
 """
-Provides functionality for validation of the data-types specified
-for odml
+Provides functionality for validation of the data-types specified for odML
 """
 
 import sys
@@ -11,6 +10,11 @@ import datetime
 import binascii
 import hashlib
 from enum import Enum
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
 
 
 class DType(str, Enum):
@@ -24,7 +28,6 @@ class DType(str, Enum):
     time = 'time'
     boolean = 'boolean'
     person = 'person'
-    binary = 'binary'
 
     def __str__(self):
         return self.name
@@ -67,7 +70,6 @@ def valid_type(dtype):
     return False
 
 
-# TODO also take encoding into account
 def validate(string, dtype):
     """
     checks if:
@@ -91,19 +93,17 @@ def validate(string, dtype):
         return False
 
 
-def get(string, dtype=None, encoding=None):
+def get(string, dtype=None):
     """
     convert *string* to the corresponding *dtype*
     """
     if not dtype: return str_get(string)
     if dtype.endswith("-tuple"): # special case, as the count-number is included in the type-name
         return tuple_get(string)
-    if dtype == "binary":
-        return binary_get(string, encoding)
     return self.get(dtype + "_get", str_get)(string)
 
 
-def set(value, dtype=None, encoding=None):
+def set(value, dtype=None):
     """
     serialize a *value* of type *dtype* to a unicode string
     """
@@ -111,8 +111,6 @@ def set(value, dtype=None, encoding=None):
         return str_set(value)
     if dtype.endswith("-tuple"):
         return tuple_set(value)
-    if dtype == "binary":
-        return binary_set(value, encoding)
     if sys.version_info > (3, 0):
         if isinstance(value, str):
             return str_set(value)
@@ -230,77 +228,3 @@ def tuple_set(value):
     if not value: return None
     return "(%s)" % ";".join(value)
 
-###############################################################################
-# Binary Encoding Stuff
-###############################################################################
-
-class Encoder(object):
-    def __init__(self, encode, decode):
-        self._encode = encode
-        self._decode = decode
-
-    def encode(self, data):
-        if sys.version_info > (3, 0) and isinstance(data, str):
-            data = str.encode(data)
-        return self._encode(data)
-
-    def decode(self, string):
-        return self._decode(string)
-
-
-encodings = {
-    'base64': Encoder(lambda x: binascii.b2a_base64(x).strip(), binascii.a2b_base64),
-    'quoted-printable': Encoder(binascii.b2a_qp, binascii.a2b_qp),
-    'hexadecimal': Encoder(binascii.b2a_hex, binascii.a2b_hex),
-    None: Encoder(lambda x: x, lambda x: x), #identity encoder
-}
-
-
-def valid_encoding(encoding):
-    return encoding in encodings
-
-
-def binary_get(string, encoding=None):
-    "binary decode the *string* according to *encoding*"
-    if not string: return None
-    return encodings[encoding].decode(string)
-
-
-def binary_set(value, encoding=None):
-    "binary encode the *value* according to *encoding*"
-    if not value: return None
-    return encodings[encoding].encode(value)
-
-
-def calculate_crc32_checksum(data):
-    if sys.version_info < (3, 0):
-        return "%08x" % (binascii.crc32(data) & 0xffffffff)
-    else:
-        if isinstance(data, str):
-            data = str.encode(data)
-        return "%08x" % (binascii.crc32(data) & 0xffffffff)
-
-
-
-checksums = {
-    'crc32': calculate_crc32_checksum,
-}
-
-# allow to use any available algorithm
-if sys.version_info > (3, 0):
-    for algo in hashlib.algorithms_guaranteed:
-        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
-elif not sys.version_info < (2, 7):
-    for algo in hashlib.algorithms:
-        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
-
-
-def valid_checksum_type(checksum_type):
-    return checksum_type in checksums
-
-
-def calculate_checksum(data, checksum_type):
-    if data is None: data = ''
-    if isinstance(data, str):
-        data = str.encode(data)
-    return checksums[checksum_type](data)
