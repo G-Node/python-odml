@@ -2,7 +2,6 @@ import unittest
 import odml
 import odml.validation
 import odml.terminology
-import odml.mapping
 from . import test_samplefile as samplefile
 
 validate = odml.validation.Validation
@@ -17,9 +16,6 @@ class TestValidation(unittest.TestCase):
     def filter_repository_errors(self, errors):
         return filter(lambda x: not "A section should have an associated repository" in x.msg, errors)
 
-    def filter_mapping_errors(self, errors):
-        return filter(lambda x: not x.msg.startswith("mapping:"), errors)    
-
     def test_errorfree(self):
         res = validate(self.doc)
         self.assertEqual(list(self.filter_repository_errors(res.errors)), [])
@@ -29,8 +25,8 @@ class TestValidation(unittest.TestCase):
         passes only if err appears in res.errors
         """
         errs = res.errors
-        if filter_rep: errs = self.filter_repository_errors(errs)
-        if filter_map: errs = self.filter_mapping_errors(errs)
+        if filter_rep:
+            errs = self.filter_repository_errors(errs)
         for i in errs:
             if err in i.msg:
                 return
@@ -51,12 +47,10 @@ class TestValidation(unittest.TestCase):
         s0[t0]
         - S1[T1]
         """)
-        odml.mapping.unmap_document(doc)
         doc.sections[0].repository = 'map'
         res = validate(doc)
-        # TODO: mappings don't take over the repository attribute yet
-        #       thus the mapped equivalent of the document would still raise the error
-        self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
+        # self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
+        self.assertEqual(res.errors, [])
         
     def test_uniques(self):
         self.assertRaises(KeyError, samplefile.parse, """
@@ -69,35 +63,6 @@ class TestValidation(unittest.TestCase):
             - p1
             - p1
             """)
-
-    def test_mapping_errors(self):
-        # 1. mappings don't resolve
-        doc = samplefile.parse("""s1[t1] mapping [T2]""")
-        odml.terminology.terminologies['map'] = samplefile.parse("S1[T1]")
-        res = validate(doc)
-        self.assertError(res, "No section of type 'T2' could be found")
-        
-        # 2. mapped property does not resolve
-        doc = samplefile.parse("""
-            s1[t1]
-            - p1 mapping [T1:P1]
-            """)
-        res = validate(doc)
-        self.assertError(res, "No property named 'P1' could be found in section 'S1'")
-        
-    def test_invalid_mapped_document(self):
-        # the following mapping creates an illegal document
-        # in which the property P1 is found twice in the same section
-        doc = samplefile.parse("""
-            s1[t1]
-            - p1 mapping [T1:P1]
-            - P1
-            """)
-        odml.terminology.terminologies['map'] = samplefile.parse("""
-            S1[T1]
-            - P1
-            """)
-        self.assertRaises(KeyError, validate, doc)
 
     def test_property_in_terminology(self):
         doc = samplefile.parse("""

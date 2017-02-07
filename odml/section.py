@@ -2,7 +2,6 @@
 import odml.base as base
 import odml.format as format
 import odml.terminology as terminology
-import odml.mapping as mapping
 from odml.property import Property  # this is supposedly ok, as we only use it for an isinstance check
                                     # it MUST however not be used to create any Property objects
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
@@ -12,25 +11,23 @@ class Section(base._baseobj):
     pass
 
 @allow_inherit_docstring
-class BaseSection(base.sectionable, mapping.mapableSection, Section):
+class BaseSection(base.sectionable, Section):
     """An odML Section"""
     type = None
     id = None
     _link = None
     _include = None
-    _mapping = None
     reference = None  # the *import* property
 
     _merged = None
 
     _format = format.Section
 
-    def __init__(self, name, type="undefined", parent=None, definition=None, mapping=None):
+    def __init__(self, name, type="undefined", parent=None, definition=None):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
         self._definition = definition
-        self._mapping = mapping
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
         self.type = type
@@ -168,8 +165,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
 
     @base.sectionable.repository.setter
     def repository(self, url):
-        if self._active_mapping is not None:
-            raise ValueError("cannot edit repsitory while a mapping is active")
         base.sectionable.repository.fset(self, url)
 
     @inherit_docstring
@@ -186,7 +181,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         """
         return self._merged
 
-    @mapping.remapable_append
     def append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
@@ -198,7 +192,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         else:
             raise ValueError("Can only append sections and properties")
 
-    @mapping.remapable_insert
     def insert(self, position, obj):
         """insert a Section or Property at the respective position"""
         if isinstance(obj, Section):
@@ -210,7 +203,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         else:
             raise ValueError("Can only insert sections and properties")
 
-    @mapping.remapable_remove
     def remove(self, obj):
         if isinstance(obj, Section): # TODO make sure this is not compare based
             self._sections.remove(obj)
@@ -218,7 +210,6 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
         elif isinstance(obj, Property):
             self._props.remove(obj)
             obj._section = None
-            # also: TODO unmap the property
         else:
             raise ValueError("Can only remove sections and properties")
 

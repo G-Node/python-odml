@@ -50,7 +50,6 @@ class Property(Format):
         'name': 1,
         'value': 1,
         'definition': 0,
-        'mapping': 0,
         'dependency': 0,
         'dependencyvalue': 0
         }
@@ -70,7 +69,6 @@ class Section(Format):
         'reference': 0,
         'link': 0,
         'repository': 0,
-        'mapping': 0,
         'section': 0,
         'include': 0,
         'property': 0
