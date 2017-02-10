@@ -93,10 +93,6 @@ class BaseProperty(base.baseobject, Property):
         # value._property = None
         pass
 
-    @inherit_docstring
-    def reorder(self, new_index):
-        return self._reorder(self.parent.properties, new_index)
-        # FIXME this looks a lot like GUI related
 
     def get_path(self):
         """return the absolute path to this object"""
