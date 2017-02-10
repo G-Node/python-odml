@@ -277,6 +277,5 @@ parent.append(odml.Property(name="NoOfCybernetics",
                             definition="Number of cybernetic robots on the "
                                        "ship"))
 
-#homedir = "/home/zehl/Projects/toolbox/"
-save_to =os.getcwd()+"\\THGTTG.odml"
+save_to =os.path.join(os.getcwd(),"THGTTG.odml")
 odml.tools.xmlparser.XMLWriter(doc).write_file(save_to)
