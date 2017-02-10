@@ -29,7 +29,7 @@ def dumpSection(section, indent=1):
             indent + 1, " ", prop.name,
             get_props(
                 prop,
-                ["synonym", "definition", "dependency", "dependencyValue"]
+                ["definition", "dependency", "dependencyValue"]
             )
         ))
         for value in prop.values:
