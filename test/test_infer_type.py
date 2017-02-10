@@ -62,7 +62,7 @@ class TestInferType(unittest.TestCase):
         sec.append(Property("dateprop", dt.now().date()))
         sec.append(Property("timeprop", dt.now().time()))
         sec.append(Property("boolprop", True))
-        if sys.version_info < (3,0):
+        if sys.version_info < (3, 0):
             str_doc = unicode(XMLWriter(doc))
         else:
             str_doc = str(XMLWriter(doc))
@@ -78,7 +78,7 @@ class TestInferType(unittest.TestCase):
 
         v = new_sec.properties["txtprop"].value
         assert(v.dtype == "text")
-        if sys.version_info < (3,0):
+        if sys.version_info < (3, 0):
             assert(type(v.data) == unicode)
         else:
             assert (type(v.data) == str)

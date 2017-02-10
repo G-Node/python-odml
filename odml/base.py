@@ -276,9 +276,8 @@ class sectionable(baseobject, mapping.mapped):
         :type filter_func: function
         """
         for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
-            for v in prop.values:
-                if filter_func(v):
-                    yield v
+            if filter_func(prop.value):
+                yield prop.value
 
     def contains(self, obj):
         """
@@ -289,6 +288,7 @@ class sectionable(baseobject, mapping.mapped):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
+    #FIXME type arguments renamed to dtype?
     def _matches(self, obj, key=None, type=None, include_subtype=False):
         """
         find out
