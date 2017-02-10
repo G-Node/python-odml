@@ -1,9 +1,8 @@
-#-*- coding: utf-8
+# -*- coding: utf-8
 
 import odml.base as base
-import odml.format as format
-import odml.value as odml_value
-import odml
+import odml.format as frmt
+import odml.dtypes as dtypes
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -14,32 +13,42 @@ class Property(base._baseobj):
 @allow_inherit_docstring
 class BaseProperty(base.baseobject, Property):
     """An odML Property"""
-    _format = format.Property
+    _format = frmt.Property
 
-    def __init__(self, name, value, definition=None, dependency=None, dependency_value=None):
+    def __init__(self, name, value, unit=None, uncertainty=None, value_reference=None, definition=None, dependency=None,
+                 dependency_value=None):
         """
-        Create a new Property with one single value. If something is passed as value that
-        is not a Value object, the method will try to infer the values dtype from the type of the
+        Create a new Property with a single value. The method will try to infer the value's dtype from the type of the
         parameter.
 
-        Example for a property with a single value
-        >>> Property("property1", odml.Value(2)) #or
-        >>> Property("property1", 2)
-
+        Example for a property with
+        >>> p = Property("property1", "a string")
+        >>> p.dtype
+        >>> str
+        >>> p = Property("property1", 2)
+        >>> p.dtype
+        >>> int
         :param name: The mane of the property
-        :param value: Either a Value or some data a Value can be created from.
+        :param value: Some data value.
+        :param unit: The unit of the stored data.
+        :param uncertainty: the uncertainty (e.g. the standard deviation) associated with a measure value.
+        :param value_reference: A reference (e.g. an URL) to an external definition of the value.
         :param definition: The definition of the property.
         :param dependency: Another property this property depends on.
         :param dependency_value: Dependency on a certain value.
         """
-        #TODO doc description for arguments
+
         #TODO validate arguments
         self._name = name
         self._section = None
         self._value = None
-        self.definition = definition
-        self.dependency = dependency
-        self.dependency_value = dependency_value
+        self._unit = unit
+        self._uncertainty = uncertainty
+        self._value_reference = value_reference
+        self._definition = definition
+        self._dependency = dependency
+        self._dependency_value = dependency_value
+        self._dtype = None
 
         if isinstance(value, list) and len(value) > 1:  # FIXME this is a nasty hack
             print("Properties can hold only a single value! A list was passed.")
@@ -59,27 +68,99 @@ class BaseProperty(base.baseobject, Property):
         return "<Property %s>" % self._name
 
     @property
+    def dtype(self):
+        """
+        the data type of the value
+
+        If the data type is changed, it is tried, to convert the value to the new type.
+
+        If this doesn't work, the change is refused.
+        This behaviour can be overridden by directly accessing the *_dtype* attribute
+        and adjusting the *data* attribute manually.
+        """
+        return self._dtype
+
+    @dtype.setter
+    def dtype(self, new_type):
+        # check if this is a valid type
+        if not dtypes.valid_type(new_type):
+            raise AttributeError("'%s' is not a valid type." % new_type)
+        # we convert the value if possible
+        old_type = self._dtype
+        old_value = dtypes.set(self._value, self._dtype)
+        try:
+            new_value = dtypes.get(old_value, new_type)
+        except:
+            # cannot convert, try the other way around
+            try:
+                old_value = dtypes.set(self._value, new_type)
+                new_value = dtypes.get(old_value, new_type)
+            except:
+                # doesn't work either, therefore refuse
+                raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
+        self._value = new_value
+        self._dtype = new_type
+
+    @property
     def parent(self):
         """the section containing this property"""
         return self._section
 
     @property
-    def value(self):
-        """
-        returns the value of this property
-        """
+    def value(self):  # FIXME check the usage of value in the xmlwriter, jsonwriter
         return self._value
+
+    @property
+    def value_str(self):
+        """
+        used to access typed data of the value as a string.
+        Use data to access the raw type, i.e.:
+
+        >>> v = Value(1, type="float")
+        >>> v.data
+        1.0
+        >>> v.data = 1.5
+        >>> v.value
+        "1.5"
+        >>> v.value = 2
+        >>> v.data
+        2.0
+        """
+        return dtypes.set(self._value, self._dtype)
 
     @value.setter
     def value(self, new_value):
-        if not isinstance(new_value, odml_value.Value):
-            value = odml.Value(new_value)
-            self._value = value
-        elif new_value is not None:
-            self._value = new_value
+        if self._dtype is None:
+            self._dtype = dtypes.infer_dtype(new_value)
+        self._value = dtypes.get(new_value, self._dtype)
+
+    @property
+    def uncertainty(self):
+        return self._uncertainty
+
+    @uncertainty.setter
+    def uncertainty(self, new_value):
+        self._uncertainty = new_value
+
+    @property
+    def unit(self):
+        return self._unit
+
+    @unit.setter
+    def unit(self, new_value):
+        self._unit = new_value
+
+    @property
+    def value_reference(self):
+        return self._value_reference
+
+    @value_reference.setter
+    def value_reference(self, new_value):
+        self._value_reference = new_value
 
     # FIXME properties must have a value, unsetting the value will invalidate it. We could have an empty standard
-    # FIXME value with an isempty property
+    # FIXME value with an isempty property. Probably no longer needed when we only have a sinlge value stored in a plain
+    # FIXME tag
     def remove(self, value):
         """
         Remove a value from this property and unset its parent.
@@ -92,7 +173,6 @@ class BaseProperty(base.baseobject, Property):
         # self._values.remove(value)
         # value._property = None
         pass
-
 
     def get_path(self):
         """return the absolute path to this object"""
