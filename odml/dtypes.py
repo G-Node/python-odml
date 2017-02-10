@@ -1,15 +1,11 @@
+import sys
+import datetime
+from enum import Enum
+self = sys.modules[__name__].__dict__
+
 """
 Provides functionality for validation of the data-types specified for odML
 """
-
-import sys
-
-self = sys.modules[__name__].__dict__
-
-import datetime
-import binascii
-import hashlib
-from enum import Enum
 
 try:
     unicode = unicode
@@ -97,8 +93,9 @@ def get(string, dtype=None):
     """
     convert *string* to the corresponding *dtype*
     """
-    if not dtype: return str_get(string)
-    if dtype.endswith("-tuple"): # special case, as the count-number is included in the type-name
+    if not dtype:
+        return str_get(string)
+    if dtype.endswith("-tuple"):  # special case, as the count-number is included in the type-name
         return tuple_get(string)
     return self.get(dtype + "_get", str_get)(string)
 
