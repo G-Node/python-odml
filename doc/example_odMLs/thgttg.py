@@ -7,8 +7,10 @@ Script to generate intro-example.odml
 @author: zehl
 """
 
+import os
 import odml
 import datetime
+
 
 odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
 
@@ -275,6 +277,6 @@ parent.append(odml.Property(name="NoOfCybernetics",
                             definition="Number of cybernetic robots on the "
                                        "ship"))
 
-homedir = "/home/zehl/Projects/toolbox/"
-save_to = homedir + "/python-odml/doc/example_odMLs/THGTTG.odml"
+#homedir = "/home/zehl/Projects/toolbox/"
+save_to =os.getcwd()+"\\THGTTG.odml"
 odml.tools.xmlparser.XMLWriter(doc).write_file(save_to)
