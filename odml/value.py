@@ -1,10 +1,10 @@
 #-*- coding: utf8
-import types
-import base
-import format
+import odml.dtypes as dtypes
+import odml.base as base
+import odml.format as format
 
 import string
-from tools.doc_inherit import *
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Value(base._baseobj):
@@ -32,19 +32,6 @@ class BaseValue(base.baseobject, Value):
     reference (optional)
         an external reference number (e.g. entry in a database)
 
-    filename (optional)
-        the default file name which should be used when saving the object
-
-    encoder (encoder)
-        binary content must be encoded into ascii to be included in odML files.
-        Currently supported is only base64
-
-    checksum (optional)
-        if binary content is directly included or if the URL of an external file is given,
-        a checksum entry can be used to validate the file's identity, integrity.
-        Use this element to indicate the algorithm and the checksum in the format algorithm$checksum
-        e.g. crc32$b84892a2 or md5$d41d8cd98f00b204e9800998ecf8427e
-
     definition (optional)
         additional comments on the value of the property
 
@@ -56,8 +43,8 @@ class BaseValue(base.baseobject, Value):
 
     _format = format.Value
 
-    def __init__(self, data=None, uncertainty=None, unit=None, dtype=None, definition=None, reference=None,
-                 filename=None, encoder=None, checksum=None, comment=None, value=None):
+    def __init__(self, data=None, uncertainty=None, unit=None, dtype=None,
+                 definition=None, reference=None, comment=None, value=None):
         if data is None and value is None:
             raise TypeError("either data or value has to be set")
         if data is not None and value is not None:
@@ -69,21 +56,15 @@ class BaseValue(base.baseobject, Value):
         self._dtype = dtype
         self._definition = definition
         self._reference = reference
-        self._filename = filename
         self._comment = comment
-        self._encoder = encoder
 
         if value is not None:
             # assign value directly (through property would raise a change-event)
-            self._value = types.get(value, self._dtype, self._encoder)
+            self._value = dtypes.get(value, self._dtype)
         elif data is not None:
             if dtype is None:
-                self._dtype = types.infer_dtype(data)
+                self._dtype = dtypes.infer_dtype(data)
             self._value = data
-
-        self._checksum_type = None
-        if checksum is not None:
-            self.checksum = checksum
 
     def __repr__(self):
         if self._dtype:
@@ -124,11 +105,11 @@ class BaseValue(base.baseobject, Value):
         >>> v.data
         2.0
         """
-        return types.set(self._value, self._dtype, self._encoder)
+        return dtypes.set(self._value, self._dtype)
 
     @value.setter
     def value(self, new_string):
-        self._value = types.get(new_string, self._dtype, self._encoder)
+        self._value = dtypes.get(new_string, self._dtype)
 
     @property
     def dtype(self):
@@ -146,49 +127,23 @@ class BaseValue(base.baseobject, Value):
     @dtype.setter
     def dtype(self, new_type):
         # check if this is a valid type
-        if not types.valid_type(new_type):
+        if not dtypes.valid_type(new_type):
             raise AttributeError("'%s' is not a valid type." % new_type)
         # we convert the value if possible
         old_type = self._dtype
-        old_value = types.set(self._value, self._dtype, self._encoder)
+        old_value = dtypes.set(self._value, self._dtype)
         try:
-            new_value = types.get(old_value,  new_type, self._encoder)
+            new_value = dtypes.get(old_value, new_type)
         except:
             # cannot convert, try the other way around
             try:
-                old_value = types.set(self._value, new_type, self._encoder)
-                new_value = types.get(old_value,   new_type, self._encoder)
+                old_value = dtypes.set(self._value, new_type)
+                new_value = dtypes.get(old_value, new_type)
             except:
                 #doesn't work either, therefore refuse
                 raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
         self._value = new_value
         self._dtype = new_type
-
-    @property
-    def encoder(self):
-        """
-        the encoding of binary data
-
-        changing the encoding also converts the data
-        """
-        if self._dtype == "binary":
-            return self._encoder
-        return None
-
-    @encoder.setter
-    def encoder(self, encoding):
-        if not self._dtype == "binary":
-            raise AttributeError("attribute 'encoding' can only be set for binary types, not for '%s'" % self._dtype)
-
-        if not encoding:
-            encoding = None
-
-        if not types.valid_encoding(encoding):
-            raise AttributeError("'%s' is not a valid encoding" % encoding)
-
-        # no need to cast anything here, because the encoding
-        # effects only the display, not the representation
-        self._encoder = encoding
 
     @property
     def uncertainty(self):
@@ -230,41 +185,6 @@ class BaseValue(base.baseobject, Value):
     def comment(self, new_value):
         self._comment = new_value
 
-    @property
-    def filename(self):
-        return self._filename
-
-    @filename.setter
-    def filename(self, new_value):
-        self._filename = new_value
-
-    @property
-    def checksum(self):
-        if not self._dtype == "binary":
-            return None
-        cs_type = self._checksum_type
-        if cs_type is None:
-            cs_type = "crc32"
-        return "%s$%s" % (cs_type, self.calculate_checksum(cs_type))
-
-    @checksum.setter
-    def checksum(self, value):
-        if not self._dtype == "binary":
-            raise AttributeError("attribute 'checksum' can only be set for binary types, not for '%s'" % self._dtype)
-
-        data = value.split("$", 1)
-        if not types.valid_checksum_type(data[0]):
-            raise AttributeError("unsupported checksum type '%s'" % data[0])
-        self._checksum_type = data[0]
-
-    def calculate_checksum(self, cs_type):
-        """
-        returns the checksum for the data of this Value-object
-
-        *cs_type* is the checksum mechanism (e.g. 'crc32' or 'md5')
-        """
-        return types.calculate_checksum(self._value, cs_type)
-
     def can_display(self, text=None, max_length=-1):
         """
         return whether the content of this can be safely displayed in the gui
@@ -276,11 +196,6 @@ class BaseValue(base.baseobject, Value):
 
         if max_length != -1 and len(text) > max_length:
             return False
-
-        if self._dtype == "binary":
-            unprintable = filter(lambda x: x not in string.printable, text)
-            if self._encoder is None and len(unprintable) > 0:
-                return False
 
         if "\n" in text or "\t" in text:
             return False

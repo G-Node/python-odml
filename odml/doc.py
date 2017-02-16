@@ -1,12 +1,14 @@
-#-*- coding: utf-8
-import types
-import base
-import format
-import terminology
-from tools.doc_inherit import *
+# -*- coding: utf-8
+import odml.dtypes as dtypes
+import odml.base as base
+import odml.format as format
+import odml.terminology as terminology
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
 
 class Document(base._baseobj):
     pass
+
 
 @allow_inherit_docstring
 class BaseDocument(base.sectionable, Document):
@@ -56,11 +58,11 @@ class BaseDocument(base.sectionable, Document):
         """
         The date the document was created.
         """
-        return types.set(self._date, "date")
+        return dtypes.set(self._date, "date")
 
     @date.setter
     def date(self, new_value):
-        self._date = types.get(new_value, "date")
+        self._date = dtypes.get(new_value, "date")
 
     @property
     def parent(self):

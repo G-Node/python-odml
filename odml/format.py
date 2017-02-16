@@ -4,6 +4,7 @@ A module providing general format information
 and mappings of xml-attributes to their python class equivalents
 """
 
+
 class Format(object):
     _map = {}
     _rev_map = None
@@ -29,6 +30,7 @@ class Format(object):
     def create(self, *args, **kargs):
         return getattr(odml, self.__class__.__name__)(*args, **kargs)
 
+
 class Value(Format):
     _name = "value"
     _args = {
@@ -38,11 +40,9 @@ class Value(Format):
         'type': 0,
         'definition': 0,
         'reference': 0,
-        'filename': 0,
-        'checksum': 0,
-        'encoder': 0
         }
     _map = {'type': 'dtype'}
+
 
 class Property(Format):
     _name = "property"
@@ -50,7 +50,6 @@ class Property(Format):
         'name': 1,
         'value': 1,
         'definition': 0,
-        'mapping': 0,
         'dependency': 0,
         'dependencyvalue': 0
         }
@@ -59,6 +58,7 @@ class Property(Format):
         'dependencyvalue': 'dependency_value',
         'type': 'dtype'
         }
+
 
 class Section(Format):
     _name = "section"
@@ -69,7 +69,6 @@ class Section(Format):
         'reference': 0,
         'link': 0,
         'repository': 0,
-        'mapping': 0,
         'section': 0,
         'include': 0,
         'property': 0
@@ -78,6 +77,7 @@ class Section(Format):
         'section': 'sections',
         'property': 'properties',
         }
+
 
 class Document(Format):
     _name = "odML"

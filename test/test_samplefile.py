@@ -1,18 +1,31 @@
 import odml
+
 import unittest
 import os
+import sys
 import re
 
 from odml.tools import xmlparser
 from odml.tools import jsonparser
 from odml.tools import dumper
 
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+
+
 def dump(doc, filename):
     """
     helper function to dump a document for debugging purposes
     """
-    open(filename, "w").write(unicode(xmlparser.XMLWriter(doc)))
+    if sys.version_info < (3, 0):
+        odml_string = unicode(xmlparser.XMLWriter(doc))
+    else:
+        odml_string = str(xmlparser.XMLWriter(doc))
+    open(filename, "w").write(odml_string)
     
+
 def parse(data):
     """
     parses strings to quickly create odml-documents
@@ -44,7 +57,7 @@ def parse(data):
         try:
             m = pat.match(line).groupdict()
         except:
-            print "error parsing", repr(line)
+            print("error parsing", repr(line))
             raise
         if m['type'] is None:
             obj = odml.Property(name=m['name'], value="[val]")
@@ -62,18 +75,18 @@ def parse(data):
 class SampleFileCreator:
     def create_document(self):
         doc = odml.Document()
-        for i in xrange(3):
+        for i in range(3):
             doc.append(self.create_section("sec %d" % i))
         return doc
 
     def create_section(self, name, depth=0):
         s = odml.Section(name=name, type=name.replace("sec", "type"))
         if depth < 1:
-            for i in xrange(2):
+            for i in range(2):
                 s.append(self.create_section("%s,%d" % (name, i), depth=depth+1))
 
         if name.endswith("1"):
-            for i in xrange(3):
+            for i in range(3):
                 s.append(self.create_property("%s:%d" % (name, i)))
 
         return s
@@ -85,10 +98,12 @@ class SampleFileCreator:
     def create_value(self, content):
         return odml.Value(content)
 
+
 class SampleFileCreatorTest(unittest.TestCase):
     def test_samplefile(self):
         doc = SampleFileCreator().create_document()
-        #dumper.dumpDoc(doc)
+        # dumper.dumpDoc(doc)
+
 
 class SampleFileOperationTest(unittest.TestCase):
     def setUp(self):
@@ -122,27 +137,38 @@ class SampleFileOperationTest(unittest.TestCase):
 
     def test_xml_writer_version(self):
         doc = odml.Document()
-        val = unicode(xmlparser.XMLWriter(doc))
+        if sys.version_info < (3, 0):
+            val = unicode(xmlparser.XMLWriter(doc))
+        else:
+            val = str(xmlparser.XMLWriter(doc))
         self.assertIn('version="%s"' % xmlparser.XML_VERSION, val)
         doc = xmlparser.XMLReader().fromString(val)
         # this test is switched off until the XML versioning support is implemented
-        #self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
+        # self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
 
     def test_save(self):
         for module in [xmlparser.XMLWriter, jsonparser.JSONWriter]:
             doc = module(self.doc)
-            path = os.tempnam()
+            import tempfile
+
+            path = tempfile.gettempdir()
+            path = os.path.join(path, "temp.odml")
             doc.write_file(path)
             os.unlink(path)
 
     def test_restore(self):
-        import StringIO
-        for Writer,Reader in [
-            (xmlparser.XMLWriter, xmlparser.XMLReader),
-            (jsonparser.JSONWriter, jsonparser.JSONReader)]:
-        
+        try:
+            from StringIO import StringIO
+        except ImportError:
+            from io import StringIO
+        for Writer, Reader in [(xmlparser.XMLWriter, xmlparser.XMLReader),
+                               (jsonparser.JSONWriter, jsonparser.JSONReader)]:
+
             doc = Writer(self.doc)
-            doc = StringIO.StringIO(unicode(doc))
+            if sys.version_info < (3, 0):
+                doc = StringIO(unicode(doc))
+            else:
+                doc = StringIO(str(doc))
             doc = Reader().fromFile(doc)
             self.assertEqual(doc, self.doc)
 #        for a,b in zip(doc.sections, self.doc.sections):
@@ -156,24 +182,30 @@ class SampleFileOperationTest(unittest.TestCase):
 #            xmlparser.dumpSection(sec)
 #        print "-----------------------------------"
 
+
 class AttributeTest(unittest.TestCase):
+
     def test_value_int(self):
         v = odml.Value(value="1", dtype="int")
         self.assertEqual(v.data, 1)
+
     def test_conversion_int_to_float(self):
         v = odml.Value(value="1", dtype="int")
-        v.dtype = "float" #change dtype
+        v.dtype = "float"  # change dtype
         self.assertEqual(v.dtype, "float")
         self.assertEqual(v.data, 1.0)
         self.assertEqual(v.value, "1.0")
+
     def test_conversion_float_to_int(self):
         v = odml.Value(value="1.5", dtype="float")
         v.dtype = "int"
         self.assertEqual(v.dtype, "int")
         self.assertEqual(v.data, 1)
+
     def test_value_float(self):
         v = odml.Value(value="1.5", dtype="float")
         self.assertEqual(v.data, 1.5)
+
 
 class CopyTest(unittest.TestCase):
     def setUp(self):
@@ -193,8 +225,8 @@ class CopyTest(unittest.TestCase):
         self.assertEqual(a, b)
         a.value = odml.Value(5)
         self.assertNotEqual(a, b)
+        # self.assertUn
 
-        #self.assertUn
 
 class MiscTest(unittest.TestCase):
     def setUp(self):
@@ -329,13 +361,4 @@ class MiscTest(unittest.TestCase):
         writer.write_file("/tmp/example.odml")
 
         restored = xmlparser.load("/tmp/example.odml")
-        self.assertEquals(self.doc.version, restored.version)
-
-
-if __name__ == '__main__':
-    import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--dump":
-        dump(SampleFileCreator().create_document(), sys.argv[2])
-        sys.exit(0)
-    unittest.main()
-
+        self.assertEqual(self.doc.version, restored.version)

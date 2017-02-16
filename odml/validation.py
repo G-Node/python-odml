@@ -1,20 +1,15 @@
-#-*- coding: utf-8
+# -*- coding: utf-8
 """
-generic odml validation framework
+Generic odML validation framework
 """
-import format
-import mapping
-import tools.event
 import odml
 
-# event capabilities are needed for mappings
-odml.setMinimumImplementation('event')
 
 class ValidationError(object):
     """
     Represents an error found in the validation process
     
-    The error is bound to an odml-object (*obj*) or a list of those
+    The error is bound to an odML-object (*obj*) or a list of those
     and contains a message and a type which may be one of:
     'error', 'warning', 'info'
     """
@@ -42,11 +37,13 @@ class ValidationError(object):
     
 
 class Validation(object):
+
     _handlers = {}
+
     @staticmethod
     def register_handler(klass, handler):
         """
-        Add a validation handler for a odml-class.
+        Add a validation handler for a odml class.
         *type* may be one of the following:
          * odML
          * section
@@ -64,6 +61,7 @@ class Validation(object):
         the handler twice.
         """
         Validation._handlers.setdefault(klass, set()).add(handler)
+
     def __init__(self, doc):
         self.doc = doc # may also be a section
         self.errors = []
@@ -96,6 +94,7 @@ class Validation(object):
                 errors.append(err)
         return errors
 
+
 # ------------------------------------------------
 # validation rules
 
@@ -105,6 +104,7 @@ def section_type_must_be_defined(sec):
         yield ValidationError(sec, 'Section type undefined', 'warning')
 
 Validation.register_handler('section', section_type_must_be_defined)
+
 
 def section_repository_should_be_present(sec):
     """
@@ -118,7 +118,7 @@ def section_repository_should_be_present(sec):
 
     try:
         tsec = sec.get_terminology_equivalent()
-    except Exception, e:
+    except Exception as e:
         yield ValidationError(sec, 'Could not load terminology: ' + e.message, 'warning')
         return
 
@@ -126,6 +126,7 @@ def section_repository_should_be_present(sec):
         yield ValidationError(sec, "Section type '%s' not found in terminology" % sec.type, 'warning')
 
 Validation.register_handler('section', section_repository_should_be_present)
+
 
 def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names must be unique"):
     """
@@ -146,11 +147,13 @@ def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names 
             yield ValidationError(s, msg, 'error')
         names.add(attr(s))
 
+
 def section_unique_name_type_combination(obj):
-    for i in object_unique_names(obj,
-        attr=lambda x: (x.name, x.type),
-        children=lambda x: x.sections,
-        msg="name/type combination must be unique"):
+    for i in object_unique_names(
+            obj,
+            attr=lambda x: (x.name, x.type),
+            children=lambda x: x.sections,
+            msg="name/type combination must be unique"):
             yield i
         
 def property_unique_names(obj):
@@ -161,49 +164,6 @@ Validation.register_handler('odML',    section_unique_name_type_combination)
 Validation.register_handler('section', section_unique_name_type_combination)
 Validation.register_handler('section', property_unique_names)
 
-def odML_mapped_document_be_valid(doc):
-    """
-    try to create a mapping of the document and if that succeeds
-    validate the mapped document according to the validation rules
-    """
-    if mapping.proxy is not None and isinstance(doc, mapping.proxy.Proxy):
-        return # don't try to map already mapped documents
-
-    # first check if any object has a mapping attribute
-    for sec in doc.itersections(recursive=True):
-        if sec.mapping is not None:
-            break
-        for prop in sec.properties:
-            if prop.mapping is not None:
-                break
-        else: # no break in the loop, continue with next section
-            continue
-        break # found a mapping can stop searching
-    else:
-        return # no mapping found
-
-    mdoc = doc._active_mapping
-    if mdoc is not None:
-        mapping.unmap_document(doc)
-        mdoc = None
-    # TODO: if mdoc is set there is already a mapping present. However, this
-    # TODO  may have been corrupted by user interaction, thus we should actually
-    # TODO  unmap the document, create a new one and then remap the original one
-    try:
-        if mdoc is None:
-            mdoc = mapping.create_mapping(doc)
-    except mapping.MappingError, e:
-        yield ValidationError(doc, 'mapping: %s' % str(e), 'error')
-        return
-
-    v = Validation(mdoc)
-    for err in v.errors:
-        err.mobj = err.obj
-        err.obj = mapping.get_object_from_mapped_equivalent(err.obj)
-        err.msg = "mapping: " + err.msg
-        yield err
-        
-Validation.register_handler('odML', odML_mapped_document_be_valid)
 
 def property_values_same_unit(prop, tprop=None):
     units = set(map(lambda x: x.unit, prop.values))
@@ -213,6 +173,7 @@ def property_values_same_unit(prop, tprop=None):
         yield ValidationError(prop, 'Values of a property should have the same unit as their terminology equivalent', 'warning')
 
 Validation.register_handler('property', property_values_same_unit)
+
 
 def property_terminology_check(prop):
     """
@@ -233,6 +194,7 @@ def property_terminology_check(prop):
         yield err
 
 Validation.register_handler('property', property_terminology_check)
+
 
 def property_dependency_check(prop):
     """

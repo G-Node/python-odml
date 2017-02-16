@@ -1,15 +1,17 @@
-#-*- coding: utf-8
+# -*- coding: utf-8
 """
-collects common base functionality
+Collects common base functionality
 """
-import doc
+import sys
 import posixpath
-import terminology
-import mapping
-from tools.doc_inherit import *
+from odml import terminology
+# from odml import doc
+from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
 
 class _baseobj(object):
     pass
+
 
 class baseobject(_baseobj):
     _format = None
@@ -90,6 +92,7 @@ class baseobject(_baseobj):
         """
         raise NotImplementedError
 
+
 class SafeList(list):
     def index(self, obj):
         """
@@ -110,13 +113,14 @@ class SafeList(list):
         """
         del self[self.index(obj)]
 
+
 class SmartList(SafeList):
     def __getitem__(self, key):
         """
         provides element index also by searching for an element with a given name
         """
         # try normal list index first (for integers)
-        if type(key) is int:
+        if isinstance(key, int):
             return super(SmartList, self).__getitem__(key)
 
         # otherwise search the list
@@ -138,8 +142,10 @@ class SmartList(SafeList):
         else:
             super(SmartList, self).append(obj)
 
+
 @allow_inherit_docstring
-class sectionable(baseobject, mapping.mapped):
+class sectionable(baseobject):
+
     def __init__(self):
         self._sections = SmartList()
         self._repository = None
@@ -152,6 +158,7 @@ class sectionable(baseobject, mapping.mapped):
         p = self
         while p.parent:
             p = p.parent
+        import odml.doc as doc
         if isinstance(p, doc.Document):
             return p
 
@@ -160,7 +167,6 @@ class sectionable(baseobject, mapping.mapped):
         """the list of sections contained in this section/document"""
         return self._sections
 
-    @mapping.remapable_insert
     def insert(self, position, section):
         """
         adds the section to the section-list and makes this document the section’s parent
@@ -170,7 +176,6 @@ class sectionable(baseobject, mapping.mapped):
         self._sections.append(section)
         section._parent = self
 
-    @mapping.remapable_append
     def append(self, section):
         """adds the section to the section-list and makes this document the section’s parent"""
         self._sections.append(section)
@@ -180,7 +185,6 @@ class sectionable(baseobject, mapping.mapped):
     def reorder(self, new_index):
         return self._reorder(self.parent.sections, new_index)
 
-    @mapping.remapable_remove
     def remove(self, section):
         """removes the specified child-section"""
         self._sections.remove(section)
@@ -215,7 +219,7 @@ class sectionable(baseobject, mapping.mapped):
         """
         stack = []
         # below: never yield self if self is a Document
-        if self == self.document and (max_depth > 0 or max_depth is None):
+        if self == self.document and ((max_depth is None) or (max_depth > 0)):
             for sec in self.sections:
                 stack.append((sec, 1))  # (<section>, <level in a tree>)
         elif not self == self.document:
@@ -420,7 +424,8 @@ class sectionable(baseobject, mapping.mapped):
                         ret.append(obj)
                     else:
                         return obj
-                if not recursive: break
+                if not recursive:
+                    break
 
         if ret:
             return ret
@@ -447,11 +452,13 @@ class sectionable(baseobject, mapping.mapped):
         a += "/"
         b += "/"
         parent = posixpath.dirname(posixpath.commonprefix([a,b]))
-        if parent == "/": return b[:-1]
+        if parent == "/":
+            return b[:-1]
 
         a = posixpath.relpath(a, parent)
         b = posixpath.relpath(b, parent)
-        if a == ".": return b
+        if a == ".":
+            return b
 
         return posixpath.normpath("../" * (a.count("/")+1) + b)
 
@@ -463,7 +470,7 @@ class sectionable(baseobject, mapping.mapped):
         """
         a = self.get_path()
         b = section.get_path()
-        return self._get_relative_path(a,b)
+        return self._get_relative_path(a, b)
 
     def clean(self):
         """
@@ -496,7 +503,8 @@ class sectionable(baseobject, mapping.mapped):
 
     @repository.setter
     def repository(self, url):
-        if not url: url = None
+        if not url:
+            url = None
         self._repository = url
         if url:
             terminology.deferred_load(url)
