@@ -189,11 +189,12 @@ In the IPython shell, first import the odml package::
 	
 Second, load the example odML file with the following command lines::
 	
-	>>> to_load = '/home/usr/toolbox/python-odml/doc/example_odMLs/THGTTG.odml'
+	>>> to_load = './doc/example_odMLs/THGTTG.odml'
 	>>> odmlEX = odml.tools.xmlparser.load(to_load)
 	
 If you open a Python shell outside of the Python-odML library directory, please
-adapt your Python-Path and the path to the "THGTTG.odml" file accordingly.
+adapt your Python-Path, the path to the "THGTTG.odml" file, and the path stated
+in "to_load" accordingly.
 	
 How you can access the different odML objects and their attributes once you 
 loaded an odML file and how you can make use of the attributes is described in 
@@ -211,7 +212,7 @@ If you loaded the example odML file, you can have a first look at the Document
 either by explicitely calling the odml object,...::
 
 	>>> print odmlEX.document
-	<Doc 42 by Douglas Adams (2 sections)>
+	<Doc 42 by D. N. Adams (2 sections)>
 	
 ... or using the following short cut::
 
@@ -262,6 +263,7 @@ following commands::
 	>>> odmlEX.version
 	42 
 	>>> odmlEX.repository
+	xxxTODOxxx
 
 As you learned in the beginning, Sections can be attached to a Document, as the
 first hierarchy level of the odML file. Let's have a look which Sections were
@@ -342,7 +344,9 @@ the following commands::
 	>>> odmlEX['TheCrew'].type
 	'crew'
 	>>> odmlEX['TheCrew'].reference
+	xxxTODOxxx
 	>>> odmlEX['TheCrew'].repository
+	xxxTODOxxx
 
 To see which Sections are directly attached to the Section 'TheCrew' use again 
 the following command::
@@ -421,13 +425,6 @@ dependency_value
 	- optional Property attribute
 	- Value of the other Property specified in the 'dependency' attribute on 
 	  which this Property depends on.	
-	  
-mapping
-	- optional Property attribute
-	- The odML path within the same odML file (internal link) to another 
-	  Section to which all children of this section, if a conversion is 
-	  requested, should be transferred to, as long as the children not 
-	  themselves define a mapping.
 
 Let's check which attributes were defined for the Property "NoCrewMembers"::
 
@@ -436,8 +433,9 @@ Let's check which attributes were defined for the Property "NoCrewMembers"::
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].definition
 	'Number of crew members'
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].dependency
+	xxxTODOxxx
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].dependency_value
-	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].mapping
+	xxxTODOxxx
 
 The Value or Values attached to a Property can be accessed via two different
 commands. If only one value object was attached to the Property, the first 
@@ -450,8 +448,10 @@ If multiple Values were attached to the Property, a list of Values is
 returned::
 
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].value
-	[<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
-	 <string Tricia Marie McMillan>, <string Ford Prefect>]
+	[<person Arthur Philip Dent>, 
+	 <person Zaphod Beeblebrox>, 
+	 <person Tricia Marie McMillan>, 
+	 <person Ford Prefect>]
      
 The second command will always return a list independent of the number of 
 Values attached::
@@ -459,8 +459,10 @@ Values attached::
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].values
 	[<int 4>]
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values
-	[<string Arthur Philip Dent>, <string Zaphod Beeblebrox>, 
-	 <string Tricia Marie McMillan>, <string Ford Prefect>]
+	[<person Arthur Philip Dent>, 
+	 <person Zaphod Beeblebrox>, 
+	 <person Tricia Marie McMillan>, 
+	 <person Ford Prefect>]
 	
 The printout of the Value is explained in the next chapter.
 
@@ -474,12 +476,6 @@ following command::
 
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value
 	<int 4>
-	
-If you know, more then one Value is attached, and you would like for e.g., 
-access the forth one you can use::
-
-	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3]
-	<string Ford Prefect>
 
 The Value printout is reduced and only gives you information about the 
 following:
@@ -487,6 +483,12 @@ following:
 - '<...>' indicates that you are looking at an object
 - 'int' tells you that the value has the odml data type (dtype) 'int'
 - '4' is the actual data stored within the value object
+
+If you know, more then one Value is attached, and you would like for e.g., 
+access the forth one you can use::
+
+	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3]
+	<person Ford Prefect>
 
 In total, a Value can be defined by the following 6 attributes:
 
@@ -512,21 +514,7 @@ unit
 	
 reference
 	- optional Value attribute
-	- The ?
-	
-filename
-	- optional Value attribute
-	- The ?
-	
-encoder
-	- optional Value attribute
-	- Name of the applied encoder used to encode a binary metadata value into 
-	  ascii.
-	  
-checksum
-	- optional Value attribute
-	- Checksum and name of the algorithm that calculated the checksum of a 
-	  given binary metadata value (algorithm$checksum format)
+	- xxxTODOxxx
 
 Let's see which attributes were defined for the Value of the Property 
 'NoCrewMembers' of the Section 'TheCrew'::
@@ -536,38 +524,40 @@ Let's see which attributes were defined for the Value of the Property
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.dtype
 	'int'
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.definition
+	xxxTODOxxxSHOULDxEXIST?xxx
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.uncertainty
+	xxxTODOxxx
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.unit
+	xxxTODOxxx
 	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.reference
-	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.filename
-	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.encoder
-	>>> odmlEX['TheCrew'].properties['NoCrewMembers'].value.checksum
+	xxxTODOxxx
 	
 Note that these commands are for Properties containing one Value. For
 accessing attributes of a Value of a Property with multiple Values use::
 
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].data
-	'Ford Prefect'
+	u'Ford Prefect'
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].dtype
 	'person'
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].definition
-	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].uncertainty
-	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].unit
+	xxxTODOxxxSHOULDxEXIST?xxx
 	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].reference
-	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].filename
-	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].encoder
-	>>> odmlEX['TheCrew'].properties['NameCrewMembers'].values[3].checksum
+	xxxTODOxxx
 	
 If you would like to get all the actual metadata values back from a Property 
 with multiple Values, iterate over the Values list::
 
 	>>> all_metadata = []
-	>>> for val in doc['TheCrew'].properties['NameCrewMembers'].values:
+	>>> for val in odmlEX['TheCrew'].properties['NameCrewMembers'].values:
 	...     all_metadata.append(val.data)
 	... 
 	>>> all_metadata
-		['Arthur Philip Dent', 'Zaphod Beeblebrox', 
-		 'Tricia Marie McMillan', 'Ford Prefect']
+		[u'Arthur Philip Dent', 
+		 u'Zaphod Beeblebrox', 
+		 u'Tricia Marie McMillan', 
+		 u'Ford Prefect']
+		 
+xxxTODOxxxSort function for Properties and Sections?xxx
 	
 
 ------------------------------------------------------------------------
@@ -595,31 +585,42 @@ Create a document
 
 Let's start by creating the Document::
  
-	>>> MYodML = odml.Document(author='Douglas Adams',
+	>>> MYodML = odml.Document(author='D. N. Adams',
 	                           version=42)
 
 You can check if your new Document contains actually what you created by using
 some of the commands you learned before::
 	                           
 	>>> MYodML
-	>>> <Doc 42 by Douglas Adams (0 sections)>
-	>>> MYodML.date
+	>>> <Doc 42 by D. N. Adams (0 sections)>
 
-As you can see, we created a Document with the same attributes as the example,
-except that we forgot to define the date. Note that you can always edit 
-attributes of generated odml objects. For this let's first import the Python 
-package datetime::
+As you can see, we created a Document with the same 'author' and 'version' 
+attributes as the example. The Document does of course not yet contain any 
+sections. You will learn how to create and add a Section to a Document in the 
+next chapter. 
+
+Let's focus here on the remaining two Document attributes we forgot to define, 
+'date' and 'repository'. Note that you can, but don't have to define 
+recommended and optional attributes immediately when you create an odml object.
+Furthermore, all attributes of an odml object can be edited at any time.
+
+To test this, try first to create the 'date' attribute. This attribute is 
+special in the sense that it requires a datetime object as entry. For this 
+reason, you need to first import the Python package datetime::
 	
 	>>> import datetime as dt
 	
-Now we edit the date attribute of the Document::
+Now we edit the 'date' attribute of the Document::
 
 	>>> MYodML.date = dt.date(1979, 10, 12)
 	>>> MYodML.date
 	'1979-10-12'
+	
+Secondly, let us also add a 'repository' attribute.
+xxxTODOxxx
 
-Another part which is still missing is that so far we have no Sections attached 
-to our Document. Let's change this!
+Finally, the "only" part still missing are the Sections of our Document. 
+Let's change this!
 	
 
 Create a section
