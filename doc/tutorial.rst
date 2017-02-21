@@ -133,7 +133,7 @@ Basic knowledge on odML
 
 Before we start, it is important to know the basic structure of an odML 
 file. Within an odML file metadata are grouped and stored in a 
-hierarchical tree structure which consists of four different odML 
+hierarchical tree structure which consists of three different odML 
 objects.
 
 Document
@@ -149,11 +149,6 @@ Section
 Property
 	- corresponds to (small) branches of the tree (groups values)
 	- *parent*: Section
-	- *children*: at least one Value
-	
-Value
-	- corresponds to leaf of the tree (contains metadata)
-	- *parent*: Property
 	- *children*: no children
 			
 Each of these odML objects has a certain set of attributes where the 
@@ -198,8 +193,8 @@ in "to_load" accordingly.
 	
 How you can access the different odML objects and their attributes once you 
 loaded an odML file and how you can make use of the attributes is described in 
-more detail in the following chapters for each odML object type (document, 
-section, property, value). Please note that some attributes are obligatory, 
+more detail in the following chapters for each odML object type (Document, 
+Section, Property). Please note that some attributes are obligatory, 
 some are recommended and others are optional. The optional attributes are 
 important for the advanced odML possibilities and can for now be ignored by 
 odML beginners. You can find an example of their usage in later chapters.
@@ -211,13 +206,13 @@ The Document
 If you loaded the example odML file, you can have a first look at the Document 
 either by explicitely calling the odml object,...::
 
-	>>> print odmlEX.document
+	>>> print(odmlEX.document)
 	<Doc 42 by D. N. Adams (2 sections)>
 	
 ... or using the following short cut::
 
-	>>> print odmlEX
-	<Doc 42 by Douglas Adams (2 sections)>
+	>>> print(odmlEX)
+	<Doc 42 by D. N. Adams (2 sections)>
 	
 As you can see, both commands will printout the same short summary about the 
 Document of the loaded example odML file. In the following we will only use the 
@@ -239,19 +234,21 @@ In total, a Document has the following 4 attributes:
 
 author
 	- recommended Document attribute
-	- The author of this odML file. 
+	- The author (returned as string) of this odML file. 
 	
 date
 	- recommended Document attribute
-	- The date this odML file was created (yyyy-mm-dd format). 
+	- The date (returned as string) when this odML file was created or last 
+	  changed. 
 	
 repository
 	- optional Document attribute
-	- The URL to the repository of terminologies used in this odML file. 
+	- The URL (returned as string) to the repository of terminologies used in 
+	  this Document. 
 	
 version
 	- recommended Document attribute
-	- The version of this odML file. 
+	- The version (returned as string) of this odML file. 
 
 Let's find out what attributes were defined for our example Document using the 
 following commands::
@@ -261,9 +258,9 @@ following commands::
 	>>> odmlfile.date
 	'1979-10-12'
 	>>> odmlEX.version
-	42 
+	'42' 
 	>>> odmlEX.repository
-	xxxTODOxxx
+	'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
 
 As you learned in the beginning, Sections can be attached to a Document, as the
 first hierarchy level of the odML file. Let's have a look which Sections were
@@ -616,8 +613,12 @@ Now we edit the 'date' attribute of the Document::
 	>>> MYodML.date
 	'1979-10-12'
 	
-Secondly, let us also add a 'repository' attribute.
-xxxTODOxxx
+Secondly, let us also add a 'repository' attribute. 
+For this, let us import the Python package os and extract the absolut path to 
+our previously used example odML file::
+
+	>>> import os
+	>>> abspath_odmlEX = os.path.abspath(to_load)
 
 Finally, the "only" part still missing are the Sections of our Document. 
 Let's change this!
