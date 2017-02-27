@@ -5,6 +5,8 @@ from odml import property
 from odml import section
 from odml import value
 from odml.dtypes import DType
+from odml import mdoc
+from odml import msec
 
 
 class odml_implementation(object):

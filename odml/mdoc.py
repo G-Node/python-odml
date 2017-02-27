@@ -2,7 +2,7 @@
 import odml
 
 # Extent odml.doc.BaseDocument
-class odml_mdocument(odml.doc.BaseDocument):
+class mdoc(odml.doc.BaseDocument):
     def __init__(self,  author=None, date=None, version=None, repository=None):
         odml.doc.BaseDocument.__init__(self, author, date, version, repository) 
 
