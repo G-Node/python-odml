@@ -204,6 +204,8 @@ class XMLReader(object):
         parse an odml node based on the format description *fmt*
         and a function *create* to instantiate a corresponding object
         """
+
+        print("parse tag")
         arguments = {}
         extra_args = {}
         children = []
@@ -226,7 +228,7 @@ class XMLReader(object):
         for node in root:
             node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
-            if node.tag in fmt._args:
+            if node.tag in fmt._args:  # FIXME this has been checked in is_valid_argument, has it not?
                 if node.tag in self.tags and node.tag in fmt._map:  # this is a heuristic, but works for now
                     sub_obj = self.parse_element(node)
                     if sub_obj is not None:
@@ -238,7 +240,6 @@ class XMLReader(object):
                         # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
                         self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
                     arguments[tag] = node.text.strip() if node.text else None
-
             else:
                 self.error("Invalid element <%s> in odML document section <%s>" % (node.tag, root.tag), node)
             if node.tail:
@@ -295,7 +296,7 @@ class XMLReader(object):
 
     def parse_value(self, root, fmt):
         create = lambda text, args, **kargs: fmt.create(text, **args)
-        return self.parse_tag(root, fmt, create=create)
+        return self.parse_tag(root, fmt, insert_children=False, create=create)
 
 
 if __name__ == '__main__':

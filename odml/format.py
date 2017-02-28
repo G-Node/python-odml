@@ -54,7 +54,7 @@ class Property(Format):
         'dependencyvalue': 0
         }
     _map = {
-        'value': 'values',
+        'value': 'value',
         'dependencyvalue': 'dependency_value',
         'type': 'dtype'
         }
