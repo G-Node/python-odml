@@ -15,7 +15,7 @@ class BaseProperty(base.baseobject, Property):
     """An odML Property"""
     _format = frmt.Property
 
-    def __init__(self, name, value, unit=None, uncertainty=None, value_reference=None, definition=None, dependency=None,
+    def __init__(self, name, value=None, unit=None, uncertainty=None, value_reference=None, definition=None, dependency=None,
                  dependency_value=None):
         """
         Create a new Property with a single value. The method will try to infer the value's dtype from the type of the
@@ -32,7 +32,7 @@ class BaseProperty(base.baseobject, Property):
         >>> p.dtype
         >>> int
         :param name: The mane of the property
-        :param value: Some data value this may be a list of homogeneous values.
+        :param value: Some data value, this may be a list of homogeneous values.
         :param unit: The unit of the stored data.
         :param uncertainty: the uncertainty (e.g. the standard deviation) associated with a measure value.
         :param value_reference: A reference (e.g. an URL) to an external definition of the value.
@@ -129,11 +129,15 @@ class BaseProperty(base.baseobject, Property):
 
     @value.setter
     def value(self, new_value):
+        if new_value is None:
+            return
+        if not isinstance(new_value, list):
+            new_value = [new_value]
+        if len(new_value) == 0:
+            return
         nv = new_value[0] if isinstance(new_value, list) else new_value
         if self._dtype is None:
             self._dtype = dtypes.infer_dtype(nv)
-        if not isinstance(new_value, list):
-            new_value = [new_value]
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.value: passed values are not of consistent type!")
         self._value = [dtypes.get(v, self.dtype) for v in new_value]

@@ -9,7 +9,12 @@ def get_props(obj, props):
         if hasattr(obj, p):
             x = getattr(obj, p)
             if x is not None:
-                out.append("%s=%s" % (p, repr(x)))
+                if isinstance(x, list):
+                    # TODO csv export should go here...
+                    pass
+                else:
+                    out.append("%s=%s" % (p, repr(x)))
+
     return ", ".join(out)
 
 
