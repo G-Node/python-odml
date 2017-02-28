@@ -3,14 +3,12 @@ import sys
 from odml import doc
 from odml import property
 from odml import section
-from odml import value
 from odml.dtypes import DType
 
 
 class odml_implementation(object):
     name = None
     provides = []
-    Value = None
     Property = None
     Section = None
     Document = None
@@ -19,10 +17,6 @@ class odml_implementation(object):
 class BasicImplementation(odml_implementation):
     name = 'basic'
     provides = ['basic']
-
-    @_property
-    def Value(self):
-        return value.BaseValue
 
     @_property
     def Section(self):
@@ -97,10 +91,6 @@ def setMinimumImplementation(key):
 addImplementation(current_implementation)
 
 
-def Value(*args, **kwargs):
-    return current_implementation.Value(*args, **kwargs)
-
-
 def Property(*args, **kwargs):
     return current_implementation.Property(*args, **kwargs)
 
@@ -112,4 +102,4 @@ def Section(*args, **kwargs):
 def Document(*args, **kwargs):
     return current_implementation.Document(*args, **kwargs)
 
-#__all__ = [Value, Property, Section, Document]
+#__all__ = [Property, Section, Document]
