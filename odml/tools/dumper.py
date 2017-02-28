@@ -8,39 +8,26 @@ def get_props(obj, props):
     for p in props:
         if hasattr(obj, p):
             x = getattr(obj, p)
-            if not x is None:
+            if x is not None:
                 out.append("%s=%s" % (p, repr(x)))
     return ", ".join(out)
+
+
+def dumpProperty(property, indent=1):
+    print("%*s:%s (%s)" % (indent, " ", property.name, get_props(property,
+                                                                 ["definition", "value", "uncertainty", "unit", "dtype",
+                                                                  "value_reference", "dependency", "dependencyValue"])))
 
 
 def dumpSection(section, indent=1):
     if section is None:
         return
 
-    print("%*s*%s (%s)" % (
-        indent, " ", section.name, get_props(
-            section,
-            ["type", "definition", "id", "link", "include", "repository"]
-        )
-    ))
-
+    print("%*s*%s (%s)" % (indent, " ", section.name, get_props(section,
+                                                                ["type", "definition", "link",
+                                                                 "include", "repository"])))
     for prop in section.properties:
-        print("%*s:%s (%s)" % (
-            indent + 1, " ", prop.name,
-            get_props(
-                prop,
-                ["definition", "dependency", "dependencyValue"]
-            )
-        ))
-        for value in prop.values:
-            print("%*s:%s (%s)" % (
-                indent + 3, " ", value.data,
-                get_props(
-                    value,
-                    ["dtype", "unit", "uncertainty", "definition",
-                     "id", "defaultFileName"]
-                )
-            ))
+        dumpProperty(prop, indent + 1)
 
     for sub in section.sections:
         dumpSection(sub, indent * 2)
