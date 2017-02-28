@@ -41,7 +41,7 @@ class BaseProperty(base.baseobject, Property):
         #TODO validate arguments
         self._name = name
         self._section = None
-        self._value = None
+        self._value = []
         self._unit = unit
         self._uncertainty = uncertainty
         self._value_reference = value_reference
@@ -49,12 +49,7 @@ class BaseProperty(base.baseobject, Property):
         self._dependency = dependency
         self._dependency_value = dependency_value
         self._dtype = None
-
-        if isinstance(value, list) and len(value) > 1:  # FIXME this is a nasty hack
-            print("Properties can hold only a single value! A list was passed.")
-            self.value = value[0]
-        else:
-            self.value = value
+        self.value = value
 
     @property
     def name(self):
@@ -110,29 +105,35 @@ class BaseProperty(base.baseobject, Property):
     def value(self):  # FIXME check the usage of value in the xmlwriter, jsonwriter
         return self._value
 
-    @property
-    def value_str(self):
+    def value_str(self, index=0):
         """
         used to access typed data of the value as a string.
         Use data to access the raw type, i.e.:
-
-        >>> v = Value(1, type="float")
-        >>> v.data
-        1.0
-        >>> v.data = 1.5
-        >>> v.value
-        "1.5"
-        >>> v.value = 2
-        >>> v.data
-        2.0
         """
-        return dtypes.set(self._value, self._dtype)
+        return dtypes.set(self._value[index], self._dtype)
+
+    def _validate_values(self, values):
+        """
+            Method ensures that the passed value(s) can be cast to the same dtype, i.e. that
+            associated with this property or the inferred dtype of the first entry of the values list.
+        """
+        for v in values:
+            try:
+                dtypes.get(v, self.dtype)
+            except Exception as ex:
+                return False
+        return True
 
     @value.setter
     def value(self, new_value):
+        nv = new_value[0] if isinstance(new_value, list) else new_value
         if self._dtype is None:
-            self._dtype = dtypes.infer_dtype(new_value)
-        self._value = dtypes.get(new_value, self._dtype)
+            self._dtype = dtypes.infer_dtype(nv)
+        if not isinstance(new_value, list):
+            new_value = [new_value]
+        if not self._validate_values(new_value):
+            raise ValueError("odml.Property.value: passed values are not of consistent type!")
+        self._value = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
     def uncertainty(self):
@@ -158,9 +159,6 @@ class BaseProperty(base.baseobject, Property):
     def value_reference(self, new_value):
         self._value_reference = new_value
 
-    # FIXME properties must have a value, unsetting the value will invalidate it. We could have an empty standard
-    # FIXME value with an isempty property. Probably no longer needed when we only have a sinlge value stored in a plain
-    # FIXME tag
     def remove(self, value):
         """
         Remove a value from this property and unset its parent.
@@ -168,27 +166,22 @@ class BaseProperty(base.baseobject, Property):
         Raises a TypeError if this would cause the property not to hold any value at all.
         This can be circumvented by using the *_values* property.
         """
-        #if len(self._values) == 1:
-        #    raise TypeError("Cannot remove %s from %s. A property must always have at least one value." % (repr(value), repr(self)))
-        # self._values.remove(value)
-        # value._property = None
+        if value in self._value:
+            self._value.remove(value)
         pass
 
     def get_path(self):
         """return the absolute path to this object"""
         return self.parent.get_path() + ":" + self.name
 
-    def clone(self, children=True):
+    def clone(self):
         """
-        clone this object recursively allowing to copy it independently
+        clone this object to copy it independently
         to another document
         """
-        obj = super(BaseProperty, self).clone(children)
+        obj = super(BaseProperty, self).clone()
         obj._section = None
-
-        if children:
-            obj.value = self.value.clone()
-
+        obj.value = self.value
         return obj
 
     def merge(self, property):
@@ -219,3 +212,9 @@ class BaseProperty(base.baseobject, Property):
             return sec.properties[self.name]
         except KeyError:
             return None
+
+    def __len__(self):
+        return len(self._value)
+
+    def __getitem__(self, key):
+        return self._value[key]
