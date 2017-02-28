@@ -31,19 +31,6 @@ class Format(object):
         return getattr(odml, self.__class__.__name__)(*args, **kargs)
 
 
-class Value(Format):
-    _name = "value"
-    _args = {
-        'value': 0,
-        'uncertainty': 0,
-        'unit': 0,
-        'type': 0,
-        'definition': 0,
-        'reference': 0,
-        }
-    _map = {'type': 'dtype'}
-
-
 class Property(Format):
     _name = "property"
     _args = {
@@ -94,7 +81,6 @@ class Document(Format):
 
 Document = Document()
 Section = Section()
-Value = Value()
 Property = Property()
 
-__all__ = [Document, Section, Property, Value]
+__all__ = [Document, Section, Property]
