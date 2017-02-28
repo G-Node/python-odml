@@ -6,13 +6,13 @@ Parses odML files. Can be invoked standalone:
 
     python -m odml.tools.xmlparser file.odml
 """
-#TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
+# TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 import sys
 
 from odml import format
 from lxml import etree as ET
 from lxml.builder import E
-
+from IPython import embed
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
 
@@ -29,13 +29,10 @@ except ImportError:
 format.Document._xml_name = "odML"
 format.Section._xml_name = "section"
 format.Property._xml_name = "property"
-format.Value._xml_name = "value"
 
 format.Document._xml_attributes = {}
 format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Property._xml_attributes = {}
-format.Value._xml_attributes = {}
-format.Value._xml_content = 'value'
 
 XML_VERSION = "1"
 
@@ -76,7 +73,7 @@ class XMLWriter:
 
             val = getattr(e, fmt.map(v))
             if val is None:
-                continue # no need to save this
+                continue  # no need to save this
             if sys.version_info < (3, 0):
                 cur.attrib[k] = unicode(val)
             else:
@@ -87,24 +84,25 @@ class XMLWriter:
             if (k in fmt._xml_attributes and fmt._xml_attributes[k] is not None) or not hasattr(e, fmt.map(k)) \
                     or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
                 continue
-
             val = getattr(e, fmt.map(k))
             if val is None:
                 continue
-
-            if isinstance(val, list):
-                for v in val:
-                    if v is None:
-                        continue
-                    ele = XMLWriter.save_element(v)
-                    cur.append(ele)
-            else:
-                if sys.version_info < (3,):
-                    ele = E(k, unicode(val))
-                else:
-                    ele = E(k, str(val))
-                # ele = E(k, unicode(val))
+            if isinstance(fmt, format.Property.__class__) and k == "value":
+                ele = E(k, '[' + ', '.join(map(unicode, val)) + ']')
                 cur.append(ele)
+            else:
+                if isinstance(val, list):
+                    for v in val:
+                        if v is None:
+                            continue
+                        ele = XMLWriter.save_element(v)
+                        cur.append(ele)
+                else:
+                    if sys.version_info < (3,):
+                        ele = E(k, unicode(val))
+                    else:
+                        ele = E(k, str(val))
+                    cur.append(ele)
         return cur
 
     def __str__(self):
@@ -116,7 +114,7 @@ class XMLWriter:
     def write_file(self, filename):
         # calculate the data before opening the file in case we get any
         # exception
-        if sys.version_info < (3, ):
+        if sys.version_info < (3,):
             data = unicode(self).encode('utf-8')
         else:
             data = str(self)
@@ -146,6 +144,7 @@ class XMLReader(object):
 
         >>> doc = XMLReader().fromFile(open("file.odml"))
     """
+
     def __init__(self, ignore_errors=False, filename=None):
         self.parser = ET.XMLParser(remove_comments=True)
         self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
@@ -177,7 +176,8 @@ class XMLReader(object):
 
     def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
         if tag_name not in ArgClass._args:
-            self.error("Invalid element <%s> inside <%s> tag" % (tag_name, parent_node.tag), parent_node if child is None else child)
+            self.error("Invalid element <%s> inside <%s> tag" % (tag_name, parent_node.tag),
+                       parent_node if child is None else child)
 
     def error(self, msg, elem):
         if elem is not None:
@@ -204,8 +204,6 @@ class XMLReader(object):
         parse an odml node based on the format description *fmt*
         and a function *create* to instantiate a corresponding object
         """
-
-        print("parse tag")
         arguments = {}
         extra_args = {}
         children = []
@@ -224,11 +222,10 @@ class XMLReader(object):
             else:
                 k = fmt._xml_attributes[k] or k
                 arguments[k] = v
-
         for node in root:
             node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
-            if node.tag in fmt._args:  # FIXME this has been checked in is_valid_argument, has it not?
+            if node.tag in fmt._args:
                 if node.tag in self.tags and node.tag in fmt._map:  # this is a heuristic, but works for now
                     sub_obj = self.parse_element(node)
                     if sub_obj is not None:
@@ -239,22 +236,26 @@ class XMLReader(object):
                     if tag in arguments:
                         # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
                         self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
+
                     arguments[tag] = node.text.strip() if node.text else None
             else:
                 self.error("Invalid element <%s> in odML document section <%s>" % (node.tag, root.tag), node)
             if node.tail:
                 text.append(node.tail.strip())
 
-        if create is None:
-            obj = fmt.create()
-        else:
-            obj = create(args=arguments, text=''.join(text), children=children)
         if sys.version_info > (3,):
             self.check_mandatory_arguments(dict(list(arguments.items()) + list(extra_args.items())),
                                            fmt, root.tag, root)
         else:
             self.check_mandatory_arguments(dict(arguments.items() + extra_args.items()),
                                            fmt, root.tag, root)
+        if create is None:
+            obj = fmt.create()
+        else:
+            print(arguments)
+            print(children)
+            print(text)
+            obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
             if hasattr(obj, k):
@@ -277,7 +278,7 @@ class XMLReader(object):
 
     def parse_section(self, root, fmt):
         name = root.get("name")  # property name= overrides
-        if name is None:         # the element
+        if name is None:  # the element
             name_node = root.find("name")
             if name_node is not None:
                 name = name_node.text
@@ -291,12 +292,15 @@ class XMLReader(object):
         return self.parse_tag(root, fmt, create=lambda **kargs: fmt.create(name))
 
     def parse_property(self, root, fmt):
+        print("parse property")
         create = lambda children, args, **kargs: fmt.create(value=children, **args)
         return self.parse_tag(root, fmt, insert_children=False, create=create)
 
+    """
     def parse_value(self, root, fmt):
         create = lambda text, args, **kargs: fmt.create(text, **args)
         return self.parse_tag(root, fmt, insert_children=False, create=create)
+    """
 
 
 if __name__ == '__main__':
