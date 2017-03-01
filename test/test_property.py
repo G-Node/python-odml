@@ -1,7 +1,7 @@
 import unittest
 import sys
 from datetime import datetime as dt, date, time
-from odml import Value, Property, Section, Document
+from odml import Property, Section, Document
 from odml.tools.xmlparser import XMLReader, XMLWriter
 from IPython import embed
 
@@ -12,10 +12,8 @@ class TestProperty(unittest.TestCase):
         pass
 
     def test_value(self):
-
-        v = Value("A value")
-        p = Property("property", v)
-        assert(p.value == v)
+        p = Property("property", 100)
+        assert(p.value[0] == 100)
 
     def test_name(self):
         pass
