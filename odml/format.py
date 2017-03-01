@@ -35,13 +35,14 @@ class Property(Format):
     _name = "property"
     _args = {
         'name': 1,
-        # 'value': 0,
+        'value': 0,
         'unit': 0,
         'definition': 0,
         'dependency': 0,
         'dependencyvalue': 0,
         'uncertainty': 0,
         'value_reference': 0,
+        'type': 0,
         }
     _map = {
         'dependencyvalue': 'dependency_value',
