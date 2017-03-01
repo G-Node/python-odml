@@ -166,6 +166,30 @@ class BaseProperty(base.baseobject, Property):
     def value_reference(self, new_value):
         self._value_reference = new_value
 
+    @property
+    def definition(self):
+        return self._definition
+
+    @definition.setter
+    def definition(self, new_value):
+        self._definition = new_value
+
+    @property
+    def dependency(self):
+        return self._dependency
+
+    @dependency.setter
+    def dependency(self, new_value):
+        self._dependency = new_value
+
+    @property
+    def dependency_value(self):
+        return self._dependency_value
+
+    @dependency_value.setter
+    def dependency_value(self, new_value):
+        self._dependency_value = new_value
+
     def remove(self, value):
         """
         Remove a value from this property and unset its parent.
