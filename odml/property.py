@@ -132,13 +132,15 @@ class BaseProperty(base.baseobject, Property):
     def value(self, new_value):
         if new_value is None:
             return
+        if isinstance(new_value, str):
+            if new_value[0] == "[" and new_value[-1] == "]":
+                new_value = new_value[1:-1].split(",")
         if not isinstance(new_value, list):
             new_value = [new_value]
         if len(new_value) == 0:
             return
-        nv = new_value[0] if isinstance(new_value, list) else new_value
         if self._dtype is None:
-            self._dtype = dtypes.infer_dtype(nv)
+            self._dtype = dtypes.infer_dtype(new_value[0])
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.value: passed values are not of consistent type!")
         self._value = [dtypes.get(v, self.dtype) for v in new_value]
