@@ -16,7 +16,7 @@ class BaseProperty(base.baseobject, Property):
     _format = frmt.Property
 
     def __init__(self, name, value=None, unit=None, uncertainty=None, value_reference=None, definition=None, dependency=None,
-                 dependency_value=None):
+                 dependency_value=None, dtype=None):
         """
         Create a new Property with a single value. The method will try to infer the value's dtype from the type of the
         value.
@@ -39,8 +39,9 @@ class BaseProperty(base.baseobject, Property):
         :param definition: The definition of the property.
         :param dependency: Another property this property depends on.
         :param dependency_value: Dependency on a certain value.
+        :param dtype: the data type of the values stored in the property, if dtype is not given, the type is deduced
+        from the values.
         """
-
         #TODO validate arguments
         self._name = name
         self._section = None
@@ -51,7 +52,7 @@ class BaseProperty(base.baseobject, Property):
         self._definition = definition
         self._dependency = dependency
         self._dependency_value = dependency_value
-        self._dtype = None
+        self._dtype = dtype
         self.value = value
 
     @property
