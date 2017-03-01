@@ -12,7 +12,6 @@ import sys
 from odml import format
 from lxml import etree as ET
 from lxml.builder import E
-from IPython import embed
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
 
@@ -252,24 +251,21 @@ class XMLReader(object):
         if create is None:
             obj = fmt.create()
         else:
-            print(arguments)
-            print(children)
-            print(text)
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
             if hasattr(obj, k):
-                try:
-                    setattr(obj, k, v)
-                except Exception as e:
-                    self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
-                    if not self.ignore_errors:
-                        raise
+                if getattr(obj, k) is None:
+                    try:
+                        setattr(obj, k, v)
+                    except Exception as e:
+                        self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
+                        if not self.ignore_errors:
+                            raise
 
         if insert_children:
             for child in children:
                 obj.append(child)
-
         return obj
 
     def parse_odML(self, root, fmt):
@@ -292,8 +288,7 @@ class XMLReader(object):
         return self.parse_tag(root, fmt, create=lambda **kargs: fmt.create(name))
 
     def parse_property(self, root, fmt):
-        print("parse property")
-        create = lambda children, args, **kargs: fmt.create(value=children, **args)
+        create = lambda children, args, **kargs: fmt.create(**args)
         return self.parse_tag(root, fmt, insert_children=False, create=create)
 
     """
