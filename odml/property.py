@@ -86,19 +86,12 @@ class BaseProperty(base.baseobject, Property):
             raise AttributeError("'%s' is not a valid type." % new_type)
         # we convert the value if possible
         old_type = self._dtype
-        old_value = dtypes.set(self._value, self._dtype)
+        old_values = self._value
         try:
-            new_value = dtypes.get(old_value, new_type)
+            self._dtype = new_type
+            self.value = old_values
         except:
-            # cannot convert, try the other way around
-            try:
-                old_value = dtypes.set(self._value, new_type)
-                new_value = dtypes.get(old_value, new_type)
-            except:
-                # doesn't work either, therefore refuse
-                raise ValueError("cannot convert '%s' from '%s' to '%s'" % (self.value, old_type, new_type))
-        self._value = new_value
-        self._dtype = new_type
+            raise ValueError("cannot convert from '%s' to '%s'" % (old_type, new_type))
 
     @property
     def parent(self):
