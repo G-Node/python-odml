@@ -154,7 +154,7 @@ def time_get(string):
     if not string:
         return None
     if type(string) is datetime.time:
-        return string.strftime('%H:%M:%S')
+        return datetime.datetime.strptime(string.strftime('%H:%M:%S'), '%H:%M:%S').time()
     else:
         return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
@@ -183,7 +183,7 @@ def datetime_get(string):
     if not string:
         return None
     if type(string) is datetime.datetime:
-        return string.strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
@@ -198,7 +198,7 @@ def datetime_set(value):
 
 
 def boolean_get(string):
-    if not string:
+    if string is None:
         return None
     if type(string) is bool:
         string = str(string)
