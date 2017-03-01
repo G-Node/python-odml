@@ -28,10 +28,9 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(typ.datetime_set(date), date_string)
 
     def test_int(self):
-        v = odml.Value(value="123456789012345678901", dtype="int")
-        self.assertEqual(v.data, 123456789012345678901)
-        self.assertEqual(v.value, "123456789012345678901")
-        v = odml.Value(value="-123456789012345678901", dtype="int")
-        self.assertEqual(v.data, -123456789012345678901)
-        v = odml.Value(value="123.45", dtype="int")
-        self.assertEqual(v.data, 123)
+        p = odml.Property("test", value="123456789012345678901", dtype="int")
+        self.assertEqual(p.value[0], 123456789012345678901)
+        p = odml.Property("test", value="-123456789012345678901", dtype="int")
+        self.assertEqual(p.value[0], -123456789012345678901)
+        p = odml.Property("test", value="123.45", dtype="int")
+        self.assertEqual(p.value[0], 123)
