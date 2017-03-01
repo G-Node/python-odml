@@ -272,7 +272,7 @@ class sectionable(baseobject):
         iterate each related value (recursively)
 
         >>> # example: return all children values which string converted version has "foo"
-        >>> filter_func = lambda x: str(getattr(x, 'data')).find("foo") > -1
+        >>> filter_func = lambda x: str(x).find("foo") > -1
         >>> sec_or_doc.itervalues(filter_func=filter_func)
 
         :param max_depth: iterate all properties recursively if None, only to a certain

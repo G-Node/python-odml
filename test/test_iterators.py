@@ -78,7 +78,7 @@ class TestValidation(unittest.TestCase):
         val_all = self.doc.itervalues()
         assert(len([v for v in val_all]) == 8)
 
-        filter_func = lambda x: str(getattr(x, 'data')).find("text") > -1
+        filter_func = lambda x: str(x).find("text") > -1
         val_filt = self.doc.itervalues(filter_func=filter_func)
         assert(len([v for v in val_filt]) == 4)
 
