@@ -41,7 +41,7 @@ XML_VERSION = "1.5"
 
 
 def to_csv(val):
-    unicode_values = map(unicode, val)
+    unicode_values = list(map(unicode, val))
     stream = StringIO()
     writer = csv.writer(stream, dialect="excel")
     writer.writerow(unicode_values)
