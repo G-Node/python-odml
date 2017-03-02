@@ -23,7 +23,7 @@ class BaseSection(base.sectionable, Section):
 
     _format = format.Section
 
-    def __init__(self, name, type="undefined", parent=None, definition=None):
+    def __init__(self, name, type=None, parent=None, definition=None):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
