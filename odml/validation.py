@@ -68,8 +68,6 @@ class Validation(object):
             self.validate(sec)
             for prop in sec.properties:
                 self.validate(prop)
-                for val in prop.values:
-                    self.validate(val)
 
     def validate(self, obj):
         handlers = self._handlers.get(obj._format._name, [])
