@@ -1,6 +1,7 @@
 """
 Dumps odML-Structures
 """
+from odml.tools.xmlparser import to_csv
 
 
 def get_props(obj, props):
@@ -10,8 +11,7 @@ def get_props(obj, props):
             x = getattr(obj, p)
             if x is not None:
                 if isinstance(x, list):
-                    # TODO csv export should go here...
-                    pass
+                    out.append("%s=%s"% (p, to_csv(x)))
                 else:
                     out.append("%s=%s" % (p, repr(x)))
 
