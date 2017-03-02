@@ -33,7 +33,7 @@ class TestInferType(unittest.TestCase):
         assert(type(p.value[0]) == dt)
 
     def test_date(self):
-        p = Property("test", dt.now().date)
+        p = Property("test", dt.now().date())
         assert (p.dtype == "date")
         assert (type(p.value[0]) == date)
 
