@@ -8,7 +8,11 @@ Parses odML files. Can be invoked standalone:
 """
 # TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 import sys
-
+import csv
+try:
+    from StringIO import StringIO
+except:
+    from io import StringIO
 from odml import format
 from lxml import etree as ET
 from lxml.builder import E
@@ -33,7 +37,27 @@ format.Document._xml_attributes = {}
 format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Property._xml_attributes = {}
 
-XML_VERSION = "1"
+XML_VERSION = "1.5"
+
+
+def to_csv(val):
+    unicode_values = map(unicode, val)
+    stream = StringIO()
+    writer = csv.writer(stream, dialect="excel")
+    writer.writerow(unicode_values)
+    csv_string = "[" + stream.getvalue() + "]"
+    return csv_string
+
+
+def from_csv(value_string):
+    if len(value_string) == 0:
+        return []
+    if value_string[0] == "[":
+        value_string = value_string[1:-1]
+    stream = StringIO(value_string)
+    stream.seek(0)
+    reader = csv.reader(stream, dialect="excel")
+    return list(reader)[0]
 
 
 class XMLWriter:
@@ -87,7 +111,8 @@ class XMLWriter:
             if val is None:
                 continue
             if isinstance(fmt, format.Property.__class__) and k == "value":
-                ele = E(k, '[' + ', '.join(map(unicode, val)) + ']')
+                # TODO here goes the csv
+                ele = E(k, to_csv(val))
                 cur.append(ele)
             else:
                 if isinstance(val, list):
@@ -235,8 +260,11 @@ class XMLReader(object):
                     if tag in arguments:
                         # TODO make this an error, however first figure out a way to let <odML version=><version/> pass
                         self.warn("Element <%s> is given multiple times in <%s> tag" % (node.tag, root.tag), node)
-
-                    arguments[tag] = node.text.strip() if node.text else None
+                    if tag == "value" and node.text:  # special handling of values ...
+                        content = from_csv(node.text.strip())
+                        arguments[tag] = content
+                    else:
+                        arguments[tag] = node.text.strip() if node.text else None
             else:
                 self.error("Invalid element <%s> in odML document section <%s>" % (node.tag, root.tag), node)
             if node.tail:
