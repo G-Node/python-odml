@@ -1,9 +1,5 @@
 import unittest
-import sys
-from datetime import datetime as dt, date, time
 from odml import Property, Section, Document
-from odml.tools.xmlparser import XMLReader, XMLWriter
-from IPython import embed
 
 
 class TestProperty(unittest.TestCase):
