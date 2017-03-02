@@ -142,12 +142,12 @@ Document
 	- *children*: Section
 	
 Section
-	- corresponds to (big) branches of the tree
+	- corresponds to branches of the tree
 	- *parent*: Section or Document
 	- *children*: Section and/or Property
 	
 Property
-	- corresponds to (small) branches of the tree (groups values)
+	- corresponds to the leafs of the tree (containing the metadata)
 	- *parent*: Section
 	- *children*: no children
 			
@@ -160,10 +160,10 @@ in an example odML file (e.g., "THGTTG.odml").
 A first look
 ============
 
-If you want to get familiar with the concept behind an odML and how to handle 
-odML files in Python, you can have a first look at the example odML file 
-provided in the Python-odML library. For this you first need to run the python 
-code ("thgttg.py") to generate the example odML file ("THGTTG.odml")::
+If you want to get familiar with the concept behind the odML framework and how 
+to handle odML files in Python, you can have a first look at the example odML 
+file provided in the Python-odML library. For this you first need to run the 
+python code ("thgttg.py") to generate the example odML file ("THGTTG.odml")::
 
 	$ cd /home/usr/toolbox/python-odml/doc/example_odMLs/
 	$ ls
@@ -917,12 +917,8 @@ you can try to reload your own saved odML file::
 Advanced odML-Features
 ======================
 
-
-Advanced knowledge on Values
-----------------------------
-
 Data type conversions
-*********************
+---------------------
 
 After creating a Value the data type can be changed and the corresponding Value
 will converted to the new data type, if the new format is valid for the given
@@ -960,63 +956,69 @@ converted to an integer and then back to a float::
 	>>> test_value
 	<float 42.0>
 
+Terminologies
+-------------
+(deprecated; new version coming soon)
+odML supports terminologies that are data structure templates for typical use cases.
+Sections can have a ``repository`` attribute. As repositories can be inherited,
+the current applicable one can be obtained using the :py:meth:`odml.section.BaseSection.get_repository`
+method.
 
-Binary metadata
-***************
+To see whether an object has a terminology equivalent, use the :py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
+method, which returns the corresponding object of the terminology.
 
-For metadata of binary data type you also need to be specify the correct 
-encoder. The following table lists all possible encoders of the odML-libarary
-and their binary metadata representation:
-
-+------------------+--------------------------+
-| binary encoder   | binary metadata example  |
-+==================+==========================+
-| quoted-printable | Ford Prefect             |
-+------------------+--------------------------+
-| hexadecimal      | 466f72642050726566656374 |
-+------------------+--------------------------+
-| base64           | Rm9yZCBQcmVmZWN0         |
-+------------------+--------------------------+
-
-The encoder can also be edited later on::
-
-	>>> test_value = odml.Value(data='Ford Prefect', 
-	                            dtype=odml.DType.binary, 
-	                            encoder='quoted-printable')
-	>>> test_value
-	<binary Ford Prefect>
-	>>> test_value.encoder = 'hexadecimal'
-	>>> test_value
-	<binary 466f72642050726566656374>
-	>>> test_value.encoder = 'base64'
-	>>> test_value
-	<binary Rm9yZCBQcmVmZWN0>
-
-The checksum of binary metadata is automatically calculated with ``crc32`` as
-default checksum::
-
-	>>> test_value.checksum
-	'crc32$10e6c0cf
-    
-Alternatively, ``md5`` can be used for the checksum calculation::
- 
-	>>> test_value.checksum = "md5"
-	>>> test_value.checksum
-	'md5$c1282d5763e2249028047757b6209518'
-
-
-Advanced knowledge on Properties
---------------------------------
-
-Dependencies & dependency values
-********************************
+Clone
+-----
 (coming soon)
 
-Advanced knowledge on Sections
-------------------------------
+Reorder
+-------
+As previously shown, it is possible to append multiple Section objects to an 
+odML Document as well as multiple Section or Property objects to an odML 
+Section. The order of attached odML objects reflects the order of how these objects 
+where appended. 
+
+For example, for the odmlEX file, we appended first the Section 
+'Arthur Philip Dent', second the Section 'Zaphod Beeblebrox', third the Section
+'Tricia Marie McMillan', and at last the Section 'Ford Prefect' to the parent 
+Section 'TheCrew'. This order of appending the Section objects is preserved, 
+as one can see when listing the sections::
+
+	>>> odmlEX['TheCrew'].sections
+	[<Section Arthur Philip Dent[crew/person] (0)>, # first append
+	 <Section Zaphod Beeblebrox[crew/person] (0)>, # second append
+	 <Section Tricia Marie McMillan[crew/person] (0)>, # third append
+	 <Section Ford Prefect[crew/person] (0)>] # last append
+	 
+It is possible, though, to reorder these attached objects later on using the 
+:py:meth:`odml.doc.BaseSection.reorder` or 
+:py:meth:`odml.doc.BaseProperty.reorder` method.
+
+For example, let us reorder the Sections of the 'TheCrew' alphabetically::
+
+    >>> odmlEX['TheCrew'].sections[-1].reorder(1)
+    3 
+    >>> odmlEX['TheCrew'].sections
+	[<Section Arthur Philip Dent[crew/person] (0)>,
+	 <Section Ford Prefect[crew/person] (0)>, # moved from index 3 to index 1
+     <Section Zaphod Beeblebrox[crew/person] (0)>,
+     <Section Tricia Marie McMillan[crew/person] (0)>]
+    >>> odmlEX['TheCrew'].sections[-1].reorder(2)
+    3
+    >>> odmlEX['TheCrew'].sections
+    [<Section Arthur Philip Dent[crew/person] (0)>,
+     <Section Ford Prefect[crew/person] (0)>,
+     <Section Tricia Marie McMillan[crew/person] (0)>, # moved from index 3 to index 2
+     <Section Zaphod Beeblebrox[crew/person] (0)>]
+
+Note that the :py:meth:`odml.doc.BaseSection.reorder` as well as the 
+:py:meth:`odml.doc.BaseProperty.reorder` method receives the new (wanted) list 
+index for the object as input, moves the object with execution and returns its 
+original index position of the corresponding object list.
+
 
 Links & Includes
-****************
+----------------
 (deprecated; new version coming soon)
 Sections can be linked to other Sections, so that they include their defined 
 attributes. A link can be within the document (``link`` property) or to an
@@ -1047,41 +1049,6 @@ linked equivalents. This should be done globally before saving using the
 Changing a ``link`` (or ``include``) attribute will first unmerge the section and
 then set merge with the new object.
 
-Terminologies
-*************
-(deprecated; new version coming soon)
-odML supports terminologies that are data structure templates for typical use cases.
-Sections can have a ``repository`` attribute. As repositories can be inherited,
-the current applicable one can be obtained using the :py:meth:`odml.section.BaseSection.get_repository`
-method.
-
-To see whether an object has a terminology equivalent, use the :py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
-method, which returns the corresponding object of the terminology.
-
-Mappings
-********
-(deprecated; new version coming soon)
-A sometimes obscure but very useful feature is the idea of mappings, which can
-be used to write documents in a user-defined terminology, but provide mapping
-information to a standard-terminology that allows the document to be viewed in
-the standard-terminology (provided that adequate mapping-information is provided).
-
-See :py:class:`test.mapping.TestMapping` if you need to understand the
-mapping-process itself.
-
-Mappings are views on documents and are created as follows::
-
-	>>> import odml
-	>>> import odml.mapping as mapping
-	>>> doc = odml.Document()
-	>>> mdoc = mapping.create_mapping(doc)
-	>>> mdoc
-	P(<Doc None by None (0 sections)>)
-	>>> mdoc.__class__
-	<class 'odml.tools.proxy.DocumentProxy'>
-
-Creating a view has the advantage, that changes on a Proxy-object are
-propagated to the original document.
-This works quite well and is extensively used in the GUI.
-However, be aware that you are typically dealing with proxy objects only
-and not all API methods may be available.
+Dependencies & dependency_values
+--------------------------------
+(coming soon)
