@@ -160,14 +160,14 @@ class XMLReader(object):
         try:
             root = ET.parse(xml_file, self.parser).getroot()
         except ET.XMLSyntaxError as e:
-            raise ParserException(e.message)
+            raise ParserException(e.msg)
         return self.parse_element(root)
 
     def fromString(self, string):
         try:
             root = ET.XML(string, self.parser)
         except ET.XMLSyntaxError as e:
-            raise ParserException(e.message)
+            raise ParserException(e.msg)
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
