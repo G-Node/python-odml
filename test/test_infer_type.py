@@ -10,12 +10,18 @@ class TestInferType(unittest.TestCase):
     def test_string(self):
         p = Property("test", value="somestring")
         assert(p.dtype == "string")
-        assert(type(p.value[0]) == str)
+        if sys.version_info < (3, 0):
+            assert (type(p.value[0]) == unicode)
+        else:
+            assert (type(p.value[0]) == str)
 
     def test_text(self):
         p = Property("test", value="some\nstring")
         assert (p.dtype == "text")
-        assert (type(p.value[0]) == str)
+        if sys.version_info < (3, 0):
+            assert (type(p.value[0]) == unicode)
+        else:
+            assert (type(p.value[0]) == str)
 
     def test_int(self):
         p = Property("test", value=111)
