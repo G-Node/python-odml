@@ -60,6 +60,7 @@ To install the Python-odML library, enter the corresponding directory and run::
   $ cd python-odml
   $ python setup.py install
 
+**Note** The master branch is our current development branch, not all features might be working as expected. Use the release tags instead.
 
 Documentation
 -------------
