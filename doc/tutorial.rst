@@ -1014,7 +1014,7 @@ For example, let us reorder the Sections of the 'TheCrew' alphabetically::
 Note that the :py:meth:`odml.doc.BaseSection.reorder` as well as the 
 :py:meth:`odml.doc.BaseProperty.reorder` method receives the new (wanted) list 
 index for the object as input, moves the object with execution and returns its 
-original index position of the corresponding object list.
+original index position of the correspond
 
 
 Links & Includes
