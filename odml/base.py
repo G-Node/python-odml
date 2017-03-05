@@ -261,7 +261,7 @@ class sectionable(baseobject):
         iterate each related value (recursively)
 
         >>> # example: return all children values which string converted version has "foo"
-        >>> filter_func = lambda x: str(getattr(x, 'data')).find("foo") > -1
+        >>> filter_func = lambda x: str(x).find("foo") > -1
         >>> sec_or_doc.itervalues(filter_func=filter_func)
 
         :param max_depth: iterate all properties recursively if None, only to a certain
@@ -273,9 +273,8 @@ class sectionable(baseobject):
         :type filter_func: function
         """
         for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
-            for v in prop.values:
-                if filter_func(v):
-                    yield v
+            if filter_func(prop.value):
+                yield prop.value
 
     def contains(self, obj):
         """
@@ -286,6 +285,7 @@ class sectionable(baseobject):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
+    #FIXME type arguments renamed to dtype?
     def _matches(self, obj, key=None, type=None, include_subtype=False):
         """
         find out

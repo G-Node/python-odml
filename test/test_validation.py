@@ -89,15 +89,10 @@ class TestValidation(unittest.TestCase):
     def test_property_values(self):
         # different units
         doc = samplefile.parse("""s1[t1]""")
-        p = odml.Property(name="p1", value=[0,1])
+        p = odml.Property(name="p1", value=[0, 1])
         doc["s1"].append(p)
-        p.values[0].unit = "km"
-        p.values[1].unit = "mV"
-        res = validate(doc)
-        self.assertError(res, "the same unit")
 
-        del p.values[1]
         # missing dependency
         p.dependency = "p2"
         res = validate(doc)
-        self.assertError(res, "non-existant dependency object")
+        self.assertError(res, "non-existent dependency object")
