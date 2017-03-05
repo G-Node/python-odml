@@ -17,16 +17,14 @@ odML Tutorial
 odML (open metadata Markup Language)
 ====================================
 
-odML (open metadata Markup Language) is an XML based file format, 
-proposed by [Grewe et al. (2011) Front Neuroinform 5:16], in order 
-to provide metadata in an organized, human- and machine-readable way. 
-In this tutorial we will illustrate the conceptual design of odML and 
-show hands-on how you can generate your own odML metadata collection. 
-In addition, we demonstrate the advantages of using odML to screen 
-large numbers of data sets according to selection criteria relevant for 
-subsequent analyses. Well organized metadata management is a key 
-component to guarantee reproducibility of experiments and to track 
-provenance of performed analyses.
+odML (open metadata Markup Language) is a framework, proposed by 
+[Grewe et al. (2011) Front Neuroinform 5:16], to organize and store 
+experimental metadata in a human- and machine-readable, XML based format 
+(odml). In this tutorial we will illustrate the conceptual design of the odML 
+framework and show hands-on how you can generate your own odML metadata file 
+collection. A well organized metadata management of your experiment is a key 
+component to guarantee the reproducibility of your research and facilitate 
+the provenance tracking of your analysis projects.
 
 What are metadata and why are they needed?
 	Metadata are data about data. They describe the conditions under which the 
@@ -38,41 +36,42 @@ What are metadata and why are they needed?
 	knowledge of what is important and how it is organized is often 
 	underestimated.
 
-	While maintaining the relation to the actual raw-data, odML can help to 
-	collect all metadata which are usually distributed over several files and 
-	formats, and to store them unitetly which facilitates sharing data and 
-	metadata.
+	While maintaining the relation to the actual raw-data, the odML framework
+	can help to collect all metadata which are usually distributed over several 
+	files and formats, and to store them unitetly which will facilitate sharing 
+	data and metadata within your lab and across collaboration partners.
 
-Key features of odML
+Key features of the odML framework
 	- open, XML based language, to collect, store and share metadata
-	- Machine- and human-readable
-	- Interactive odML-Editor
-	- Python-odML library
+	- machine- and human-readable
+	- standardized metadata organization
+	- provision of a user defined repository with common experimental metadata 
+	  terminologies
 -------------------------------------------------------------------------------
 
 
 Structure of this tutorial
 ==========================
 
-The scientific background of the possible user community of odML varies 
-enormously (e.g. physics, informatics, mathematics, biology, medicine,
+The scientific background of the possible user community of the odML framework 
+varies enormously (e.g. physics, informatics, mathematics, biology, medicine,
 psychology). Some users will be trained programmers, others probably have never 
 learned a programming language. 
 
-To cover the different demands of all users, we first provide a slow 
-introduction to odML that allows programming beginners to learn the basic 
-concepts. In a next step, we will demonstrate how to generate an odML file via 
-the Python-odML library. In later chapters we present more advanced possibilies 
-of the Python-odML library (e.g. how to search for certain metadata or how to
-integrate existing terminologies or templates). 
+To cover the different demands of all users, we provide a slow introduction to 
+the odML framework that even allows programming beginners to learn the basic 
+concepts. We will further demonstrate how to generate an odML file and present 
+more advanced possibilies of the Python-odML library (e.g. how to search for 
+certain metadata or how to integrate existing terminologies). 
 
-Although the structure of an odML is depending on the needs of each individual 
-user, we would like to provide at the end of this tutorial a few guidelines.
+Although the structure of an odML file is depending on the needs of each 
+individual user, we would like to provide at the end of this tutorial a few 
+guidelines.
 
 The code for the example odML files, which we use within this tutorial is part 
 of the documentation package (see doc/example_odMLs/). 
 
-A summary of available odML terminologies and templates can be found `here
+A summary of available odML terminologies can be found `here
 <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_. 
 
 
@@ -82,36 +81,71 @@ A summary of available odML terminologies and templates can be found `here
 Download and Installation
 =========================
 
-The Python-odML library (including the odML-Editor) is available on 
-`GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with 
-the version control system **git**, but still want to use it, have a look at 
-the documentaion available on the `git-scm website <https://git-scm.com/>`_. 
+The Python-odML library is available on `GitHub <https://github.com/G-Node/python-odml>`_ 
+and `PyPI <https://pypi.python.org/pypi/odML/1.0>`_. 
 
 Dependencies
 ------------
 
-The Python-odML library runs under Python 2.7. 
+The Python-odML library runs under Python 2.7 or 3.5. 
 
-Additionally, the Python-odML library depends on Enum (version 0.4.4).
+Additionally, the Python-odML library depends on Enum (version 0.4.4) and lxml
+(version 3.7.2).
+
+When the odML-Python library is installed via pip or the setup.py, these 
+packages will be automatically downloaded and installed. Alternatively, they 
+can be installed from the OS package manager. 
+
+On Ubuntu, the dependency packages are available as:
+* python-enum
+* python-lxml
+
+If you prefer the later way of installion, the following packages are required
+to build the python-lxml package on Ubuntu 14.04:
+* libxml2-dev
+* libxslt1-dev
+* lib32z1-dev
 
 
-Installation
-------------
+Installation...
+---------------
 
-To download the Python-odML library please either use git and clone the 
-repository from GitHub::
+... via pip:
+************
+
+The simplest way to install the Python-odML library is from PyPI using pip::
+
+	$ pip install odml
+	
+The appropriate Python dependencies (Enum and lxml) will be automatically 
+downloaded and installed.
+
+If you are not familiar with PyPI and pip, please have a look at the available
+online documentation (see `PyPI <https://pypi.python.org/pypi>`_ and 
+`pip <https://pip.pypa.io/en/stable/>`_)
+
+
+... from source:
+****************
+To build the Python-odML library from source, please use git and clone the 
+corresponding repository from GitHub::
 
 	$ cd /home/usr/toolbox/
 	$ git clone https://github.com/G-Node/python-odml.git
 	
-... or if you don't want to use git download the ZIP file also provided on 
-GitHub to your computer (e.g. as above on your home directory under a "toolbox" 
+Alternatively, you can download the ZIP file also provided on GitHub site of 
+odML to your computer (e.g. as above on your home directory under a "toolbox" 
 folder).
 
-To install the Python-odML library, enter the corresponding directory and run::
+After cloning or downloading the Python-odML library, enter it's corresponding 
+directory and install the setup.py file::
 
 	$ cd /home/usr/toolbox/python-odml/
 	$ python setup.py install
+	
+If you are not familiar with the version control system **git**, but still want 
+to use it, have a look at the documentaion available on the `git-scm website 
+<https://git-scm.com/>`_. 
 	
 
 Bugs & Questions
@@ -131,10 +165,9 @@ it with `odml` and we'll do our best to quickly solve the problem.
 Basic knowledge on odML
 =======================
 
-Before we start, it is important to know the basic structure of an odML 
-file. Within an odML file metadata are grouped and stored in a 
-hierarchical tree structure which consists of three different odML 
-objects.
+Before we start, it is important to know the basic structure of an odML file. 
+Within an odML file metadata are grouped and stored in a hierarchical tree 
+structure which consists of three different odML objects.
 
 Document
 	- corresponds to the root of the tree (groups everything together)
@@ -151,10 +184,10 @@ Property
 	- *parent*: Section
 	- *children*: no children
 			
-Each of these odML objects has a certain set of attributes where the 
-user can describe the object and its contents. Which attribute belongs 
-to which object and what the attributes are used for, is better explained 
-in an example odML file (e.g., "THGTTG.odml").
+Each of these odML objects has a certain set of attributes where the user can 
+describe the object and its contents. Which attribute belongs to which object 
+and what the attributes are used for, is better explained by looking at an 
+example odML file (e.g., "THGTTG.odml").
 
 
 A first look
@@ -194,10 +227,19 @@ in "to_load" accordingly.
 How you can access the different odML objects and their attributes once you 
 loaded an odML file and how you can make use of the attributes is described in 
 more detail in the following chapters for each odML object type (Document, 
-Section, Property). Please note that some attributes are obligatory, 
-some are recommended and others are optional. The optional attributes are 
-important for the advanced odML possibilities and can for now be ignored by 
-odML beginners. You can find an example of their usage in later chapters.
+Section, Property). Please note that some attributes are obligatory, some are 
+recommended and others are optional when creating the corresponding odML 
+objects. 
+
+How you can create the different odML objects on your own and how to connect 
+them to build your own metadata odML file will be described in later chapters.
+Further advanced functions you can use to navigate threw your odML files, or to
+create an odML template file, or to make use of common odML terminologies 
+provided via `the G-Node repository
+<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_ can also
+be found later on in this tutorial.
+
+But now, let us first have a look at the example odML file (THGTTG.odml)!
 
 
 The Document
