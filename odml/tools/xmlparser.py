@@ -182,7 +182,8 @@ class XMLReader(object):
         """
         try:
             root = ET.parse(xml_file, self.parser).getroot()
-            xml_file.close()
+            if hasattr(xml_file, "close"):
+                xml_file.close()
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
         return self.parse_element(root)
