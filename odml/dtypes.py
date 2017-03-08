@@ -77,15 +77,15 @@ def validate(string, dtype):
         if not valid_type(dtype):
             if dtype.endswith("-tuple"):
                 count = int(dtype[:-6])
-                #try to parse it
+                # try to parse it
                 tuple_get(string, count=count)
                 return True
-                #try to parse it
+                # try to parse it
             self.get(dtype + "_get", str_get)(string)
         else:
             return False
     except RuntimeError:
-        #any error, this type ain't valid
+        # any error, this type ain't valid
         return False
 
 
@@ -203,7 +203,7 @@ def boolean_get(string):
     if type(string) is bool:
         string = str(string)
     string = string.lower()
-    truth = ["true", "t", "1"] # be kind, spec only accepts True / False
+    truth = ["true", "t", "1"]  # be kind, spec only accepts True / False
     if string in truth:
         return True
     false = ["false", "f", "0"]
@@ -228,7 +228,7 @@ def tuple_get(string, count=None):
     assert string.startswith("(") and string.endswith(")")
     string = string[1:-1]
     res = string.split(";")
-    if count is not None: # be strict
+    if count is not None:  # be strict
         assert len(res) == count
     return res
 
