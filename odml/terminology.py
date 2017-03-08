@@ -77,7 +77,7 @@ class Terminologies(dict):
             term.finalize()
         except odml.tools.xmlparser.ParserException as e:
             print("Failed to load %s due to parser errors" % url)
-            print(' "%s"' % e.message)
+            print(' "%s"' % e)
             term = None
         self[url] = term
         return term
