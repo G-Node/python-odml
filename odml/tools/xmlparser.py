@@ -37,7 +37,7 @@ format.Document._xml_attributes = {}
 format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Property._xml_attributes = {}
 
-XML_VERSION = "1.5"
+XML_VERSION = "1.1"
 
 
 def to_csv(val):
@@ -111,7 +111,6 @@ class XMLWriter:
             if val is None:
                 continue
             if isinstance(fmt, format.Property.__class__) and k == "value":
-                # TODO here goes the csv
                 ele = E(k, to_csv(val))
                 cur.append(ele)
             else:
@@ -284,14 +283,13 @@ class XMLReader(object):
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
-            if hasattr(obj, k):
-                if getattr(obj, k) is None:
-                    try:
-                        setattr(obj, k, v)
-                    except Exception as e:
-                        self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
-                        if not self.ignore_errors:
-                            raise
+            if hasattr(obj, k) and getattr(obj, k) is None:
+                try:
+                    setattr(obj, k, v)
+                except Exception as e:
+                    self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
+                    if not self.ignore_errors:
+                        raise e
 
         if insert_children:
             for child in children:
