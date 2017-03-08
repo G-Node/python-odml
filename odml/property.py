@@ -19,7 +19,7 @@ class BaseProperty(base.baseobject, Property):
                  dependency_value=None, dtype=None):
         """
         Create a new Property with a single value. The method will try to infer the value's dtype from the type of the
-        value.
+        value if not explicitly stated.
 
         Example for a property with
         >>> p = Property("property1", "a string")
@@ -31,11 +31,11 @@ class BaseProperty(base.baseobject, Property):
         >>> p = Property("prop", [2, 3, 4])
         >>> p.dtype
         >>> int
-        :param name: The mane of the property
+        :param name: The name of the property
         :param value: Some data value, this may be a list of homogeneous values.
         :param unit: The unit of the stored data.
         :param uncertainty: the uncertainty (e.g. the standard deviation) associated with a measure value.
-        :param value_reference: A reference (e.g. an URL) to an external definition of the value.
+        :param reference: A reference (e.g. an URL) to an external definition of the value.
         :param definition: The definition of the property.
         :param dependency: Another property this property depends on.
         :param dependency_value: Dependency on a certain value.
@@ -195,7 +195,6 @@ class BaseProperty(base.baseobject, Property):
         """
         if value in self._value:
             self._value.remove(value)
-        pass
 
     def get_path(self):
         """return the absolute path to this object"""
