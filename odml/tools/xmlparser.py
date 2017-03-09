@@ -8,11 +8,9 @@ Parses odML files. Can be invoked standalone:
 """
 #TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 import sys
-
 from odml import format
 from lxml import etree as ET
 from lxml.builder import E
-
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
 

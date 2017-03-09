@@ -8,12 +8,13 @@ import tempfile
 import datetime
 import odml.tools.xmlparser
 from hashlib import md5
+py3 = True
 try:
     import urllib.request as urllib2
 except ImportError:
     import urllib2
+    py3 = False
 import threading
-
 
 CACHE_AGE = datetime.timedelta(days=1)
 
@@ -36,12 +37,15 @@ def cache_load(url):
        or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
        datetime.datetime.now() - CACHE_AGE:
         try:
-            data = urllib2.urlopen(url).read()
+            data = urllib2.urlopen(url).read().decode("latin1")
         except Exception as e:
             print("failed loading '%s': %s" % (url, e))
             return
         fp = open(cache_file, "w")
-        fp.write(str(data))
+        if py3:
+            fp.write(data)
+        else:
+            fp.write(data.encode('latin1'))
         fp.close()
     return open(cache_file)
 
@@ -97,4 +101,8 @@ deferred_load = terminologies.deferred_load
 
 
 if __name__ == "__main__":
-    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/analysis.xml')
+    print ("Terminologies!")
+    t = Terminologies()
+    t.load('http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml')
+    # t.load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/power_spectrum.xml')
+
