@@ -136,11 +136,17 @@ class SmartList(SafeList):
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
 
-    def append(self, obj):
-        if obj.name in self:
-            raise KeyError("Object with the same name already exists! " + str(obj))
-        else:
-            super(SmartList, self).append(obj)
+    def append(self, *obj_tuple):
+        ll = len(obj_tuple)
+        for i in list(range(0,ll)):
+                if obj_tuple[i].name in self:
+                    raise KeyError("Object with the same name already exists! " + str(obj_tuple[i]))
+                from odml.section import BaseSection
+                from odml.doc import BaseDocument
+                if (not isinstance(obj_tuple[i], BaseSection)) & isinstance(self,BaseDocument):
+                    raise KeyError("Object " + str(obj_tuple[i]) + " is not a Section.")
+                super(SmartList, self).append(obj_tuple[i])
+
 
 
 @allow_inherit_docstring
@@ -176,10 +182,17 @@ class sectionable(baseobject):
         self._sections.append(section)
         section._parent = self
 
-    def append(self, section):
+    def append(self, *vsection):
         """adds the section to the section-list and makes this document the section’s parent"""
-        self._sections.append(section)
-        section._parent = self
+        ll = len(vsection)
+        for i in list(range(0,ll)):
+             from odml.section import BaseSection
+             from odml.doc import BaseDocument
+             if (not isinstance(vsection[i], BaseSection)) & isinstance(self,BaseDocument):
+                raise KeyError("Object " + str(vsection[i]) + " is not a Section.")
+             self._sections.append(vsection[i])
+             vsection[i]._parent = self
+ 
 
     @inherit_docstring
     def reorder(self, new_index):

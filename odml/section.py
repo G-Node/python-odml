@@ -181,7 +181,7 @@ class BaseSection(base.sectionable, Section):
         """
         return self._merged
 
-    def append(self, obj):
+    def __append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
             self._sections.append(obj)
@@ -191,6 +191,12 @@ class BaseSection(base.sectionable, Section):
             obj._section = self
         else:
             raise ValueError("Can only append sections and properties")
+
+    def append(self, *obj_tuple):
+        """append Sections or Properties"""
+        ll = len(obj_tuple)
+        for i in list(range(0,ll)):
+            self.__append(obj_tuple[i])
 
     def insert(self, position, obj):
         """insert a Section or Property at the respective position"""
