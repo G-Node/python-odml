@@ -194,9 +194,8 @@ class BaseSection(base.sectionable, Section):
 
     def append(self, *obj_tuple):
         """append Sections or Properties"""
-        ll = len(obj_tuple)
-        for i in list(range(0,ll)):
-            self.__append(obj_tuple[i])
+        for obj in obj_tuple:
+            self.__append(obj)
 
     def insert(self, position, obj):
         """insert a Section or Property at the respective position"""
