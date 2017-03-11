@@ -137,15 +137,14 @@ class SmartList(SafeList):
                 return True
 
     def append(self, *obj_tuple):
-        ll = len(obj_tuple)
-        for i in list(range(0,ll)):
-                if obj_tuple[i].name in self:
-                    raise KeyError("Object with the same name already exists! " + str(obj_tuple[i]))
-                from odml.section import BaseSection
-                from odml.doc import BaseDocument
-                if (not isinstance(obj_tuple[i], BaseSection)) & isinstance(self,BaseDocument):
-                    raise KeyError("Object " + str(obj_tuple[i]) + " is not a Section.")
-                super(SmartList, self).append(obj_tuple[i])
+        from odml.section import BaseSection
+        from odml.doc import BaseDocument
+        for obj in obj_tuple:
+                if obj.name in self:
+                    raise KeyError("Object with the same name already exists! " + str(obj))
+                if (not isinstance(obj, BaseSection)) & isinstance(self, BaseDocument):
+                    raise KeyError("Object " + str(obj) + " is not a Section.")
+                super(SmartList, self).append(obj)
 
 
 
@@ -182,16 +181,15 @@ class sectionable(baseobject):
         self._sections.append(section)
         section._parent = self
 
-    def append(self, *vsection):
+    def append(self, *vsection_tuple):
         """adds the section to the section-list and makes this document the section’s parent"""
-        ll = len(vsection)
-        for i in list(range(0,ll)):
-             from odml.section import BaseSection
-             from odml.doc import BaseDocument
-             if (not isinstance(vsection[i], BaseSection)) & isinstance(self,BaseDocument):
-                raise KeyError("Object " + str(vsection[i]) + " is not a Section.")
-             self._sections.append(vsection[i])
-             vsection[i]._parent = self
+        from odml.section import BaseSection
+        from odml.doc import BaseDocument
+        for vsection in vsection_tuple:
+             if (not isinstance(vsection, BaseSection)) & isinstance(self,BaseDocument):
+                raise KeyError("Object " + str(vsection) + " is not a Section.")
+             self._sections.append(vsection)
+             vsection._parent = self
  
 
     @inherit_docstring
