@@ -216,7 +216,7 @@ class BaseValue(base.baseobject, Value):
         if max_length != -1:
             text = text[:max_length]
         if self.can_display(text, max_length):
-            return text + u'…'
+            return (text + u'…').encode('utf-8')
 
         return "(%d bytes)" % len(self._value)
 
