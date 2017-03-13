@@ -28,8 +28,6 @@ class ValidationError(object):
 
     @property
     def path(self):
-        if isinstance(self.obj, odml.value.Value):
-            return self.obj.parent.get_path()
         return self.obj.get_path()
 
     def __repr__(self):
@@ -48,8 +46,7 @@ class Validation(object):
          * odML
          * section
          * property
-         * value
-        
+
         And is called in the validation process for each corresponding
         object. The *handler* is assumed to be a generator function
         yielding all ValidationErrors it finds:
@@ -71,8 +68,6 @@ class Validation(object):
             self.validate(sec)
             for prop in sec.properties:
                 self.validate(prop)
-                for val in prop.values:
-                    self.validate(val)
 
     def validate(self, obj):
         handlers = self._handlers.get(obj._format._name, [])
@@ -155,7 +150,8 @@ def section_unique_name_type_combination(obj):
             children=lambda x: x.sections,
             msg="name/type combination must be unique"):
             yield i
-        
+
+
 def property_unique_names(obj):
     for i in object_unique_names(obj, lambda x: x.properties):
         yield i
@@ -163,16 +159,6 @@ def property_unique_names(obj):
 Validation.register_handler('odML',    section_unique_name_type_combination)
 Validation.register_handler('section', section_unique_name_type_combination)
 Validation.register_handler('section', property_unique_names)
-
-
-def property_values_same_unit(prop, tprop=None):
-    units = set(map(lambda x: x.unit, prop.values))
-    if len(units) > 1:
-        yield ValidationError(prop, 'Values of a property should be of the same unit', 'warning')
-    if tprop is not None and tprop.values[0].unit != prop.values[0].unit:
-        yield ValidationError(prop, 'Values of a property should have the same unit as their terminology equivalent', 'warning')
-
-Validation.register_handler('property', property_values_same_unit)
 
 
 def property_terminology_check(prop):
@@ -184,39 +170,33 @@ def property_terminology_check(prop):
        match the one in the terminology
     """
     tsec = prop.parent.get_terminology_equivalent()
-    if tsec is None: return
+    if tsec is None:
+        return
     try:
         tprop = tsec.properties[prop.name]
     except KeyError:
         tprop = None
         yield ValidationError(prop, "Property '%s' not found in terminology" % prop.name, 'warning')
-    for err in property_values_same_unit(prop, tprop):
-        yield err
 
 Validation.register_handler('property', property_terminology_check)
 
 
 def property_dependency_check(prop):
     """
-    warn, if the dependency attribute refers to a non-existant attribute
+    warn, if the dependency attribute refers to a non-existent attribute
     or the dependency_value does not match
     """
     dep = prop.dependency
-    if dep is None: return
+    if dep is None:
+        return
 
     try:
         dep_obj = prop.parent[dep]
     except KeyError:
-        yield ValidationError(prop, "Property refers to a non-existant dependency object", 'warning')
+        yield ValidationError(prop, "Property refers to a non-existent dependency object", 'warning')
         return
 
-    if dep_obj.value.value != prop.dependency_value:
+    if prop.dependency_value not in dep_obj.value[0]:  # FIXME
         yield ValidationError(prop, "Dependency-value is not equal to value of the property's dependency", 'warning')
 
 Validation.register_handler('property', property_dependency_check)
-
-def value_empty(val):
-    if val.value == '':
-        yield ValidationError(val, "Values may only be empty in terminologies", 'warning')
-
-Validation.register_handler('value', value_empty)
