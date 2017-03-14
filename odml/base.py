@@ -136,11 +136,16 @@ class SmartList(SafeList):
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
 
-    def append(self, obj):
-        if obj.name in self:
-            raise KeyError("Object with the same name already exists! " + str(obj))
-        else:
-            super(SmartList, self).append(obj)
+    def append(self, *obj_tuple):
+        from odml.section import BaseSection
+        from odml.doc import BaseDocument
+        for obj in obj_tuple:
+                if obj.name in self:
+                    raise KeyError("Object with the same name already exists! " + str(obj))
+                if (not isinstance(obj, BaseSection)) & isinstance(self, BaseDocument):
+                    raise KeyError("Object " + str(obj) + " is not a Section.")
+                super(SmartList, self).append(obj)
+
 
 
 @allow_inherit_docstring
@@ -176,10 +181,16 @@ class sectionable(baseobject):
         self._sections.append(section)
         section._parent = self
 
-    def append(self, section):
+    def append(self, *vsection_tuple):
         """adds the section to the section-list and makes this document the section’s parent"""
-        self._sections.append(section)
-        section._parent = self
+        from odml.section import BaseSection
+        from odml.doc import BaseDocument
+        for vsection in vsection_tuple:
+             if (not isinstance(vsection, BaseSection)) & isinstance(self,BaseDocument):
+                raise KeyError("Object " + str(vsection) + " is not a Section.")
+             self._sections.append(vsection)
+             vsection._parent = self
+ 
 
     @inherit_docstring
     def reorder(self, new_index):
@@ -261,7 +272,7 @@ class sectionable(baseobject):
         iterate each related value (recursively)
 
         >>> # example: return all children values which string converted version has "foo"
-        >>> filter_func = lambda x: str(getattr(x, 'data')).find("foo") > -1
+        >>> filter_func = lambda x: str(x).find("foo") > -1
         >>> sec_or_doc.itervalues(filter_func=filter_func)
 
         :param max_depth: iterate all properties recursively if None, only to a certain
@@ -273,9 +284,8 @@ class sectionable(baseobject):
         :type filter_func: function
         """
         for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
-            for v in prop.values:
-                if filter_func(v):
-                    yield v
+            if filter_func(prop.value):
+                yield prop.value
 
     def contains(self, obj):
         """
@@ -286,6 +296,7 @@ class sectionable(baseobject):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
+    #FIXME type arguments renamed to dtype?
     def _matches(self, obj, key=None, type=None, include_subtype=False):
         """
         find out

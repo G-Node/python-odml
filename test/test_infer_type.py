@@ -1,54 +1,61 @@
 import unittest
 import sys
 from datetime import datetime as dt, date, time
-from odml import Value, Property, Section, Document
+from odml import Property, Section, Document
 from odml.tools.xmlparser import XMLReader, XMLWriter
 
 
 class TestInferType(unittest.TestCase):
 
     def test_string(self):
-        v = Value("somestring")
-        assert(v.dtype == "string")
-        assert(type(v.data) == str)
+        p = Property("test", value="somestring")
+        assert(p.dtype == "string")
+        if sys.version_info < (3, 0):
+            assert (type(p.value[0]) == unicode)
+        else:
+            assert (type(p.value[0]) == str)
 
     def test_text(self):
-        v = Value("some\nstring")
-        assert(v.dtype == "text")
-        assert(type(v.data) == str)
+        p = Property("test", value="some\nstring")
+        assert (p.dtype == "text")
+        if sys.version_info < (3, 0):
+            assert (type(p.value[0]) == unicode)
+        else:
+            assert (type(p.value[0]) == str)
 
     def test_int(self):
-        v = Value(111)
-        assert(v.dtype == "int")
-        assert(type(v.data) == int)
+        p = Property("test", value=111)
+        assert (p.dtype == "int")
+        assert (type(p.value[0]) == int)
 
     def test_float(self):
-        v = Value(3.14)
-        assert(v.dtype == "float")
-        assert(type(v.data) == float)
+        p = Property("test", value=3.14)
+        assert (p.dtype == "float")
+        assert (type(p.value[0]) == float)
 
     def test_datetime(self):
-        v = Value(dt.now())
-        assert(v.dtype == "datetime")
-        assert(type(v.data) == dt)
+        p = Property("test", value=dt.now())
+        assert (p.dtype == "datetime")
+        assert(type(p.value[0]) == dt)
 
     def test_date(self):
-        v = Value(dt.now().date())
-        assert(v.dtype == "date")
-        assert(type(v.data) == date)
+        p = Property("test", dt.now().date())
+        assert (p.dtype == "date")
+        assert (type(p.value[0]) == date)
 
     def test_time(self):
-        v = Value(dt.now().time())
-        assert(v.dtype == "time")
-        assert(type(v.data) == time)
+        p = Property("test", value=dt.now().time())
+        assert (p.dtype == "time")
+        assert (type(p.value[0]) == time)
 
     def test_boolean(self):
-        v = Value(True)
-        assert(v.dtype == "boolean")
-        assert(type(v.data) == bool)
-        v = Value(False)
-        assert(v.dtype == "boolean")
-        assert(type(v.data) == bool)
+        p = Property("test", True)
+        assert (p.dtype == "boolean")
+        assert (type(p.value[0]) == bool)
+
+        p = Property("test", False)
+        assert (p.dtype == "boolean")
+        assert (type(p.value[0]) == bool)
 
     def test_read_write(self):
         doc = Document("author")
@@ -62,47 +69,47 @@ class TestInferType(unittest.TestCase):
         sec.append(Property("dateprop", dt.now().date()))
         sec.append(Property("timeprop", dt.now().time()))
         sec.append(Property("boolprop", True))
-        if sys.version_info < (3,0):
+        if sys.version_info < (3, 0):
             str_doc = unicode(XMLWriter(doc))
         else:
             str_doc = str(XMLWriter(doc))
         new_doc = XMLReader().fromString(str_doc)
         new_sec = new_doc.sections[0]
 
-        v = new_sec.properties["strprop"].value
-        assert(v.dtype == "string")
+        p = new_sec.properties["strprop"]
+        assert(p.dtype == "string")
         if sys.version_info < (3, 0):
-            assert(type(v.data) == unicode)
+            assert(type(p.value[0]) == unicode)
         else:
-            assert (type(v.data) == str)
+            assert (type(p.value[0]) == str)
 
-        v = new_sec.properties["txtprop"].value
-        assert(v.dtype == "text")
-        if sys.version_info < (3,0):
-            assert(type(v.data) == unicode)
+        p = new_sec.properties["txtprop"]
+        assert(p.dtype == "text")
+        if sys.version_info < (3, 0):
+            assert(type(p.value[0]) == unicode)
         else:
-            assert (type(v.data) == str)
+            assert (type(p.value[0]) == str)
 
-        v = new_sec.properties["intprop"].value
-        assert(v.dtype == "int")
-        assert(type(v.data) == int)
+        p = new_sec.properties["intprop"]
+        assert(p.dtype == "int")
+        assert(type(p.value[0]) == int)
 
-        v = new_sec.properties["floatprop"].value
-        assert(v.dtype == "float")
-        assert(type(v.data) == float)
+        p = new_sec.properties["floatprop"]
+        assert(p.dtype == "float")
+        assert(type(p.value[0]) == float)
 
-        v = new_sec.properties["datetimeprop"].value
-        assert(v.dtype == "datetime")
-        assert(type(v.data) == dt)
+        p = new_sec.properties["datetimeprop"]
+        assert(p.dtype == "datetime")
+        assert(type(p.value[0]) == dt)
 
-        v = new_sec.properties["dateprop"].value
-        assert(v.dtype == "date")
-        assert(type(v.data) == date)
+        p = new_sec.properties["dateprop"]
+        assert(p.dtype == "date")
+        assert(type(p.value[0]) == date)
 
-        v = new_sec.properties["timeprop"].value
-        assert(v.dtype == "time")
-        assert(type(v.data) == time)
+        p = new_sec.properties["timeprop"]
+        assert(p.dtype == "time")
+        assert(type(p.value[0]) == time)
 
-        v = new_sec.properties["boolprop"].value
-        assert(v.dtype == "boolean")
-        assert(type(v.data) == bool)
+        p = new_sec.properties["boolprop"]
+        assert(p.dtype == "boolean")
+        assert(type(p.value[0]) == bool)

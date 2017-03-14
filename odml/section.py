@@ -23,7 +23,7 @@ class BaseSection(base.sectionable, Section):
 
     _format = format.Section
 
-    def __init__(self, name, type="undefined", parent=None, definition=None):
+    def __init__(self, name, type=None, parent=None, definition=None):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
@@ -181,7 +181,7 @@ class BaseSection(base.sectionable, Section):
         """
         return self._merged
 
-    def append(self, obj):
+    def __append(self, obj):
         """append a Section or Property"""
         if isinstance(obj, Section):
             self._sections.append(obj)
@@ -191,6 +191,11 @@ class BaseSection(base.sectionable, Section):
             obj._section = self
         else:
             raise ValueError("Can only append sections and properties")
+
+    def append(self, *obj_tuple):
+        """append Sections or Properties"""
+        for obj in obj_tuple:
+            self.__append(obj)
 
     def insert(self, position, obj):
         """insert a Section or Property at the respective position"""
