@@ -37,7 +37,8 @@ format.Document._xml_attributes = {}
 format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Property._xml_attributes = {}
 
-XML_VERSION = "1.5"
+
+XML_VERSION = "1.1"
 
 
 def to_csv(val):
@@ -111,7 +112,6 @@ class XMLWriter:
             if val is None:
                 continue
             if isinstance(fmt, format.Property.__class__) and k == "value":
-                # TODO here goes the csv
                 ele = E(k, to_csv(val))
                 cur.append(ele)
             else:
@@ -182,16 +182,17 @@ class XMLReader(object):
         """
         try:
             root = ET.parse(xml_file, self.parser).getroot()
-            xml_file.close()
+            if hasattr(xml_file, "close"):
+                xml_file.close()
         except ET.XMLSyntaxError as e:
-            raise ParserException(e.message)
+            raise ParserException(e.msg)
         return self.parse_element(root)
 
     def fromString(self, string):
         try:
             root = ET.XML(string, self.parser)
         except ET.XMLSyntaxError as e:
-            raise ParserException(e.message)
+            raise ParserException(e.msg)
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
@@ -283,14 +284,13 @@ class XMLReader(object):
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
-            if hasattr(obj, k):
-                if getattr(obj, k) is None:
-                    try:
-                        setattr(obj, k, v)
-                    except Exception as e:
-                        self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
-                        if not self.ignore_errors:
-                            raise
+            if hasattr(obj, k) and getattr(obj, k) is None:
+                try:
+                    setattr(obj, k, v)
+                except Exception as e:
+                    self.warn("cannot set '%s' property on <%s>: %s" % (k, root.tag, repr(e)), root)
+                    if not self.ignore_errors:
+                        raise e
 
         if insert_children:
             for child in children:

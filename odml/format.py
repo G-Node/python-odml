@@ -41,7 +41,7 @@ class Property(Format):
         'dependency': 0,
         'dependencyvalue': 0,
         'uncertainty': 0,
-        'value_reference': 0,
+        'reference': 0,
         'type': 0,
         }
     _map = {

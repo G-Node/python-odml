@@ -15,11 +15,11 @@ class BaseProperty(base.baseobject, Property):
     """An odML Property"""
     _format = frmt.Property
 
-    def __init__(self, name, value=None, unit=None, uncertainty=None, value_reference=None, definition=None, dependency=None,
+    def __init__(self, name, value=None, unit=None, uncertainty=None, reference=None, definition=None, dependency=None,
                  dependency_value=None, dtype=None):
         """
         Create a new Property with a single value. The method will try to infer the value's dtype from the type of the
-        value.
+        value if not explicitly stated.
 
         Example for a property with
         >>> p = Property("property1", "a string")
@@ -31,11 +31,12 @@ class BaseProperty(base.baseobject, Property):
         >>> p = Property("prop", [2, 3, 4])
         >>> p.dtype
         >>> int
-        :param name: The mane of the property
+        
+        :param name: The name of the property
         :param value: Some data value, this may be a list of homogeneous values.
         :param unit: The unit of the stored data.
         :param uncertainty: the uncertainty (e.g. the standard deviation) associated with a measure value.
-        :param value_reference: A reference (e.g. an URL) to an external definition of the value.
+        :param reference: A reference (e.g. an URL) to an external definition of the value.
         :param definition: The definition of the property.
         :param dependency: Another property this property depends on.
         :param dependency_value: Dependency on a certain value.
@@ -48,7 +49,7 @@ class BaseProperty(base.baseobject, Property):
         self._value = []
         self._unit = unit
         self._uncertainty = uncertainty
-        self._value_reference = value_reference
+        self._reference = reference
         self._definition = definition
         self._dependency = dependency
         self._dependency_value = dependency_value
@@ -155,12 +156,12 @@ class BaseProperty(base.baseobject, Property):
         self._unit = new_value
 
     @property
-    def value_reference(self):
-        return self._value_reference
+    def reference(self):
+        return self._reference
 
-    @value_reference.setter
-    def value_reference(self, new_value):
-        self._value_reference = new_value
+    @reference.setter
+    def reference(self, new_value):
+        self._reference = new_value
 
     @property
     def definition(self):
@@ -195,7 +196,6 @@ class BaseProperty(base.baseobject, Property):
         """
         if value in self._value:
             self._value.remove(value)
-        pass
 
     def get_path(self):
         """return the absolute path to this object"""
