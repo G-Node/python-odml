@@ -4,6 +4,8 @@ try:
 except ImportError as ex:
     from distutils.core import setup
 
+from odml import __version__
+
 packages = [
     'odml',
     'odml.tools'
@@ -14,10 +16,10 @@ with open('README.rst') as f:
 
 install_req = ["lxml"]
 if sys.version_info < (3, 4):
-    install_req += ["enum"]
+    install_req += ["enum34"]
 
 setup(name='odML',
-      version='1.3.dev0',
+      version=__version__, 
       description='open metadata Markup Language',
       author='Hagen Fritsch',
       author_email='fritsch+gnode@in.tum.de',
