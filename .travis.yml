@@ -21,7 +21,7 @@ before_install:
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
   - pip install --upgrade coveralls
-
+  - pip install lxml enum34
 script:
   - python setup.py build
   - if [ $COVERALLS = 1 ]; then
