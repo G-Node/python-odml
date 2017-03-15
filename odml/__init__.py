@@ -5,6 +5,7 @@ from odml import property
 from odml import section
 from odml.dtypes import DType
 
+__version__ = '1.3.dev0'
 
 class odml_implementation(object):
     name = None
