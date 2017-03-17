@@ -5,7 +5,7 @@ Google Summer of Code contributions
 General guidelines
 ------------------
 
-Google Summer of Code candidates should follow the general contribution guidelines before beginning work on an issue and submitting pull requests.
+Google Summer of Code candidates should follow the [general contribution guidelines](CONTRIBUTING.md) before beginning work on an issue and submitting pull requests.
 Students interested in working on python-odml as part of GSoC 2017 should read the guidelines described in the [GSoC student guide](http://write.flossmanuals.net/gsocstudentguide/making-first-contact/) regarding making first contact.
 They're quite useful for general open source contributions as well.
 
