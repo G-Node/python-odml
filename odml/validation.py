@@ -114,7 +114,7 @@ def section_repository_should_be_present(sec):
     try:
         tsec = sec.get_terminology_equivalent()
     except Exception as e:
-        yield ValidationError(sec, 'Could not load terminology: ' + e.message, 'warning')
+        yield ValidationError(sec, 'Could not load terminology: ' % e, 'warning')
         return
 
     if tsec is None:
