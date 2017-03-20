@@ -293,7 +293,7 @@ class BaseSection(base.sectionable, Section):
         to the linked object
         """
         if self == section:
-            raise RuntimeException("cannot unmerge myself?")
+            raise RuntimeError("cannot unmerge myself?")
         removals = []
         for obj in section:
             mine = self.contains(obj)
