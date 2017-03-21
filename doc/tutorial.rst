@@ -17,8 +17,8 @@ odML Tutorial
 odML (open metadata Markup Language)
 ====================================
 
-odML (**o**pen meta**d**ata **M**arkup **L**anguage) is a framework, proposed 
-by `Grewe et al. (2011) <http://journal.frontiersin.org/article/10.3389/fninf.2011.00016/full>`_, 
+odML (open metadata Markup Language) is a framework, proposed by `Grewe et al. 
+(2011) <http://journal.frontiersin.org/article/10.3389/fninf.2011.00016/full>`_, 
 to organize and store experimental metadata in a human- and machine-readable, 
 XML based format (odml). In this tutorial we will illustrate the conceptual 
 design of the odML framework and show hands-on how you can generate your own 
@@ -81,13 +81,12 @@ A summary of available odML terminologies can be found `here
 Download and Installation
 =========================
 
-The odML framework is an open source project of the **G**erman Neuroinformatics
-**Node** (`G-Node <http://www.g-node.org/`_, 
-`odML project website <http://www.g-node.org/projects/odml>`_) of the 
-**I**nternational **N**euroinformatics **C**oordination **F**acility 
-(`INCF <http://www.g-node.org/`_). The source code for the Python library is 
-available on `GitHub <https://github.com/>`_ under the project name 
-`python-odml <https://github.com/G-Node/python-odml>`_.
+The odML framework is an open source project of the German Neuroinformatics
+Node (`G-Node <http://www.g-node.org/`_, `odML project website 
+<http://www.g-node.org/projects/odml>`_) of the International Neuroinformatics 
+Coordination Facility (`INCF <http://www.g-node.org/`_). The source code for 
+the Python library is available on `GitHub <https://github.com/>`_ under the 
+project name `python-odml <https://github.com/G-Node/python-odml>`_.
 
 Dependencies
 ------------
