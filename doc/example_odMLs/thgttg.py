@@ -7,6 +7,14 @@ Script to generate intro-example.odml
 @author: zehl
 """
 
+import sys
+if len(sys.argv) != 2:
+	print("You have to provide the absolute path to the odml-python module ", 
+	      "your command line.")
+else:
+	odml_pythonpath = sys.argv[-1]
+sys.path.append(odml_pythonpath)
+
 import os
 import odml
 import datetime
@@ -61,15 +69,17 @@ parent.append(odml.Section(
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="NameCrewMembers",
-    value=[odml.Value(data="Arthur Philip Dent", dtype=odml.DType.person),
-           odml.Value(data="Zaphod Beeblebrox", dtype=odml.DType.person),
-           odml.Value(data="Tricia Marie McMillan", dtype=odml.DType.person),
-           odml.Value(data="Ford Prefect", dtype=odml.DType.person)],
+    value=["Arthur Philip Dent",
+           "Zaphod Beeblebrox",
+           "Tricia Marie McMillan", 
+           "Ford Prefect"],
+    dtype=odml.DType.person,
     definition="List of crew members names"))
 
 parent.append(odml.Property(
 	name="NoCrewMembers",
-    value=odml.Value(data=4, dtype=odml.DType.int),
+    value=4, 
+    dtype=odml.DType.int,
     definition="Number of crew members"))
 
 
@@ -81,27 +91,32 @@ parent = doc['TheCrew']['Arthur Philip Dent']
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="Species",
-    value=odml.Value(data="Human", dtype=odml.DType.string),
+    value="Human", 
+    dtype=odml.DType.string,
     definition="Species to which subject belongs to"))
 
 parent.append(odml.Property(
 	name="Nickname",
-    value=odml.Value(data="The sandwich-maker", dtype=odml.DType.string),
+    value="The sandwich-maker", 
+    dtype=odml.DType.string,
     definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(
 	name="Occupation",
-    value=odml.Value(data="-", dtype=odml.DType.string),
+    value=None, 
+    dtype=odml.DType.string,
     definition="Occupation of the subject"))
 
 parent.append(odml.Property(
 	name="Gender",
-    value=odml.Value(data="male", dtype=odml.DType.string),
+    value="male", 
+    dtype=odml.DType.string,
     definition="Sex of the subject"))
 
 parent.append(odml.Property(
 	name="HomePlanet",
-    value=odml.Value(data="Earth", dtype=odml.DType.string),
+    value="Earth", 
+    dtype=odml.DType.string,
     definition="Home planet of the subject"))
 
 
@@ -113,29 +128,32 @@ parent = doc['TheCrew']['Zaphod Beeblebrox']
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="Species",
-    value=odml.Value(data="Betelgeusian", dtype=odml.DType.string),
+    value="Betelgeusian", 
+    dtype=odml.DType.string,
     definition="Species to which subject belongs to"))
 
 parent.append(odml.Property(
 	name="Nickname",
-    value=odml.Value(data="-", dtype=odml.DType.string),
+    value=None, 
+    dtype=odml.DType.string,
     definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(
 	name="Occupation",
-    value=odml.Value(data="Ex-Galactic President", dtype=odml.DType.string),
+    value="Ex-Galactic President", 
+    dtype=odml.DType.string,
     definition="Occupation of the subject"))
 
 parent.append(odml.Property(
 	name="Gender",
-    value=odml.Value(data="male", dtype=odml.DType.string),
+    value="male", 
+    dtype=odml.DType.string,
     definition="Sex of the subject"))
 
 parent.append(odml.Property(
 	name="HomePlanet",
-    value=odml.Value(
-		data="A planet in the vicinity of Betelgeuse",
-        dtype=odml.DType.string),
+    value="A planet in the vicinity of Betelgeuse",
+    dtype=odml.DType.string,
     definition="Home planet of the subject"))
 
 
@@ -147,27 +165,32 @@ parent = doc['TheCrew']['Tricia Marie McMillan']
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="Species",
-    value=odml.Value(data="Human", dtype=odml.DType.string),
+    value="Human", 
+    dtype=odml.DType.string,
     definition="Species to which subject belongs to"))
 
 parent.append(odml.Property(
 	name="Nickname",
-    value=odml.Value(data="Trillian Astra", dtype=odml.DType.string),
+    value="Trillian Astra", 
+    dtype=odml.DType.string,
     definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(
 	name="Occupation",
-    value=odml.Value(data="-", dtype=odml.DType.string),
+    value=None, 
+    dtype=odml.DType.string,
     definition="Occupation of the subject"))
 
 parent.append(odml.Property(
 	name="Gender",
-    value=odml.Value(data="female", dtype=odml.DType.string),
+    value="female", 
+    dtype=odml.DType.string,
     definition="Sex of the subject"))
 
 parent.append(odml.Property(
 	name="HomePlanet",
-    value=odml.Value(data="Earth", dtype=odml.DType.string),
+    value="Earth", 
+    dtype=odml.DType.string,
     definition="Home planet of the subject"))
 
 
@@ -179,29 +202,32 @@ parent = doc['TheCrew']['Ford Prefect']
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="Species",
-    value=odml.Value(data="Betelgeusian", dtype=odml.DType.string),
+    value="Betelgeusian", 
+    dtype=odml.DType.string,
     definition="Species to which subject belongs to"))
 
 parent.append(odml.Property(
 	name="Nickname",
-    value=odml.Value(data="Ix", dtype=odml.DType.string),
+    value="Ix", 
+    dtype=odml.DType.string,
     definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(
 	name="Occupation",
-    value=odml.Value(data="Researcher/Reporter", dtype=odml.DType.string),
+    value="Researcher/Reporter", 
+    dtype=odml.DType.string,
     definition="Occupation of the subject"))
 
 parent.append(odml.Property(
 	name="Gender",
-    value=odml.Value(data="male", dtype=odml.DType.string),
+    value="male", 
+    dtype=odml.DType.string,
     definition="Sex of the subject"))
 
 parent.append(odml.Property(
 	name="HomePlanet",
-    value=odml.Value(
-		data="A planet in the vicinity of Betelgeuse",
-        dtype=odml.DType.string),
+    value="A planet in the vicinity of Betelgeuse",
+    dtype=odml.DType.string,
     definition="Home planet of the subject"))
 
 # SET NEW PARENT NODE
@@ -216,39 +242,45 @@ parent.append(odml.Section(
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="Name",
-    value=odml.Value(data="Heart of Gold", dtype=odml.DType.string),
+    value="Heart of Gold", 
+    dtype=odml.DType.string,
     definition="Name of person/device"))
 
 parent.append(odml.Property(
 	name="OwnerStatus",
-    value=odml.Value(data="stolen", dtype=odml.DType.string),
+    value="stolen", 
+    dtype=odml.DType.string,
     definition="Owner status of device"))
 
 parent.append(odml.Property(
 	name="DriveType",
-    value=odml.Value(
-		data="Infinite Propability Drive",
-		dtype=odml.DType.string),
+    value="Infinite Propability Drive",
+	dtype=odml.DType.string,
     definition="Type of drive"))
 
 parent.append(odml.Property(
 	name="Technology",
-    value=odml.Value(data="secret", dtype=odml.DType.string),
+    value="secret", 
+    dtype=odml.DType.string,
     definition="Technology used to built device"))
 
 parent.append(odml.Property(
 	name="Length",
-    value=odml.Value(data=150.00, dtype=odml.DType.float, unit='m'),
+    value=150.00, 
+    dtype=odml.DType.float, 
+    unit='m',
     definition="Length of device"))
 
 parent.append(odml.Property(
 	name="Shape",
-    value=odml.Value(data="various", dtype=odml.DType.string),
+    value="various", 
+    dtype=odml.DType.string,
     definition="Shape of device"))
 
 parent.append(odml.Property(
 	name="FactoryPlanet",
-    value=odml.Value(data="Damogran", dtype=odml.DType.string),
+    value="Damogran", 
+    dtype=odml.DType.string,
     definition="Planet where device was constructed"))
 
 # SET NEW PARENT NODE
@@ -268,13 +300,15 @@ parent.append(odml.Section(
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(
 	name="NoOfCybernetics",
-    value=odml.Value(data=2, dtype=odml.DType.int),
+    value=2, 
+    dtype=odml.DType.int,
     definition="Number of cybernetic robots on the ship"))
                                        
 parent.append(odml.Property(
 	name="NamesOfCybernetics",
-    value=[odml.Value(data="Marvin", dtype=odml.DType.string),
-           odml.Value(data="Eddie", dtype=odml.DType.string)],
+    value=["Marvin",
+           "Eddie"], 
+    dtype=odml.DType.string,
     definition="Names of cybernetic robots on the ship"))                                       
                                        
                                        
@@ -286,16 +320,14 @@ parent = doc['TheStarship']['Cybernetics']['Marvin']
 # APPEND PROPERTIES WIHT VALUES
 parent.append(odml.Property(
 	name="Type",
-    value=odml.Value(
-		data="Genuine People Personality", 
-		dtype=odml.DType.string),
+    value="Genuine People Personality", 
+	dtype=odml.DType.string,
     definition="Type of robot"))
                             
 parent.append(odml.Property(
 	name="Manufacturer",
-    value=odml.Value(
-		data="Sirius Cybernetics Corporation",
-        dtype=odml.DType.string),
+    value="Sirius Cybernetics Corporation",
+    dtype=odml.DType.string,
     definition="Manufacturer of robots"))
                             
 # SET NEW PARENT NODE
@@ -306,17 +338,15 @@ parent = doc['TheStarship']['Cybernetics']['Eddie']
 # APPEND PROPERTIES WIHT VALUES
 parent.append(odml.Property(
 	name="Type",
-    value=odml.Value(
-		data="Genuine People Personality",
-        dtype=odml.DType.string),
+    value="Genuine People Personality",
+    dtype=odml.DType.string,
     definition="Type of robot"))
                             
 parent.append(odml.Property(
 	name="Manufacturer",
-    value=odml.Value(
-		data="Sirius Cybernetics Corporation",
-        dtype=odml.DType.string),
+    value="Sirius Cybernetics Corporation",
+    dtype=odml.DType.string,
     definition="Manufacturer of robots"))                           
 
-save_to =os.path.join(os.getcwd(),"THGTTG.odml")
+save_to = os.path.join(odml_pythonpath, "doc", "example_odMLs", "THGTTG.odml")
 odml.tools.xmlparser.XMLWriter(doc).write_file(save_to)

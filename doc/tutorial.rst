@@ -169,20 +169,20 @@ Before we start, it is important to know the basic structure of an odML file.
 Within an odML file metadata are grouped and stored in a hierarchical tree 
 structure which consists of three different odML objects.
 
-Document
-	- corresponds to the root of the tree (groups everything together)
-	- *parent*: no parent
-	- *children*: Section
+Document:
+	- description: *root of the tree*
+	- parent: *no parent*
+	- children: *Section*
 	
-Section
-	- corresponds to branches of the tree
-	- *parent*: Section or Document
-	- *children*: Section and/or Property
+Section:
+	- description: *branches of the tree*
+	- parent: *Document or Section*
+	- children: *Section and/or Property*
 	
-Property
-	- corresponds to the leafs of the tree (containing the metadata)
-	- *parent*: Section
-	- *children*: no children
+Property:
+	- description: *leafs of the tree (contains metadata values)*
+	- parent: *Section*
+	- children: *none*
 			
 Each of these odML objects has a certain set of attributes where the user can 
 describe the object and its contents. Which attribute belongs to which object 
@@ -196,19 +196,20 @@ A first look
 If you want to get familiar with the concept behind the odML framework and how 
 to handle odML files in Python, you can have a first look at the example odML 
 file provided in the Python-odML library. For this you first need to run the 
-python code ("thgttg.py") to generate the example odML file ("THGTTG.odml")::
+python code ("thgttg.py") to generate the example odML file ("THGTTG.odml"). 
+When using the following commands, make sure you adapt the paths to the 
+python-odml module to your owns!::
 
-	$ cd /home/usr/toolbox/python-odml/doc/example_odMLs/
-	$ ls
+	$ cd /home/usr/.../python-odml
+	$ ls doc/example_odMLs
 	thgttg.py
-	$ python thgttg.py
-	$ ls
+	$ python doc/example_odMLs/example_odMLs.py "/home/usr/.../python-odml"
+	$ ls doc/example_odMLs
 	THGTTG.odml  thgttg.py
 
 Now open a Python shell within the Python-odML library directory, e.g. with
 IPython::
 
-	$ cd /home/usr/toolbox/python-odml/
 	$ ipython 
 
 In the IPython shell, first import the odml package::
