@@ -81,11 +81,11 @@ Download and Installation
 =========================
 
 The odML framework is an open source project of the German Neuroinformatics
-Node (`G-Node <http://www.g-node.org/`_, `odML project website 
+Node (`G-Node <http://www.g-node.org/>`_, `odML project website 
 <http://www.g-node.org/projects/odml>`_) of the International Neuroinformatics 
-Coordination Facility (`INCF <http://www.g-node.org/`_). The source code for 
-the Python library is available on `GitHub <https://github.com/>`_ under the 
-project name `python-odml <https://github.com/G-Node/python-odml>`_.
+Coordination Facility (`INCF <http://www.g-node.org/>`_). The source code for 
+the Python-odML library is available on `GitHub <https://github.com/>`_ under 
+the project name `python-odml <https://github.com/G-Node/python-odml>`_.
 
 Dependencies
 ------------
@@ -99,11 +99,13 @@ packages will be automatically downloaded and installed. Alternatively, they
 can be installed from the OS package manager. 
 
 On Ubuntu, the dependency packages are available as:
+
 - python-enum
 - python-lxml
 
 If you prefer the later way of installion, the following packages are required
 to build the python-lxml package on Ubuntu 14.04:
+
 - libxml2-dev
 - libxslt1-dev
 - lib32z1-dev
@@ -115,9 +117,8 @@ Installation...
 ... via pip:
 ************
 
-The simplest way to install the Python-odML library is from 
-`PyPI <https://pypi.python.org/pypi>`_ using 
-`pip <https://pip.pypa.io/en/stable/>`_::
+The simplest way to install the Python-odML library is from `PyPI 
+<https://pypi.python.org/pypi>`_ using `pip <https://pip.pypa.io/en/stable/>`_::
 
 	$ pip install odml
 
