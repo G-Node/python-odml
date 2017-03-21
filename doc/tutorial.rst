@@ -163,26 +163,22 @@ file. Within an odML file metadata are grouped and stored in a
 hierarchical tree structure which consists of four different odML 
 objects.
 
-Document
-	- corresponds to the root of the tree (groups everything together)
-	- *parent*: no parent
-	- *children*: Section
-	
-Section
-	- corresponds to (big) branches of the tree
-	- *parent*: Section or Document
-	- *children*: Section and/or Property
-	
-Property
-	- corresponds to (small) branches of the tree (groups values)
-	- *parent*: Section
-	- *children*: at least one Value
-	
-Value
-	- corresponds to leaf of the tree (contains metadata)
-	- *parent*: Property
-	- *children*: no children
-			
+Document:
+	- description: *root of the tree*
+	- parent: *no parent*
+	- children: *Section*
+
+Section:
+	- description: *branches of the tree*
+	- parent: *Document or Section*
+	- children: *Section and/or Property*
+
+Property:
+	- description: *leafs of the tree (contains metadata values)*
+	- parent: *Section*
+	- children: *none*
+
+
 Each of these odML objects has a certain set of attributes where the 
 user can describe the object and its contents. Which attribute belongs 
 to which object and what the attributes are used for, is better explained 
@@ -192,30 +188,31 @@ in an example odML file (e.g., "THGTTG.odml").
 A first look
 ============
 
-If you want to get familiar with the concept behind an odML and how to handle 
-odML files in Python, you can have a first look at the example odML file 
-provided in the Python-odML library. For this you first need to run the python 
-code ("thgttg.py") to generate the example odML file ("THGTTG.odml")::
+If you want to get familiar with the concept behind the odML framework and how 
+to handle odML files in Python, you can have a first look at the example odML 
+file provided in the Python-odML library. For this you first need to run the 
+python code ("thgttg.py") to generate the example odML file ("THGTTG.odml"). 
+When using the following commands, make sure you adapt the paths to the 
+python-odml module to your owns!::
 
-	$ cd /home/usr/toolbox/python-odml/doc/example_odMLs/
-	$ ls
+	$ cd /home/usr/.../python-odml
+	$ ls doc/example_odMLs
 	thgttg.py
-	$ python thgttg.py
-	$ ls
+	$ python doc/example_odMLs/example_odMLs.py "/home/usr/.../python-odml"
+	$ ls doc/example_odMLs
 	THGTTG.odml  thgttg.py
 
 Now open a Python shell within the Python-odML library directory, e.g. with
 IPython::
 
-	$ cd /home/usr/toolbox/python-odml/
 	$ ipython 
 
 In the IPython shell, first import the odml package::
 
 	>>> import odml
-	
+
 Second, load the example odML file with the following command lines::
-	
+
 	>>> to_load = '/home/usr/toolbox/python-odml/doc/example_odMLs/THGTTG.odml'
 	>>> odmlEX = odml.tools.xmlparser.load(to_load)
 	
