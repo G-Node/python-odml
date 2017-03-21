@@ -34,9 +34,8 @@ doc.append(odml.Section(name="TheCrew",
                         type="crew"))
 
 doc.append(odml.Section(name="TheStarship",
-                        definition="Information on the crew",
-                        type="crew"))
-
+                        type="starship",
+                        definition="Information on the starship"))
 
 # SET NEW PARENT NODE
 parent = doc['TheCrew']
