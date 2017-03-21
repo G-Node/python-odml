@@ -100,17 +100,11 @@ When the odML-Python library is installed via pip or the setup.py, these
 packages will be automatically downloaded and installed. Alternatively, they 
 can be installed from the OS package manager. 
 
-On Ubuntu, the dependency packages are available as:
+On Ubuntu, the dependency packages are available as ``python-enum`` and 
+``python-lxml``.
 
-- python-enum
-- python-lxml
-
-If you prefer the later way of installion, the following packages are required
-to build the python-lxml package on Ubuntu 14.04:
-
-- libxml2-dev
-- libxslt1-dev
-- lib32z1-dev
+Note that on Ubuntu 14.04, the latter package additionally requires the 
+installation of ``libxml2-dev``, ``libxslt1-dev``, and ``lib32z1-dev``.
 
 
 Installation...
