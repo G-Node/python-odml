@@ -247,7 +247,7 @@ The Document
 ------------
 
 If you loaded the example odML file, you can have a first look at the Document 
-either by explicitely calling the odml object,...::
+either by explicitely calling the odml object::
 
 	>>> print(odmlEX.document)
 	<Doc 42 by D. N. Adams (2 sections)>
@@ -263,11 +263,11 @@ short cut notation.
 
 The print out gives you already the follwing information about the odML file:
 
-- '<...>' indicates that you are looking at an object
-- 'Doc' tells you that you are looking at an odML Document
-- '42' is the version of the odML file
-- 'by D. N. Adams' states the author of the odML file
-- '(2 sections)' tells you that this odML Document has 2 Section directly 
+- ``<...>`` indicates that you are looking at an object
+- ``Doc`` tells you that you are looking at an odML Document
+- ``42`` is the version of the odML file
+- ``by D. N. Adams`` states the author of the odML file
+- ``(2 sections)`` tells you that this odML Document has 2 Section directly 
   appended
   
 Note that the Document printout tells you nothing about the depth of the 

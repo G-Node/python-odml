@@ -37,7 +37,7 @@ doc.append(odml.Section(
 
 doc.append(odml.Section(
 	name="TheStarship",
-	type="crew",
+	type="starship",
     definition="Information on the starship"))
 
 
