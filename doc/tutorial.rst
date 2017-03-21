@@ -7,7 +7,7 @@ odML Tutorial
 	Lyuba Zehl;
 	based on work by Hagen Fritsch
 :Release:
-	0.1
+	0.2
 :License:
 	Creative Commons Attribution-ShareAlike 4.0 International 
 	`License <http://creativecommons.org/licenses/by-sa/4.0/>`_
@@ -17,14 +17,14 @@ odML Tutorial
 odML (open metadata Markup Language)
 ====================================
 
-odML (open metadata Markup Language) is a framework, proposed by 
-[Grewe et al. (2011) Front Neuroinform 5:16], to organize and store 
-experimental metadata in a human- and machine-readable, XML based format 
-(odml). In this tutorial we will illustrate the conceptual design of the odML 
-framework and show hands-on how you can generate your own odML metadata file 
-collection. A well organized metadata management of your experiment is a key 
-component to guarantee the reproducibility of your research and facilitate 
-the provenance tracking of your analysis projects.
+odML (**o**pen meta**d**ata **M**arkup **L**anguage) is a framework, proposed 
+by `Grewe et al. (2011) <http://journal.frontiersin.org/article/10.3389/fninf.2011.00016/full>`_, 
+to organize and store experimental metadata in a human- and machine-readable, 
+XML based format (odml). In this tutorial we will illustrate the conceptual 
+design of the odML framework and show hands-on how you can generate your own 
+odML metadata file collection. A well organized metadata management of your 
+experiment is a key component to guarantee the reproducibility of your research 
+and facilitate the provenance tracking of your analysis projects.
 
 What are metadata and why are they needed?
 	Metadata are data about data. They describe the conditions under which the 
@@ -60,13 +60,13 @@ learned a programming language.
 
 To cover the different demands of all users, we provide a slow introduction to 
 the odML framework that even allows programming beginners to learn the basic 
-concepts. We will further demonstrate how to generate an odML file and present 
-more advanced possibilies of the Python-odML library (e.g. how to search for 
+concepts. We will demonstrate how to generate an odML file and present more 
+advanced possibilies of the Python-odML library (e.g., how to search for 
 certain metadata or how to integrate existing terminologies). 
 
-Although the structure of an odML file is depending on the needs of each 
-individual user, we would like to provide at the end of this tutorial a few 
-guidelines.
+At the end of this tutorial we will provide a few guidelines that will help you
+to create an odML file structure that is optimised for your individual 
+experimental project and complements the special needs of your laboratory. 
 
 The code for the example odML files, which we use within this tutorial is part 
 of the documentation package (see doc/example_odMLs/). 
@@ -81,13 +81,18 @@ A summary of available odML terminologies can be found `here
 Download and Installation
 =========================
 
-The Python-odML library is available on `GitHub <https://github.com/G-Node/python-odml>`_ 
-and `PyPI <https://pypi.python.org/pypi/odML/1.0>`_. 
+The odML framework is an open source project of the **G**erman Neuroinformatics
+**Node** (`G-Node <http://www.g-node.org/`_, 
+`odML project website <http://www.g-node.org/projects/odml>`_) of the 
+**I**nternational **N**euroinformatics **C**oordination **F**acility 
+(`INCF <http://www.g-node.org/`_). The source code for the Python library is 
+available on `GitHub <https://github.com/>`_ under the project name 
+`python-odml <https://github.com/G-Node/python-odml>`_.
 
 Dependencies
 ------------
 
-The Python-odML library runs under Python 2.7 or 3.5. 
+The Python-odML library (version 1.3) runs under Python 2.7 or 3.5. 
 
 Additionally, the Python-odML library depends on Enum (version 0.4.4) and lxml
 (version 3.7.2).
@@ -97,14 +102,14 @@ packages will be automatically downloaded and installed. Alternatively, they
 can be installed from the OS package manager. 
 
 On Ubuntu, the dependency packages are available as:
-* python-enum
-* python-lxml
+- python-enum
+- python-lxml
 
 If you prefer the later way of installion, the following packages are required
 to build the python-lxml package on Ubuntu 14.04:
-* libxml2-dev
-* libxslt1-dev
-* lib32z1-dev
+- libxml2-dev
+- libxslt1-dev
+- lib32z1-dev
 
 
 Installation...
@@ -113,7 +118,9 @@ Installation...
 ... via pip:
 ************
 
-The simplest way to install the Python-odML library is from PyPI using pip::
+The simplest way to install the Python-odML library is from 
+`PyPI <https://pypi.python.org/pypi>`_ using 
+`pip <https://pip.pypa.io/en/stable/>`_::
 
 	$ pip install odml
 	
@@ -121,8 +128,7 @@ The appropriate Python dependencies (Enum and lxml) will be automatically
 downloaded and installed.
 
 If you are not familiar with PyPI and pip, please have a look at the available
-online documentation (see `PyPI <https://pypi.python.org/pypi>`_ and 
-`pip <https://pip.pypa.io/en/stable/>`_)
+online documentation.
 
 
 ... from source:
