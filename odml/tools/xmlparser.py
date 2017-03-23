@@ -45,7 +45,7 @@ def to_csv(val):
     stream = StringIO()
     writer = csv.writer(stream, dialect="excel")
     writer.writerow(unicode_values)
-    csv_string = stream.getvalue()[:-2]     # [:-2] For removing newline char
+    csv_string = stream.getvalue().strip()
     csv_string = "[" + csv_string + "]"
     return csv_string
 
