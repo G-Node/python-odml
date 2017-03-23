@@ -70,6 +70,9 @@ parent.append(odml.Property(name="NameCrewMembers",
 parent.append(odml.Property(name="NoCrewMembers",
                             value=4,
                             dtype=odml.DType.int,
+                            definition="Number of crew members",
+                            uncertainty=1,
+                            reference="The Hitchhiker's guide to the Galaxy (novel)",
                             definition="Number of crew members"))
 
 
