@@ -84,7 +84,6 @@ parent.append(odml.Property(
     reference="The Hitchhiker's guide to the Galaxy (novel)",
     definition="Number of crew members"))
 
-
 # SET NEW PARENT NODE
 parent = doc['TheCrew']['Arthur Philip Dent']
 
@@ -120,7 +119,6 @@ parent.append(odml.Property(
     value="Earth", 
     dtype=odml.DType.string,
     definition="Home planet of the subject"))
-
 
 # SET NEW PARENT NODE
 parent = doc['TheCrew']['Zaphod Beeblebrox']
@@ -158,7 +156,6 @@ parent.append(odml.Property(
     dtype=odml.DType.string,
     definition="Home planet of the subject"))
 
-
 # SET NEW PARENT NODE
 parent = doc['TheCrew']['Tricia Marie McMillan']
 
@@ -194,7 +191,6 @@ parent.append(odml.Property(
     value="Earth", 
     dtype=odml.DType.string,
     definition="Home planet of the subject"))
-
 
 # SET NEW PARENT NODE
 parent = doc['TheCrew']['Ford Prefect']
@@ -351,4 +347,4 @@ parent.append(odml.Property(
     definition="Manufacturer of robots"))                           
 
 save_to = os.path.join(odml_pythonpath, "doc", "example_odMLs", "THGTTG.odml")
-odml.tools.xmlparser.XMLWriter(doc).write_file(save_to)
+odml.save(doc, save_to)
