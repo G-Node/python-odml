@@ -200,9 +200,8 @@ def datetime_set(value):
 def boolean_get(string):
     if string is None:
         return None
-    if type(string) is str:
+    if type(string) is unicode:
         string = string.lower()
-
     truth = ["true", "1", True]  # be kind, spec only accepts True / False
     if string in truth:
         return True
@@ -237,4 +236,3 @@ def tuple_set(value):
     if not value:
         return None
     return "(%s)" % ";".join(value)
-
