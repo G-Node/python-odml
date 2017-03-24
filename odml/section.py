@@ -24,13 +24,14 @@ class BaseSection(base.sectionable, Section):
     _format = format.Section
 
     def __init__(self, name, type=None, parent=None, definition=None):
-        self._parent = parent
+        self._parent = None
         self._name = name
         self._props = base.SmartList()
         self._definition = definition
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
         self.type = type
+        self.parent = parent
 
     def __repr__(self):
         return "<Section %s[%s] (%d)>" % (self._name, self.type, len(self._sections))
@@ -153,6 +154,23 @@ class BaseSection(base.sectionable, Section):
         """the parent section, the parent document or None"""
         return self._parent
 
+    @parent.setter
+    def parent(self, new_parent):
+        if new_parent is None:
+            return
+        elif self._validate_parent(new_parent):
+            self._parent = new_parent
+            self._parent.append(self)
+        else:
+            raise ValueError("odml.Section.parent: passed value is not of consistent type! \n"
+                             "odml.Document or odml.Section expected")
+
+    def _validate_parent(self, new_parent):
+        from odml.doc import BaseDocument
+        if isinstance(new_parent, BaseDocument) | isinstance(new_parent, BaseSection):
+            return True
+        return False
+
     def get_repository(self):
         """
         returns the repository responsible for this section,
@@ -188,7 +206,7 @@ class BaseSection(base.sectionable, Section):
             obj._parent = self
         elif isinstance(obj, Property):
             self._props.append(obj)
-            obj._section = self
+            obj._parent = self
         else:
             raise ValueError("Can only append sections and properties")
 
