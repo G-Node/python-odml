@@ -15,7 +15,7 @@ class BaseProperty(base.baseobject, Property):
     """An odML Property"""
     _format = frmt.Property
 
-    def __init__(self, name, value=None, unit=None, uncertainty=None, reference=None, definition=None, dependency=None,
+    def __init__(self, name, value=None, parent=None, unit=None, uncertainty=None, reference=None, definition=None, dependency=None,
                  dependency_value=None, dtype=None):
         """
         Create a new Property with a single value. The method will try to infer the value's dtype from the type of the
@@ -44,7 +44,7 @@ class BaseProperty(base.baseobject, Property):
         """
         #TODO validate arguments
         self._name = name
-        self._section = None
+        self._parent = None
         self._value = []
         self._unit = unit
         self._uncertainty = uncertainty
@@ -54,6 +54,7 @@ class BaseProperty(base.baseobject, Property):
         self._dependency_value = dependency_value
         self._dtype = dtype
         self.value = value
+        self.parent = parent
 
     @property
     def name(self):
@@ -96,7 +97,23 @@ class BaseProperty(base.baseobject, Property):
     @property
     def parent(self):
         """the section containing this property"""
-        return self._section
+        return self._parent
+
+    @parent.setter
+    def parent(self, new_parent):
+        if new_parent is None:
+            return
+        elif self._validate_parent(new_parent):
+            self._parent = new_parent
+            self._parent.append(self)
+        else:
+            raise ValueError("odml.Property.parent: passed value is not of consistent type! odml.Section expected")
+
+    def _validate_parent(self, new_parent):
+        from odml.section import BaseSection
+        if isinstance(new_parent, BaseSection):
+            return True
+        return False
 
     @property
     def value(self):  # FIXME check the usage of value in the xmlwriter, jsonwriter
@@ -117,7 +134,7 @@ class BaseProperty(base.baseobject, Property):
         for v in values:
             try:
                 dtypes.get(v, self.dtype)
-            except Exception as ex:
+            except Exception:
                 return False
         return True
 
@@ -223,15 +240,15 @@ class BaseProperty(base.baseobject, Property):
         return the merged object (i.e. if the section is linked to another one,
         return the corresponding property of the linked section) or None
         """
-        if self._section._merged is None:
+        if self._parent._merged is None:
             return None
-        return self._section._merged.contains(self)
+        return self._parent._merged.contains(self)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
-        if self._section is None:
+        if self._parent is None:
             return None
-        sec = self._section.get_terminology_equivalent()
+        sec = self._parent.get_terminology_equivalent()
         if sec is None:
             return None
         try:
