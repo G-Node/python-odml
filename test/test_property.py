@@ -25,6 +25,25 @@ class TestProperty(unittest.TestCase):
         assert(q.dtype == 'boolean')
         assert(q.value == [False, True, True, False])
 
+    def test_str_to_int_convert(self):
+
+        # Success Test
+        p = Property(name='cats_onboard', value=['3', '0', '1', '0', '8'])
+        assert(p.dtype == 'string')
+        p.dtype = DType.int
+        assert(p.dtype == 'int')
+        assert(p.value == [3, 0, 1, 0, 8])
+
+        # Failure Test
+        p = Property(name='dogs_onboard', value=['7', '20', '1 Dog', 'Seven'])
+        assert(p.dtype == 'string')
+        try:
+            p.dtype = DType.int
+        except ValueError as e:
+            assert(str(e) == "cannot convert from 'string' to 'int'")
+
+        assert(p.dtype == 'string')
+        assert(p.value == ['7', '20', '1 Dog', 'Seven'])
 
     def test_name(self):
         pass
