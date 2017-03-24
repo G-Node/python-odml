@@ -91,6 +91,7 @@ class BaseProperty(base.baseobject, Property):
             self._dtype = new_type
             self.value = old_values
         except:
+            self._dtype = old_type  # If conversion failed, restore old dtype
             raise ValueError("cannot convert from '%s' to '%s'" % (old_type, new_type))
 
     @property
