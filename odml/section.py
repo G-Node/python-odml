@@ -23,11 +23,12 @@ class BaseSection(base.sectionable, Section):
 
     _format = format.Section
 
-    def __init__(self, name, type=None, parent=None, definition=None):
+    def __init__(self, name, type=None, parent=None, definition=None, reference=None):
         self._parent = None
         self._name = name
         self._props = base.SmartList()
         self._definition = definition
+        self._reference = reference
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
         self.type = type
@@ -135,6 +136,14 @@ class BaseSection(base.sectionable, Section):
     @definition.deleter
     def definition(self):
         del self._definition
+
+    @property
+    def reference(self):
+        return self._reference
+
+    @reference.setter
+    def reference(self, new_value):
+        self._reference = new_value
 
     # API (public)
     #
