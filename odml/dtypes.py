@@ -217,6 +217,10 @@ def boolean_set(value):
     return str(value)
 
 
+bool_get = boolean_get
+bool_set = boolean_set
+
+
 def tuple_get(string, count=None):
     """
     parse a tuple string like "(1024;768)" and return strings of the elements
