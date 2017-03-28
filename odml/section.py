@@ -5,6 +5,7 @@ import odml.terminology as terminology
 from odml.property import Property  # this is supposedly ok, as we only use it for an isinstance check
                                     # it MUST however not be used to create any Property objects
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from odml.doc import BaseDocument
 
 
 class Section(base._baseobj):
@@ -175,7 +176,6 @@ class BaseSection(base.sectionable, Section):
                              "odml.Document or odml.Section expected")
 
     def _validate_parent(self, new_parent):
-        from odml.doc import BaseDocument
         if isinstance(new_parent, BaseDocument) | isinstance(new_parent, BaseSection):
             return True
         return False
