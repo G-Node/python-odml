@@ -176,7 +176,7 @@ class BaseSection(base.sectionable, Section):
                              "odml.Document or odml.Section expected")
 
     def _validate_parent(self, new_parent):
-        if isinstance(new_parent, BaseDocument) | isinstance(new_parent, BaseSection):
+        if isinstance(new_parent, BaseDocument) or isinstance(new_parent, BaseSection):
             return True
         return False
 
