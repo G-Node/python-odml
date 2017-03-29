@@ -200,12 +200,12 @@ def datetime_set(value):
 def boolean_get(string):
     if string is None:
         return None
-    if type(string) is unicode:
+    if isinstance(string, unicode):
         string = string.lower()
-    truth = ["true", "1", True]  # be kind, spec only accepts True / False
+    truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False
     if string in truth:
         return True
-    false = ["false", "0", False]
+    false = ["false", "0", False, "f"]
     if string in false:
         return False
     return bool(string)

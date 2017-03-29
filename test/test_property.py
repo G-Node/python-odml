@@ -19,11 +19,11 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'boolean')
         assert(p.value == [True, False, True, False, True])
 
-        q = Property(name='sent', value=['False', True, 'TRUE', '0'])
+        q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', 'F', 'Ft'])
         assert(q.dtype == 'string')
         q.dtype = DType.boolean
         assert(q.dtype == 'boolean')
-        assert(q.value == [False, True, True, False])
+        assert(q.value == [False, True, True, False, True, False, True])
 
     def test_str_to_int_convert(self):
 
@@ -37,10 +37,9 @@ class TestProperty(unittest.TestCase):
         # Failure Test
         p = Property(name='dogs_onboard', value=['7', '20', '1 Dog', 'Seven'])
         assert(p.dtype == 'string')
-        try:
+
+        with self.assertRaises(ValueError):
             p.dtype = DType.int
-        except ValueError as e:
-            assert(str(e) == "cannot convert from 'string' to 'int'")
 
         assert(p.dtype == 'string')
         assert(p.value == ['7', '20', '1 Dog', 'Seven'])
@@ -56,6 +55,7 @@ class TestProperty(unittest.TestCase):
 
     def test_path(self):
         pass
+
 
 if __name__ == "__main__":
     print("TestProperty")
