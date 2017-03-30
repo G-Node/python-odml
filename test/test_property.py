@@ -28,6 +28,11 @@ class TestProperty(unittest.TestCase):
         self.assertIsInstance(p.parent, BaseSection)
         self.assertIsInstance(p.parent._props[0], BaseProperty)
 
+        prop_parent = p.parent
+        p.parent = None
+        self.assertIsNone(p.parent)
+        self.assertEqual(len(prop_parent._props), 0)
+
         with self.assertRaises(ValueError):
             Property("property_prop", parent=Property("P"))
         with self.assertRaises(ValueError):
