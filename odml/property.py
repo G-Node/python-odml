@@ -101,9 +101,14 @@ class BaseProperty(base.baseobject, Property):
 
     @parent.setter
     def parent(self, new_parent):
-        if new_parent is None:
+        if new_parent is None and self._parent is None:
+            return
+        elif new_parent is None and self._parent is not None:
+            self._parent.remove(self)
             self._parent = None
         elif self._validate_parent(new_parent):
+            if self._parent is not None:
+                self._parent.remove(self)
             self._parent = new_parent
             self._parent.append(self)
         else:
