@@ -200,22 +200,25 @@ def datetime_set(value):
 def boolean_get(string):
     if string is None:
         return None
-    if type(string) is bool:
-        string = str(string)
-    string = string.lower()
-    truth = ["true", "t", "1"]  # be kind, spec only accepts True / False
+    if isinstance(string, unicode):
+        string = string.lower()
+    truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False
     if string in truth:
         return True
-    false = ["false", "f", "0"]
+    false = ["false", "0", False, "f"]
     if string in false:
         return False
-    raise ValueError("Cannot interpret '%s' as boolean" % string)
+    return bool(string)
 
 
 def boolean_set(value):
     if value is None:
         return None
     return str(value)
+
+
+bool_get = boolean_get
+bool_set = boolean_set
 
 
 def tuple_get(string, count=None):
@@ -237,4 +240,3 @@ def tuple_set(value):
     if not value:
         return None
     return "(%s)" % ";".join(value)
-
