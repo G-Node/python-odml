@@ -167,7 +167,7 @@ class BaseSection(base.sectionable, Section):
     @parent.setter
     def parent(self, new_parent):
         if new_parent is None:
-            return
+            self._parent = None
         elif self._validate_parent(new_parent):
             self._parent = new_parent
             self._parent.append(self)
