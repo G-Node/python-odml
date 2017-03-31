@@ -1,4 +1,6 @@
 import unittest
+from odml.section import BaseSection
+from odml.property import BaseProperty
 from odml import Property, Section, Document, DType
 
 
