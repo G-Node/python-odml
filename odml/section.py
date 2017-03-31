@@ -5,6 +5,7 @@ import odml.terminology as terminology
 from odml.property import Property  # this is supposedly ok, as we only use it for an isinstance check
                                     # it MUST however not be used to create any Property objects
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from odml.doc import BaseDocument
 
 
 class Section(base._baseobj):
@@ -23,14 +24,16 @@ class BaseSection(base.sectionable, Section):
 
     _format = format.Section
 
-    def __init__(self, name, type=None, parent=None, definition=None):
-        self._parent = parent
+    def __init__(self, name, type=None, parent=None, definition=None, reference=None):
+        self._parent = None
         self._name = name
         self._props = base.SmartList()
         self._definition = definition
+        self._reference = reference
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
         self.type = type
+        self.parent = parent
 
     def __repr__(self):
         return "<Section %s[%s] (%d)>" % (self._name, self.type, len(self._sections))
@@ -135,6 +138,14 @@ class BaseSection(base.sectionable, Section):
     def definition(self):
         del self._definition
 
+    @property
+    def reference(self):
+        return self._reference
+
+    @reference.setter
+    def reference(self, new_value):
+        self._reference = new_value
+
     # API (public)
     #
     #  properties
@@ -152,6 +163,27 @@ class BaseSection(base.sectionable, Section):
     def parent(self):
         """the parent section, the parent document or None"""
         return self._parent
+
+    @parent.setter
+    def parent(self, new_parent):
+        if new_parent is None and self._parent is None:
+            return
+        elif new_parent is None and self._parent is not None:
+            self._parent.remove(self)
+            self._parent = None
+        elif self._validate_parent(new_parent):
+            if self._parent is not None:
+                self._parent.remove(self)
+            self._parent = new_parent
+            self._parent.append(self)
+        else:
+            raise ValueError("odml.Section.parent: passed value is not of consistent type! \n"
+                             "odml.Document or odml.Section expected")
+
+    def _validate_parent(self, new_parent):
+        if isinstance(new_parent, BaseDocument) or isinstance(new_parent, BaseSection):
+            return True
+        return False
 
     def get_repository(self):
         """
@@ -188,7 +220,7 @@ class BaseSection(base.sectionable, Section):
             obj._parent = self
         elif isinstance(obj, Property):
             self._props.append(obj)
-            obj._section = self
+            obj._parent = self
         else:
             raise ValueError("Can only append sections and properties")
 
