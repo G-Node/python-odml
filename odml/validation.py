@@ -8,11 +8,12 @@ import odml
 class ValidationError(object):
     """
     Represents an error found in the validation process
-    
+
     The error is bound to an odML-object (*obj*) or a list of those
     and contains a message and a type which may be one of:
     'error', 'warning', 'info'
     """
+
     def __init__(self, obj, msg, type='error'):
         self.obj = obj
         self.msg = msg
@@ -31,8 +32,10 @@ class ValidationError(object):
         return self.obj.get_path()
 
     def __repr__(self):
-        return "<ValidationError(%s):%s \"%s\">" % (self.type, self.obj, self.msg)
-    
+        return "<ValidationError(%s):%s \"%s\">" % (self.type,
+                                                    self.obj,
+                                                    self.msg)
+
 
 class Validation(object):
 
@@ -50,9 +53,9 @@ class Validation(object):
         And is called in the validation process for each corresponding
         object. The *handler* is assumed to be a generator function
         yielding all ValidationErrors it finds:
-        
+
           handler(obj)
-          
+
         The section handlers are only called for sections and not for
         the document node. If both are required, you need to register
         the handler twice.
@@ -60,7 +63,7 @@ class Validation(object):
         Validation._handlers.setdefault(klass, set()).add(handler)
 
     def __init__(self, doc):
-        self.doc = doc # may also be a section
+        self.doc = doc  # may also be a section
         self.errors = []
         self.validate(doc)
         # TODO isn't there a 'walk' method for these things?
@@ -103,30 +106,34 @@ Validation.register_handler('section', section_type_must_be_defined)
 
 def section_repository_should_be_present(sec):
     """
-    1. warn, if a section has no repository or 
+    1. warn, if a section has no repository or
     2. the section type is not present in the repository
     """
     repo = sec.get_repository()
     if repo is None:
-        yield ValidationError(sec, 'A section should have an associated repository', 'warning')
+        yield ValidationError(sec, 'A section should have an associated '
+                                   'repository', 'warning')
         return
 
     try:
         tsec = sec.get_terminology_equivalent()
     except Exception as e:
-        yield ValidationError(sec, 'Could not load terminology: %s' % e, 'warning')
+        yield ValidationError(sec, 'Could not load terminology: %s' % e,
+                                   'warning')
         return
 
     if tsec is None:
-        yield ValidationError(sec, "Section type '%s' not found in terminology" % sec.type, 'warning')
+        yield ValidationError(sec, "Section type '%s' not found in terminology"
+                              % (sec.type, 'warning'))
 
 Validation.register_handler('section', section_repository_should_be_present)
 
 
-def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names must be unique"):
+def object_unique_names(obj, children, attr=lambda x: x.name,
+                        msg="Object names must be unique"):
     """
     test that object names within one section are unique
-    
+
     *attr* is a function, that returns the item that needs to be unique
 
     *children* is a function, that returns the children to be
@@ -135,7 +142,7 @@ def object_unique_names(obj, children, attr=lambda x: x.name, msg="Object names 
     """
     names = set(map(attr, children(obj)))
     if len(names) == len(children(obj)):
-        return # quick exit
+        return  # quick exit
     names = set()
     for s in children(obj):
         if attr(s) in names:
@@ -149,7 +156,7 @@ def section_unique_name_type_combination(obj):
             attr=lambda x: (x.name, x.type),
             children=lambda x: x.sections,
             msg="name/type combination must be unique"):
-            yield i
+        yield i
 
 
 def property_unique_names(obj):
@@ -166,8 +173,8 @@ def property_terminology_check(prop):
     executes a couple of checks:
 
     1. warn, if there are properties that do not occur in the terminology
-    2. warn, if there are multiple values with different units or the unit does not
-       match the one in the terminology
+    2. warn, if there are multiple values with different units or the unit does
+       not match the one in the terminology
     """
     tsec = prop.parent.get_terminology_equivalent()
     if tsec is None:
@@ -176,7 +183,8 @@ def property_terminology_check(prop):
         tprop = tsec.properties[prop.name]
     except KeyError:
         tprop = None
-        yield ValidationError(prop, "Property '%s' not found in terminology" % prop.name, 'warning')
+        yield ValidationError(prop, "Property '%s' not found in terminology" %
+                              prop.name, 'warning')
 
 Validation.register_handler('property', property_terminology_check)
 
@@ -193,10 +201,12 @@ def property_dependency_check(prop):
     try:
         dep_obj = prop.parent[dep]
     except KeyError:
-        yield ValidationError(prop, "Property refers to a non-existent dependency object", 'warning')
+        yield ValidationError(prop, "Property refers to a non-existent "
+                                    "dependency object", 'warning')
         return
 
     if prop.dependency_value not in dep_obj.value[0]:  # FIXME
-        yield ValidationError(prop, "Dependency-value is not equal to value of the property's dependency", 'warning')
+        yield ValidationError(prop, "Dependency-value is not equal to value of"
+                              " the property's dependency", 'warning')
 
 Validation.register_handler('property', property_dependency_check)

@@ -61,9 +61,9 @@ class baseobject(_baseobj):
 
     def clone(self, children=True):
         """
-        clone this object recursively (if children is True) allowing to copy it independently
-        to another document. If children is False, this acts as a template cloner, creating
-        a copy of the object without any children
+        clone this object recursively (if children is True) allowing to copy it
+        independently to another document. If children is False, this acts as
+        a template cloner, creating a copy of the object without any children
         """
         # TODO don't we need some recursion / deepcopy here?
         import copy
@@ -79,7 +79,7 @@ class baseobject(_baseobj):
             new_index += 1
         l.insert(new_index, self)
         if new_index < old_index:
-            del l[old_index+1]
+            del l[old_index + 1]
         else:
             del l[old_index]
         return old_index
@@ -94,6 +94,7 @@ class baseobject(_baseobj):
 
 
 class SafeList(list):
+
     def index(self, obj):
         """
         find obj in list
@@ -115,9 +116,11 @@ class SafeList(list):
 
 
 class SmartList(SafeList):
+
     def __getitem__(self, key):
         """
-        provides element index also by searching for an element with a given name
+        provides element index also by searching for an element with a given
+        name
         """
         # try normal list index first (for integers)
         if isinstance(key, int):
@@ -140,12 +143,15 @@ class SmartList(SafeList):
         from odml.section import BaseSection
         from odml.doc import BaseDocument
         for obj in obj_tuple:
-                if obj.name in self:
-                    raise KeyError("Object with the same name already exists! " + str(obj))
-                if (not isinstance(obj, BaseSection)) & isinstance(self, BaseDocument):
-                    raise KeyError("Object " + str(obj) + " is not a Section.")
-                super(SmartList, self).append(obj)
+            if obj.name in self:
+                raise KeyError(
+                    "Object with the same name already exists! " + str(obj))
 
+            if (not isinstance(obj, BaseSection)) & \
+               isinstance(self, BaseDocument):
+                raise KeyError("Object " + str(obj) + " is not a Section.")
+
+            super(SmartList, self).append(obj)
 
 
 @allow_inherit_docstring
@@ -174,23 +180,29 @@ class sectionable(baseobject):
 
     def insert(self, position, section):
         """
-        adds the section to the section-list and makes this document the section’s parent
+        adds the section to the section-list and makes this document the
+        section’s parent
 
-        currently just appends the section and does not insert at the specified *position*
+        currently just appends the section and does not insert at the
+        specified *position*
         """
         self._sections.append(section)
         section._parent = self
 
     def append(self, *vsection_tuple):
-        """adds the section to the section-list and makes this document the section’s parent"""
+        """
+        adds the section to the section-list and makes this document the
+        section’s parent
+        """
         from odml.section import BaseSection
         from odml.doc import BaseDocument
         for vsection in vsection_tuple:
-             if (not isinstance(vsection, BaseSection)) & isinstance(self,BaseDocument):
-                raise KeyError("Object " + str(vsection) + " is not a Section.")
-             self._sections.append(vsection)
-             vsection._parent = self
- 
+            if (not isinstance(vsection, BaseSection)) & \
+               isinstance(self, BaseDocument):
+                raise KeyError("Object " + str(vsection) +
+                               " is not a Section.")
+            self._sections.append(vsection)
+            vsection._parent = self
 
     @inherit_docstring
     def reorder(self, new_index):
@@ -210,7 +222,8 @@ class sectionable(baseobject):
     def __iter__(self):
         return self._sections.__iter__()
 
-    def itersections(self, recursive=True, yield_self=False, filter_func=lambda x: True, max_depth=None):
+    def itersections(self, recursive=True, yield_self=False,
+                     filter_func=lambda x: True, max_depth=None):
         """
         iterate each child section
 
@@ -224,8 +237,8 @@ class sectionable(baseobject):
         :param yield_self: includes itself in the iteration
         :type yield_self: bool
 
-        :param filter_func: accepts a function that will be applied to each iterable. Yields
-                            iterable if function returns True
+        :param filter_func: accepts a function that will be applied to each
+                            iterable. Yields iterable if function returns True
         :type filter_func: function
         """
         stack = []
@@ -253,15 +266,16 @@ class sectionable(baseobject):
         >>> filter_func = lambda x: getattr(x, 'name').find("foo") > -1
         >>> sec_or_doc.iterproperties(filter_func=filter_func)
 
-        :param max_depth: iterate all properties recursively if None, only to a certain
-                            level otherwise
+        :param max_depth: iterate all properties recursively if None, only to
+                          a certain level otherwise
         :type max_depth: bool
 
-        :param filter_func: accepts a function that will be applied to each iterable. Yields
-                            iterable if function returns True
+        :param filter_func: accepts a function that will be applied to each
+                            iterable. Yields iterable if function returns True
         :type filter_func: function
         """
-        for sec in [s for s in self.itersections(max_depth=max_depth, yield_self=True)]:
+        for sec in [s for s in self.itersections(max_depth=max_depth,
+                                                 yield_self=True)]:
             if hasattr(sec, "properties"):  # not to fail if odml.Document
                 for i in sec.properties:
                     if filter_func(i):
@@ -271,16 +285,17 @@ class sectionable(baseobject):
         """
         iterate each related value (recursively)
 
-        >>> # example: return all children values which string converted version has "foo"
+        # Example: return all children values which string converted version
+          has "foo"
         >>> filter_func = lambda x: str(x).find("foo") > -1
         >>> sec_or_doc.itervalues(filter_func=filter_func)
 
-        :param max_depth: iterate all properties recursively if None, only to a certain
-                            level otherwise
+        :param max_depth: iterate all properties recursively if None, only to
+                          a certain level otherwise
         :type max_depth: bool
 
-        :param filter_func: accepts a function that will be applied to each iterable. Yields
-                            iterable if function returns True
+        :param filter_func: accepts a function that will be applied to each
+                            iterable. Yields iterable if function returns True
         :type filter_func: function
         """
         for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
@@ -296,22 +311,33 @@ class sectionable(baseobject):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
-    #FIXME type arguments renamed to dtype?
+    # FIXME type arguments renamed to dtype?
     def _matches(self, obj, key=None, type=None, include_subtype=False):
         """
         find out
         * if the *key* matches obj.name (if key is not None)
         * or if *type* matches obj.type (if type is not None)
-        * if type does not match exactly, test for subtype. (e.g.stimulus/white_noise)
+        * if type does not match exactly, test for subtype.
+        (e.g.stimulus/white_noise)
         comparisons are case-insensitive, however both key and type
         MUST be lower-case.
         """
-        name_match = (key is None or (key is not None and hasattr(obj, "name") and obj.name == key))
-        exact_type_match = (type is None or (type is not None and hasattr(obj, "type") and obj.type.lower() == type))
+        name_match = (key is None or (
+            key is not None and hasattr(obj, "name") and obj.name == key))
+
+        exact_type_match = (type is None or (type is not None and
+                                             hasattr(obj, "type") and
+                                             obj.type.lower() == type))
+
         if not include_subtype:
             return name_match and exact_type_match
-        subtype_match = type is None or (type is not None and hasattr(obj, "type") and
-                                         type in obj.type.lower().split('/')[:-1])
+
+        subtype_match = type is None or (type is not None and
+                                         hasattr(obj, "type") and
+                                         type in obj.type
+                                         .lower().split('/')[:-1])
+        # TODO : Break the above line more elegantly
+
         return name_match and (exact_type_match or subtype_match)
 
     def get_section_by_path(self, path):
@@ -355,7 +381,8 @@ class sectionable(baseobject):
             doc = self.document
             if doc is not None:
                 return doc._get_section_by_path(path[1:])
-            raise ValueError("A section with no Document cannot resolve absolute path")
+            raise ValueError(
+                "A section with no Document cannot resolve absolute path")
 
         pathlist = path.split("/")
         if len(pathlist) > 1:
@@ -387,7 +414,8 @@ class sectionable(baseobject):
         if ret:
             return ret
 
-    def find_related(self, key=None, type=None, children=True, siblings=True, parents=True, recursive=True, findAll=False):
+    def find_related(self, key=None, type=None, children=True, siblings=True,
+                     parents=True, recursive=True, findAll=False):
         """
         finds a related section named *key* and/or *type*
 
@@ -411,7 +439,10 @@ class sectionable(baseobject):
                         return section
 
                 if recursive:
-                    obj = section.find_related(key, type, children, siblings=False, parents=False, recursive=recursive, findAll=findAll)
+                    obj = section.find_related(key, type, children,
+                                               siblings=False, parents=False,
+                                               recursive=recursive,
+                                               findAll=findAll)
                     if obj is not None:
                         if findAll:
                             ret += obj
@@ -462,7 +493,7 @@ class sectionable(baseobject):
         """
         a += "/"
         b += "/"
-        parent = posixpath.dirname(posixpath.commonprefix([a,b]))
+        parent = posixpath.dirname(posixpath.commonprefix([a, b]))
         if parent == "/":
             return b[:-1]
 
@@ -471,13 +502,15 @@ class sectionable(baseobject):
         if a == ".":
             return b
 
-        return posixpath.normpath("../" * (a.count("/")+1) + b)
+        return posixpath.normpath("../" * (a.count("/") + 1) + b)
 
     def get_relative_path(self, section):
         """
-        returns a relative (file)path to point to section (e.g. ../other_section)
+        returns a relative (file)path to point to section
+        like (e.g. ../other_section)
 
-        if the common parent of both sections is the document (i.e. /), return an absolute path
+        if the common parent of both sections is the document (i.e. /),
+        return an absolute path
         """
         a = self.get_path()
         b = section.get_path()

@@ -14,12 +14,13 @@ class TestValidation(unittest.TestCase):
         self.maxDiff = None
 
     def filter_repository_errors(self, errors):
-        return filter(lambda x: not "A section should have an associated repository" in x.msg, errors)
+        return filter(lambda x: "A section should have an associated "
+                                "repository" not in x.msg, errors)
 
     def test_errorfree(self):
         res = validate(self.doc)
         self.assertEqual(list(self.filter_repository_errors(res.errors)), [])
-        
+
     def assertError(self, res, err, filter_rep=True, filter_map=False):
         """
         passes only if err appears in res.errors
@@ -31,7 +32,7 @@ class TestValidation(unittest.TestCase):
             if err in i.msg:
                 return
         self.assertEqual(errs, err)
-        
+
     def test_section_type(self):
         doc = samplefile.parse("""s1[undefined]""")
         res = validate(doc)
@@ -41,7 +42,8 @@ class TestValidation(unittest.TestCase):
     def test_section_in_terminology(self):
         doc = samplefile.parse("""s1[T1]""")
         res = validate(doc)
-        self.assertError(res, "A section should have an associated repository", filter_rep=False)
+        self.assertError(res, "A section should have an associated repository",
+                         filter_rep=False)
 
         odml.terminology.terminologies['map'] = samplefile.parse("""
         s0[t0]
@@ -51,7 +53,7 @@ class TestValidation(unittest.TestCase):
         res = validate(doc)
         # self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
         self.assertEqual(res.errors, [])
-        
+
     def test_uniques(self):
         self.assertRaises(KeyError, samplefile.parse, """
             s1[t1]
@@ -76,7 +78,7 @@ class TestValidation(unittest.TestCase):
         doc.repository = 'term'
         res = validate(doc)
         self.assertEqual(res.errors, [])
-        
+
         doc = samplefile.parse("""
             s1[t1]
             - p1

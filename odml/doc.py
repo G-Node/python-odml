@@ -26,7 +26,7 @@ class BaseDocument(base.sectionable, Document):
     def __init__(self, author=None, date=None, version=None, repository=None):
         super(BaseDocument, self).__init__()
         self._author = author
-        self._date = date # date must be a datetime
+        self._date = date  # date must be a datetime
         self._version = version
         self._repository = repository
 
@@ -70,18 +70,21 @@ class BaseDocument(base.sectionable, Document):
         return None
 
     def __repr__(self):
-        return "<Doc %s by %s (%d sections)>" % (self._version, self._author, len(self._sections))
+        return "<Doc %s by %s (%d sections)>" % (self._version,
+                                                 self._author,
+                                                 len(self._sections))
 
     def finalize(self):
         """
         This needs to be called after the document is set up from parsing
         it will perform additional operations, that need the complete document.
 
-        In particular, this method will resolve all *link* and *include* attributes
-        accordingly.
+        In particular, this method will resolve all *link* and *include*
+        attributes accordingly.
         """
-        # we could not fill out links while parsing (referenced sections where not known),
-        # so try to set them now, where the document is complete
+        # we could not fill out links while parsing (referenced sections where
+        # not known), so try to set them now, where the document is complete
+
         for sec in self.itersections(recursive=True):
             if sec._link is not None:
                 sec.link = sec._link
@@ -90,6 +93,7 @@ class BaseDocument(base.sectionable, Document):
 
     @inherit_docstring
     def get_terminology_equivalent(self):
-        if self.repository is None: return None
+        if self.repository is None:
+            return None
         term = terminology.load(self.repository)
         return term

@@ -17,6 +17,7 @@ class OdmlSerializer(object):
     """
     converts the odml class hierarchy to dictionaries and lists
     """
+
     def __init__(self, odml_document):
         self.doc = odml_document
 
@@ -53,6 +54,7 @@ JSON_VERSION = "1"
 
 
 class JSONWriter(OdmlSerializer):
+
     def __unicode__(self):
         doc = self.save_element(self.doc)
         doc['_version'] = JSON_VERSION
@@ -79,6 +81,7 @@ class OdmlReader(object):
     opposite of OdmlSerializer: converts dictionaries representing
     odml objects back to their classes
     """
+
     def to_odml(self, obj):
         fmt = getattr(odml.format, obj['_type'])
         kargs = {}
@@ -107,6 +110,7 @@ class OdmlReader(object):
 
 
 class JSONReader(OdmlReader):
+
     def fromString(self, data):
         obj = json.loads(data)
         return self.to_odml(obj)

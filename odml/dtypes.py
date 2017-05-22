@@ -95,7 +95,8 @@ def get(string, dtype=None):
     """
     if not dtype:
         return str_get(string)
-    if dtype.endswith("-tuple"):  # special case, as the count-number is included in the type-name
+    # special case, as the count-number is included in the type-name
+    if dtype.endswith("-tuple"):
         return tuple_get(string)
     return self.get(dtype + "_get", str_get)(string)
 
@@ -154,7 +155,8 @@ def time_get(string):
     if not string:
         return None
     if type(string) is datetime.time:
-        return datetime.datetime.strptime(string.strftime('%H:%M:%S'), '%H:%M:%S').time()
+        return datetime.datetime.strptime(string.strftime('%H:%M:%S'),
+                                          '%H:%M:%S').time()
     else:
         return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
@@ -171,7 +173,8 @@ def date_get(string):
     if not string:
         return None
     if type(string) is datetime.date:
-        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d').date()
+        return datetime.datetime.strptime(string.isoformat(),
+                                          '%Y-%m-%d').date()
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
@@ -183,7 +186,8 @@ def datetime_get(string):
     if not string:
         return None
     if type(string) is datetime.datetime:
-        return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'),
+                                          '%Y-%m-%d %H:%M:%S')
     else:
         return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 

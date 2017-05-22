@@ -8,6 +8,7 @@ from .addons import load, save, display
 
 __version__ = '1.3.dev0'
 
+
 class odml_implementation(object):
     name = None
     provides = []
@@ -40,7 +41,8 @@ current_implementation = BasicImplementation()
 minimum_implementation = current_implementation
 
 
-def addImplementation(implementation, make_minimum=False, make_default=False, key=None):
+def addImplementation(implementation, make_minimum=False,
+                      make_default=False, key=None):
     """register a new available implementation"""
     impls[implementation.name] = implementation
     if make_minimum and key is not None:
@@ -66,7 +68,9 @@ def setDefaultImplementation(key):
     global current_implementation
     if minimum_implementation.name not in impls[key].provides:
         raise TypeError(
-            "Cannot set default odml-implementation to '%s', because %s-capabilities are required which are not provided (provides: %s)" %
+            "Cannot set default odml-implementation to '%s', "
+            "because %s-capabilities are required which are not "
+            "provided (provides: %s)" %
             (key, minimum_implementation.name, ', '.join(impls[key].provides)))
     current_implementation = impls[key]
 
@@ -80,10 +84,12 @@ def setMinimumImplementation(key):
     """
     global minimum_implementation
     if key in minimum_implementation.provides:
-        return # the minimum implementation is already capable of this feature
+        return  # the minimum implementation is already capable of this feature
     if minimum_implementation.name not in impls[key].provides:
         raise TypeError(
-            "Cannot set new minimum odml-implementation to '%s', because %s-capabilities are already required which are not provided (provides: %s)" %
+            "Cannot set new minimum odml-implementation to '%s', "
+            "because %s-capabilities are already required which are "
+            "not provided (provides: %s)" %
             (key, minimum_implementation.name, ', '.join(impls[key].provides)))
     if key not in current_implementation.provides:
         setDefaultImplementation(key)
@@ -104,4 +110,4 @@ def Section(*args, **kwargs):
 def Document(*args, **kwargs):
     return current_implementation.Document(*args, **kwargs)
 
-#__all__ = [Property, Section, Document]
+# __all__ = [Property, Section, Document]

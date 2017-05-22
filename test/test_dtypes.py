@@ -6,6 +6,7 @@ import datetime
 
 
 class TestTypes(unittest.TestCase):
+
     def setUp(self):
         pass
 
@@ -16,7 +17,7 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(typ.date_set(date), date_string)
 
     def test_time(self):
-        time = datetime.time(12,34,56)
+        time = datetime.time(12, 34, 56)
         time_string = '12:34:56'
         self.assertEqual(time, typ.time_get(time_string))
         self.assertEqual(typ.time_set(time), time_string)

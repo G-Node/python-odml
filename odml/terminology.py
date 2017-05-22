@@ -73,7 +73,8 @@ class Terminologies(dict):
             print("did not successfully load '%s'" % url)
             return
         try:
-            term = odml.tools.xmlparser.XMLReader(filename=url, ignore_errors=True).fromFile(fp)
+            term = odml.tools.xmlparser.XMLReader(
+                filename=url, ignore_errors=True).fromFile(fp)
             term.finalize()
         except odml.tools.xmlparser.ParserException as e:
             print("Failed to load %s due to parser errors" % url)
@@ -97,4 +98,5 @@ deferred_load = terminologies.deferred_load
 
 
 if __name__ == "__main__":
-    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/analysis.xml')
+    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/'
+                   'analysis/analysis.xml')

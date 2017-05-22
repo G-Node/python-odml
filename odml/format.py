@@ -43,11 +43,11 @@ class Property(Format):
         'uncertainty': 0,
         'reference': 0,
         'type': 0,
-        }
+    }
     _map = {
         'dependencyvalue': 'dependency_value',
         'type': 'dtype'
-        }
+    }
 
 
 class Section(Format):
@@ -62,11 +62,11 @@ class Section(Format):
         'section': 0,
         'include': 0,
         'property': 0
-        }
+    }
     _map = {
         'section': 'sections',
         'property': 'properties',
-        }
+    }
 
 
 class Document(Format):
@@ -77,10 +77,10 @@ class Document(Format):
         'date': 0,
         'section': 0,
         'repository': 0,
-        }
+    }
     _map = {
         'section': 'sections'
-        }
+    }
 
 Document = Document()
 Section = Section()

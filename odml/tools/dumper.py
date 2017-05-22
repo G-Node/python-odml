@@ -11,7 +11,7 @@ def get_props(obj, props):
             x = getattr(obj, p)
             if x is not None:
                 if isinstance(x, list):
-                    out.append("%s=%s"% (p, to_csv(x)))
+                    out.append("%s=%s" % (p, to_csv(x)))
                 else:
                     out.append("%s=%s" % (p, repr(x)))
 
@@ -19,18 +19,20 @@ def get_props(obj, props):
 
 
 def dumpProperty(property, indent=1):
-    print("%*s:%s (%s)" % (indent, " ", property.name, get_props(property,
-                                                                 ["definition", "value", "uncertainty", "unit", "dtype",
-                                                                  "value_reference", "dependency", "dependencyValue"])))
+    print("%*s:%s (%s)" % (indent, " ", property.name,
+          get_props(property, ["definition", "value", "uncertainty", "unit",
+                               "dtype", "value_reference", "dependency",
+                               "dependencyValue"])))
 
 
 def dumpSection(section, indent=1):
     if section is None:
         return
 
-    print("%*s*%s (%s)" % (indent, " ", section.name, get_props(section,
-                                                                ["type", "definition", "link",
-                                                                 "include", "repository"])))
+    print("%*s*%s (%s)" % (indent, " ", section.name,
+          get_props(section, ["type", "definition", "link",
+                              "include", "repository"])))
+
     for prop in section.properties:
         dumpProperty(prop, indent + 1)
 

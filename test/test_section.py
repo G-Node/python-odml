@@ -5,6 +5,7 @@ from odml.section import BaseSection
 
 
 class TestSection(unittest.TestCase):
+
     def setUp(self):
         pass
 
@@ -23,7 +24,8 @@ class TestSection(unittest.TestCase):
         self.assertIsInstance(s.parent, BaseDocument)
         self.assertIsInstance(s.parent._sections[0], BaseSection)
 
-        """ test if child is removed from _sections of a parent after assigning a new parent to the child """
+        """ test if child is removed from _sections of a parent after assigning
+         a new parent to the child """
         p = s.parent
         s.parent = Section("S")
         self.assertEqual(len(p._sections), 0)
