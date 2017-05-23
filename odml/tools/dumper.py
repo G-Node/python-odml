@@ -19,6 +19,7 @@ def get_props(obj, props):
 
 
 def dumpProperty(property, indent=1):
+    # TODO : (PEP8) Find a better way to split the following line
     print("%*s:%s (%s)" % (indent, " ", property.name,
           get_props(property, ["definition", "value", "uncertainty", "unit",
                                "dtype", "value_reference", "dependency",
@@ -29,6 +30,7 @@ def dumpSection(section, indent=1):
     if section is None:
         return
 
+    # TODO : (PEP8) Find a better way to split the following line
     print("%*s*%s (%s)" % (indent, " ", section.name,
           get_props(section, ["type", "definition", "link",
                               "include", "repository"])))

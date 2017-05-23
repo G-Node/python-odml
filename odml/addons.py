@@ -27,8 +27,8 @@ def save(obj, filename, backend="xml"):
 def display(obj, backend="xml"):
     if backend in parsers:
         if backend == "xml":
-            print (str(xml.XMLWriter(obj)))
+            print(str(xml.XMLWriter(obj)))
         elif backend == "json":
-            print (str(json.JSONWriter(obj)))
+            print(str(json.JSONWriter(obj)))
     else:
         raise ValueError("No such parser")

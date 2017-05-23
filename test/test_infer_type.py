@@ -17,7 +17,7 @@ class TestInferType(unittest.TestCase):
 
     def test_text(self):
         p = Property("test", value="some\nstring")
-        assert (p.dtype == "text")
+        assert(p.dtype == "text")
         if sys.version_info < (3, 0):
             assert (type(p.value[0]) == unicode)
         else:
@@ -25,37 +25,37 @@ class TestInferType(unittest.TestCase):
 
     def test_int(self):
         p = Property("test", value=111)
-        assert (p.dtype == "int")
-        assert (type(p.value[0]) == int)
+        assert(p.dtype == "int")
+        assert(type(p.value[0]) == int)
 
     def test_float(self):
         p = Property("test", value=3.14)
-        assert (p.dtype == "float")
-        assert (type(p.value[0]) == float)
+        assert(p.dtype == "float")
+        assert(type(p.value[0]) == float)
 
     def test_datetime(self):
         p = Property("test", value=dt.now())
-        assert (p.dtype == "datetime")
+        assert(p.dtype == "datetime")
         assert(type(p.value[0]) == dt)
 
     def test_date(self):
         p = Property("test", dt.now().date())
-        assert (p.dtype == "date")
-        assert (type(p.value[0]) == date)
+        assert(p.dtype == "date")
+        assert(type(p.value[0]) == date)
 
     def test_time(self):
         p = Property("test", value=dt.now().time())
-        assert (p.dtype == "time")
-        assert (type(p.value[0]) == time)
+        assert(p.dtype == "time")
+        assert(type(p.value[0]) == time)
 
     def test_boolean(self):
         p = Property("test", True)
-        assert (p.dtype == "boolean")
-        assert (type(p.value[0]) == bool)
+        assert(p.dtype == "boolean")
+        assert(type(p.value[0]) == bool)
 
         p = Property("test", False)
-        assert (p.dtype == "boolean")
-        assert (type(p.value[0]) == bool)
+        assert(p.dtype == "boolean")
+        assert(type(p.value[0]) == bool)
 
     def test_read_write(self):
         doc = Document("author")
@@ -81,14 +81,14 @@ class TestInferType(unittest.TestCase):
         if sys.version_info < (3, 0):
             assert(type(p.value[0]) == unicode)
         else:
-            assert (type(p.value[0]) == str)
+            assert(type(p.value[0]) == str)
 
         p = new_sec.properties["txtprop"]
         assert(p.dtype == "text")
         if sys.version_info < (3, 0):
             assert(type(p.value[0]) == unicode)
         else:
-            assert (type(p.value[0]) == str)
+            assert(type(p.value[0]) == str)
 
         p = new_sec.properties["intprop"]
         assert(p.dtype == "int")

@@ -54,11 +54,14 @@ class TestMultiAppendDoc(unittest.TestCase):
         section_bulls0.append(prop1)
         section_bulls0.append(prop2)
 
-        self.assertTrue(section_bulls.sections[
-                        0].name == section_bulls0.sections[0].name)
-        self.assertTrue(section_bulls.sections[
-                        1].name == section_bulls0.sections[1].name)
-        self.assertTrue(section_bulls.properties[
-                        0].name == section_bulls0.properties[0].name)
-        self.assertTrue(section_bulls.properties[
-                        1].name == section_bulls0.properties[1].name)
+        self.assertTrue(section_bulls.sections[0].name ==
+                        section_bulls0.sections[0].name)
+
+        self.assertTrue(section_bulls.sections[1].name ==
+                        section_bulls0.sections[1].name)
+
+        self.assertTrue(section_bulls.properties[0].name ==
+                        section_bulls0.properties[0].name)
+
+        self.assertTrue(section_bulls.properties[1].name ==
+                        section_bulls0.properties[1].name)

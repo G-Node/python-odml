@@ -15,7 +15,7 @@ class Section(base._baseobj):
 
 @allow_inherit_docstring
 class BaseSection(base.sectionable, Section):
-    """An odML Section"""
+    """ An odML Section """
     type = None
     id = None
     _link = None
@@ -53,7 +53,7 @@ class BaseSection(base.sectionable, Section):
     @property
     def include(self):
         """
-        the same as :py:attr:`odml.section.BaseSection.link`, except that
+        The same as :py:attr:`odml.section.BaseSection.link`, except that
         include specifies an arbitrary url instead of a local path within
         the same document
         """
@@ -93,7 +93,7 @@ class BaseSection(base.sectionable, Section):
     @property
     def link(self):
         """
-        specifies a softlink, i.e. a path within the document
+        Specifies a softlink, i.e. a path within the document
 
         When the merge()-method is called, the link will be resolved creating
         according copies of the section referenced by the link attribute.
@@ -133,7 +133,7 @@ class BaseSection(base.sectionable, Section):
 
     @property
     def definition(self):
-        """Name Definition of the section"""
+        """ Name Definition of the section """
         if hasattr(self, "_definition"):
             return self._definition
         else:
@@ -160,17 +160,17 @@ class BaseSection(base.sectionable, Section):
     #  properties
     @property
     def properties(self):
-        """the list of all properties contained in this section"""
+        """ The list of all properties contained in this section """
         return self._props
 
     @property
     def sections(self):
-        """the list of all child-sections of this section"""
+        """ The list of all child-sections of this section """
         return self._sections
 
     @property
     def parent(self):
-        """the parent section, the parent document or None"""
+        """ The parent section, the parent document or None """
         return self._parent
 
     @parent.setter
@@ -198,7 +198,7 @@ class BaseSection(base.sectionable, Section):
 
     def get_repository(self):
         """
-        returns the repository responsible for this section,
+        Returns the repository responsible for this section,
         which might not be the *repository* attribute, but may
         be inherited from a parent section / the document
         """
@@ -222,12 +222,14 @@ class BaseSection(base.sectionable, Section):
 
     def get_merged_equivalent(self):
         """
-        return the merged object or None
+        Return the merged object or None
         """
         return self._merged
 
     def __append(self, obj):
-        """append a Section or Property"""
+        """
+        Append a Section or Property
+        """
         if isinstance(obj, Section):
             self._sections.append(obj)
             obj._parent = self
@@ -238,12 +240,16 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("Can only append sections and properties")
 
     def append(self, *obj_tuple):
-        """append Sections or Properties"""
+        """
+        Append Sections or Properties
+        """
         for obj in obj_tuple:
             self.__append(obj)
 
     def insert(self, position, obj):
-        """insert a Section or Property at the respective position"""
+        """
+        Insert a Section or Property at the respective position
+        """
         if isinstance(obj, Section):
             self._sections.insert(position, obj)
             obj._parent = self
@@ -265,19 +271,23 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("Can only remove sections and properties")
 
     def __iter__(self):
-        """iterate over each section and property contained in this section"""
+        """
+        Iterate over each section and property contained in this section
+        """
         for section in self._sections:
             yield section
         for prop in self._props:
             yield prop
 
     def __len__(self):
-        """number of children (sections AND properties)"""
+        """
+        Number of children (sections AND properties)
+        """
         return len(self._sections) + len(self._props)
 
     def clone(self, children=True):
         """
-        clone this object recursively allowing to copy it independently
+        Clone this object recursively allowing to copy it independently
         to another document
         """
         obj = super(BaseSection, self).clone(children)
@@ -291,7 +301,7 @@ class BaseSection(base.sectionable, Section):
 
     def contains(self, obj):
         """
-        finds a property or section with the same name&type properties or None
+        Finds a property or section with the same name&type properties or None
         """
         if isinstance(obj, Section):
             return super(BaseSection, self).contains(obj)
@@ -301,7 +311,7 @@ class BaseSection(base.sectionable, Section):
 
     def merge(self, section=None):
         """
-        merges this section with another *section*
+        Merges this section with another *section*
 
         See also: :py:attr:`odml.section.BaseSection.link`
 
@@ -335,7 +345,7 @@ class BaseSection(base.sectionable, Section):
 
     def unmerge(self, section):
         """
-        clean up a merged section by removing objects that are totally equal
+        Clean up a merged section by removing objects that are totally equal
         to the linked object
         """
         if self == section:
@@ -352,7 +362,7 @@ class BaseSection(base.sectionable, Section):
         for obj in removals:
             self.remove(obj)
 
-        # the path may not be valid anymore, so make sure to update it
+        # The path may not be valid anymore, so make sure to update it
         # however this does not reflect changes happening while the section
         # is unmerged
         if self._link is not None:
@@ -365,7 +375,7 @@ class BaseSection(base.sectionable, Section):
     @property
     def is_merged(self):
         """
-        returns True if the section is merged with another one (e.g. through
+        Returns True if the section is merged with another one (e.g. through
         :py:attr:`odml.section.BaseSection.link` or
         :py:attr:`odml.section.BaseSection.include`)
 
@@ -376,6 +386,6 @@ class BaseSection(base.sectionable, Section):
     @property
     def can_be_merged(self):
         """
-        returns True if either a *link* or an *include* attribute is specified
+        Returns True if either a *link* or an *include* attribute is specified
         """
         return self._link is not None or self._include is not None

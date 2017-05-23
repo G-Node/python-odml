@@ -17,7 +17,7 @@ except NameError:
 
 def dump(doc, filename):
     """
-    helper function to dump a document for debugging purposes
+    Helper function to dump a document for debugging purposes
     """
     if sys.version_info < (3, 0):
         odml_string = unicode(xmlparser.XMLWriter(doc))
@@ -28,7 +28,7 @@ def dump(doc, filename):
 
 def parse(data):
     """
-    parses strings to quickly create odml-documents
+    Parses strings to quickly create odml-documents
 
     e.g.:
         s1[t1] mapping [T1]

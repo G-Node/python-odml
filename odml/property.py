@@ -73,7 +73,7 @@ class BaseProperty(base.baseobject, Property):
     @property
     def dtype(self):
         """
-        the data type of the value
+        The data type of the value
 
         If the data type is changed, it is tried, to convert the value to the
         new type.
@@ -102,7 +102,9 @@ class BaseProperty(base.baseobject, Property):
 
     @property
     def parent(self):
-        """the section containing this property"""
+        """
+        The section containing this property
+        """
         return self._parent
 
     @parent.setter
@@ -135,7 +137,7 @@ class BaseProperty(base.baseobject, Property):
 
     def value_str(self, index=0):
         """
-        used to access typed data of the value as a string.
+        Used to access typed data of the value as a string.
         Use data to access the raw type, i.e.:
         """
         return dtypes.set(self._value[index], self._dtype)
@@ -230,12 +232,14 @@ class BaseProperty(base.baseobject, Property):
             self._value.remove(value)
 
     def get_path(self):
-        """return the absolute path to this object"""
+        """
+        Return the absolute path to this object
+        """
         return self.parent.get_path() + ":" + self.name
 
     def clone(self):
         """
-        clone this object to copy it independently
+        Clone this object to copy it independently
         to another document
         """
         obj = super(BaseProperty, self).clone()
@@ -244,16 +248,20 @@ class BaseProperty(base.baseobject, Property):
         return obj
 
     def merge(self, property):
-        """stub that doesn't do anything for this class"""
+        """
+        Stub that doesn't do anything for this class
+        """
         pass
 
     def unmerge(self, property):
-        """stub that doesn't do anything for this class"""
+        """
+        Stub that doesn't do anything for this class
+        """
         pass
 
     def get_merged_equivalent(self):
         """
-        return the merged object (i.e. if the section is linked to another one,
+        Return the merged object (i.e. if the section is linked to another one,
         return the corresponding property of the linked section) or None
         """
         if self._parent._merged is None:

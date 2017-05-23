@@ -66,7 +66,7 @@ class BaseDocument(base.sectionable, Document):
 
     @property
     def parent(self):
-        """The parent of a document is always None."""
+        """ The parent of a document is always None. """
         return None
 
     def __repr__(self):
@@ -82,7 +82,7 @@ class BaseDocument(base.sectionable, Document):
         In particular, this method will resolve all *link* and *include*
         attributes accordingly.
         """
-        # we could not fill out links while parsing (referenced sections where
+        # We could not fill out links while parsing (referenced sections where
         # not known), so try to set them now, where the document is complete
 
         for sec in self.itersections(recursive=True):

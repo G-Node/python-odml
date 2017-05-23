@@ -28,6 +28,7 @@ class DType(str, Enum):
     def __str__(self):
         return self.name
 
+
 _dtype_map = {'str': 'string', 'bool': 'boolean'}
 
 
@@ -46,7 +47,7 @@ def infer_dtype(value):
 
 def valid_type(dtype):
     """
-    checks if *dtype* is a valid type
+    Checks if *dtype* is a valid type
     """
     dtype = dtype.lower()
     if dtype in _dtype_map:
@@ -68,10 +69,10 @@ def valid_type(dtype):
 
 def validate(string, dtype):
     """
-    checks if:
+    Checks if:
 
-     * *dtype* is a valid type
-     * *string* is a valid expression of type *dtype*
+     - *dtype* is a valid type
+     - *string* is a valid expression of type *dtype*
     """
     try:
         if not valid_type(dtype):
@@ -91,7 +92,7 @@ def validate(string, dtype):
 
 def get(string, dtype=None):
     """
-    convert *string* to the corresponding *dtype*
+    Convert *string* to the corresponding *dtype*
     """
     if not dtype:
         return str_get(string)
@@ -103,7 +104,7 @@ def get(string, dtype=None):
 
 def set(value, dtype=None):
     """
-    serialize a *value* of type *dtype* to a unicode string
+    Serialize a *value* of type *dtype* to a unicode string
     """
     if not dtype:
         return str_set(value)
@@ -227,7 +228,7 @@ bool_set = boolean_set
 
 def tuple_get(string, count=None):
     """
-    parse a tuple string like "(1024;768)" and return strings of the elements
+    Parse a tuple string like "(1024;768)" and return strings of the elements
     """
     if not string:
         return None

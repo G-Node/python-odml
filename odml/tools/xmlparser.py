@@ -111,7 +111,7 @@ class XMLWriter:
                 fmt._xml_attributes[k] is not None) \
                or not hasattr(e, fmt.map(k)) \
                or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
-                continue
+                    continue
 
             val = getattr(e, fmt.map(k))
             if val is None:
@@ -235,7 +235,7 @@ class XMLReader(object):
 
     def parse_tag(self, root, fmt, insert_children=True, create=None):
         """
-        parse an odml node based on the format description *fmt*
+        Parse an odml node based on the format description *fmt*
         and a function *create* to instantiate a corresponding object
         """
         arguments = {}

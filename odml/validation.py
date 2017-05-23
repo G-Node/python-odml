@@ -132,7 +132,7 @@ Validation.register_handler('section', section_repository_should_be_present)
 def object_unique_names(obj, children, attr=lambda x: x.name,
                         msg="Object names must be unique"):
     """
-    test that object names within one section are unique
+    Test that object names within one section are unique
 
     *attr* is a function, that returns the item that needs to be unique
 
@@ -170,7 +170,7 @@ Validation.register_handler('section', property_unique_names)
 
 def property_terminology_check(prop):
     """
-    executes a couple of checks:
+    Executes a couple of checks:
 
     1. warn, if there are properties that do not occur in the terminology
     2. warn, if there are multiple values with different units or the unit does
@@ -191,7 +191,7 @@ Validation.register_handler('property', property_terminology_check)
 
 def property_dependency_check(prop):
     """
-    warn, if the dependency attribute refers to a non-existent attribute
+    Warn, if the dependency attribute refers to a non-existent attribute
     or the dependency_value does not match
     """
     dep = prop.dependency

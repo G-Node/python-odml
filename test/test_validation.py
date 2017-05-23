@@ -23,7 +23,7 @@ class TestValidation(unittest.TestCase):
 
     def assertError(self, res, err, filter_rep=True, filter_map=False):
         """
-        passes only if err appears in res.errors
+        Passes only if err appears in res.errors
         """
         errs = res.errors
         if filter_rep:

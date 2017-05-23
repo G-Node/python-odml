@@ -1,5 +1,5 @@
 _property = property
-import sys
+
 from odml import doc
 from odml import property
 from odml import section
