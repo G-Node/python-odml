@@ -21,7 +21,8 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'boolean')
         assert(p.value == [True, False, True, False, True])
 
-        q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', 'F', 'Ft'])
+        q = Property(name='sent',
+                     value=['False', True, 'TRUE', '0', 't', 'F', 'Ft'])
         assert(q.dtype == 'string')
         q.dtype = DType.boolean
         assert(q.dtype == 'boolean')
@@ -54,7 +55,8 @@ class TestProperty(unittest.TestCase):
         self.assertIsInstance(p.parent, BaseSection)
         self.assertEqual(len(p.parent._props), 1)
 
-        """ test if child is removed from _props of a parent after assigning a new parent to the child """
+        """ Test if child is removed from _props of a parent after assigning
+            a new parent to the child """
         prop_parent = p.parent
         p.parent = Section("S1")
         self.assertEqual(len(prop_parent._props), 0)

@@ -17,19 +17,19 @@ except NameError:
 
 def dump(doc, filename):
     """
-    helper function to dump a document for debugging purposes
+    Helper function to dump a document for debugging purposes
     """
     if sys.version_info < (3, 0):
         odml_string = unicode(xmlparser.XMLWriter(doc))
     else:
         odml_string = str(xmlparser.XMLWriter(doc))
     open(filename, "w").write(odml_string)
-    
+
 
 def parse(data):
     """
-    parses strings to quickly create odml-documents
-    
+    Parses strings to quickly create odml-documents
+
     e.g.:
         s1[t1] mapping [T1]
         - p1
@@ -38,12 +38,13 @@ def parse(data):
     """
     lines = data.strip(" ").strip("\n").split("\n")
     offset = len(re.compile('(\s*)').match(lines[0]).group())
-    pat = re.compile(r'(?P<name>\w+)(\[(?P<type>\w+)\])?(\s+mapping \[(?P<dst>[\w:]+)\])?(\s+linked to (?P<link>[\w/]+))?')
+    pat = re.compile(r'(?P<name>\w+)(\[(?P<type>\w+)\])?(\s+mapping \[(?P<dst>'
+                     '[\w:]+)\])?(\s+linked to (?P<link>[\w/]+))?')
     parents = [odml.Document(), None]
     for line in lines:
         line = line[offset:]
         while len(parents) > 1:
-            parpref =(len(parents)-2)*2
+            parpref = (len(parents) - 2) * 2
             if line.startswith(" " * parpref):
                 line = line[parpref:]
                 break
@@ -73,6 +74,7 @@ def parse(data):
 
 
 class SampleFileCreator:
+
     def create_document(self):
         doc = odml.Document()
         for i in range(3):
@@ -83,7 +85,8 @@ class SampleFileCreator:
         s = odml.Section(name=name, type=name.replace("sec", "type"))
         if depth < 1:
             for i in range(2):
-                s.append(self.create_section("%s,%d" % (name, i), depth=depth+1))
+                s.append(self.create_section("%s,%d" %
+                                             (name, i), depth=depth + 1))
 
         if name.endswith("1"):
             for i in range(3):
@@ -92,16 +95,19 @@ class SampleFileCreator:
         return s
 
     def create_property(self, name):
-        return odml.Property(name=name.replace("sec", "prop"), value=name.replace("sec", "val"))
+        return odml.Property(name=name.replace("sec", "prop"),
+                             value=name.replace("sec", "val"))
 
 
 class SampleFileCreatorTest(unittest.TestCase):
+
     def test_samplefile(self):
         doc = SampleFileCreator().create_document()
         # dumper.dumpDoc(doc)
 
 
 class SampleFileOperationTest(unittest.TestCase):
+
     def setUp(self):
         doc = SampleFileCreator().create_document()
         doc.sections['sec 0'].sections['sec 0,1'].type = "test"
@@ -139,7 +145,8 @@ class SampleFileOperationTest(unittest.TestCase):
             val = str(xmlparser.XMLWriter(doc))
         self.assertIn('version="%s"' % xmlparser.XML_VERSION, val)
         doc = xmlparser.XMLReader().fromString(val)
-        # this test is switched off until the XML versioning support is implemented
+        # The following test is switched off until the XML versioning
+        # support is implemented.
         # self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
 
     def test_save(self):
@@ -157,7 +164,9 @@ class SampleFileOperationTest(unittest.TestCase):
             from StringIO import StringIO
         except ImportError:
             from io import StringIO
-        modules = [(xmlparser.XMLWriter, xmlparser.XMLReader)]   # (jsonparser.JSONWriter, jsonparser.JSONReader)]
+        modules = [(xmlparser.XMLWriter, xmlparser.XMLReader)]
+        # (jsonparser.JSONWriter, jsonparser.JSONReader)]
+
         for Writer, Reader in modules:
 
             doc = Writer(self.doc)
@@ -207,6 +216,7 @@ class AttributeTest(unittest.TestCase):
 
 
 class CopyTest(unittest.TestCase):
+
     def setUp(self):
         self.p = odml.Property(name="test", value=1)
 
@@ -228,6 +238,7 @@ class CopyTest(unittest.TestCase):
 
 
 class MiscTest(unittest.TestCase):
+
     def setUp(self):
         self.doc = SampleFileCreator().create_document()
 
@@ -269,7 +280,8 @@ class MiscTest(unittest.TestCase):
         s1[T2]
         s2[T1]
         """)
-        self.assertEqual(len(doc.sections[1].find_related(type="T1", findAll=True)), 2)
+        self.assertEqual(
+            len(doc.sections[1].find_related(type="T1", findAll=True)), 2)
 
     def test_reorder_post(self):
         old_index = self.doc.sections[0].reorder(2)
@@ -301,7 +313,8 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(current, sec11)
 
         # test relative path with ./
-        current = sec1.get_section_by_path("./" + sec1.get_relative_path(sec11))
+        current = sec1.get_section_by_path(
+            "./" + sec1.get_relative_path(sec11))
         self.assertEqual(current, sec11)
 
         # test relative path
@@ -319,7 +332,8 @@ class MiscTest(unittest.TestCase):
         # test absolute path with no document
         newsec = SampleFileCreator().create_section("foo", 0)
         path = newsec.sections[0].get_path()
-        self.assertRaises(ValueError, newsec.sections[1].get_section_by_path, path)
+        self.assertRaises(ValueError,
+                          newsec.sections[1].get_section_by_path, path)
 
         # test path with property is invalid
         path = sec11.properties[0].get_path()

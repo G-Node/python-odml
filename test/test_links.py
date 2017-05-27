@@ -3,9 +3,10 @@ from . import test_samplefile as samplefile
 
 
 class TestLinks(unittest.TestCase):
+
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        #for s in self.doc: xmlparser.dumpSection(s)
+        # for s in self.doc: xmlparser.dumpSection(s)
 
     def test_link_creation(self):
         obj = self.doc.sections[0].sections[0]
@@ -37,8 +38,8 @@ class TestLinks(unittest.TestCase):
         samplefile.dumper.dumpSection(dst)
 
     def test_merge(self):
-        obj = self.doc.sections[0].sections[0] # must be an empty section
-        dst = self.doc.sections[1] #.sections[1]
+        obj = self.doc.sections[0].sections[0]  # must be an empty section
+        dst = self.doc.sections[1]  # .sections[1]
         org = obj.clone()
 
         obj.link = '/sec 1'

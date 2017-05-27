@@ -25,7 +25,9 @@ class TestFindSections(unittest.TestCase):
         ret = self.root_section.find(type="sub_2", findAll=True)
         self.assertTrue(len(ret) == 2)
 
-        ret = self.root_section.find(key=None, type="sub_2", findAll=True, include_subtype=True)
+        ret = self.root_section.find(key=None, type="sub_2", findAll=True,
+                                     include_subtype=True)
+
         self.assertTrue(len(ret) == 3)
 
     def test_find_by_name_and_type(self):

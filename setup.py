@@ -19,7 +19,7 @@ if sys.version_info < (3, 4):
     install_req += ["enum34"]
 
 setup(name='odML',
-      version=__version__, 
+      version=__version__,
       description='open metadata Markup Language',
       author='Hagen Fritsch',
       author_email='fritsch+gnode@in.tum.de',

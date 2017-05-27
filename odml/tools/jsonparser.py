@@ -15,20 +15,21 @@ except NameError:
 
 class OdmlSerializer(object):
     """
-    converts the odml class hierarchy to dictionaries and lists
+    Converts the odml class hierarchy to dictionaries and lists
     """
+
     def __init__(self, odml_document):
         self.doc = odml_document
 
     @staticmethod
     def save_element(e):
         """
-        returns an xml node for the odML object e
+        Returns an xml node for the odML object e
         """
         fmt = e._format
         cur = {'_type': fmt.__class__.__name__}
 
-        # generate elements
+        # Generate elements
         for k in fmt._args:
             if not hasattr(e, fmt.map(k)):
                 continue
@@ -49,14 +50,15 @@ class OdmlSerializer(object):
 
         return cur
 
+
 JSON_VERSION = "1"
 
 
 class JSONWriter(OdmlSerializer):
+
     def __unicode__(self):
         doc = self.save_element(self.doc)
         doc['_version'] = JSON_VERSION
-        temp = "here i am"
         return json.dumps(doc)
 
     def __str__(self):
@@ -76,9 +78,10 @@ class JSONWriter(OdmlSerializer):
 
 class OdmlReader(object):
     """
-    opposite of OdmlSerializer: converts dictionaries representing
+    Opposite of OdmlSerializer: converts dictionaries representing
     odml objects back to their classes
     """
+
     def to_odml(self, obj):
         fmt = getattr(odml.format, obj['_type'])
         kargs = {}
@@ -107,6 +110,7 @@ class OdmlReader(object):
 
 
 class JSONReader(OdmlReader):
+
     def fromString(self, data):
         obj = json.loads(data)
         return self.to_odml(obj)
@@ -116,7 +120,7 @@ class JSONReader(OdmlReader):
 
 
 if __name__ == "__main__":
-    import sys
+    # import sys
     y = JSONReader().fromFile(sys.stdin)
     import dumper
     dumper.dumpDoc(y)
