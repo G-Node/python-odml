@@ -11,6 +11,9 @@ parts
 # odml files
 *.odml
 
+# Include a sample file
+!THGTTG.odml
+
 # installer logs
 pip-log.txt
 

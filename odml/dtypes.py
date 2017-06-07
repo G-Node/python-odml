@@ -42,7 +42,8 @@ def infer_dtype(value):
             dtype = 'text'
         return dtype
     else:
-        return None
+        # If unable to infer a dtype of given value, return defalt as *string*
+        return 'string'
 
 
 def valid_type(dtype):
@@ -57,37 +58,7 @@ def valid_type(dtype):
     if dtype is None:
         return True
 
-    if dtype.endswith("-tuple"):
-        try:
-            int(dtype[:-6])
-            return True
-        except ValueError:
-            pass
-
     return False
-
-
-def validate(string, dtype):
-    """
-    Checks if:
-
-     - *dtype* is a valid type
-     - *string* is a valid expression of type *dtype*
-    """
-    try:
-        if not valid_type(dtype):
-            if dtype.endswith("-tuple"):
-                count = int(dtype[:-6])
-                # try to parse it
-                tuple_get(string, count=count)
-                return True
-                # try to parse it
-            self.get(dtype + "_get", str_get)(string)
-        else:
-            return False
-    except RuntimeError:
-        # any error, this type ain't valid
-        return False
 
 
 def get(string, dtype=None):
@@ -98,7 +69,7 @@ def get(string, dtype=None):
         return str_get(string)
     # special case, as the count-number is included in the type-name
     if dtype.endswith("-tuple"):
-        return tuple_get(string)
+        return tuple_get(string, int(dtype[:-6]))
     return self.get(dtype + "_get", str_get)(string)
 
 
@@ -141,15 +112,11 @@ def str_get(string):
     return str(string)
 
 
-def str_set(value):
-    try:
-        if sys.version_info < (3, 0):
-            return unicode(value)
-        else:
-            return str(value)
-    except Exception as ex:
-        fail = ex
-        raise fail
+# Alias  str_set to str_get. Both perform same function.
+
+str_set = str_get
+string_get = str_get
+string_set = str_get
 
 
 def time_get(string):
@@ -216,12 +183,9 @@ def boolean_get(string):
     return bool(string)
 
 
-def boolean_set(value):
-    if value is None:
-        return None
-    return str(value)
+# Alias boolean_set to boolean_get. Both perform same function.
 
-
+boolean_set = boolean_get
 bool_get = boolean_get
 bool_set = boolean_set
 
@@ -235,7 +199,7 @@ def tuple_get(string, count=None):
     string = string.strip()
     assert string.startswith("(") and string.endswith(")")
     string = string[1:-1]
-    res = string.split(";")
+    res = [x.strip() for x in string.split(";")]
     if count is not None:  # be strict
         assert len(res) == count
     return res

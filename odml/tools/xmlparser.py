@@ -12,7 +12,7 @@ import sys
 import csv
 try:
     from StringIO import StringIO
-except:
+except ImportError:
     from io import StringIO
 from odml import format
 from lxml import etree as ET
@@ -25,10 +25,6 @@ try:
 except NameError:
     unicode = str
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 format.Document._xml_name = "odML"
 format.Section._xml_name = "section"
