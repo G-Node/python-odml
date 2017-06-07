@@ -72,8 +72,7 @@ parent.append(odml.Property(name="NoCrewMembers",
                             dtype=odml.DType.int,
                             definition="Number of crew members",
                             uncertainty=1,
-                            reference="The Hitchhiker's guide to the Galaxy (novel)",
-                            definition="Number of crew members"))
+                            reference="The Hitchhiker's guide to the Galaxy (novel)"))
 
 
 # SET NEW PARENT NODE
@@ -307,4 +306,5 @@ parent.append(odml.Property(name="Manufacturer",
 
 save_to = os.path.join(odml_pythonpath, "doc", "example_odMLs", "THGTTG.odml")
 
-odml.tools.xmlparser.XMLWriter(doc).write_file(save_to)
+odml.save(doc, save_to)
+
