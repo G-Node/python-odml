@@ -32,6 +32,7 @@ class BaseProperty(base.baseobject, Property):
         >>> p = Property("prop", [2, 3, 4])
         >>> p.dtype
         >>> int
+        
         :param name: The name of the property
         :param value: Some data value, this may be a list of homogeneous values
         :param unit: The unit of the stored data.
