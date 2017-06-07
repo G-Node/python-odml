@@ -20,13 +20,12 @@ import odml
 import datetime
 
 
-odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+
 
 # CREATE A DOCUMENT
 doc = odml.Document(author="D. N. Adams",
                     date=datetime.date(1979, 10, 12),
                     version=42)
-#                    repository=odmlrepo)
 
 # CREATE AND APPEND THE MAIN SECTIONs
 doc.append(odml.Section(name="TheCrew",
