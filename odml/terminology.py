@@ -20,7 +20,7 @@ CACHE_AGE = datetime.timedelta(days=1)
 
 def cache_load(url):
     """
-    load the url and store it in a temporary cache directory
+    Load the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version
     """
     filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
@@ -51,9 +51,9 @@ class Terminologies(dict):
 
     def load(self, url):
         """
-        load and cache a terminology-url
+        Load and cache a terminology-url
 
-        returns the odml-document for the url
+        Returns the odml-document for the url
         """
         if url in self:
             return self[url]
@@ -73,7 +73,8 @@ class Terminologies(dict):
             print("did not successfully load '%s'" % url)
             return
         try:
-            term = odml.tools.xmlparser.XMLReader(filename=url, ignore_errors=True).fromFile(fp)
+            term = odml.tools.xmlparser.XMLReader(
+                filename=url, ignore_errors=True).fromFile(fp)
             term.finalize()
         except odml.tools.xmlparser.ParserException as e:
             print("Failed to load %s due to parser errors" % url)
@@ -84,7 +85,7 @@ class Terminologies(dict):
 
     def deferred_load(self, url):
         """
-        start a thread to load the terminology in background
+        Start a thread to load the terminology in background
         """
         if url in self or url in self.loading:
             return
@@ -97,4 +98,5 @@ deferred_load = terminologies.deferred_load
 
 
 if __name__ == "__main__":
-    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/analysis.xml')
+    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/'
+                   'analysis/analysis.xml')

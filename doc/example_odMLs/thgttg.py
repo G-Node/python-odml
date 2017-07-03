@@ -7,6 +7,14 @@ Script to generate intro-example.odml
 @author: zehl
 """
 
+import sys
+if len(sys.argv) != 2:
+	print("You have to provide the absolute path to the odml-python module ", 
+	      "your command line.")
+else:
+	odml_pythonpath = sys.argv[-1]
+sys.path.append(odml_pythonpath)
+
 import os
 import odml
 import datetime
@@ -26,9 +34,8 @@ doc.append(odml.Section(name="TheCrew",
                         type="crew"))
 
 doc.append(odml.Section(name="TheStarship",
-                        definition="Information on the crew",
-                        type="crew"))
-
+                        type="starship",
+                        definition="Information on the starship"))
 
 # SET NEW PARENT NODE
 parent = doc['TheCrew']
@@ -63,7 +70,9 @@ parent.append(odml.Property(name="NameCrewMembers",
 parent.append(odml.Property(name="NoCrewMembers",
                             value=4,
                             dtype=odml.DType.int,
-                            definition="Number of crew members"))
+                            definition="Number of crew members",
+                            uncertainty=1,
+                            reference="The Hitchhiker's guide to the Galaxy (novel)"))
 
 
 # SET NEW PARENT NODE
@@ -83,7 +92,7 @@ parent.append(odml.Property(name="Nickname",
                             definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(name="Occupation",
-                            value="-",
+                            value=None,
                             dtype=odml.DType.string,
                             definition="Occupation of the subject"))
 
@@ -110,7 +119,7 @@ parent.append(odml.Property(name="Species",
                             definition="Species to which subject belongs to"))
 
 parent.append(odml.Property(name="Nickname",
-                            value="-",
+                            value=None,
                             dtype=odml.DType.string,
                             definition="Nickname(s) of the subject"))
 
@@ -137,7 +146,7 @@ parent = doc['TheCrew']['Tricia Marie McMillan']
 
 # APPEND PROPERTIES WITH VALUES
 parent.append(odml.Property(name="Species",
-                            value="Betelgeusian",
+                            value="Human",
                             dtype=odml.DType.string,
                             definition="Species to which subject belongs to"))
 
@@ -147,7 +156,7 @@ parent.append(odml.Property(name="Nickname",
                             definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(name="Occupation",
-                            value="-",
+                            value=None,
                             dtype=odml.DType.string,
                             definition="Occupation of the subject"))
 
@@ -160,7 +169,6 @@ parent.append(odml.Property(name="HomePlanet",
                             value="Earth",
                             dtype=odml.DType.string,
                             definition="Home planet of the subject"))
-
 
 # SET NEW PARENT NODE
 parent = doc['TheCrew']['Ford Prefect']
@@ -179,8 +187,7 @@ parent.append(odml.Property(name="Nickname",
                             definition="Nickname(s) of the subject"))
 
 parent.append(odml.Property(name="Occupation",
-                            value="Researcher for the Hitchhiker's Guide"
-                            " to the Galaxy",
+                            value="Researcher/Reporter",
                             dtype=odml.DType.string,
                             definition="Occupation of the subject"))
 
@@ -240,6 +247,7 @@ parent.append(odml.Property(name="FactoryPlanet",
                             dtype=odml.DType.string,
                             definition="Planet where device was constructed"))
 
+
 # SET NEW PARENT NODE
 parent = doc['TheStarship']['Cybernetics']
 
@@ -253,21 +261,50 @@ parent.append(odml.Section(name='Eddie',
                            definition="Information on Eddie"))
 
 # APPEND PROPERTIES WITH VALUES
-parent.append(odml.Property(name="RobotType",
-                            value="Genuine People Personalities",
+parent.append(odml.Property(name="NoOfCybernetics",
+                            value=2,
+                            dtype=odml.DType.int,
+                            definition="Number of cybernetic robots on the ship"))
+
+parent.append(odml.Property(name="NamesOfCybernetics",
+                            value=["Marvin",
+                                   "Eddie"],
                             dtype=odml.DType.string,
-                            definition="Type of robots"))
+                            definition="Names of cybernetic robots on the ship"))
+
+# SET NEW PARENT NODE
+parent = doc['TheStarship']['Cybernetics']['Marvin']
+
+# APPEND SUBSECTIONS
+
+# APPEND PROPERTIES WIHT VALUES
+parent.append(odml.Property(name="Type",
+                            value="Genuine People Personality",
+                            dtype=odml.DType.string,
+                            definition="Type of robot"))
 
 parent.append(odml.Property(name="Manufacturer",
                             value="Sirius Cybernetics Corporation",
                             dtype=odml.DType.string,
                             definition="Manufacturer of robots"))
 
-parent.append(odml.Property(name="NoOfCybernetics",
-                            value=2,
-                            dtype=odml.DType.int,
-                            definition="Number of cybernetic robots "
-                                       "on the ship"))
+# SET NEW PARENT NODE
+parent = doc['TheStarship']['Cybernetics']['Eddie']
 
-save_to = os.path.join(os.getcwd(), "THGTTG.odml")
-odml.tools.xmlparser.XMLWriter(doc).write_file(save_to)
+# APPEND SUBSECTIONS
+
+# APPEND PROPERTIES WIHT VALUES
+parent.append(odml.Property(name="Type",
+                            value="Genuine People Personality",
+                            dtype=odml.DType.string,
+                            definition="Type of robot"))
+
+parent.append(odml.Property(name="Manufacturer",
+                            value="Sirius Cybernetics Corporation",
+                            dtype=odml.DType.string,
+                            definition="Manufacturer of robots"))
+
+save_to = os.path.join(odml_pythonpath, "doc", "example_odMLs", "THGTTG.odml")
+
+odml.save(doc, save_to)
+

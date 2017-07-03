@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1.1">
+  <version>42</version>
+  <author>D. N. Adams</author>
+  <date>1979-10-12</date>
+  <section>
+    <section>
+      <property>
+        <value>[Human]</value>
+        <definition>Species to which subject belongs to</definition>
+        <type>string</type>
+        <name>Species</name>
+      </property>
+      <property>
+        <value>[The sandwich-maker]</value>
+        <definition>Nickname(s) of the subject</definition>
+        <type>string</type>
+        <name>Nickname</name>
+      </property>
+      <property>
+        <value>[-]</value>
+        <definition>Occupation of the subject</definition>
+        <type>string</type>
+        <name>Occupation</name>
+      </property>
+      <property>
+        <value>[male]</value>
+        <definition>Sex of the subject</definition>
+        <type>string</type>
+        <name>Gender</name>
+      </property>
+      <property>
+        <value>[Earth]</value>
+        <definition>Home planet of the subject</definition>
+        <type>string</type>
+        <name>HomePlanet</name>
+      </property>
+      <definition>Information on Arthur Dent</definition>
+      <type>crew/person</type>
+      <name>Arthur Philip Dent</name>
+    </section>
+    <section>
+      <property>
+        <value>[Betelgeusian]</value>
+        <definition>Species to which subject belongs to</definition>
+        <type>string</type>
+        <name>Species</name>
+      </property>
+      <property>
+        <value>[-]</value>
+        <definition>Nickname(s) of the subject</definition>
+        <type>string</type>
+        <name>Nickname</name>
+      </property>
+      <property>
+        <value>[Ex-Galactic President]</value>
+        <definition>Occupation of the subject</definition>
+        <type>string</type>
+        <name>Occupation</name>
+      </property>
+      <property>
+        <value>[male]</value>
+        <definition>Sex of the subject</definition>
+        <type>string</type>
+        <name>Gender</name>
+      </property>
+      <property>
+        <value>[A planet in the vicinity of Betelgeuse]</value>
+        <definition>Home planet of the subject</definition>
+        <type>string</type>
+        <name>HomePlanet</name>
+      </property>
+      <definition>Information on Zaphod Beeblebrox</definition>
+      <type>crew/person</type>
+      <name>Zaphod Beeblebrox</name>
+    </section>
+    <section>
+      <property>
+        <value>[Betelgeusian]</value>
+        <definition>Species to which subject belongs to</definition>
+        <type>string</type>
+        <name>Species</name>
+      </property>
+      <property>
+        <value>[Trillian Astra]</value>
+        <definition>Nickname(s) of the subject</definition>
+        <type>string</type>
+        <name>Nickname</name>
+      </property>
+      <property>
+        <value>[-]</value>
+        <definition>Occupation of the subject</definition>
+        <type>string</type>
+        <name>Occupation</name>
+      </property>
+      <property>
+        <value>[female]</value>
+        <definition>Sex of the subject</definition>
+        <type>string</type>
+        <name>Gender</name>
+      </property>
+      <property>
+        <value>[Earth]</value>
+        <definition>Home planet of the subject</definition>
+        <type>string</type>
+        <name>HomePlanet</name>
+      </property>
+      <definition>Information on Trillian Astra</definition>
+      <type>crew/person</type>
+      <name>Tricia Marie McMillan</name>
+    </section>
+    <section>
+      <property>
+        <value>[Betelgeusian]</value>
+        <definition>Species to which subject belongs to</definition>
+        <type>string</type>
+        <name>Species</name>
+      </property>
+      <property>
+        <value>[Ix]</value>
+        <definition>Nickname(s) of the subject</definition>
+        <type>string</type>
+        <name>Nickname</name>
+      </property>
+      <property>
+        <value>[Researcher for the Hitchhiker's Guide to the Galaxy]</value>
+        <definition>Occupation of the subject</definition>
+        <type>string</type>
+        <name>Occupation</name>
+      </property>
+      <property>
+        <value>[male]</value>
+        <definition>Sex of the subject</definition>
+        <type>string</type>
+        <name>Gender</name>
+      </property>
+      <property>
+        <value>[A planet in the vicinity of Betelgeuse]</value>
+        <definition>Home planet of the subject</definition>
+        <type>string</type>
+        <name>HomePlanet</name>
+      </property>
+      <definition>Information on Ford Prefect</definition>
+      <type>crew/person</type>
+      <name>Ford Prefect</name>
+    </section>
+    <property>
+      <value>[Arthur Philip Dent,Zaphod Beeblebrox,Tricia Marie McMillan,Ford Prefect]</value>
+      <definition>List of crew members names</definition>
+      <type>person</type>
+      <name>NameCrewMembers</name>
+    </property>
+    <property>
+      <value>[4]</value>
+      <definition>Number of crew members</definition>
+      <type>int</type>
+      <name>NoCrewMembers</name>
+    </property>
+    <definition>Information on the crew</definition>
+    <type>crew</type>
+    <name>TheCrew</name>
+  </section>
+  <section>
+    <section>
+      <section>
+        <definition>Information on Marvin</definition>
+        <type>starship/cybernetics</type>
+        <name>Marvin</name>
+      </section>
+      <section>
+        <definition>Information on Eddie</definition>
+        <type>starship/cybernetics</type>
+        <name>Eddie</name>
+      </section>
+      <property>
+        <value>[Genuine People Personalities]</value>
+        <definition>Type of robots</definition>
+        <type>string</type>
+        <name>RobotType</name>
+      </property>
+      <property>
+        <value>[Sirius Cybernetics Corporation]</value>
+        <definition>Manufacturer of robots</definition>
+        <type>string</type>
+        <name>Manufacturer</name>
+      </property>
+      <property>
+        <value>[2]</value>
+        <definition>Number of cybernetic robots on the ship</definition>
+        <type>int</type>
+        <name>NoOfCybernetics</name>
+      </property>
+      <definition>Information on cybernetics present on the ship</definition>
+      <type>starship/cybernetics</type>
+      <name>Cybernetics</name>
+    </section>
+    <property>
+      <value>[Heart of Gold]</value>
+      <definition>Name of person/device</definition>
+      <type>string</type>
+      <name>Name</name>
+    </property>
+    <property>
+      <value>[stolen]</value>
+      <definition>Owner status of device</definition>
+      <type>string</type>
+      <name>OwnerStatus</name>
+    </property>
+    <property>
+      <value>[Infinite Propability Drive]</value>
+      <definition>Type of drive</definition>
+      <type>string</type>
+      <name>DriveType</name>
+    </property>
+    <property>
+      <value>[secret]</value>
+      <definition>Technology used to built device</definition>
+      <type>string</type>
+      <name>Technology</name>
+    </property>
+    <property>
+      <unit>m</unit>
+      <value>[150.0]</value>
+      <definition>Length of device</definition>
+      <type>float</type>
+      <name>Length</name>
+    </property>
+    <property>
+      <value>[various]</value>
+      <definition>Shape of device</definition>
+      <type>string</type>
+      <name>Shape</name>
+    </property>
+    <property>
+      <value>[Damogran]</value>
+      <definition>Planet where device was constructed</definition>
+      <type>string</type>
+      <name>FactoryPlanet</name>
+    </property>
+    <definition>Information on the crew</definition>
+    <type>crew</type>
+    <name>TheStarship</name>
+  </section>
+</odML>

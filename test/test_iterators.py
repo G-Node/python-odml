@@ -68,10 +68,13 @@ class TestValidation(unittest.TestCase):
         prop_filt = self.doc.iterproperties(filter_func=filter_func)
         assert(len([p for p in prop_filt]) == 4)
 
-        prop_filt = self.doc.iterproperties(filter_func=filter_func, max_depth=2)
+        prop_filt = self.doc.iterproperties(
+            filter_func=filter_func, max_depth=2)
         assert(len([p for p in prop_filt]) == 3)
 
-        prop_filt = self.doc.iterproperties(filter_func=filter_func, max_depth=1)
+        prop_filt = self.doc.iterproperties(filter_func=filter_func,
+                                            max_depth=1)
+
         assert(len([p for p in prop_filt]) == 1)
 
     def test_itervalues(self):

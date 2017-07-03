@@ -10,11 +10,11 @@ class Format(object):
     _rev_map = None
 
     def map(self, name):
-        """maps an odml name to a python name"""
+        """ Maps an odml name to a python name """
         return self._map.get(name, name)
 
     def revmap(self, name):
-        """maps a python name to an odml name"""
+        """ Maps a python name to an odml name """
         if self._rev_map is None:
             # create the reverse map only if requested
             self._rev_map = {}
@@ -23,7 +23,7 @@ class Format(object):
         return self._rev_map.get(name, name)
 
     def __iter__(self):
-        """iterates each python property name"""
+        """ Iterates each python property name """
         for k in self._args:
             yield self.map(k)
 
@@ -43,11 +43,11 @@ class Property(Format):
         'uncertainty': 0,
         'reference': 0,
         'type': 0,
-        }
+    }
     _map = {
         'dependencyvalue': 'dependency_value',
         'type': 'dtype'
-        }
+    }
 
 
 class Section(Format):
@@ -62,11 +62,11 @@ class Section(Format):
         'section': 0,
         'include': 0,
         'property': 0
-        }
+    }
     _map = {
         'section': 'sections',
         'property': 'properties',
-        }
+    }
 
 
 class Document(Format):
@@ -77,10 +77,11 @@ class Document(Format):
         'date': 0,
         'section': 0,
         'repository': 0,
-        }
+    }
     _map = {
         'section': 'sections'
-        }
+    }
+
 
 Document = Document()
 Section = Section()
