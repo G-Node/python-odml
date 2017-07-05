@@ -34,6 +34,7 @@ class Format(object):
 class Property(Format):
     _name = "property"
     _args = {
+        'id': 0,
         'name': 1,
         'value': 0,
         'unit': 0,
@@ -53,6 +54,7 @@ class Property(Format):
 class Section(Format):
     _name = "section"
     _args = {
+        'id': 0,
         'type': 1,
         'name': 0,
         'definition': 0,
@@ -72,6 +74,7 @@ class Section(Format):
 class Document(Format):
     _name = "odML"
     _args = {
+        'id': 0,
         'version': 0,
         'author': 0,
         'date': 0,

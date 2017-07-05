@@ -2,6 +2,7 @@
 import odml.base as base
 import odml.format as format
 import odml.terminology as terminology
+import uuid
 # this is supposedly ok, as we only use it for an isinstance check
 from odml.property import Property
 # it MUST however not be used to create any Property objects
@@ -28,6 +29,7 @@ class BaseSection(base.sectionable, Section):
 
     def __init__(self, name, type=None, parent=None,
                  definition=None, reference=None):
+        self._id = uuid.uuid4()
         self._parent = None
         self._name = name
         self._props = base.SmartList()
@@ -41,6 +43,10 @@ class BaseSection(base.sectionable, Section):
     def __repr__(self):
         return "<Section %s[%s] (%d)>" % (self._name, self.type,
                                           len(self._sections))
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def name(self):

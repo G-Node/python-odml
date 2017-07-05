@@ -3,6 +3,7 @@ import odml.dtypes as dtypes
 import odml.base as base
 import odml.format as format
 import odml.terminology as terminology
+import uuid
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -25,10 +26,15 @@ class BaseDocument(base.sectionable, Document):
 
     def __init__(self, author=None, date=None, version=None, repository=None):
         super(BaseDocument, self).__init__()
+        self._id = uuid.uuid4()
         self._author = author
         self._date = date  # date must be a datetime
         self._version = version
         self._repository = repository
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def author(self):
