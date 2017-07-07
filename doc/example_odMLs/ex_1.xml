@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:ns1="http://g-node/odml#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:nodeID="4b964079-8c0d-4033-b6f5-9cb21c0ccae9">
+    <ns1:hasSection>
+      <rdf:Description rdf:nodeID="cd07c126-d63b-4189-b23c-f956bfdd93b8">
+        <ns1:definition>Information on the crew</ns1:definition>
+        <ns1:hasProperty>
+          <rdf:Description rdf:nodeID="5284a04b-6164-4f09-a2cd-d861e53ef497">
+            <ns1:hasValue>
+              <rdf:Description rdf:nodeID="N965a957be8c14b22bab0d18b80d1b707">
+                <rdf:li>Ford Prefect</rdf:li>
+                <rdf:li>Tricia Marie McMillan</rdf:li>
+                <rdf:li>Arthur Philip Dent</rdf:li>
+                <rdf:li>Zaphod Beeblebrox</rdf:li>
+              </rdf:Description>
+            </ns1:hasValue>
+            <ns1:name>NameCrewMembers</ns1:name>
+            <ns1:dtype>person</ns1:dtype>
+            <ns1:definition>List of crew members names</ns1:definition>
+            <ns1:hasValue>
+              <rdf:Description rdf:nodeID="Nd1d738fa6f9042dbb84bb46c62a2f3f6">
+                <rdf:li>Arthur Philip Dent</rdf:li>
+                <rdf:li>Zaphod Beeblebrox</rdf:li>
+                <rdf:li>Tricia Marie McMillan</rdf:li>
+                <rdf:li>Ford Prefect</rdf:li>
+              </rdf:Description>
+            </ns1:hasValue>
+          </rdf:Description>
+        </ns1:hasProperty>
+        <ns1:name>TheCrew</ns1:name>
+        <ns1:hasProperty>
+          <rdf:Description rdf:nodeID="17eab9c4-0fab-4e5d-9c31-a1cc4a1330e1">
+            <ns1:hasValue>[4]</ns1:hasValue>
+            <ns1:name>NoCrewMembers</ns1:name>
+            <ns1:definition>Number of crew members</ns1:definition>
+            <ns1:uncertainty>1</ns1:uncertainty>
+            <ns1:dtype>int</ns1:dtype>
+          </rdf:Description>
+        </ns1:hasProperty>
+        <ns1:type>crew</ns1:type>
+        <ns1:hasSection>
+          <rdf:Description rdf:nodeID="5923a6c3-8767-4025-8a66-fbdd6196f68c">
+            <ns1:hasProperty>
+              <rdf:Description rdf:nodeID="3a1483ed-0da2-4d28-9ecf-a0f5ed5451bc">
+                <ns1:name>Species</ns1:name>
+                <ns1:dtype>string</ns1:dtype>
+                <ns1:definition>Species to which subject belongs to</ns1:definition>
+                <ns1:hasValue>['Human']</ns1:hasValue>
+              </rdf:Description>
+            </ns1:hasProperty>
+            <ns1:name>Arthur Philip Dent</ns1:name>
+            <ns1:definition>Information on Arthur Dent</ns1:definition>
+            <ns1:type>crew/person</ns1:type>
+            <ns1:hasProperty>
+              <rdf:Description rdf:nodeID="c474f438-29f6-4901-bbac-dd62610cbd5e">
+                <ns1:dtype>string</ns1:dtype>
+                <ns1:name>Nickname</ns1:name>
+                <ns1:hasValue>['The sandwich-maker']</ns1:hasValue>
+                <ns1:definition>Nickname(s) of the subject</ns1:definition>
+              </rdf:Description>
+            </ns1:hasProperty>
+          </rdf:Description>
+        </ns1:hasSection>
+      </rdf:Description>
+    </ns1:hasSection>
+    <ns1:version>42</ns1:version>
+    <ns1:author>D. N. Adams</ns1:author>
+    <ns1:date>1979-10-12</ns1:date>
+    <ns1:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1979-10-12</ns1:date>
+  </rdf:Description>
+</rdf:RDF>
