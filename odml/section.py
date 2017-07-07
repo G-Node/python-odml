@@ -18,7 +18,7 @@ class Section(base._baseobj):
 class BaseSection(base.sectionable, Section):
     """ An odML Section """
     type = None
-    id = None
+    # id = None
     _link = None
     _include = None
     reference = None  # the *import* property
@@ -28,7 +28,7 @@ class BaseSection(base.sectionable, Section):
     _format = format.Section
 
     def __init__(self, name, type=None, parent=None,
-                 definition=None, reference=None):
+                 definition=None, reference=None, id=None):
         self._id = uuid.uuid4()
         self._parent = None
         self._name = name
