@@ -63,7 +63,7 @@ class Property(Format):
         'dtype': _ns.dtype,
         'unit': _ns.unit,
         'uncertainty': _ns.uncertainty,
-        'values': _ns.hasValue  # manage datatype RDF:Bag, RDF:li
+        'value': _ns.hasValue
     }
 
 
