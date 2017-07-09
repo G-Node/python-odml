@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1.1">
+  <id>2fb285a7-e345-4dc7-a26e-d172f924401f</id>
+  <section>
+    <id>7febc07c-9ff2-43d9-a271-e6d566d4022c</id>
+    <definition>Information on the crew</definition>
+    <section>
+      <id>8e6d2f04-215e-4a41-852d-f79da296b5f0</id>
+      <definition>Information on Arthur Dent</definition>
+      <name>Arthur Philip Dent</name>
+      <type>crew/person</type>
+      <property>
+        <id>126bde69-7b1f-4390-b472-a0eef0fa7b62</id>
+        <definition>Species to which subject belongs to</definition>
+        <value>[Human]</value>
+        <name>Species</name>
+        <type>string</type>
+      </property>
+      <property>
+        <id>550652db-46de-442a-89f1-e2a7f5b30b93</id>
+        <definition>Nickname(s) of the subject</definition>
+        <value>[The sandwich-maker]</value>
+        <name>Nickname</name>
+        <type>string</type>
+      </property>
+    </section>
+    <name>TheCrew</name>
+    <type>crew</type>
+    <property>
+      <id>0356370a-c8cc-4001-bf49-94d377b9a7a7</id>
+      <definition>List of crew members names</definition>
+      <value>[Arthur Philip Dent,Zaphod Beeblebrox,Tricia Marie McMillan,Ford Prefect]</value>
+      <name>NameCrewMembers</name>
+      <type>person</type>
+    </property>
+    <property>
+      <id>1eab3e56-06f1-487c-834f-6376a295e6a4</id>
+      <definition>Number of crew members</definition>
+      <value>[4]</value>
+      <name>NoCrewMembers</name>
+      <type>int</type>
+      <uncertainty>1</uncertainty>
+      <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
+    </property>
+  </section>
+  <version>42</version>
+  <author>D. N. Adams</author>
+  <date>1979-10-12</date>
+</odML>
