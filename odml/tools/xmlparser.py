@@ -298,7 +298,7 @@ class XMLReader(object):
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
-            if hasattr(obj, k) and getattr(obj, k) is None:
+            if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
                 try:
                     setattr(obj, k, v)
                 except Exception as e:

@@ -1,6 +1,5 @@
-import os
 import sys
-from rdflib import Graph, BNode, Literal
+from rdflib import Graph, BNode, Literal, URIRef
 from rdflib.namespace import XSD, RDF
 import odml.format as format
 import odml
@@ -12,7 +11,7 @@ except NameError:
 
 class RDFWriter:
     """ 
-    Creates RDF graph storing information about odML document 
+    Creates the RDF graph storing information about the odML document 
     """
     def __init__(self, odml_document):
         self.doc = odml_document
@@ -30,6 +29,7 @@ class RDFWriter:
         for k in fmt._rdf_map:
             if k == 'id':
                 continue
+            # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, format.Document.__class__) or
                     isinstance(fmt, format.Section.__class__)) and \
                     k == 'sections' and len(getattr(e, k)) > 0:
@@ -46,20 +46,25 @@ class RDFWriter:
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p)
             elif isinstance(fmt, format.Property.__class__) and \
-                    k == 'value' and len(getattr(e, k)) > 1:
+                    k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
                 bag = BNode()
                 self.g.add((curr_node, fmt.rdf_map(k), bag))
                 for v in values:
-                    # TODO discuss possible data types here
                     self.g.add((bag, RDF.li, Literal(v)))
-
+            # adding attributes to the entities
             else:
                 val = getattr(e, k)
+                print("elem: ", e)
+                print("k ", k)
+                print("Val ", val)
                 if val is None or not val:
                     continue
                 elif k == 'date':
                     self.g.add((curr_node, fmt.rdf_map(k), Literal(val, datatype=XSD.date)))
+                elif k == 'reference':
+                    # TODO check if reference is a string pointing to DB
+                    self.g.add((curr_node, fmt.rdf_map(k), URIRef(val)))
                 self.g.add((curr_node, fmt.rdf_map(k), Literal(val)))
         return self.g
 
@@ -81,7 +86,9 @@ class RDFWriter:
 
 if __name__ == "__main__":
     l = "./python-odml/doc/example_odMLs/ex_1.odml"
+    l = "/home/rick/g-node/python-odml/doc/example_odMLs/ex_1.odml"
     o = odml.load(l)
     r = RDFWriter(o)
     r.save_element(r.doc)
-    r.write_file("./ex_1.xml")
+    # r.write_file("./ex_1.xml")
+    r.write_file("/home/rick/g-node/python-odml/doc/example_odMLs/ex_1.xml")
