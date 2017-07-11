@@ -9,6 +9,7 @@ try:
 except NameError:
     unicode = str
 
+
 class RDFWriter:
     """ 
     Creates the RDF graph storing information about the odML document 
@@ -18,7 +19,12 @@ class RDFWriter:
         self.g = Graph()
 
     def save_element(self, e, node=None):
-
+        """
+        Save the current element to the RDF graph
+        :param e: current element 
+        :param node: Blank node to pass the earlier created node to inner elements
+        :return: the RDF graph 
+        """
         fmt = e._format
 
         if not node:
@@ -37,14 +43,14 @@ class RDFWriter:
                 for s in sections:
                     node = BNode(s.id)
                     self.g.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(s)
+                    self.save_element(s, node)
             elif isinstance(fmt, format.Section.__class__) and \
                     k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
                     node = BNode(p.id)
                     self.g.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(p)
+                    self.save_element(p, node)
             elif isinstance(fmt, format.Property.__class__) and \
                     k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
@@ -55,9 +61,6 @@ class RDFWriter:
             # adding attributes to the entities
             else:
                 val = getattr(e, k)
-                print("elem: ", e)
-                print("k ", k)
-                print("Val ", val)
                 if val is None or not val:
                     continue
                 elif k == 'date':
@@ -69,10 +72,10 @@ class RDFWriter:
         return self.g
 
     def __str__(self):
-        return self.save_element(self.doc).serialize(format='pretty-xml').decode("utf-8")
+        return self.save_element(self.doc).serialize(format='turtle').decode("utf-8")
 
     def __unicode__(self):
-        return self.save_element(self.doc).serialize(format='pretty-xml').decode("utf-8")
+        return self.save_element(self.doc).serialize(format='turtle').decode("utf-8")
 
     def write_file(self, filename):
         if sys.version_info < (3,):
@@ -86,9 +89,6 @@ class RDFWriter:
 
 if __name__ == "__main__":
     l = "./python-odml/doc/example_odMLs/ex_1.odml"
-    l = "/home/rick/g-node/python-odml/doc/example_odMLs/ex_1.odml"
     o = odml.load(l)
     r = RDFWriter(o)
-    r.save_element(r.doc)
-    # r.write_file("./ex_1.xml")
-    r.write_file("/home/rick/g-node/python-odml/doc/example_odMLs/ex_1.xml")
+    r.write_file("./ex_1.rdf")

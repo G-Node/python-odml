@@ -1,0 +1,36 @@
+@prefix ns1: <http://g-node/odml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+[] ns1:author "D. N. Adams" ;
+    ns1:date "1979-10-12"^^xsd:date,
+        "1979-10-12" ;
+    ns1:hasSection [ ns1:definition "Information on the crew" ;
+            ns1:hasProperty [ ns1:definition "List of crew members names" ;
+                    ns1:dtype "person" ;
+                    ns1:hasValue [ rdf:li "Arthur Philip Dent",
+                                "Ford Prefect",
+                                "Tricia Marie McMillan",
+                                "Zaphod Beeblebrox" ] ;
+                    ns1:name "NameCrewMembers" ],
+                [ ns1:definition "Number of crew members" ;
+                    ns1:dtype "int" ;
+                    ns1:hasValue [ rdf:li 4 ] ;
+                    ns1:name "NoCrewMembers" ;
+                    ns1:uncertainty "1" ] ;
+            ns1:hasSection [ ns1:definition "Information on Arthur Dent" ;
+                    ns1:hasProperty [ ns1:definition "Nickname(s) of the subject" ;
+                            ns1:dtype "string" ;
+                            ns1:name "Nickname" ],
+                        [ ns1:definition "Species to which subject belongs to" ;
+                            ns1:dtype "string" ;
+                            ns1:hasValue [ rdf:li "Human" ] ;
+                            ns1:name "Species" ] ;
+                    ns1:name "Arthur Philip Dent" ;
+                    ns1:type "crew/person" ] ;
+            ns1:name "TheCrew" ;
+            ns1:type "crew" ] ;
+    ns1:version "42" .
+

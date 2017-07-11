@@ -2,50 +2,50 @@
 <?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
 <?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
 <odML version="1.1">
-  <id>2fb285a7-e345-4dc7-a26e-d172f924401f</id>
+  <author>D. N. Adams</author>
+  <id>ea5bb6ca-f67e-4189-b4a9-440433eb36e0</id>
   <section>
-    <id>7febc07c-9ff2-43d9-a271-e6d566d4022c</id>
-    <definition>Information on the crew</definition>
-    <section>
-      <id>8e6d2f04-215e-4a41-852d-f79da296b5f0</id>
-      <definition>Information on Arthur Dent</definition>
-      <name>Arthur Philip Dent</name>
-      <type>crew/person</type>
-      <property>
-        <id>126bde69-7b1f-4390-b472-a0eef0fa7b62</id>
-        <definition>Species to which subject belongs to</definition>
-        <value>[Human]</value>
-        <name>Species</name>
-        <type>string</type>
-      </property>
-      <property>
-        <id>550652db-46de-442a-89f1-e2a7f5b30b93</id>
-        <definition>Nickname(s) of the subject</definition>
-        <value>[The sandwich-maker]</value>
-        <name>Nickname</name>
-        <type>string</type>
-      </property>
-    </section>
-    <name>TheCrew</name>
+    <id>657dfd78-844c-43f9-9c42-c5df5765c807</id>
     <type>crew</type>
     <property>
-      <id>0356370a-c8cc-4001-bf49-94d377b9a7a7</id>
-      <definition>List of crew members names</definition>
-      <value>[Arthur Philip Dent,Zaphod Beeblebrox,Tricia Marie McMillan,Ford Prefect]</value>
-      <name>NameCrewMembers</name>
       <type>person</type>
+      <value>[Arthur Philip Dent,Zaphod Beeblebrox,Tricia Marie McMillan,Ford Prefect]</value>
+      <id>53ed7306-2f86-4013-9405-c74d8dd53585</id>
+      <name>NameCrewMembers</name>
+      <definition>List of crew members names</definition>
     </property>
     <property>
-      <id>1eab3e56-06f1-487c-834f-6376a295e6a4</id>
-      <definition>Number of crew members</definition>
-      <value>[4]</value>
-      <name>NoCrewMembers</name>
       <type>int</type>
-      <uncertainty>1</uncertainty>
       <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
+      <value>[4]</value>
+      <id>5e78425b-6d2b-44ec-9009-9b06042f9590</id>
+      <name>NoCrewMembers</name>
+      <definition>Number of crew members</definition>
+      <uncertainty>1</uncertainty>
     </property>
+    <name>TheCrew</name>
+    <definition>Information on the crew</definition>
+    <section>
+      <id>22251eea-857b-4928-b864-97f085a061c3</id>
+      <type>crew/person</type>
+      <property>
+        <type>string</type>
+        <value>[Human]</value>
+        <id>c026c389-548b-49f6-b93b-21c60195f001</id>
+        <name>Species</name>
+        <definition>Species to which subject belongs to</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <value>[]</value>
+        <id>a1621b44-7307-4983-a2c1-b8b6701379f6</id>
+        <name>Nickname</name>
+        <definition>Nickname(s) of the subject</definition>
+      </property>
+      <name>Arthur Philip Dent</name>
+      <definition>Information on Arthur Dent</definition>
+    </section>
   </section>
-  <version>42</version>
-  <author>D. N. Adams</author>
   <date>1979-10-12</date>
+  <version>42</version>
 </odML>

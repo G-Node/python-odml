@@ -56,7 +56,7 @@ parent.append(odml.Property(name="Species",
                             definition="Species to which subject belongs to"))
 
 parent.append(odml.Property(name="Nickname",
-                            value="The sandwich-maker",
+                            value=None,
                             dtype=odml.DType.string,
                             definition="Nickname(s) of the subject"))
 
