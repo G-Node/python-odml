@@ -14,8 +14,9 @@ class RDFWriter:
     """ 
     Creates the RDF graph storing information about the odML document 
     """
-    def __init__(self, odml_document):
+    def __init__(self, odml_document, hub_id):
         self.doc = odml_document
+        self.hub_id = hub_id
         self.g = Graph()
 
     def save_element(self, e, node=None):
@@ -33,6 +34,12 @@ class RDFWriter:
             curr_node = node
 
         self.g.add((curr_node, fmt.rdf_type(), URIRef(fmt.rdf_type())))
+
+        # adding doc to the hub
+        if isinstance(fmt, format.Document.__class__):
+            hub = BNode(self.hub_id)
+            self.g.add((hub, fmt.namespace().Hub, URIRef(fmt.namespace().Hub)))
+            self.g.add((hub, fmt.namespace().hasDocument, curr_node))
 
         for k in fmt._rdf_map:
             if k == 'id':
@@ -92,5 +99,5 @@ class RDFWriter:
 if __name__ == "__main__":
     l = "./python-odml/doc/example_odMLs/ex_1.odml"
     o = odml.load(l)
-    r = RDFWriter(o)
+    r = RDFWriter(o, "hub1")
     r.write_file("./ex_1.rdf")

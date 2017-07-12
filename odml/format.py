@@ -24,6 +24,10 @@ class Format(object):
         """ Return rdf type of an object """
         return self._rdf_type
 
+    def namespace(self):
+        """ Return current link to current odml namespace"""
+        return self._ns
+
     def revmap(self, name):
         """ Maps a python name to an odml name """
         if self._rev_map is None:
@@ -102,10 +106,8 @@ class Section(Format):
         'reference': _ns.reference,
         'sections': _ns.hasSection,
         'properties': _ns.hasProperty,
-
-        # TODO find out the way to correctly represent link & include
-        # 'link'
-        # 'include'
+        'link': _ns.link,
+        'include': _ns.include
     }
 
 
