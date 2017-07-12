@@ -32,6 +32,8 @@ class RDFWriter:
         else:
             curr_node = node
 
+        self.g.add((curr_node, fmt.rdf_type(), URIRef(fmt.rdf_type())))
+
         for k in fmt._rdf_map:
             if k == 'id':
                 continue

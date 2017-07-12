@@ -9,6 +9,7 @@ class Format(object):
     _map = {}
     _rev_map = None
     _rdf_map = {}
+    _rdf_type = None
     _ns = Namespace("http://g-node/odml#")
 
     def map(self, name):
@@ -18,6 +19,10 @@ class Format(object):
     def rdf_map(self, name):
         """ Maps a python name to a odml rdf namespace """
         return self._rdf_map.get(name, name)
+
+    def rdf_type(self):
+        """ Return rdf type of an object """
+        return self._rdf_type
 
     def revmap(self, name):
         """ Maps a python name to an odml name """
@@ -40,6 +45,7 @@ class Format(object):
 class Property(Format):
     _name = "property"
     _ns = Format._ns
+    _rdf_type = _ns.Property
     _args = {
         'id': 0,
         'name': 1,
@@ -70,6 +76,7 @@ class Property(Format):
 class Section(Format):
     _name = "section"
     _ns = Format._ns
+    _rdf_type = _ns.Section
     _args = {
         'id': 0,
         'type': 1,
@@ -105,6 +112,7 @@ class Section(Format):
 class Document(Format):
     _name = "odML"
     _ns = Format._ns
+    _rdf_type = _ns.Document
     _args = {
         'id': 0,
         'version': 0,
