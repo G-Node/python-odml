@@ -129,7 +129,7 @@ class Document(Format):
     _rdf_map = {
         'id': _ns.id,
         'author': _ns.author,
-        'date': _ns.date,   # manage datatype
+        'date': _ns.date,
         # 'doc_version': _ns.docversion,    # discuss about the changes to the data model
         'repository': _ns.terminology,
         'sections': _ns.hasSection,

@@ -3,49 +3,50 @@
 <?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
 <odML version="1.1">
   <author>D. N. Adams</author>
-  <id>ea5bb6ca-f67e-4189-b4a9-440433eb36e0</id>
+  <repository>http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml</repository>
   <section>
-    <id>657dfd78-844c-43f9-9c42-c5df5765c807</id>
-    <type>crew</type>
     <property>
       <type>person</type>
       <value>[Arthur Philip Dent,Zaphod Beeblebrox,Tricia Marie McMillan,Ford Prefect]</value>
-      <id>53ed7306-2f86-4013-9405-c74d8dd53585</id>
+      <id>7b0572c1-fcfc-4010-aebf-730397ac29af</id>
       <name>NameCrewMembers</name>
       <definition>List of crew members names</definition>
     </property>
     <property>
       <type>int</type>
-      <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
+      <uncertainty>1</uncertainty>
       <value>[4]</value>
-      <id>5e78425b-6d2b-44ec-9009-9b06042f9590</id>
+      <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
+      <id>298938a6-0996-4a92-982b-837a08a1a220</id>
       <name>NoCrewMembers</name>
       <definition>Number of crew members</definition>
-      <uncertainty>1</uncertainty>
     </property>
-    <name>TheCrew</name>
+    <type>crew</type>
     <definition>Information on the crew</definition>
+    <id>0f96a050-2d9b-498f-a532-fbfcc6aae55e</id>
+    <name>TheCrew</name>
     <section>
-      <id>22251eea-857b-4928-b864-97f085a061c3</id>
-      <type>crew/person</type>
       <property>
         <type>string</type>
         <value>[Human]</value>
-        <id>c026c389-548b-49f6-b93b-21c60195f001</id>
+        <id>635035cc-1c05-4e44-a4b7-0fb3d6295abf</id>
         <name>Species</name>
         <definition>Species to which subject belongs to</definition>
       </property>
       <property>
         <type>string</type>
         <value>[]</value>
-        <id>a1621b44-7307-4983-a2c1-b8b6701379f6</id>
+        <id>0cec018b-20e3-4b13-bb95-b41de12db97f</id>
         <name>Nickname</name>
         <definition>Nickname(s) of the subject</definition>
       </property>
-      <name>Arthur Philip Dent</name>
+      <type>crew/person</type>
       <definition>Information on Arthur Dent</definition>
+      <id>1d6469b5-5322-408b-916e-3224b7a22008</id>
+      <name>Arthur Philip Dent</name>
     </section>
   </section>
   <date>1979-10-12</date>
+  <id>79b613eb-a256-46bf-84f6-207df465b8f7</id>
   <version>42</version>
 </odML>

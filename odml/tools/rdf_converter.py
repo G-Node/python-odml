@@ -17,6 +17,7 @@ class RDFWriter:
     def __init__(self, odml_document, hub_id):
         self.doc = odml_document
         self.hub_id = hub_id
+        self.hub_root = None
         self.g = Graph()
 
     def save_element(self, e, node=None):
@@ -37,13 +38,27 @@ class RDFWriter:
 
         # adding doc to the hub
         if isinstance(fmt, format.Document.__class__):
-            hub = BNode(self.hub_id)
-            self.g.add((hub, fmt.namespace().Hub, URIRef(fmt.namespace().Hub)))
-            self.g.add((hub, fmt.namespace().hasDocument, curr_node))
+            self.hub_root = BNode(self.hub_id)
+            self.g.add((self.hub_root, fmt.namespace().Hub, URIRef(fmt.namespace().Hub)))
+            self.g.add((self.hub_root, fmt.namespace().hasDocument, curr_node))
 
         for k in fmt._rdf_map:
             if k == 'id':
                 continue
+            elif isinstance(fmt, format.Document.__class__) and k == "repository":
+                terminology_url = getattr(e, k)
+                if terminology_url is None or not terminology_url:
+                    continue
+                # adding terminology to the hub
+                terminology_node = self._get_terminology_by_value(terminology_url, self.hub_root)
+                if terminology_node:
+                    self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
+                else:
+                    node = BNode()
+                    self.g.add((node, fmt.namespace().Terminology, URIRef(terminology_url)))
+                    self.g.add((self.hub_root, fmt.namespace().hasTerminology, node))
+                    self.g.add((curr_node, fmt.rdf_map(k), node))
+
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, format.Document.__class__) or
                     isinstance(fmt, format.Section.__class__)) and \
@@ -74,11 +89,12 @@ class RDFWriter:
                     continue
                 elif k == 'date':
                     self.g.add((curr_node, fmt.rdf_map(k), Literal(val, datatype=XSD.date)))
-                elif k == 'reference':
-                    # TODO check if reference is a string pointing to DB
-                    self.g.add((curr_node, fmt.rdf_map(k), URIRef(val)))
                 self.g.add((curr_node, fmt.rdf_map(k), Literal(val)))
         return self.g
+
+    # TODO implement search when pass several docs to the converter
+    def _get_terminology_by_value(self, url, hub_root):
+        return None
 
     def __str__(self):
         return self.save_element(self.doc).serialize(format='turtle').decode("utf-8")

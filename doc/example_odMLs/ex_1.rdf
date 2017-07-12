@@ -12,19 +12,19 @@
             ns1:hasSection [ ns1:Section ns1:Section ;
                     ns1:definition "Information on the crew" ;
                     ns1:hasProperty [ ns1:Property ns1:Property ;
+                            ns1:definition "Number of crew members" ;
+                            ns1:dtype "int" ;
+                            ns1:hasValue [ rdf:li 4 ] ;
+                            ns1:name "NoCrewMembers" ;
+                            ns1:uncertainty "1" ],
+                        [ ns1:Property ns1:Property ;
                             ns1:definition "List of crew members names" ;
                             ns1:dtype "person" ;
                             ns1:hasValue [ rdf:li "Arthur Philip Dent",
                                         "Ford Prefect",
                                         "Tricia Marie McMillan",
                                         "Zaphod Beeblebrox" ] ;
-                            ns1:name "NameCrewMembers" ],
-                        [ ns1:Property ns1:Property ;
-                            ns1:definition "Number of crew members" ;
-                            ns1:dtype "int" ;
-                            ns1:hasValue [ rdf:li 4 ] ;
-                            ns1:name "NoCrewMembers" ;
-                            ns1:uncertainty "1" ] ;
+                            ns1:name "NameCrewMembers" ] ;
                     ns1:hasSection [ ns1:Section ns1:Section ;
                             ns1:definition "Information on Arthur Dent" ;
                             ns1:hasProperty [ ns1:Property ns1:Property ;
@@ -40,5 +40,9 @@
                             ns1:type "crew/person" ] ;
                     ns1:name "TheCrew" ;
                     ns1:type "crew" ] ;
-            ns1:version "42" ] .
+            ns1:terminology _:N9836c8840a0c48eb8a80638d786c94dd ;
+            ns1:version "42" ] ;
+    ns1:hasTerminology _:N9836c8840a0c48eb8a80638d786c94dd .
+
+_:N9836c8840a0c48eb8a80638d786c94dd ns1:Terminology <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
 
