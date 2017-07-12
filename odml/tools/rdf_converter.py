@@ -1,8 +1,10 @@
 import sys
+
 from rdflib import Graph, BNode, Literal, URIRef
 from rdflib.namespace import XSD, RDF
-import odml.format as format
+
 import odml
+import odml.format as format
 
 try:
     unicode = unicode
@@ -14,11 +16,20 @@ class RDFWriter:
     """ 
     Creates the RDF graph storing information about the odML document 
     """
-    def __init__(self, odml_document, hub_id):
-        self.doc = odml_document
+    def __init__(self, odml_documents, hub_id=None):
+        self.docs = odml_documents
         self.hub_id = hub_id
         self.hub_root = None
         self.g = Graph()
+
+    def convert_to_rdf(self, docs):
+        if self.hub_root is None:
+            self.hub_root = BNode(self.hub_id) if self.hub_id is not None else BNode()
+        if docs:
+            self.g.add((self.hub_root, format.Format.namespace().Hub, URIRef(format.Format.namespace().Hub)))
+            for doc in docs:
+                self.save_element(doc)
+        return self.g
 
     def save_element(self, e, node=None):
         """
@@ -38,8 +49,6 @@ class RDFWriter:
 
         # adding doc to the hub
         if isinstance(fmt, format.Document.__class__):
-            self.hub_root = BNode(self.hub_id)
-            self.g.add((self.hub_root, fmt.namespace().Hub, URIRef(fmt.namespace().Hub)))
             self.g.add((self.hub_root, fmt.namespace().hasDocument, curr_node))
 
         for k in fmt._rdf_map:
@@ -49,16 +58,15 @@ class RDFWriter:
                 terminology_url = getattr(e, k)
                 if terminology_url is None or not terminology_url:
                     continue
-                # adding terminology to the hub
-                terminology_node = self._get_terminology_by_value(terminology_url, self.hub_root)
+                terminology_node = self._get_terminology_by_value(terminology_url)
                 if terminology_node:
                     self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
                 else:
+                    # adding terminology to the hub and to link with the doc
                     node = BNode()
                     self.g.add((node, fmt.namespace().Terminology, URIRef(terminology_url)))
                     self.g.add((self.hub_root, fmt.namespace().hasTerminology, node))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
-
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, format.Document.__class__) or
                     isinstance(fmt, format.Section.__class__)) and \
@@ -92,15 +100,14 @@ class RDFWriter:
                 self.g.add((curr_node, fmt.rdf_map(k), Literal(val)))
         return self.g
 
-    # TODO implement search when pass several docs to the converter
-    def _get_terminology_by_value(self, url, hub_root):
-        return None
+    def _get_terminology_by_value(self, url):
+        return self.g.value(predicate=format.Format.namespace().Terminology, object=URIRef(url))
 
     def __str__(self):
-        return self.save_element(self.doc).serialize(format='turtle').decode("utf-8")
+        return self.convert_to_rdf(self.docs).serialize(format='turtle').decode("utf-8")
 
     def __unicode__(self):
-        return self.save_element(self.doc).serialize(format='turtle').decode("utf-8")
+        return self.convert_to_rdf(self.docs).serialize(format='turtle').decode("utf-8")
 
     def write_file(self, filename):
         if sys.version_info < (3,):
@@ -113,7 +120,9 @@ class RDFWriter:
         f.close()
 
 if __name__ == "__main__":
-    l = "./python-odml/doc/example_odMLs/ex_1.odml"
-    o = odml.load(l)
-    r = RDFWriter(o, "hub1")
+    l1 = "./python-odml/doc/example_odMLs/ex_1.odml"
+    l2 = "./python-odml/doc/example_odMLs/ex_2.odml"
+    o1 = odml.load(l1)
+    o2 = odml.load(l2)
+    r = RDFWriter([o1, o2], "hub1")
     r.write_file("./ex_1.rdf")

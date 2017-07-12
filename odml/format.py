@@ -1,5 +1,7 @@
+from rdflib import Namespace
+
 import odml
-from rdflib import Namespace, RDF
+
 """
 A module providing general format information
 and mappings of xml-attributes to their python class equivalents
@@ -24,9 +26,10 @@ class Format(object):
         """ Return rdf type of an object """
         return self._rdf_type
 
-    def namespace(self):
+    @staticmethod
+    def namespace():
         """ Return current link to current odml namespace"""
-        return self._ns
+        return Format._ns
 
     def revmap(self, name):
         """ Maps a python name to an odml name """

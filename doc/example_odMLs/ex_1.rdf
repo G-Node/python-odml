@@ -40,9 +40,40 @@
                             ns1:type "crew/person" ] ;
                     ns1:name "TheCrew" ;
                     ns1:type "crew" ] ;
-            ns1:terminology _:N9836c8840a0c48eb8a80638d786c94dd ;
+            ns1:terminology _:N68431ff862b44096a7b3d5b41ee1dc97 ;
+            ns1:version "42" ],
+        [ ns1:Document ns1:Document ;
+            ns1:author "D. N. Adams" ;
+            ns1:date "1979-10-12"^^xsd:date,
+                "1979-10-12" ;
+            ns1:hasSection [ ns1:Section ns1:Section ;
+                    ns1:definition "Information on the crew" ;
+                    ns1:hasSection [ ns1:Section ns1:Section ;
+                            ns1:definition "Information on the crew" ;
+                            ns1:name "s21" ;
+                            ns1:type "crew" ] ;
+                    ns1:name "s2" ;
+                    ns1:type "crew" ],
+                [ ns1:Section ns1:Section ;
+                    ns1:definition "Information on the crew" ;
+                    ns1:hasSection [ ns1:Section ns1:Section ;
+                            ns1:definition "Information on the crew" ;
+                            ns1:hasSection [ ns1:Section ns1:Section ;
+                                    ns1:definition "Information on the crew" ;
+                                    ns1:name "s121" ;
+                                    ns1:reference "s21" ;
+                                    ns1:type "crew" ] ;
+                            ns1:name "s12" ;
+                            ns1:type "crew" ],
+                        [ ns1:Section ns1:Section ;
+                            ns1:definition "Information on the crew" ;
+                            ns1:name "s11" ;
+                            ns1:type "crew" ] ;
+                    ns1:name "s1" ;
+                    ns1:type "crew" ] ;
+            ns1:terminology _:N68431ff862b44096a7b3d5b41ee1dc97 ;
             ns1:version "42" ] ;
-    ns1:hasTerminology _:N9836c8840a0c48eb8a80638d786c94dd .
+    ns1:hasTerminology _:N68431ff862b44096a7b3d5b41ee1dc97 .
 
-_:N9836c8840a0c48eb8a80638d786c94dd ns1:Terminology <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+_:N68431ff862b44096a7b3d5b41ee1dc97 ns1:Terminology <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
 
