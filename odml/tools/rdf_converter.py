@@ -1,4 +1,5 @@
 import sys
+import uuid
 
 from rdflib import Graph, BNode, Literal, URIRef
 from rdflib.namespace import XSD, RDF
@@ -10,7 +11,8 @@ try:
     unicode = unicode
 except NameError:
     unicode = str
-
+    
+odmlns = format.Format.namespace()
 
 class RDFWriter:
     """ 
@@ -24,9 +26,12 @@ class RDFWriter:
 
     def convert_to_rdf(self, docs):
         if self.hub_root is None:
-            self.hub_root = BNode(self.hub_id) if self.hub_id is not None else BNode()
+            if self.hub_id is not None:
+                self.hub_root = URIRef(odmlns + self.hub_id)
+            else:
+                self.hub_root = URIRef(odmlns + str(uuid.uuid4()))
         if docs:
-            self.g.add((self.hub_root, format.Format.namespace().Hub, URIRef(format.Format.namespace().Hub)))
+            self.g.add((self.hub_root, odmlns.Hub, URIRef(odmlns.Hub)))
             for doc in docs:
                 self.save_element(doc)
         return self.g
@@ -41,7 +46,7 @@ class RDFWriter:
         fmt = e._format
 
         if not node:
-            curr_node = BNode(e.id)
+            curr_node = URIRef(fmt.namespace() + e.id)
         else:
             curr_node = node
 
@@ -63,7 +68,7 @@ class RDFWriter:
                     self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
                 else:
                     # adding terminology to the hub and to link with the doc
-                    node = BNode()
+                    node = URIRef(fmt.namespace() + str(uuid.uuid4()))
                     self.g.add((node, fmt.namespace().Terminology, URIRef(terminology_url)))
                     self.g.add((self.hub_root, fmt.namespace().hasTerminology, node))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
@@ -73,14 +78,14 @@ class RDFWriter:
                     k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
-                    node = BNode(s.id)
+                    node = URIRef(fmt.namespace() + s.id)
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
             elif isinstance(fmt, format.Section.__class__) and \
                     k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
-                    node = BNode(p.id)
+                    node = URIRef(fmt.namespace() + p.id)
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, format.Property.__class__) and \
@@ -101,7 +106,7 @@ class RDFWriter:
         return self.g
 
     def _get_terminology_by_value(self, url):
-        return self.g.value(predicate=format.Format.namespace().Terminology, object=URIRef(url))
+        return self.g.value(predicate=odmlns.Terminology, object=URIRef(url))
 
     def __str__(self):
         return self.convert_to_rdf(self.docs).serialize(format='turtle').decode("utf-8")
