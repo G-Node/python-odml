@@ -12,7 +12,7 @@ class Format(object):
     _rev_map = None
     _rdf_map = {}
     _rdf_type = None
-    _ns = Namespace("http://g-node/odml#")
+    _ns = Namespace("https://g-node.org/projects/odml-rdf#")
 
     def map(self, name):
         """ Maps an odml name to a python name """
@@ -136,7 +136,7 @@ class Document(Format):
         # 'doc_version': _ns.docversion,    # discuss about the changes to the data model
         'repository': _ns.terminology,
         'sections': _ns.hasSection,
-        'version': _ns.version,
+        'version': _ns['doc-version'],
     }
 
 

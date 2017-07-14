@@ -14,6 +14,7 @@ except NameError:
     
 odmlns = format.Format.namespace()
 
+
 class RDFWriter:
     """ 
     Creates the RDF graph storing information about the odML document 
@@ -23,13 +24,17 @@ class RDFWriter:
         self.hub_id = hub_id
         self.hub_root = None
         self.g = Graph()
+        self.g.bind("odml", odmlns)
+
+    def create_hub_root(self):
+        if self.hub_root is None:
+            if self.hub_id is None:
+                self.hub_root = URIRef(odmlns + str(uuid.uuid4()))
+            else:
+                self.hub_root = URIRef(odmlns + self.hub_id)
 
     def convert_to_rdf(self, docs):
-        if self.hub_root is None:
-            if self.hub_id is not None:
-                self.hub_root = URIRef(odmlns + self.hub_id)
-            else:
-                self.hub_root = URIRef(odmlns + str(uuid.uuid4()))
+        self.create_hub_root()
         if docs:
             self.g.add((self.hub_root, odmlns.Hub, URIRef(odmlns.Hub)))
             for doc in docs:
@@ -46,7 +51,7 @@ class RDFWriter:
         fmt = e._format
 
         if not node:
-            curr_node = URIRef(fmt.namespace() + e.id)
+            curr_node = URIRef(odmlns + str(e.id))
         else:
             curr_node = node
 
@@ -54,12 +59,13 @@ class RDFWriter:
 
         # adding doc to the hub
         if isinstance(fmt, format.Document.__class__):
-            self.g.add((self.hub_root, fmt.namespace().hasDocument, curr_node))
+            self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
 
         for k in fmt._rdf_map:
             if k == 'id':
                 continue
-            elif isinstance(fmt, format.Document.__class__) and k == "repository":
+            elif (isinstance(fmt, format.Document.__class__) or
+                    isinstance(fmt, format.Section.__class__)) and k == "repository":
                 terminology_url = getattr(e, k)
                 if terminology_url is None or not terminology_url:
                     continue
@@ -68,9 +74,9 @@ class RDFWriter:
                     self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
                 else:
                     # adding terminology to the hub and to link with the doc
-                    node = URIRef(fmt.namespace() + str(uuid.uuid4()))
-                    self.g.add((node, fmt.namespace().Terminology, URIRef(terminology_url)))
-                    self.g.add((self.hub_root, fmt.namespace().hasTerminology, node))
+                    node = URIRef(odmlns + str(uuid.uuid4()))
+                    self.g.add((node, odmlns.Terminology, URIRef(terminology_url)))
+                    self.g.add((self.hub_root, odmlns.hasTerminology, node))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, format.Document.__class__) or
@@ -78,14 +84,14 @@ class RDFWriter:
                     k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
-                    node = URIRef(fmt.namespace() + s.id)
+                    node = URIRef(odmlns + str(s.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
             elif isinstance(fmt, format.Section.__class__) and \
                     k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
-                    node = URIRef(fmt.namespace() + p.id)
+                    node = URIRef(odmlns + str(p.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, format.Property.__class__) and \
@@ -95,7 +101,7 @@ class RDFWriter:
                 self.g.add((curr_node, fmt.rdf_map(k), bag))
                 for v in values:
                     self.g.add((bag, RDF.li, Literal(v)))
-            # adding attributes to the entities
+            # adding entities' properties
             else:
                 val = getattr(e, k)
                 if val is None or not val:
