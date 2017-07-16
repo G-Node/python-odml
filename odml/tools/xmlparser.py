@@ -49,10 +49,10 @@ def to_csv(val):
 
 
 def from_csv(value_string):
-    if len(value_string) == 0:
-        return []
     if value_string[0] == "[":
         value_string = value_string[1:-1]
+    if len(value_string) == 0:
+        return []
     stream = StringIO(value_string)
     stream.seek(0)
     reader = csv.reader(stream, dialect="excel")
@@ -298,7 +298,7 @@ class XMLReader(object):
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
-            if hasattr(obj, k) and getattr(obj, k) is None:
+            if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
                 try:
                     setattr(obj, k, v)
                 except Exception as e:

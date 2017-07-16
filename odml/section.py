@@ -1,12 +1,14 @@
 # -*- coding: utf-8
+import uuid
+
 import odml.base as base
 import odml.format as format
 import odml.terminology as terminology
+from odml.doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
 from odml.property import Property
 # it MUST however not be used to create any Property objects
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
-from odml.doc import BaseDocument
 
 
 class Section(base._baseobj):
@@ -17,7 +19,7 @@ class Section(base._baseobj):
 class BaseSection(base.sectionable, Section):
     """ An odML Section """
     type = None
-    id = None
+    # id = None
     _link = None
     _include = None
     reference = None  # the *import* property
@@ -27,7 +29,8 @@ class BaseSection(base.sectionable, Section):
     _format = format.Section
 
     def __init__(self, name, type=None, parent=None,
-                 definition=None, reference=None):
+                 definition=None, reference=None, id=None):
+        self._id = str(uuid.uuid4())
         self._parent = None
         self._name = name
         self._props = base.SmartList()
@@ -41,6 +44,14 @@ class BaseSection(base.sectionable, Section):
     def __repr__(self):
         return "<Section %s[%s] (%d)>" % (self._name, self.type,
                                           len(self._sections))
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, new_value):
+        self._id = new_value
 
     @property
     def name(self):

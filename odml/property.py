@@ -1,8 +1,10 @@
 # -*- coding: utf-8
 
+import uuid
+
 import odml.base as base
-import odml.format as frmt
 import odml.dtypes as dtypes
+import odml.format as frmt
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -17,7 +19,7 @@ class BaseProperty(base.baseobject, Property):
 
     def __init__(self, name, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
-                 dependency=None, dependency_value=None, dtype=None):
+                 dependency=None, dependency_value=None, dtype=None, id=None):
         """
         Create a new Property with a single value. The method will try to infer
         the value's dtype from the type of the value if not explicitly stated.
@@ -46,6 +48,7 @@ class BaseProperty(base.baseobject, Property):
                      if dtype is not given, the type is deduced from the values
         """
         # TODO validate arguments
+        self._id = str(uuid.uuid4())
         self._name = name
         self._parent = None
         self._value = []
@@ -58,6 +61,14 @@ class BaseProperty(base.baseobject, Property):
         self._dtype = dtype
         self.value = value
         self.parent = parent
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, new_value):
+        self._id = new_value
 
     @property
     def name(self):

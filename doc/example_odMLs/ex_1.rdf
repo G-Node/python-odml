@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:odml="https://g-node.org/projects/odml-rdf#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#hub1">
+    <odml:Hub rdf:resource="https://g-node.org/projects/odml-rdf#Hub"/>
+    <odml:hasTerminology>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#19a44a59-62af-461d-9f71-98816af73dae">
+        <odml:Terminology rdf:resource="http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml"/>
+      </rdf:Description>
+    </odml:hasTerminology>
+    <odml:hasDocument>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#9b862019-643a-403f-b5a9-3b46db012961">
+        <odml:date>1979-10-12</odml:date>
+        <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#bc6cc466-5769-4da1-b90e-8e5595903a4a"/>
+        <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#d1e70848-5318-4466-82d0-1c3e99a8ba85"/>
+        <odml:terminology rdf:resource="https://g-node.org/projects/odml-rdf#19a44a59-62af-461d-9f71-98816af73dae"/>
+        <odml:author>D. N. Adams</odml:author>
+        <odml:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1979-10-12</odml:date>
+        <odml:Document rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
+        <odml:doc-version>42</odml:doc-version>
+      </rdf:Description>
+    </odml:hasDocument>
+    <odml:hasDocument>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#79b613eb-a256-46bf-84f6-207df465b8f7">
+        <odml:doc-version>42</odml:doc-version>
+        <odml:Document rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
+        <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#0f96a050-2d9b-498f-a532-fbfcc6aae55e"/>
+        <odml:author>D. N. Adams</odml:author>
+        <odml:terminology rdf:resource="https://g-node.org/projects/odml-rdf#19a44a59-62af-461d-9f71-98816af73dae"/>
+        <odml:date>1979-10-12</odml:date>
+        <odml:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1979-10-12</odml:date>
+      </rdf:Description>
+    </odml:hasDocument>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#da908cda-19e1-4df8-b873-d1f6cd1b164d">
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:type>crew</odml:type>
+    <odml:name>s11</odml:name>
+    <odml:definition>Information on the crew</odml:definition>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#1d6469b5-5322-408b-916e-3224b7a22008">
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:hasProperty>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#635035cc-1c05-4e44-a4b7-0fb3d6295abf">
+        <odml:hasValue>
+          <rdf:Description rdf:nodeID="089424c4-9325-4c71-bf0d-602a86cc6eea">
+            <rdf:li>Human</rdf:li>
+          </rdf:Description>
+        </odml:hasValue>
+        <odml:Property rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+        <odml:name>Species</odml:name>
+        <odml:dtype>string</odml:dtype>
+        <odml:definition>Species to which subject belongs to</odml:definition>
+      </rdf:Description>
+    </odml:hasProperty>
+    <odml:type>crew/person</odml:type>
+    <odml:hasProperty>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#0cec018b-20e3-4b13-bb95-b41de12db97f">
+        <odml:Property rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+        <odml:definition>Nickname(s) of the subject</odml:definition>
+        <odml:dtype>string</odml:dtype>
+        <odml:name>Nickname</odml:name>
+      </rdf:Description>
+    </odml:hasProperty>
+    <odml:name>Arthur Philip Dent</odml:name>
+    <odml:definition>Information on Arthur Dent</odml:definition>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#298938a6-0996-4a92-982b-837a08a1a220">
+    <odml:definition>Number of crew members</odml:definition>
+    <odml:dtype>int</odml:dtype>
+    <odml:uncertainty>1</odml:uncertainty>
+    <odml:name>NoCrewMembers</odml:name>
+    <odml:Property rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+    <odml:hasValue>
+      <rdf:Description rdf:nodeID="d237593f-4a8a-49da-a2a6-fa27cadf4c59">
+        <rdf:li rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</rdf:li>
+      </rdf:Description>
+    </odml:hasValue>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#4b2d0e9d-6352-4676-97d7-fc0a795e83a9">
+    <odml:definition>Information on the crew</odml:definition>
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:type>crew</odml:type>
+    <odml:name>s21</odml:name>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#d1e70848-5318-4466-82d0-1c3e99a8ba85">
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:name>s1</odml:name>
+    <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#da908cda-19e1-4df8-b873-d1f6cd1b164d"/>
+    <odml:type>crew</odml:type>
+    <odml:hasSection>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#8d68e6fe-8dda-4dfe-a1d8-edaa0f410255">
+        <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+        <odml:type>crew</odml:type>
+        <odml:definition>Information on the crew</odml:definition>
+        <odml:name>s12</odml:name>
+        <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#18bb5a7e-2097-43f2-a782-e6f612107e93"/>
+      </rdf:Description>
+    </odml:hasSection>
+    <odml:definition>Information on the crew</odml:definition>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#0f96a050-2d9b-498f-a532-fbfcc6aae55e">
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:type>crew</odml:type>
+    <odml:hasProperty>
+      <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#7b0572c1-fcfc-4010-aebf-730397ac29af">
+        <odml:definition>List of crew members names</odml:definition>
+        <odml:dtype>person</odml:dtype>
+        <odml:Property rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+        <odml:hasValue>
+          <rdf:Description rdf:nodeID="4818d863-9abe-4ee0-9ec0-0bcaa36f2df1">
+            <rdf:li>Zaphod Beeblebrox</rdf:li>
+            <rdf:li>Ford Prefect</rdf:li>
+            <rdf:li>Arthur Philip Dent</rdf:li>
+            <rdf:li>Tricia Marie McMillan</rdf:li>
+          </rdf:Description>
+        </odml:hasValue>
+        <odml:name>NameCrewMembers</odml:name>
+      </rdf:Description>
+    </odml:hasProperty>
+    <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#1d6469b5-5322-408b-916e-3224b7a22008"/>
+    <odml:definition>Information on the crew</odml:definition>
+    <odml:name>TheCrew</odml:name>
+    <odml:hasProperty rdf:resource="https://g-node.org/projects/odml-rdf#298938a6-0996-4a92-982b-837a08a1a220"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#18bb5a7e-2097-43f2-a782-e6f612107e93">
+    <odml:type>crew</odml:type>
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:reference>s21</odml:reference>
+    <odml:name>s121</odml:name>
+    <odml:definition>Information on the crew</odml:definition>
+  </rdf:Description>
+  <rdf:Description rdf:about="https://g-node.org/projects/odml-rdf#bc6cc466-5769-4da1-b90e-8e5595903a4a">
+    <odml:name>s2</odml:name>
+    <odml:hasSection rdf:resource="https://g-node.org/projects/odml-rdf#4b2d0e9d-6352-4676-97d7-fc0a795e83a9"/>
+    <odml:definition>Information on the crew</odml:definition>
+    <odml:Section rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+    <odml:type>crew</odml:type>
+  </rdf:Description>
+</rdf:RDF>
