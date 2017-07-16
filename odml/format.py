@@ -109,8 +109,6 @@ class Section(Format):
         'reference': _ns.reference,
         'sections': _ns.hasSection,
         'properties': _ns.hasProperty,
-        'link': _ns.link,
-        'include': _ns.include
     }
 
 

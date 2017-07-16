@@ -97,7 +97,7 @@ class RDFWriter:
             elif isinstance(fmt, format.Property.__class__) and \
                     k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
-                bag = BNode()
+                bag = BNode(str(uuid.uuid4()))
                 self.g.add((curr_node, fmt.rdf_map(k), bag))
                 for v in values:
                     self.g.add((bag, RDF.li, Literal(v)))
