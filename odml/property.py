@@ -1,9 +1,10 @@
 # -*- coding: utf-8
 
-import odml.base as base
-import odml.format as frmt
-import odml.dtypes as dtypes
 import uuid
+
+import odml.base as base
+import odml.dtypes as dtypes
+import odml.format as frmt
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -47,7 +48,7 @@ class BaseProperty(base.baseobject, Property):
                      if dtype is not given, the type is deduced from the values
         """
         # TODO validate arguments
-        self._id = uuid.uuid4()
+        self._id = str(uuid.uuid4())
         self._name = name
         self._parent = None
         self._value = []
