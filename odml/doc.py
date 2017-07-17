@@ -1,6 +1,8 @@
 # -*- coding: utf-8
-import odml.dtypes as dtypes
+import uuid
+
 import odml.base as base
+import odml.dtypes as dtypes
 import odml.format as format
 import odml.terminology as terminology
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
@@ -14,21 +16,31 @@ class Document(base._baseobj):
 class BaseDocument(base.sectionable, Document):
     """
     A represenation of an odML document in memory.
-
     Its odml attributes are: *author*, *date*, *version* and *repository*.
-
     A Document behaves very much like a section, except that it cannot hold
     properties.
     """
 
     _format = format.Document
 
-    def __init__(self, author=None, date=None, version=None, repository=None):
+    def __init__(self, author=None, date=None, version=None, repository=None, id=None):
         super(BaseDocument, self).__init__()
+        self._id = str(uuid.uuid4())
         self._author = author
         self._date = date  # date must be a datetime
         self._version = version
         self._repository = repository
+
+    @property
+    def id(self):
+        """
+        The uuid for the document.
+        """
+        return self._id
+
+    @id.setter
+    def id(self, new_value):
+        self._id = new_value
 
     @property
     def author(self):
@@ -78,7 +90,6 @@ class BaseDocument(base.sectionable, Document):
         """
         This needs to be called after the document is set up from parsing
         it will perform additional operations, that need the complete document.
-
         In particular, this method will resolve all *link* and *include*
         attributes accordingly.
         """
