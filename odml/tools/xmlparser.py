@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 """
 The XML parsing module.
-
 Parses odML files. Can be invoked standalone:
-
     python -m odml.tools.xmlparser file.odml
 """
 # TODO make this module a parser class, allow arguments (e.g.
 # skip_errors=1 to parse even broken documents)
-import sys
 import csv
+import sys
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -18,7 +17,6 @@ from odml import format
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
-from lxml import _elementpath as _dummy
 
 try:
     unicode = unicode
@@ -49,10 +47,10 @@ def to_csv(val):
 
 
 def from_csv(value_string):
-    if len(value_string) == 0:
-        return []
     if value_string[0] == "[":
         value_string = value_string[1:-1]
+    if len(value_string) == 0:
+        return []
     stream = StringIO(value_string)
     stream.seek(0)
     reader = csv.reader(stream, dialect="excel")
@@ -164,9 +162,7 @@ class ParserException(Exception):
 class XMLReader(object):
     """
     A reader to parse xml-files or strings into odml data structures
-
     Usage:
-
         >>> doc = XMLReader().fromFile(open("file.odml"))
     """
 
@@ -298,7 +294,7 @@ class XMLReader(object):
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
-            if hasattr(obj, k) and getattr(obj, k) is None:
+            if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
                 try:
                     setattr(obj, k, v)
                 except Exception as e:

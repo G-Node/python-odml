@@ -1,8 +1,10 @@
 # -*- coding: utf-8
 
+import uuid
+
 import odml.base as base
-import odml.format as frmt
 import odml.dtypes as dtypes
+import odml.format as frmt
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -17,11 +19,10 @@ class BaseProperty(base.baseobject, Property):
 
     def __init__(self, name, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
-                 dependency=None, dependency_value=None, dtype=None):
+                 dependency=None, dependency_value=None, dtype=None, id=None):
         """
         Create a new Property with a single value. The method will try to infer
         the value's dtype from the type of the value if not explicitly stated.
-
         Example for a property with
         >>> p = Property("property1", "a string")
         >>> p.dtype
@@ -46,6 +47,7 @@ class BaseProperty(base.baseobject, Property):
                      if dtype is not given, the type is deduced from the values
         """
         # TODO validate arguments
+        self._id = str(uuid.uuid4())
         self._name = name
         self._parent = None
         self._value = []
@@ -58,6 +60,14 @@ class BaseProperty(base.baseobject, Property):
         self._dtype = dtype
         self.value = value
         self.parent = parent
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, new_value):
+        self._id = new_value
 
     @property
     def name(self):
@@ -74,10 +84,8 @@ class BaseProperty(base.baseobject, Property):
     def dtype(self):
         """
         The data type of the value
-
         If the data type is changed, it is tried, to convert the value to the
         new type.
-
         If this doesn't work, the change is refused.
         This behaviour can be overridden by directly accessing the *_dtype*
         attribute and adjusting the *data* attribute manually.
@@ -224,7 +232,6 @@ class BaseProperty(base.baseobject, Property):
     def remove(self, value):
         """
         Remove a value from this property and unset its parent.
-
         Raises a TypeError if this would cause the property not to hold any
         value at all. This can be circumvented by using the *_values* property.
         """
