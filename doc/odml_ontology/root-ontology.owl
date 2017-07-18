@@ -29,39 +29,15 @@
     
 
 
-    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#li -->
-
-    <rdfs:Datatype rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#li">
-        <rdfs:label>rdf:li</rdfs:label>
-    </rdfs:Datatype>
-    
-
-
-    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#resource -->
-
-    <rdfs:Datatype rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#resource">
-        <rdfs:label>rdf:resource</rdfs:label>
-    </rdfs:Datatype>
-    
-
-
-    <!-- http://www.w3.org/2001/XMLSchema#dat -->
-
-    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#dat">
-        <rdfs:label>xsd:dat</rdfs:label>
-    </rdfs:Datatype>
-    
-
-
     <!-- http://www.w3.org/2001/XMLSchema#date -->
 
     <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date">
         <rdfs:label>xsd:date</rdfs:label>
     </rdfs:Datatype>
-    
 
 
-    <!-- 
+
+    <!--
     ///////////////////////////////////////////////////////////////////////////////////////
     //
     // Object Properties
@@ -69,17 +45,17 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    
 
 
-    <!-- http://webprotege.stanford.edu/Rq5RAxjGEqIhIZ4bb8w3CQ -->
 
-    <owl:ObjectProperty rdf:about="http://webprotege.stanford.edu/Rq5RAxjGEqIhIZ4bb8w3CQ">
-        <rdfs:domain rdf:resource="http://webprotege.stanford.edu/RBrqij2XsdSBeW8YCZRngKN"/>
+    <!-- https://g-node.org/projects/odml-rdf#hasDocument -->
+
+    <owl:ObjectProperty rdf:about="https://g-node.org/projects/odml-rdf#hasDocument">
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Hub"/>
         <rdfs:range rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
         <rdfs:label>hasDocument</rdfs:label>
     </owl:ObjectProperty>
-    
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#hasProperty -->
@@ -89,7 +65,7 @@
         <rdfs:range rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
         <rdfs:label>hasProperty</rdfs:label>
     </owl:ObjectProperty>
-    
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#hasSection -->
@@ -100,7 +76,7 @@
         <rdfs:range rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
         <rdfs:label>hasSection</rdfs:label>
     </owl:ObjectProperty>
-    
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#hasTerminology -->
@@ -108,13 +84,24 @@
     <owl:ObjectProperty rdf:about="https://g-node.org/projects/odml-rdf#hasTerminology">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Terminology"/>
         <rdfs:range rdf:resource="https://g-node.org/projects/odml-rdf#Terminology"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasTerminology</rdfs:label>
     </owl:ObjectProperty>
-    
 
 
-    <!-- 
+
+    <!-- https://g-node.org/projects/odml-rdf#hasValue -->
+
+    <owl:ObjectProperty rdf:about="https://g-node.org/projects/odml-rdf#hasValue">
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+        <rdfs:range rdf:resource="https://g-node.org/projects/odml-rdf#Bag"/>
+        <rdfs:label>hasValue</rdfs:label>
+    </owl:ObjectProperty>
+
+
+
+    <!--
     ///////////////////////////////////////////////////////////////////////////////////////
     //
     // Data properties
@@ -122,152 +109,152 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#author -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#author">
+    <!-- https://g-node.org/projects/odml-rdf#hasAuthor -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasAuthor">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:label>author</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasAuthor</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#date -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#date">
+    <!-- https://g-node.org/projects/odml-rdf#hasBag -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasBag">
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Bag"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag"/>
+        <rdfs:label>hasBag</rdfs:label>
+    </owl:DatatypeProperty>
+
+
+
+    <!-- https://g-node.org/projects/odml-rdf#hasDate -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasDate">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
-        <rdfs:label>date</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasDate</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#definition -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#definition">
+    <!-- https://g-node.org/projects/odml-rdf#hasDefinition -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasDefinition">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:label>definition</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasDefinition</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#doc-version -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#doc-version">
+    <!-- https://g-node.org/projects/odml-rdf#hasDocVersion -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasDocVersion">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
-        <rdfs:label>doc-version</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasDocVersion</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#dtype -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#dtype">
+    <!-- https://g-node.org/projects/odml-rdf#hasDtype -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasDtype">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:label>dtype</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasDtype</rdfs:label>
     </owl:DatatypeProperty>
-    
+
+
+
+    <!-- https://g-node.org/projects/odml-rdf#hasId -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasId">
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasId</rdfs:label>
+    </owl:DatatypeProperty>
+
+
+
+    <!-- https://g-node.org/projects/odml-rdf#hasName -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasName">
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasName</rdfs:label>
+    </owl:DatatypeProperty>
+
+
+
+    <!-- https://g-node.org/projects/odml-rdf#hasReference -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasReference">
+        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasReference</rdfs:label>
+    </owl:DatatypeProperty>
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#hasResource -->
 
     <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasResource">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Terminology"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
         <rdfs:label>hasResource</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#hasValue -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasValue">
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#li"/>
-        <rdfs:label>hasValue</rdfs:label>
-    </owl:DatatypeProperty>
-    
+    <!-- https://g-node.org/projects/odml-rdf#hasType -->
 
-
-    <!-- https://g-node.org/projects/odml-rdf#id -->
-
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#id">
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-        <rdfs:label>id</rdfs:label>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- https://g-node.org/projects/odml-rdf#name -->
-
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#name">
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasType">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:label>name</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasType</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#reference -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#reference">
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-        <rdfs:label>reference</rdfs:label>
-    </owl:DatatypeProperty>
-    
+    <!-- https://g-node.org/projects/odml-rdf#hasUncertainty -->
 
-
-    <!-- https://g-node.org/projects/odml-rdf#type -->
-
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#type">
-        <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Section"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:label>type</rdfs:label>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- https://g-node.org/projects/odml-rdf#uncertainty -->
-
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#uncertainty">
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasUncertainty">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
-        <rdfs:label>uncertainty</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasUncertainty</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#unit -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#unit">
+    <!-- https://g-node.org/projects/odml-rdf#hasUnit -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasUnit">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Property"/>
-        <rdfs:label>unit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasUnit</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- https://g-node.org/projects/odml-rdf#version -->
 
-    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#version">
+    <!-- https://g-node.org/projects/odml-rdf#hasVersion -->
+
+    <owl:DatatypeProperty rdf:about="https://g-node.org/projects/odml-rdf#hasVersion">
         <rdfs:domain rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
-        <rdfs:label>version</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hasVersion</rdfs:label>
     </owl:DatatypeProperty>
-    
 
 
-    <!-- 
+
+    <!--
     ///////////////////////////////////////////////////////////////////////////////////////
     //
     // Classes
@@ -275,30 +262,21 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    
 
 
-    <!-- http://webprotege.stanford.edu/RBrqij2XsdSBeW8YCZRngKN -->
 
-    <owl:Class rdf:about="http://webprotege.stanford.edu/RBrqij2XsdSBeW8YCZRngKN">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <!-- https://g-node.org/projects/odml-rdf#Bag -->
+
+    <owl:Class rdf:about="https://g-node.org/projects/odml-rdf#Bag">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://webprotege.stanford.edu/Rq5RAxjGEqIhIZ4bb8w3CQ"/>
-                <owl:someValuesFrom rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasBag"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasTerminology"/>
-                <owl:someValuesFrom rdf:resource="https://g-node.org/projects/odml-rdf#Terminology"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Description of the hub class</rdfs:comment>
-        <rdfs:label>Hub</rdfs:label>
-        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Link to the Hub remote description</rdfs:seeAlso>
+        <rdfs:label>Bag</rdfs:label>
     </owl:Class>
-    
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#Document -->
@@ -319,31 +297,31 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#author"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasAuthor"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#date"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasDate"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#doc-version"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasDocVersion"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#id"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasId"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#version"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasVersion"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -351,7 +329,30 @@
         <rdfs:label>Document</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Link to the doc description of site</rdfs:seeAlso>
     </owl:Class>
-    
+
+
+
+    <!-- https://g-node.org/projects/odml-rdf#Hub -->
+
+    <owl:Class rdf:about="https://g-node.org/projects/odml-rdf#Hub">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasDocument"/>
+                <owl:someValuesFrom rdf:resource="https://g-node.org/projects/odml-rdf#Document"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasTerminology"/>
+                <owl:someValuesFrom rdf:resource="https://g-node.org/projects/odml-rdf#Terminology"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Description of the hub class</rdfs:comment>
+        <rdfs:label>Hub</rdfs:label>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Link to the Hub remote description</rdfs:seeAlso>
+    </owl:Class>
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#Property -->
@@ -360,43 +361,43 @@
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#definition"/>
-                <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#dtype"/>
-                <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasValue"/>
-                <owl:someValuesFrom rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag"/>
+                <owl:someValuesFrom rdf:resource="https://g-node.org/projects/odml-rdf#Bag"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#id"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasDefinition"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#name"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasDtype"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#uncertainty"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasId"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#unit"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasName"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasUncertainty"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasUnit"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -404,7 +405,7 @@
         <rdfs:label>Property</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Link to the description on the site</rdfs:seeAlso>
     </owl:Class>
-    
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#Section -->
@@ -431,31 +432,31 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#definition"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasDefinition"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#id"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasId"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#name"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasName"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#reference"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasReference"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#type"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasType"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -463,7 +464,7 @@
         <rdfs:label>Section</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Link to the doc description of site</rdfs:seeAlso>
     </owl:Class>
-    
+
 
 
     <!-- https://g-node.org/projects/odml-rdf#Terminology -->
@@ -478,13 +479,19 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasResource"/>
-                <owl:someValuesFrom rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#resource"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasTerminology"/>
+                <owl:someValuesFrom rdf:resource="https://g-node.org/projects/odml-rdf#Terminology"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#id"/>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasId"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="https://g-node.org/projects/odml-rdf#hasResource"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -497,4 +504,3 @@
 
 
 <!-- Generated by the OWL API (version 4.3.1) https://github.com/owlcs/owlapi -->
-
