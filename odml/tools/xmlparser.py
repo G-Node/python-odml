@@ -296,7 +296,10 @@ class XMLReader(object):
         for k, v in arguments.items():
             if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
                 try:
-                    setattr(obj, k, v)
+                    if k == 'id' and v is not None:
+                        obj._id = v
+                    else:
+                        setattr(obj, k, v)
                 except Exception as e:
                     self.warn("cannot set '%s' property on <%s>: %s" %
                               (k, root.tag, repr(e)), root)

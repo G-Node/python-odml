@@ -68,10 +68,6 @@ class BaseProperty(base.baseobject, Property):
     def id(self):
         return self._id
 
-    @id.setter
-    def id(self, new_value):
-        self._id = new_value
-
     @property
     def name(self):
         return self._name

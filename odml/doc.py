@@ -38,10 +38,6 @@ class BaseDocument(base.sectionable, Document):
         """
         return self._id
 
-    @id.setter
-    def id(self, new_value):
-        self._id = new_value
-
     @property
     def author(self):
         """

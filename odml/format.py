@@ -7,6 +7,7 @@ A module providing general format information
 and mappings of xml-attributes to their python class equivalents
 """
 
+
 class Format(object):
     _map = {}
     _rev_map = None
