@@ -29,7 +29,7 @@ class BaseSection(base.sectionable, Section):
     _format = format.Section
 
     def __init__(self, name, type=None, parent=None,
-                 definition=None, reference=None, id=None):
+                 definition=None, reference=None):
         self._id = str(uuid.uuid4())
         self._parent = None
         self._name = name
