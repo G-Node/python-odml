@@ -21,6 +21,7 @@ class BaseProperty(base.baseobject, Property):
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None, value_origin=None):
         #TODO add description to :param value_origin
+                 dependency=None, dependency_value=None, dtype=None):
         """
         Create a new Property with a single value. The method will try to infer
         the value's dtype from the type of the value if not explicitly stated.
