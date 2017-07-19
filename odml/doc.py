@@ -23,7 +23,7 @@ class BaseDocument(base.sectionable, Document):
 
     _format = format.Document
 
-    def __init__(self, author=None, date=None, version=None, repository=None, id=None):
+    def __init__(self, author=None, date=None, version=None, repository=None):
         super(BaseDocument, self).__init__()
         self._id = str(uuid.uuid4())
         self._author = author
