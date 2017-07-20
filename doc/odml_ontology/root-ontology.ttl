@@ -1,21 +1,16 @@
-@prefix : <http://webprotege.stanford.edu/project/9IqNfOthyW8sqU6S3HagXc#> .
+@prefix : <https://g-node.org/projects/odml-rdf#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://webprotege.stanford.edu/project/9IqNfOthyW8sqU6S3HagXc> .
+@base <https://g-node.org/projects/odml-rdf> .
 
-<http://webprotege.stanford.edu/project/9IqNfOthyW8sqU6S3HagXc> rdf:type owl:Ontology .
+<https://g-node.org/projects/odml-rdf> rdf:type owl:Ontology .
 
 #################################################################
 #    Datatypes
 #################################################################
-
-###  http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag
-rdf:Bag rdf:type rdfs:Datatype ;
-        rdfs:label "rdf:Bag" .
-
 
 ###  http://www.w3.org/2001/XMLSchema#date
 xsd:date rdf:type rdfs:Datatype ;
@@ -26,42 +21,82 @@ xsd:date rdf:type rdfs:Datatype ;
 #    Object Properties
 #################################################################
 
+###  https://g-node.org/projects/odml-rdf#hasDocument
+:hasDocument rdf:type owl:ObjectProperty ;
+             rdfs:domain :Hub ;
+             rdfs:range :Document ;
+             rdfs:label "hasDocument"^^xsd:string .
+
+
 ###  https://g-node.org/projects/odml-rdf#hasProperty
-<https://g-node.org/projects/odml-rdf#hasProperty> rdf:type owl:ObjectProperty ;
-                                                   rdfs:domain <https://g-node.org/projects/odml-rdf#Section> ;
-                                                   rdfs:range <https://g-node.org/projects/odml-rdf#Property> ;
-                                                   rdfs:label "hasProperty" .
+:hasProperty rdf:type owl:ObjectProperty ;
+             rdfs:domain :Section ;
+             rdfs:range :Property ;
+             rdfs:label "hasProperty"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasSection
-<https://g-node.org/projects/odml-rdf#hasSection> rdf:type owl:ObjectProperty ;
-                                                  rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ,
-                                                              <https://g-node.org/projects/odml-rdf#Section> ;
-                                                  rdfs:range <https://g-node.org/projects/odml-rdf#Section> ;
-                                                  rdfs:label "hasSection" .
+:hasSection rdf:type owl:ObjectProperty ;
+            rdfs:domain :Document ,
+                        :Section ;
+            rdfs:range :Section ;
+            rdfs:label "hasSection"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasTerminology
-<https://g-node.org/projects/odml-rdf#hasTerminology> rdf:type owl:ObjectProperty ;
-                                                      rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ,
-                                                                  <https://g-node.org/projects/odml-rdf#Section> ,
-                                                                  <https://g-node.org/projects/odml-rdf#Terminology> ;
-                                                      rdfs:range <https://g-node.org/projects/odml-rdf#Terminology> ;
-                                                      rdfs:label "hasTerminology"^^xsd:string .
+:hasTerminology rdf:type owl:ObjectProperty ;
+                rdfs:domain :Document ,
+                            :Hub ,
+                            :Section ,
+                            :Terminology ;
+                rdfs:range :Terminology ;
+                rdfs:label "hasTerminology"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasValue
-<https://g-node.org/projects/odml-rdf#hasValue> rdf:type owl:ObjectProperty ;
-                                                              rdfs:domain <https://g-node.org/projects/odml-rdf#Property> ;
-                                                              rdfs:range <https://g-node.org/projects/odml-rdf#Bag> ;
-                                                              rdfs:label "hasValue" .
+:hasValue rdf:type owl:ObjectProperty ;
+          rdfs:domain :Property ;
+          rdfs:range rdf:Bag ;
+          rdfs:label "hasValue"^^xsd:string .
 
 
-###  https://g-node.org/projects/odml-rdf#hasDocument
-<https://g-node.org/projects/odml-rdf#hasDocument> rdf:type owl:ObjectProperty ;
-                                                              rdfs:domain <https://g-node.org/projects/odml-rdf#Hub> ;
-                                                              rdfs:range <https://g-node.org/projects/odml-rdf#Document> ;
-                                                              rdfs:label "hasDocument" .
+###  https://g-node.org/projects/odml-rdf#isDocumentOf
+:isDocumentOf rdf:type owl:ObjectProperty ;
+              rdfs:domain :Document ;
+              rdfs:range :Hub ;
+              rdfs:label "isDocumentOf"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#isPropertyOf
+:isPropertyOf rdf:type owl:ObjectProperty ;
+              rdfs:domain :Property ;
+              rdfs:range :Section ;
+              rdfs:label "isPropertyOf"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#isSectionOf
+:isSectionOf rdf:type owl:ObjectProperty ;
+             rdfs:domain :Section ;
+             rdfs:range :Document ,
+                        :Section ;
+             rdfs:label "isSectionOf"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#isTerminologyOf
+:isTerminologyOf rdf:type owl:ObjectProperty ;
+                 rdfs:domain :Terminology ;
+                 rdfs:range :Document ,
+                            :Hub ,
+                            :Section ,
+                            :Terminology ;
+                 rdfs:label "isTerminologyOf"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#isValueOf
+:isValueOf rdf:type owl:ObjectProperty ;
+           rdfs:domain rdf:Bag ;
+           rdfs:range :Property ;
+           rdfs:label "isValueOf"^^xsd:string .
 
 
 #################################################################
@@ -69,268 +104,297 @@ xsd:date rdf:type rdfs:Datatype ;
 #################################################################
 
 ###  https://g-node.org/projects/odml-rdf#hasAuthor
-<https://g-node.org/projects/odml-rdf#hasAuthor> rdf:type owl:DatatypeProperty ;
-                                              rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ;
-                                              rdfs:range xsd:string ;
-                                              rdfs:label "hasAuthor"^^xsd:string .
+:hasAuthor rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Document ;
+           rdfs:range xsd:string ;
+           rdfs:label "hasAuthor"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasDate
-<https://g-node.org/projects/odml-rdf#hasDate> rdf:type owl:DatatypeProperty ;
-                                            rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ;
-                                            rdfs:range xsd:date ;
-                                            rdfs:label "hasDate"^^xsd:string .
+:hasDate rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Document ;
+         rdfs:range xsd:date ;
+         rdfs:label "hasDate"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasDefinition
-<https://g-node.org/projects/odml-rdf#hasDefinition> rdf:type owl:DatatypeProperty ;
-                                                  rdfs:domain <https://g-node.org/projects/odml-rdf#Property> ,
-                                                              <https://g-node.org/projects/odml-rdf#Section> ;
-                                                  rdfs:range xsd:string ;
-                                                  rdfs:label "hasDefinition"^^xsd:string .
+:hasDefinition rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Property ,
+                           :Section ;
+               rdfs:range xsd:string ;
+               rdfs:label "hasDefinition"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasDocVersion
-<https://g-node.org/projects/odml-rdf#hasDocVersion> rdf:type owl:DatatypeProperty ;
-                                                   rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ;
-                                                   rdfs:range xsd:float ;
-                                                   rdfs:label "hasDocVersion"^^xsd:string .
+:hasDocVersion rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Document ;
+               rdfs:range xsd:float ;
+               rdfs:label "hasDocVersion"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasDtype
-<https://g-node.org/projects/odml-rdf#hasDtype> rdf:type owl:DatatypeProperty ;
-                                             rdfs:domain <https://g-node.org/projects/odml-rdf#Property> ;
-                                             rdfs:range xsd:string ;
-                                             rdfs:label "hasDtype"^^xsd:string .
+:hasDtype rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Property ;
+          rdfs:range xsd:string ;
+          rdfs:label "hasDtype"^^xsd:string .
 
 
-###  https://g-node.org/projects/odml-rdf#hasResource
-<https://g-node.org/projects/odml-rdf#hasResource> rdf:type owl:DatatypeProperty ;
-                                                   rdfs:domain <https://g-node.org/projects/odml-rdf#Terminology> ;
-                                                   rdfs:range rdfs:Literal ;
-                                                   rdfs:label "hasResource" .
+###  https://g-node.org/projects/odml-rdf#hasExternalTerminology
+:hasExternalTerminology rdf:type owl:DatatypeProperty ;
+                        rdfs:domain :Terminology ;
+                        rdfs:range rdfs:Literal ;
+                        rdfs:label "hasExternalTerminology"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasId
-<https://g-node.org/projects/odml-rdf#hasId> rdf:type owl:DatatypeProperty ;
-                                          rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ,
-                                                      <https://g-node.org/projects/odml-rdf#Property> ,
-                                                      <https://g-node.org/projects/odml-rdf#Section> ;
-                                          rdfs:range rdfs:Literal ;
-                                          rdfs:label "hasId"^^xsd:string .
+:hasId rdf:type owl:DatatypeProperty ,
+                owl:FunctionalProperty ;
+       rdfs:domain :Document ,
+                   :Property ,
+                   :Section ;
+       rdfs:range rdfs:Literal ;
+       rdfs:label "hasId"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasName
-<https://g-node.org/projects/odml-rdf#hasName> rdf:type owl:DatatypeProperty ;
-                                            rdfs:domain <https://g-node.org/projects/odml-rdf#Property> ,
-                                                        <https://g-node.org/projects/odml-rdf#Section> ;
-                                            rdfs:range xsd:string ;
-                                            rdfs:label "hasName"^^xsd:string .
+:hasName rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Property ,
+                     :Section ;
+         rdfs:range xsd:string ;
+         rdfs:label "hasName"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasReference
-<https://g-node.org/projects/odml-rdf#hasReference> rdf:type owl:DatatypeProperty ;
-                                                 rdfs:domain <https://g-node.org/projects/odml-rdf#Section> ;
-                                                 rdfs:range rdfs:Literal ;
-                                                 rdfs:label "hasReference"^^xsd:string .
+:hasReference rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Section ;
+              rdfs:range rdfs:Literal ;
+              rdfs:label "hasReference"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasType
-<https://g-node.org/projects/odml-rdf#hasType> rdf:type owl:DatatypeProperty ;
-                                            rdfs:domain <https://g-node.org/projects/odml-rdf#Section> ;
-                                            rdfs:range xsd:string ;
-                                            rdfs:label "hasType"^^xsd:string .
+:hasType rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Section ;
+         rdfs:range xsd:string ;
+         rdfs:label "hasType"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasUncertainty
-<https://g-node.org/projects/odml-rdf#hasUncertainty> rdf:type owl:DatatypeProperty ;
-                                                   rdfs:domain <https://g-node.org/projects/odml-rdf#Property> ;
-                                                   rdfs:label "hasUncertainty"^^xsd:string .
+:hasUncertainty rdf:type owl:DatatypeProperty ;
+                rdfs:domain :Property ;
+                rdfs:range xsd:float ;
+                rdfs:label "hasUncertainty"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasUnit
-<https://g-node.org/projects/odml-rdf#hasUnit> rdf:type owl:DatatypeProperty ;
-                                            rdfs:domain <https://g-node.org/projects/odml-rdf#Property> ;
-                                            rdfs:label "hasUnit"^^xsd:string .
+:hasUnit rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Property ;
+         rdfs:label "hasUnit"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasVersion
-<https://g-node.org/projects/odml-rdf#hasVersion> rdf:type owl:DatatypeProperty ;
-                                               rdfs:domain <https://g-node.org/projects/odml-rdf#Document> ;
-                                               rdfs:range xsd:float ;
-                                               rdfs:label "hasVersion"^^xsd:string .
-
-
-###  https://g-node.org/projects/odml-rdf#hasBag
-<https://g-node.org/projects/odml-rdf#hasBag> rdf:type owl:DatatypeProperty ;
-                                              rdfs:domain <https://g-node.org/projects/odml-rdf#Bag> ;
-                                              rdfs:range rdf:Bag ;
-                                              rdfs:label "hasBag" .
+:hasVersion rdf:type owl:DatatypeProperty ;
+            rdfs:domain :Document ;
+            rdfs:range xsd:float ;
+            rdfs:label "hasVersion"^^xsd:string .
 
 
 #################################################################
 #    Classes
 #################################################################
 
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag
+rdf:Bag rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty :isValueOf ;
+                          owl:someValuesFrom :Property
+                        ] ;
+        rdfs:comment "The class of unordered containers." ;
+        rdfs:isDefinedBy rdf: ;
+        rdfs:label "Bag" .
+
+
 ###  https://g-node.org/projects/odml-rdf#Document
-<https://g-node.org/projects/odml-rdf#Document> rdf:type owl:Class ;
-                                                rdfs:subClassOf owl:Thing ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasSection> ;
-                                                                  owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Section>
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasTerminology> ;
-                                                                  owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Terminology>
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasAuthor> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasDate> ;
-                                                                  owl:someValuesFrom xsd:date
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasDocVersion> ;
-                                                                  owl:someValuesFrom xsd:float
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasId> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasVersion> ;
-                                                                  owl:someValuesFrom xsd:float
-                                                                ] ;
-                                                rdfs:comment "Doc description"^^xsd:string ;
-                                                rdfs:label "Document" ;
-                                                rdfs:seeAlso "Link to the doc description of site"^^xsd:string .
-
-
-###  https://g-node.org/projects/odml-rdf#Property
-<https://g-node.org/projects/odml-rdf#Property> rdf:type owl:Class ;
-                                                rdfs:subClassOf owl:Thing ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasValue> ;
-                                                                  owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Bag>
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasDefinition> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasDtype> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasId> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasName> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasUncertainty> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ,
-                                                                [ rdf:type owl:Restriction ;
-                                                                  owl:onProperty <https://g-node.org/projects/odml-rdf#hasUnit> ;
-                                                                  owl:someValuesFrom rdfs:Literal
-                                                                ] ;
-                                                rdfs:comment "Description of a Property entity"^^xsd:string ;
-                                                rdfs:label "Property" ;
-                                                rdfs:seeAlso "Link to the description on the site"^^xsd:string .
-
-
-###  https://g-node.org/projects/odml-rdf#Section
-<https://g-node.org/projects/odml-rdf#Section> rdf:type owl:Class ;
-                                               rdfs:subClassOf owl:Thing ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasProperty> ;
-                                                                 owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Property>
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasSection> ;
-                                                                 owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Section>
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasTerminology> ;
-                                                                 owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Terminology>
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasDefinition> ;
-                                                                 owl:someValuesFrom rdfs:Literal
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasId> ;
-                                                                 owl:someValuesFrom rdfs:Literal
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasName> ;
-                                                                 owl:someValuesFrom rdfs:Literal
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasReference> ;
-                                                                 owl:someValuesFrom rdfs:Literal
-                                                               ] ,
-                                                               [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasType> ;
-                                                                 owl:someValuesFrom rdfs:Literal
-                                                               ] ;
-                                               rdfs:comment "Comment about section"^^xsd:string ;
-                                               rdfs:label "Section" ;
-                                               rdfs:seeAlso "Link to the doc description of site"^^xsd:string .
-
-
-###  https://g-node.org/projects/odml-rdf#Terminology
-<https://g-node.org/projects/odml-rdf#Terminology> rdf:type owl:Class ;
-                                                   rdfs:subClassOf owl:Thing ,
-                                                                   [ rdf:type owl:Restriction ;
-                                                                     owl:onProperty <https://g-node.org/projects/odml-rdf#hasSection> ;
-                                                                     owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Section>
-                                                                   ] ,
-                                                                   [ rdf:type owl:Restriction ;
-                                                                     owl:onProperty <https://g-node.org/projects/odml-rdf#hasTerminology> ;
-                                                                     owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Terminology>
-                                                                   ] ,
-                                                                   [ rdf:type owl:Restriction ;
-                                                                     owl:onProperty <https://g-node.org/projects/odml-rdf#hasResource> ;
-                                                                     owl:someValuesFrom rdfs:Literal
-                                                                   ] ,
-                                                                   [ rdf:type owl:Restriction ;
-                                                                     owl:onProperty <https://g-node.org/projects/odml-rdf#hasId> ;
-                                                                     owl:someValuesFrom rdfs:Literal
-                                                                   ] ;
-                                                   rdfs:comment "Description of a Terminology"^^xsd:string ;
-                                                   rdfs:label "Terminology" ;
-                                                   rdfs:seeAlso "Link to the remote description"^^xsd:string .
+:Document rdf:type owl:Class ;
+          rdfs:subClassOf owl:Thing ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasSection ;
+                            owl:someValuesFrom :Section
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasTerminology ;
+                            owl:someValuesFrom :Terminology
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :isDocumentOf ;
+                            owl:someValuesFrom :Hub
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasAuthor ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasDate ;
+                            owl:someValuesFrom xsd:date
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasDocVersion ;
+                            owl:someValuesFrom xsd:float
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasId ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasVersion ;
+                            owl:someValuesFrom xsd:float
+                          ] ;
+          rdfs:comment "Doc description"^^xsd:string ;
+          rdfs:label "Document" ;
+          rdfs:seeAlso "Link to the doc description of site"^^xsd:string .
 
 
 ###  https://g-node.org/projects/odml-rdf#Hub
-<https://g-node.org/projects/odml-rdf#Hub> rdf:type owl:Class ;
-                                                               rdfs:subClassOf owl:Thing ,
-                                                                               [ rdf:type owl:Restriction ;
-                                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasTerminology> ;
-                                                                                 owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Terminology>
-                                                                               ] ,
-                                                                               [ rdf:type owl:Restriction ;
-                                                                                 owl:onProperty <https://g-node.org/projects/odml-rdf#hasDocument> ;
-                                                                                 owl:someValuesFrom <https://g-node.org/projects/odml-rdf#Document>
-                                                                               ] ;
-                                                               rdfs:comment "Description of the hub class"^^xsd:string ;
-                                                               rdfs:label "Hub" ;
-                                                               rdfs:seeAlso "Link to the Hub remote description"^^xsd:string .
+:Hub rdf:type owl:Class ;
+     rdfs:subClassOf owl:Thing ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :hasDocument ;
+                       owl:someValuesFrom :Document
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :hasTerminology ;
+                       owl:someValuesFrom :Terminology
+                     ] ;
+     rdfs:comment "Description of the hub class"^^xsd:string ;
+     rdfs:label "Hub" ;
+     rdfs:seeAlso "Link to the Hub remote description"^^xsd:string .
 
 
-###  https://g-node.org/projects/odml-rdf#Bag
-<https://g-node.org/projects/odml-rdf#Bag> rdf:type owl:Class ;
-                                                              rdfs:subClassOf [ rdf:type owl:Restriction ;
-                                                                                owl:onProperty <https://g-node.org/projects/odml-rdf#hasBag> ;
-                                                                                owl:someValuesFrom rdf:Bag
-                                                                              ] ;
-                                                              rdfs:label "Bag" .
+###  https://g-node.org/projects/odml-rdf#Property
+:Property rdf:type owl:Class ;
+          rdfs:subClassOf owl:Thing ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasValue ;
+                            owl:someValuesFrom rdf:Bag
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :isPropertyOf ;
+                            owl:someValuesFrom :Section
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasDefinition ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasDtype ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasId ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasName ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasUncertainty ;
+                            owl:someValuesFrom xsd:float
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasUnit ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ;
+          rdfs:comment "Description of a Property entity"^^xsd:string ;
+          rdfs:label "Property" ;
+          rdfs:seeAlso "Link to the description on the site"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#Section
+:Section rdf:type owl:Class ;
+         rdfs:subClassOf owl:Thing ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasProperty ;
+                           owl:someValuesFrom :Property
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasSection ;
+                           owl:someValuesFrom :Section
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasTerminology ;
+                           owl:someValuesFrom :Terminology
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :isSectionOf ;
+                           owl:someValuesFrom :Document
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :isSectionOf ;
+                           owl:someValuesFrom :Section
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasDefinition ;
+                           owl:someValuesFrom rdfs:Literal
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasId ;
+                           owl:someValuesFrom rdfs:Literal
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasName ;
+                           owl:someValuesFrom rdfs:Literal
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasReference ;
+                           owl:someValuesFrom rdfs:Literal
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :hasType ;
+                           owl:someValuesFrom rdfs:Literal
+                         ] ;
+         rdfs:comment "Comment about section"^^xsd:string ;
+         rdfs:label "Section" ;
+         rdfs:seeAlso "Link to the doc description of site"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#Terminology
+:Terminology rdf:type owl:Class ;
+             rdfs:subClassOf owl:Thing ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasSection ;
+                               owl:someValuesFrom :Section
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasTerminology ;
+                               owl:someValuesFrom :Terminology
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :isTerminologyOf ;
+                               owl:someValuesFrom :Document
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :isTerminologyOf ;
+                               owl:someValuesFrom :Hub
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :isTerminologyOf ;
+                               owl:someValuesFrom :Section
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :isTerminologyOf ;
+                               owl:someValuesFrom :Terminology
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasExternalTerminology ;
+                               owl:someValuesFrom rdfs:Literal
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasId ;
+                               owl:someValuesFrom rdfs:Literal
+                             ] ;
+             rdfs:comment "Description of a Terminology"^^xsd:string ;
+             rdfs:label "Terminology" ;
+             rdfs:seeAlso "Link to the remote description"^^xsd:string .
 
 
 ###  Generated by the OWL API (version 4.3.1) https://github.com/owlcs/owlapi
