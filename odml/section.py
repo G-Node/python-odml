@@ -1,12 +1,14 @@
 # -*- coding: utf-8
+import uuid
+
 import odml.base as base
 import odml.format as format
 import odml.terminology as terminology
+from odml.doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
 from odml.property import Property
 # it MUST however not be used to create any Property objects
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
-from odml.doc import BaseDocument
 
 
 class Section(base._baseobj):
@@ -17,7 +19,7 @@ class Section(base._baseobj):
 class BaseSection(base.sectionable, Section):
     """ An odML Section """
     type = None
-    id = None
+    # id = None
     _link = None
     _include = None
     reference = None  # the *import* property
@@ -28,6 +30,7 @@ class BaseSection(base.sectionable, Section):
 
     def __init__(self, name, type=None, parent=None,
                  definition=None, reference=None):
+        self._id = str(uuid.uuid4())
         self._parent = None
         self._name = name
         self._props = base.SmartList()
@@ -41,6 +44,10 @@ class BaseSection(base.sectionable, Section):
     def __repr__(self):
         return "<Section %s[%s] (%d)>" % (self._name, self.type,
                                           len(self._sections))
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def name(self):
@@ -94,15 +101,12 @@ class BaseSection(base.sectionable, Section):
     def link(self):
         """
         Specifies a softlink, i.e. a path within the document
-
         When the merge()-method is called, the link will be resolved creating
         according copies of the section referenced by the link attribute.
-
         When the unmerge() method is called (happens when running clean())
         the link is unresolved, i.e. all properties and sections that are
         completely equivalent to the merged object will be removed.
         (They will be restored accordingly when calling merge()).
-
         When changing the *link* attribute, the previously merged section is
         unmerged, and the new reference will be immediately resolved. To avoid
         this side-effect, directly change the *_link* attribute.
@@ -312,9 +316,7 @@ class BaseSection(base.sectionable, Section):
     def merge(self, section=None):
         """
         Merges this section with another *section*
-
         See also: :py:attr:`odml.section.BaseSection.link`
-
         If section is none, sets the link/include attribute (if _link or
         _include are set), causing the section to be automatically merged
         to the referenced section.
@@ -378,7 +380,6 @@ class BaseSection(base.sectionable, Section):
         Returns True if the section is merged with another one (e.g. through
         :py:attr:`odml.section.BaseSection.link` or
         :py:attr:`odml.section.BaseSection.include`)
-
         The merged object can be accessed through the *_merged* attribute.
         """
         return self._merged is not None
