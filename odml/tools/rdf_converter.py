@@ -98,7 +98,7 @@ class RDFWriter(object):
             elif isinstance(fmt, odml.format.Property.__class__) and \
                             k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
-                bag = URIRef(str(uuid.uuid4()))
+                bag = URIRef(odmlns + str(uuid.uuid4()))
                 self.g.add((bag, RDF.type, RDF.Bag))
                 self.g.add((curr_node, fmt.rdf_map(k), bag))
                 for v in values:
