@@ -78,6 +78,8 @@ class ParentedNode(RootNode):
         except IndexError:
             return None
 
+    __next__ = next
+
     @property
     def position(self):
         return self.parent.path_to(self)[-1]

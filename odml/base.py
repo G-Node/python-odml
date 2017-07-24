@@ -54,6 +54,12 @@ class baseobject(_baseobj):
         """
         return not self == obj
 
+    def __hash__(self):
+        '''
+            Define a default hash function for all odML objects
+        '''
+        return id(self)
+
     def clean(self):
         """
         stub that doesn't do anything for this class

@@ -291,12 +291,12 @@ checksums = {
 }
 
 # allow to use any available algorithm
-if sys.version_info > (3, 0):
-    for algo in hashlib.algorithms_guaranteed:
-        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
-elif not sys.version_info < (2, 7):
-    for algo in hashlib.algorithms:
-        checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
+try:
+    hash_algorithms = hashlib.algoritms
+except AttributeError:
+    hash_algorithms = hashlib.algorithms_guaranteed
+for algo in hash_algorithms:
+    checksums[algo] = lambda data, func=getattr(hashlib, algo): func(data).hexdigest()
 
 
 def valid_checksum_type(checksum_type):

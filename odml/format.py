@@ -18,7 +18,7 @@ class Format(object):
         if self._rev_map is None:
             # create the reverse map only if requested
             self._rev_map = {}
-            for k, v in self._map.iteritems():
+            for k, v in self._map.items():
                 self._rev_map[v] = k
         return self._rev_map.get(name, name)
 

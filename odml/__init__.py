@@ -1,4 +1,3 @@
-_property = property
 import sys
 from odml import doc
 from odml import property
@@ -6,6 +5,12 @@ from odml import section
 from odml import value
 from odml.dtypes import DType
 
+# the original property-function is overwritten
+# so get it back!
+try:
+    from builtins import property as _property
+except ImportError:
+    from __builtin__ import property as _property
 
 class odml_implementation(object):
     name = None
