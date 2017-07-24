@@ -1,12 +1,12 @@
 import datetime
 import unittest
 
-from odml.tools.rdf_converter import RDFWriter
 from rdflib import URIRef, Literal
 from rdflib.namespace import XSD, RDF
 
 import odml
 import odml.format as format
+from odml.tools.rdf_converter import RDFWriter
 from test.test_samplefile import SampleFileCreator
 from test.test_samplefile import parse
 
@@ -37,7 +37,7 @@ class TestRDFWriter(unittest.TestCase):
     def test_convert_to_rdf(self):
         w = RDFWriter([self.doc, self.doc1])
         w.convert_to_rdf(w.docs)
-        doc_subjects = w.g.subjects(predicate=odmlns.Document, object=URIRef(odmlns.Document))
+        doc_subjects = w.g.subjects(predicate=RDF.type, object=URIRef(odmlns.Document))
         self.assertEqual(len(list(doc_subjects)), 2)
 
     def test_adding_doc_to_the_hub(self):
