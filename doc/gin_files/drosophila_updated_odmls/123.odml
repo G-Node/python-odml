@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
-<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
-<odML version="1.1">
-  <id>b14cb086-af37-4ff7-933a-092b712724f2</id>
-  <repository>http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml</repository>
-</odML>
