@@ -210,7 +210,3 @@ class DirectoryParser:
         root = re.sub(r"/[a-z0-9_%-]*\.[a-z]*", r"/", new_file_path)
         if not os.path.isdir(root):
             os.makedirs(root)
-
-if __name__ == "__main__":
-    DirectoryParser().convert_directory("./python-odml/doc/gin_files/", "_updated", ".xml")
-    DirectoryParser().convert_directory("./python-odml/doc/gin_files/", "_odmls", ".odml")
