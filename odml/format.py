@@ -74,12 +74,12 @@ class Property(Format):
         'type': 'dtype'
     }
     _rdf_map = {
-        'id': _ns.id,
-        'name': _ns.name,
-        'definition': _ns.definition,
-        'dtype': _ns.dtype,
-        'unit': _ns.unit,
-        'uncertainty': _ns.uncertainty,
+        'id': _ns.hasId,
+        'name': _ns.hasName,
+        'definition': _ns.hasDefinition,
+        'dtype': _ns.hasDtype,
+        'unit': _ns.hasUnit,
+        'uncertainty': _ns.hasUncertainty,
         'value': _ns.hasValue
     }
 
@@ -105,12 +105,12 @@ class Section(Format):
         'property': 'properties',
     }
     _rdf_map = {
-        'id': _ns.id,
-        'name': _ns.name,
-        'definition': _ns.definition,
-        'type': _ns.type,
-        'repository': _ns.terminology,
-        'reference': _ns.reference,
+        'id': _ns.hasId,
+        'name': _ns.hasName,
+        'definition': _ns.hasDefinition,
+        'type': _ns.hasType,
+        'repository': _ns.hasTerminology,
+        'reference': _ns.hasReference,
         'sections': _ns.hasSection,
         'properties': _ns.hasProperty,
     }
@@ -132,13 +132,12 @@ class Document(Format):
         'section': 'sections'
     }
     _rdf_map = {
-        'id': _ns.id,
-        'author': _ns.author,
-        'date': _ns.date,
-        # 'doc_version': _ns.docversion,    # discuss about the changes to the data model
-        'repository': _ns.terminology,
-        'sections': _ns.hasSection,
-        'version': _ns['doc-version'],
+        'id': _ns.hasId,
+        'author': _ns.hasAuthor,
+        'date': _ns.hasDate,
+        'version': _ns.hasDocVersion,    # discuss about the changes to the data model
+        'repository': _ns.hasTerminology,
+        'sections': _ns.hasSection
     }
 
 

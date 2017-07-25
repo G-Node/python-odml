@@ -49,17 +49,16 @@ class TestRDFWriter(unittest.TestCase):
     def test_adding_repository(self):
         w = RDFWriter([self.doc])
         w.convert_to_rdf(w.docs)
-        self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.Terminology))), 0)
         self.assertEqual(len(list(w.g.objects(subject=w.hub_root, predicate=odmlns.hasTerminology))), 0)
-        self.assertEqual(len(list(w.g.objects(subject=URIRef(odmlns + w.docs[0].id), predicate=odmlns.terminology))), 0)
+        self.assertEqual(len(list(w.g.objects(subject=URIRef(odmlns + w.docs[0].id), predicate=odmlns.hasTerminology))), 0)
 
         url = "terminology_url"
         self.doc.repository = url
         w = RDFWriter([self.doc])
         w.convert_to_rdf(w.docs)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.Terminology, object=URIRef(url)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.type, object=URIRef(url)))), 1)
         self.assertEqual(len(list(w.g.objects(subject=w.hub_root, predicate=odmlns.hasTerminology))), 1)
-        self.assertEqual(len(list(w.g.objects(subject=URIRef(odmlns + w.docs[0].id), predicate=odmlns.terminology))), 1)
+        self.assertEqual(len(list(w.g.objects(subject=URIRef(odmlns + w.docs[0].id), predicate=odmlns.hasTerminology))), 1)
 
     def test_adding_sections(self):
         doc = odml.Document()
@@ -160,17 +159,17 @@ class TestRDFWriter(unittest.TestCase):
 
         w = RDFWriter([doc])
         w.convert_to_rdf(w.docs)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns['doc-version'], object=Literal(version)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.date, object=Literal(date, datatype=XSD.date)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.author, object=Literal(author)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDocVersion, object=Literal(version)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDate, object=Literal(date, datatype=XSD.date)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasAuthor, object=Literal(author)))), 1)
 
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.name, object=Literal("s1")))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.type, object=Literal("t1")))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.definition, object=Literal(s_def)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.reference, object=Literal(s_ref)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasName, object=Literal("s1")))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasType, object=Literal("t1")))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDefinition, object=Literal(s_def)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasReference, object=Literal(s_ref)))), 1)
 
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.name, object=Literal(p_name)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.unit, object=Literal(p_unit)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.definition, object=Literal(p_def)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.uncertainty, object=Literal(p_uncertainty)))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.dtype, object=Literal(p_dtype)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasName, object=Literal(p_name)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasUnit, object=Literal(p_unit)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDefinition, object=Literal(p_def)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasUncertainty, object=Literal(p_uncertainty)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDtype, object=Literal(p_dtype)))), 1)
