@@ -37,7 +37,7 @@ class RDFWriter(object):
     def convert_to_rdf(self, docs):
         self.create_hub_root()
         if docs:
-            self.g.add((self.hub_root, odmlns.Hub, URIRef(odmlns.Hub)))
+            self.g.add((self.hub_root, RDF.type, URIRef(odmlns.Hub)))
             for doc in docs:
                 self.save_element(doc)
         return self.g
@@ -76,7 +76,7 @@ class RDFWriter(object):
                 else:
                     # adding terminology to the hub and to link with the doc
                     node = URIRef(odmlns + str(uuid.uuid4()))
-                    self.g.add((node, odmlns.Terminology, URIRef(terminology_url)))
+                    self.g.add((node, RDF.type, URIRef(terminology_url)))
                     self.g.add((self.hub_root, odmlns.hasTerminology, node))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
@@ -98,7 +98,7 @@ class RDFWriter(object):
             elif isinstance(fmt, odml.format.Property.__class__) and \
                             k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
-                bag = URIRef(str(uuid.uuid4()))
+                bag = URIRef(odmlns + str(uuid.uuid4()))
                 self.g.add((bag, RDF.type, RDF.Bag))
                 self.g.add((curr_node, fmt.rdf_map(k), bag))
                 for v in values:
@@ -115,7 +115,7 @@ class RDFWriter(object):
         return self.g
 
     def _get_terminology_by_value(self, url):
-        return self.g.value(predicate=odmlns.Terminology, object=URIRef(url))
+        return self.g.value(predicate=RDF.type, object=URIRef(url))
 
     def __str__(self):
         return self.convert_to_rdf(self.docs).serialize(format='turtle').decode("utf-8")

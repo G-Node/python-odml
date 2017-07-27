@@ -19,7 +19,7 @@ class BaseProperty(base.baseobject, Property):
 
     def __init__(self, name, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
-                 dependency=None, dependency_value=None, dtype=None):
+                 dependency=None, dependency_value=None, dtype=None, id=None):
         """
         Create a new Property with a single value. The method will try to infer
         the value's dtype from the type of the value if not explicitly stated.
@@ -47,7 +47,14 @@ class BaseProperty(base.baseobject, Property):
                      if dtype is not given, the type is deduced from the values
         """
         # TODO validate arguments
-        self._id = str(uuid.uuid4())
+        try:
+            if id is not None:
+                self._id = str(uuid.UUID(id))
+            else:
+                self._id = str(uuid.uuid4())
+        except ValueError as e:
+            print(e)
+            self._id = str(uuid.uuid4())
         self._name = name
         self._parent = None
         self._value = []

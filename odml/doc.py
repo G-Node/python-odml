@@ -23,9 +23,16 @@ class BaseDocument(base.sectionable, Document):
 
     _format = format.Document
 
-    def __init__(self, author=None, date=None, version=None, repository=None):
+    def __init__(self, author=None, date=None, version=None, repository=None, id=None):
         super(BaseDocument, self).__init__()
-        self._id = str(uuid.uuid4())
+        try:
+            if id is not None:
+                self._id = str(uuid.UUID(id))
+            else:
+                self._id = str(uuid.uuid4())
+        except ValueError as e:
+            print(e)
+            self._id = str(uuid.uuid4())
         self._author = author
         self._date = date  # date must be a datetime
         self._version = version

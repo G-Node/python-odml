@@ -29,8 +29,15 @@ class BaseSection(base.sectionable, Section):
     _format = format.Section
 
     def __init__(self, name, type=None, parent=None,
-                 definition=None, reference=None):
-        self._id = str(uuid.uuid4())
+                 definition=None, reference=None, id=None):
+        try:
+            if id is not None:
+                self._id = str(uuid.UUID(id))
+            else:
+                self._id = str(uuid.uuid4())
+        except ValueError as e:
+            print(e)
+            self._id = str(uuid.uuid4())
         self._parent = None
         self._name = name
         self._props = base.SmartList()
