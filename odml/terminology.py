@@ -9,11 +9,12 @@ import datetime
 import odml.tools.xmlparser
 from hashlib import md5
 py3 = True
+
 try:
-    import urllib.request as urllib2
+    from urllib.request import urlopen
 except ImportError:
-    import urllib2
-    py3 = False
+    from urllib import urlopen
+
 import threading
 
 CACHE_AGE = datetime.timedelta(days=1)
@@ -24,7 +25,7 @@ def cache_load(url):
     load the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version
     """
-    filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
+    filename = md5(url.encode()).hexdigest() + os.path.basename(url)
     cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
     if not os.path.exists(cache_dir):
         try:
@@ -37,16 +38,15 @@ def cache_load(url):
        or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
        datetime.datetime.now() - CACHE_AGE:
         try:
-            data = urllib2.urlopen(url).read().decode("latin1")
+            data = urlopen(url).read().decode("utf-8")
         except Exception as e:
-            print("failed loading '%s': %s" % (url, e))
+            print("Failed loading '%s': %s" % (url, e))
             return
+
         fp = open(cache_file, "w")
-        if py3:
-            fp.write(data)
-        else:
-            fp.write(data.encode('latin1'))
+        fp.write(data)
         fp.close()
+
     return open(cache_file)
 
 
@@ -74,7 +74,7 @@ class Terminologies(dict):
         # if url.startswith("http"): return None
         fp = cache_load(url)
         if fp is None:
-            print("did not successfully load '%s'" % url)
+            print("Did not successfully load '%s'" % url)
             return
         try:
             term = odml.tools.xmlparser.XMLReader(filename=url, ignore_errors=True).fromFile(fp)
