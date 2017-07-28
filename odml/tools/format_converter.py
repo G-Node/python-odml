@@ -146,11 +146,11 @@ class FormatConverter(object):
         """
         Enable usage of the argparse for calling convert_dir(...)
         Example:
-            1) >> python format_converter.py ./..path../input_dir v1_1 -out ./..path../output_dir -sub
+            1) >> python format_converter.py ./..path../input_dir v1_1 -out ./..path../output_dir -r
             
-               Convert files from path <./..path../input_dir> to .xml odml version 1.1,
+               Convert files from the path <./..path../input_dir> to .xml odml version 1.1,
                writes them into <./..path../output_dir> including subdirectories 
-               and its files from input path.
+               and its files from the input path.
             
             2) >> python format_converter.py ./..path../input_dir odml
             
@@ -161,10 +161,10 @@ class FormatConverter(object):
         parser.add_argument("input_dir", help="Path to input directory")
         parser.add_argument("result_format", choices=['v1_1', 'odml'], help="Format of output files")
         parser.add_argument("-out", "--output_dir", help="Path for output directory")
-        parser.add_argument("-sub", "--subdirs", action="store_true", help="Enable converting files from subdirectories")
+        parser.add_argument("-r", "--recursive", action="store_true", help="Enable converting files from subdirectories")
         args = parser.parse_args(args)
-        sub = True if args.subdirs else False
-        cls.convert_dir(args.input_dir, args.output_dir, sub, args.result_format)
+        r = True if args.recursive else False
+        cls.convert_dir(args.input_dir, args.output_dir, r, args.result_format)
 
     @classmethod
     def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format):
