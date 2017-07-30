@@ -1,4 +1,5 @@
 import argparse
+import io
 import os
 import re
 import sys
@@ -6,6 +7,7 @@ import sys
 from lxml import etree as ET
 
 import odml
+from odml.tools.xmlparser import XML_VERSION
 
 try:
     unicode = unicode
@@ -35,50 +37,65 @@ class VersionConverter(object):
         """
         Converts a given file to the odml version 1.1.
         Unites multuple value objects and brings value attributes out of the <value> tag.
+        :param filename: The path to the file or io.StringIO object
         """
         tree = None
-        if os.path.exists(filename) and os.path.getsize(filename) > 0:
-            cls.fix_xml(filename)
+        if isinstance(filename, io.StringIO):
+            cls._fix_unmatching_tags(filename)
+            tree = ET.ElementTree(ET.fromstring(filename.getvalue()))
+        elif os.path.exists(filename) and os.path.getsize(filename) > 0:
+            cls._fix_unmatching_tags(filename)
             tree = ET.parse(filename)
-            tree = cls._replace_same_name_entities(tree)
-            root = tree.getroot()
-            root.set("version", "1.1")
-            for prop in root.iter("property"):
-                one_value = True
-                first_value = None
-                for value in prop.iter("value"):
-                    if one_value:
-                        first_value = value
-                        for val_elem in value.iter():
-                            if val_elem.tag != "value" and one_value:
-                                elem_name = cls._version_map[val_elem.tag] \
-                                    if val_elem.tag in cls._version_map else val_elem.tag
-                                new_elem = ET.Element(elem_name)
-                                new_elem.text = val_elem.text
-                                value.getparent().append(new_elem)  # appending to the property
-                                value.remove(val_elem) 
-                        one_value = False
-                    else:
-                        first_value.text += ", " + value.text
-                        prop.remove(value)
+        else:
+            raise ValueError("The filename is not a valid path nor io.StringIO object")
+
+        tree = cls._replace_same_name_entities(tree)
+        root = tree.getroot()
+        root.set("version", XML_VERSION)
+        for prop in root.iter("property"):
+            one_value = True
+            first_value = None
+            for value in prop.iter("value"):
+                if one_value:
+                    first_value = value
+                    for val_elem in value.iter():
+                        if val_elem.tag != "value" and one_value:
+                            elem_name = cls._version_map[val_elem.tag] \
+                                if val_elem.tag in cls._version_map else val_elem.tag
+                            new_elem = ET.Element(elem_name)
+                            new_elem.text = val_elem.text
+                            value.getparent().append(new_elem)  # appending to the property
+                            value.remove(val_elem)
+                    one_value = False
+                else:
+                    first_value.text += ", " + value.text
+                    prop.remove(value)
         return tree
 
     @classmethod
-    def fix_xml(cls, filename):
+    def _fix_unmatching_tags(cls, filename):
         """
         Fix an xml file by deleting known mismatching tags.
+        :param filename: The path to the file or io.StringIO object
         """
         changes = False
-        with open(filename, 'r+') as f:
+        if isinstance(filename, io.StringIO):
+            doc = filename.getvalue()
+        elif os.path.exists(filename) and os.path.getsize(filename) > 0:
+            f = open(filename, 'r+')
             doc = f.read()
-            for k, v in cls._error_strings.items():
-                if k in doc:
-                    doc = doc.replace(k, cls._error_strings[k])
-                    changes = True
+        for k, v in cls._error_strings.items():
+            if k in doc:
+                doc = doc.replace(k, cls._error_strings[k])
+                changes = True
 
-            if changes:
+        if changes:
+            if isinstance(filename, io.StringIO):
+                return io.StringIO(doc)
+            else:
                 f.truncate(0)
                 f.write(doc)
+                f.close()
 
     @classmethod
     def _replace_same_name_entities(cls, tree):
@@ -169,13 +186,20 @@ class FormatConverter(object):
     @classmethod
     def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format):
         """
-        Convert files from given input directory to the specified res_format. 
+        Convert files from given input directory to the specified res_format.
+        :param input_dir: Path to input directory
+        :param output_dir: Path for output directory. If None, new directory will be created on the same level as input
+        :param parse_subdirs: If True enable converting files from subdirectories
+        :param res_format: Format of output files. 
+                           Possible choices: "v1_1" (converts to version 1.1 from version 1 xml)
+                                             "odml" (converts to .odml from version 1.1 .xml files)
         """
         if res_format not in cls._conversion_formats:
             raise ValueError("Format for output files is incorrect. "
                              "Please choose from the list: {}".format(cls._conversion_formats))
 
         cls._check_input_output_directory(input_dir, output_dir)
+        input_dir = os.path.join(input_dir, '')
 
         if output_dir is None:
             input_dir_name = os.path.basename(os.path.dirname(input_dir))
@@ -207,6 +231,9 @@ class FormatConverter(object):
         if res_format == "v1_1":
             VersionConverter(input_path).write_to_file(output_path)
         elif res_format == "odml":
+            if output_path.endswith(".xml"):
+                p, _ = os.path.splitext(output_path)
+                output_path = p + ".odml"
             odml.save(odml.load(input_path), output_path)
         else:
             # TODO implement conversion to rdfs, json etc.
@@ -241,6 +268,3 @@ class FormatConverter(object):
             if os.path.dirname(input_dir) == input_dir:
                 raise ValueError("The input directory cannot be a root folder of the File System if "
                                  "output directory was not specified")
-
-if __name__ == "__main__":
-    FormatConverter.convert(sys.argv[1:])
