@@ -7,6 +7,11 @@ from lxml import etree as ET
 
 from odml.tools.format_converter import VersionConverter
 
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+
 VS = VersionConverter
 
 
@@ -81,7 +86,7 @@ class TestVersionConverter(unittest.TestCase):
     def test_fix_unmatching_tags(self):
         first_elem = list(VS._error_strings.keys())[0]
         self.doc = re.sub("<value>", "<value>" + first_elem, self.doc, count=1)
-        file = io.StringIO(self.doc)
+        file = io.StringIO(unicode(self.doc))
         with self.assertRaises(Exception):
             ET.fromstring(file.getvalue())
         file = VS._fix_unmatching_tags(file)
@@ -101,7 +106,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("unit"), None)
         self.assertEqual(prop.find("type"), None)
 
-        file = io.StringIO(self.doc)
+        file = io.StringIO(unicode(self.doc))
         tree = VS.convert_odml_file(file)
         root = tree.getroot()
         prop = root.find("section").find("property")
