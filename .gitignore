@@ -9,7 +9,7 @@ eggs
 parts
 
 # odml files
-*.odml
+# *.odml
 
 # Include a sample file
 !THGTTG.odml
