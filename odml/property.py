@@ -1,8 +1,8 @@
 # -*- coding: utf-8
 
 import odml.base as base
-import odml.format as frmt
 import odml.dtypes as dtypes
+import odml.format as frmt
 from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -17,7 +17,8 @@ class BaseProperty(base.baseobject, Property):
 
     def __init__(self, name, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
-                 dependency=None, dependency_value=None, dtype=None):
+                 dependency=None, dependency_value=None, dtype=None, value_origin=None):
+        #TODO add description to :param value_origin
         """
         Create a new Property with a single value. The method will try to infer
         the value's dtype from the type of the value if not explicitly stated.
@@ -44,11 +45,13 @@ class BaseProperty(base.baseobject, Property):
         :param dependency_value: Dependency on a certain value.
         :param dtype: the data type of the values stored in the property,
                      if dtype is not given, the type is deduced from the values
+        :param value_origin:
         """
         # TODO validate arguments
         self._name = name
         self._parent = None
         self._value = []
+        self._value_origin = value_origin
         self._unit = unit
         self._uncertainty = uncertainty
         self._reference = reference
@@ -172,6 +175,14 @@ class BaseProperty(base.baseobject, Property):
             raise ValueError("odml.Property.value: passed values are not of "
                              "consistent type!")
         self._value = [dtypes.get(v, self.dtype) for v in new_value]
+
+    @property
+    def value_origin(self):
+        return self._value_origin
+
+    @value_origin.setter
+    def value_origin(self, new_value):
+        self._value_origin = new_value
 
     @property
     def uncertainty(self):
