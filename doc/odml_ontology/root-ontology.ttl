@@ -166,7 +166,8 @@ xsd:date rdf:type rdfs:Datatype ;
 
 ###  https://g-node.org/projects/odml-rdf#hasReference
 :hasReference rdf:type owl:DatatypeProperty ;
-              rdfs:domain :Section ;
+              rdfs:domain :Property ,
+                          :Section ;
               rdfs:range rdfs:Literal ;
               rdfs:label "hasReference"^^xsd:string .
 
@@ -302,6 +303,10 @@ rdf:Bag rdf:type owl:Class ;
                           ] ,
                           [ rdf:type owl:Restriction ;
                             owl:onProperty :hasName ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasReference ;
                             owl:someValuesFrom rdfs:Literal
                           ] ,
                           [ rdf:type owl:Restriction ;
