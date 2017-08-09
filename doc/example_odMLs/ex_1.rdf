@@ -4,10 +4,9 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-odml:hub1 a odml:Hub ;
-    odml:hasDocument <https://g-node.org/projects/odml-rdf#79b613eb-a256-46bf-84f6-207df465b8f7>,
-        <https://g-node.org/projects/odml-rdf#9b862019-643a-403f-b5a9-3b46db012961> ;
-    odml:hasTerminology odml:c0aa7a18-2162-46b3-8525-3466d6b09798 .
+odml:Hub odml:hasDocument <https://g-node.org/projects/odml-rdf#3f995de3-fdb3-4f41-9daa-f85e001445c6>,
+        <https://g-node.org/projects/odml-rdf#79b613eb-a256-46bf-84f6-207df465b8f7> ;
+    odml:hasTerminology <https://g-node.org/projects/odml-rdf#7e0e07c7-7501-454e-88e7-cfa072db94c1> .
 
 <https://g-node.org/projects/odml-rdf#0cec018b-20e3-4b13-bb95-b41de12db97f> a odml:Property ;
     odml:hasDefinition "Nickname(s) of the subject" ;
@@ -22,12 +21,6 @@ odml:hub1 a odml:Hub ;
     odml:hasSection <https://g-node.org/projects/odml-rdf#1d6469b5-5322-408b-916e-3224b7a22008> ;
     odml:hasType "crew" .
 
-<https://g-node.org/projects/odml-rdf#18bb5a7e-2097-43f2-a782-e6f612107e93> a odml:Section ;
-    odml:hasDefinition "Information on the crew" ;
-    odml:hasName "s121" ;
-    odml:hasReference "s21" ;
-    odml:hasType "crew" .
-
 <https://g-node.org/projects/odml-rdf#1d6469b5-5322-408b-916e-3224b7a22008> a odml:Section ;
     odml:hasDefinition "Information on Arthur Dent" ;
     odml:hasName "Arthur Philip Dent" ;
@@ -40,75 +33,55 @@ odml:hub1 a odml:Hub ;
     odml:hasDtype "int" ;
     odml:hasName "NoCrewMembers" ;
     odml:hasUncertainty "1" ;
-    odml:hasValue odml:a5fc9c74-1d29-4012-a628-3f289bd7c256 .
+    odml:hasValue odml:ce5f326a-91c9-4c41-9425-d4b8495aa832 .
 
-<https://g-node.org/projects/odml-rdf#4b2d0e9d-6352-4676-97d7-fc0a795e83a9> a odml:Section ;
-    odml:hasDefinition "Information on the crew" ;
-    odml:hasName "s21" ;
-    odml:hasType "crew" .
+<https://g-node.org/projects/odml-rdf#3f995de3-fdb3-4f41-9daa-f85e001445c6> a odml:Document ;
+    odml:hasAuthor "D. N. Adams" ;
+    odml:hasDate "1979-10-12"^^xsd:date ;
+    odml:hasDocVersion "42" ;
+    odml:hasSection odml:b44da455-8ee8-47b7-a011-016b9c3a6f9d .
+
+<https://g-node.org/projects/odml-rdf#4a9891e7-b970-46fb-80d6-60ec8b2535e3> a rdf:Bag ;
+    rdf:li "Human" .
 
 <https://g-node.org/projects/odml-rdf#635035cc-1c05-4e44-a4b7-0fb3d6295abf> a odml:Property ;
     odml:hasDefinition "Species to which subject belongs to" ;
     odml:hasDtype "string" ;
     odml:hasName "Species" ;
-    odml:hasValue <https://g-node.org/projects/odml-rdf#9300716d-558a-4fb6-8850-d61a03d01960> .
+    odml:hasValue <https://g-node.org/projects/odml-rdf#4a9891e7-b970-46fb-80d6-60ec8b2535e3> .
 
 <https://g-node.org/projects/odml-rdf#79b613eb-a256-46bf-84f6-207df465b8f7> a odml:Document ;
     odml:hasAuthor "D. N. Adams" ;
     odml:hasDate "1979-10-12"^^xsd:date ;
     odml:hasDocVersion "42" ;
     odml:hasSection <https://g-node.org/projects/odml-rdf#0f96a050-2d9b-498f-a532-fbfcc6aae55e> ;
-    odml:hasTerminology odml:c0aa7a18-2162-46b3-8525-3466d6b09798 .
+    odml:hasTerminology <https://g-node.org/projects/odml-rdf#7e0e07c7-7501-454e-88e7-cfa072db94c1> .
 
 <https://g-node.org/projects/odml-rdf#7b0572c1-fcfc-4010-aebf-730397ac29af> a odml:Property ;
     odml:hasDefinition "List of crew members names" ;
     odml:hasDtype "person" ;
     odml:hasName "NameCrewMembers" ;
-    odml:hasValue odml:f3b98ee9-b6e8-49ed-a4f8-5c3b77925867 .
+    odml:hasValue odml:d98afe9b-3982-44bf-9373-12aaa4798628 .
 
-<https://g-node.org/projects/odml-rdf#8d68e6fe-8dda-4dfe-a1d8-edaa0f410255> a odml:Section ;
+odml:b44da455-8ee8-47b7-a011-016b9c3a6f9d a odml:Section ;
     odml:hasDefinition "Information on the crew" ;
-    odml:hasName "s12" ;
-    odml:hasSection <https://g-node.org/projects/odml-rdf#18bb5a7e-2097-43f2-a782-e6f612107e93> ;
+    odml:hasName "TheCrew" ;
+    odml:hasProperty odml:bb02a18d-7de2-45aa-8be1-ca34b74f2360 ;
     odml:hasType "crew" .
 
-<https://g-node.org/projects/odml-rdf#9300716d-558a-4fb6-8850-d61a03d01960> a rdf:Bag ;
-    rdf:li "Human" .
+odml:bb02a18d-7de2-45aa-8be1-ca34b74f2360 a odml:Property ;
+    odml:hasDefinition "Number of crew members" ;
+    odml:hasDtype "int" ;
+    odml:hasName "NoCrewMembers" .
 
-<https://g-node.org/projects/odml-rdf#9b862019-643a-403f-b5a9-3b46db012961> a odml:Document ;
-    odml:hasAuthor "D. N. Adams" ;
-    odml:hasDate "1979-10-12"^^xsd:date ;
-    odml:hasDocVersion "42" ;
-    odml:hasSection odml:bc6cc466-5769-4da1-b90e-8e5595903a4a,
-        odml:d1e70848-5318-4466-82d0-1c3e99a8ba85 ;
-    odml:hasTerminology odml:c0aa7a18-2162-46b3-8525-3466d6b09798 .
-
-odml:a5fc9c74-1d29-4012-a628-3f289bd7c256 a rdf:Bag ;
+odml:ce5f326a-91c9-4c41-9425-d4b8495aa832 a rdf:Bag ;
     rdf:li 4 .
 
-odml:bc6cc466-5769-4da1-b90e-8e5595903a4a a odml:Section ;
-    odml:hasDefinition "Information on the crew" ;
-    odml:hasName "s2" ;
-    odml:hasSection <https://g-node.org/projects/odml-rdf#4b2d0e9d-6352-4676-97d7-fc0a795e83a9> ;
-    odml:hasType "crew" .
-
-odml:d1e70848-5318-4466-82d0-1c3e99a8ba85 a odml:Section ;
-    odml:hasDefinition "Information on the crew" ;
-    odml:hasName "s1" ;
-    odml:hasSection <https://g-node.org/projects/odml-rdf#8d68e6fe-8dda-4dfe-a1d8-edaa0f410255>,
-        odml:da908cda-19e1-4df8-b873-d1f6cd1b164d ;
-    odml:hasType "crew" .
-
-odml:da908cda-19e1-4df8-b873-d1f6cd1b164d a odml:Section ;
-    odml:hasDefinition "Information on the crew" ;
-    odml:hasName "s11" ;
-    odml:hasType "crew" .
-
-odml:f3b98ee9-b6e8-49ed-a4f8-5c3b77925867 a rdf:Bag ;
+odml:d98afe9b-3982-44bf-9373-12aaa4798628 a rdf:Bag ;
     rdf:li "Arthur Philip Dent",
         "Ford Prefect",
         "Tricia Marie McMillan",
         "Zaphod Beeblebrox" .
 
-odml:c0aa7a18-2162-46b3-8525-3466d6b09798 a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+<https://g-node.org/projects/odml-rdf#7e0e07c7-7501-454e-88e7-cfa072db94c1> a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
 
