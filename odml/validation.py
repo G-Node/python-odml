@@ -2,7 +2,6 @@
 """
 Generic odML validation framework
 """
-import odml
 
 
 class ValidationError(object):
@@ -123,8 +122,8 @@ def section_repository_should_be_present(sec):
         return
 
     if tsec is None:
-        yield ValidationError(sec, "Section type '%s' not found in terminology"
-                              % (sec.type, 'warning'))
+        yield ValidationError(sec, "Section type '%s' not found in terminology" % sec.type,
+                                   'warning')
 
 Validation.register_handler('section', section_repository_should_be_present)
 
