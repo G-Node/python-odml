@@ -21,19 +21,6 @@ class TestRDFWriter(unittest.TestCase):
         self.doc = doc
         self.doc1 = doc1
 
-    def test_create_hub_root(self):
-        w = RDFWriter([self.doc])
-        w.create_hub_root()
-        self.assertNotEqual(w.hub_root, None)
-
-        w = RDFWriter([self.doc], "hub1")
-        w.create_hub_root()
-        self.assertEqual(w.hub_root, URIRef(odmlns + w.hub_id))
-
-        old_hub_root = w.hub_root
-        w.create_hub_root()
-        self.assertEqual(old_hub_root, w.hub_root)
-
     def test_convert_to_rdf(self):
         w = RDFWriter([self.doc, self.doc1])
         w.convert_to_rdf()

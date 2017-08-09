@@ -19,28 +19,18 @@ class RDFWriter(object):
     Creates the RDF graph storing information about the odML document 
     """
 
-    def __init__(self, odml_documents, hub_id=None):
+    def __init__(self, odml_documents):
         """
         :param odml_documents: list of odml documents 
-        :param hub_id: id of the hub
         """
         self.docs = odml_documents if not isinstance(odml_documents, odml.doc.BaseDocument) else [odml_documents]
-        self.hub_id = hub_id
         self.hub_root = None
         self.g = Graph()
         self.g.bind("odml", odmlns)
 
-    def create_hub_root(self):
-        if self.hub_root is None:
-            if self.hub_id is None:
-                self.hub_root = URIRef(odmlns + str(uuid.uuid4()))
-            else:
-                self.hub_root = URIRef(odmlns + self.hub_id)
-
     def convert_to_rdf(self):
-        self.create_hub_root()
+        self.hub_root = URIRef(odmlns.Hub)
         if self.docs:
-            self.g.add((self.hub_root, RDF.type, URIRef(odmlns.Hub)))
             for doc in self.docs:
                 self.save_element(doc)
         return self.g
