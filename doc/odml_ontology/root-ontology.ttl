@@ -188,7 +188,15 @@ xsd:date rdf:type rdfs:Datatype ;
 ###  https://g-node.org/projects/odml-rdf#hasUnit
 :hasUnit rdf:type owl:DatatypeProperty ;
          rdfs:domain :Property ;
+         rdfs:range xsd:string ;
          rdfs:label "hasUnit"^^xsd:string .
+
+
+###  https://g-node.org/projects/odml-rdf#hasValueOrigin
+:hasValueOrigin rdf:type owl:DatatypeProperty ;
+                rdfs:domain :Property ;
+                rdfs:range xsd:string ;
+                rdfs:label "hasValueOrigin" .
 
 
 ###  https://g-node.org/projects/odml-rdf#hasVersion
@@ -302,6 +310,10 @@ rdf:Bag rdf:type owl:Class ;
                           ] ,
                           [ rdf:type owl:Restriction ;
                             owl:onProperty :hasUnit ;
+                            owl:someValuesFrom rdfs:Literal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasValueOrigin ;
                             owl:someValuesFrom rdfs:Literal
                           ] ;
           rdfs:comment "Description of a Property entity"^^xsd:string ;
