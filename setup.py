@@ -1,4 +1,5 @@
 import sys
+
 try:
     from setuptools import setup
 except ImportError as ex:
@@ -14,7 +15,7 @@ packages = [
 with open('README.rst') as f:
     description_text = f.read()
 
-install_req = ["lxml", "rdflib"]
+install_req = ["lxml", "rdflib", "rdflib-jsonld"]
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
 
