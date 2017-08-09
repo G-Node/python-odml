@@ -80,6 +80,7 @@ class Property(Format):
         'dtype': _ns.hasDtype,
         'unit': _ns.hasUnit,
         'uncertainty': _ns.hasUncertainty,
+        'reference': _ns.hasReference,
         'value': _ns.hasValue,
         'value_origin': _ns.hasValueOrigin
     }
