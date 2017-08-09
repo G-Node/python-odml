@@ -31,8 +31,8 @@ class TestParser(unittest.TestCase):
         if os.path.exists(self.yaml_file):    
             os.remove(self.yaml_file)
 
-        # if os.path.exists(self.json_file):
-        #     os.remove(self.json_file)
+        if os.path.exists(self.json_file):
+            os.remove(self.json_file)
 
 
     def test_xml(self):

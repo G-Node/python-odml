@@ -13,6 +13,10 @@ from odml import format
 from . import xmlparser
 
 
+# FIX ME: Version should not be hardcoded here. Import from odML module after
+#         fixing the circular imports issue.
+odml_version = '1.3.dev0'
+
 class ODMLWriter:
     '''
         A generic odML document writer, for XML, YAML and JSON.
@@ -24,7 +28,7 @@ class ODMLWriter:
 
     def __init__(self, parser='XML'):
         self.doc = None  # odML document
-        self.parsed_doc = None  # Python dictionary object
+        self.parsed_doc = None  # Python dictionary object equivalent
         self.parser = parser.upper()
 
     def to_dict(self, odml_document):
@@ -96,11 +100,15 @@ class ODMLWriter:
             xmlparser.XMLWriter(odml_document).write_file(filename)
         else:
             self.to_dict(odml_document)
+            odml_output = {}
+            odml_output['Document'] = self.parsed_doc
+            odml_output['odml-version'] = odml_version
+
             f = open(filename, 'w')
             if self.parser == 'YAML':
-                f.write(yaml.dump(self.parsed_doc, default_flow_style=False))
+                f.write(yaml.dump(odml_output, default_flow_style=False))
             elif self.parser == 'JSON':
-                f.write(json.dumps(self.parsed_doc, indent=4))
+                f.write(json.dumps(odml_output, indent=4))
             f.close()
 
 
@@ -115,9 +123,9 @@ class ODMLReader:
     """
 
     def __init__(self, parser='XML'):
-        
+        self.odml_version = None  # odML version of input file
         self.doc = None  # odML document
-        self.parsed_doc = None  # Python dictionary object
+        self.parsed_doc = None  # Python dictionary object equivalent
         self.parser = parser.upper()
 
     def is_valid_attribute(self, attr, fmt):
@@ -129,6 +137,10 @@ class ODMLReader:
         return None
 
     def to_odml(self):
+
+        self.odml_version = self.parsed_doc['odml-version']
+        self.parsed_doc = self.parsed_doc['Document']
+
         doc_attrs = {}
         doc_secs = []
 
