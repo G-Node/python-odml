@@ -7,6 +7,7 @@ import sys
 from lxml import etree as ET
 
 import odml
+from odml.tools.rdf_converter import RDFWriter
 from odml.tools.xmlparser import XML_VERSION
 
 try:
@@ -36,7 +37,7 @@ class VersionConverter(object):
     def convert_odml_file(cls, filename):
         """
         Converts a given file to the odml version 1.1.
-        Unites multuple value objects and brings value attributes out of the <value> tag.
+        Unites multiple value objects and brings value attributes out of the <value> tag.
         :param filename: The path to the file or io.StringIO object
         """
         tree = None
@@ -47,7 +48,9 @@ class VersionConverter(object):
             cls._fix_unmatching_tags(filename)
             tree = ET.parse(filename)
         else:
-            raise ValueError("The filename is not a valid path nor io.StringIO object")
+            print("File \"{}\" has not been converted because it is not a valid path to odml .xml file "
+                  "nor io.StringIO object".format(filename))
+            return
 
         tree = cls._replace_same_name_entities(tree)
         root = tree.getroot()
@@ -147,16 +150,26 @@ class VersionConverter(object):
             f.write(self.header)
             f.write(data)
             f.close()
-        else:
-            print("Not an odml file: ", filename)
 
 
 class FormatConverter(object):
 
-    _conversion_formats = [
-        "v1_1",
-        "odml"
-    ]
+    _conversion_formats = {
+        'v1_1': '.xml',
+        'odml': '.odml',
+        # rdflib version "4.2.2" serialization formats
+        'xml': '.rdf',
+        'pretty-xml': '.rdf',
+        'trix': '.rdf',
+        'n3': '.n3',
+        'turtle': '.ttl',
+        'ttl': '.ttl',
+        'ntriples': '.nt',
+        'nt': '.nt',
+        'nt11': '.nt',
+        'trig': '.trig',
+        'json-ld': '.jsonld'
+    }
 
     @classmethod
     def convert(cls, args=None):
@@ -176,15 +189,20 @@ class FormatConverter(object):
         """
         parser = argparse.ArgumentParser(description="Convert directory with odml files to another format")
         parser.add_argument("input_dir", help="Path to input directory")
-        parser.add_argument("result_format", choices=['v1_1', 'odml'], help="Format of output files")
+        parser.add_argument("result_format", choices=['v1_1', 'odml', 'xml' 'pretty-xml', 'trix',
+                                                      'n3', 'turtle', 'ttl', 'ntriples',
+                                                      'nt', 'nt11', 'trig', 'json-ld'],
+                            help="Format of output files")
         parser.add_argument("-out", "--output_dir", help="Path for output directory")
-        parser.add_argument("-r", "--recursive", action="store_true", help="Enable converting files from subdirectories")
+        parser.add_argument("-r", "--recursive", action="store_true",
+                            help="Enable converting files from subdirectories")
+        parser.add_argument("-hub", "--hub_id", help="Id of the Hub for rdf docs")
         args = parser.parse_args(args)
         r = True if args.recursive else False
-        cls.convert_dir(args.input_dir, args.output_dir, r, args.result_format)
+        cls.convert_dir(args.input_dir, args.output_dir, r, args.result_format, args.hub_id)
 
     @classmethod
-    def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format):
+    def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format, hub_id=None):
         """
         Convert files from given input directory to the specified res_format.
         :param input_dir: Path to input directory
@@ -193,10 +211,13 @@ class FormatConverter(object):
         :param res_format: Format of output files. 
                            Possible choices: "v1_1" (converts to version 1.1 from version 1 xml)
                                              "odml" (converts to .odml from version 1.1 .xml files)
+                                             "turtle", "nt" etc. (converts to rdf formats from version 1.1 .odml files)
+                                             (see full list of rdf serializers in FormatConverter._conversion_formats)
+        :param hub_id: Id of the Hub for rdf docs
         """
         if res_format not in cls._conversion_formats:
             raise ValueError("Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(cls._conversion_formats))
+                             "Please choose from the list: {}".format(cls._conversion_formats.keys()))
 
         cls._check_input_output_directory(input_dir, output_dir)
         input_dir = os.path.join(input_dir, '')
@@ -213,7 +234,8 @@ class FormatConverter(object):
         if not parse_subdirs:
             for file_name in os.listdir(input_dir):
                 if os.path.isfile(os.path.join(input_dir, file_name)):
-                    cls._convert_file(os.path.join(input_dir, file_name), os.path.join(output_dir, file_name), res_format)
+                    cls._convert_file(os.path.join(input_dir, file_name), os.path.join(output_dir, file_name),
+                                      res_format, hub_id)
         else:
             for dir_path, dir_names, file_names in os.walk(input_dir):
                 for file_name in file_names:
@@ -221,27 +243,25 @@ class FormatConverter(object):
                     out_dir = re.sub(r"" + input_dir, r"" + output_dir, dir_path)
                     out_file_path = os.path.join(out_dir, file_name)
                     cls._create_sub_directory(out_dir)
-                    cls._convert_file(in_file_path, out_file_path, res_format)
+                    cls._convert_file(in_file_path, out_file_path, res_format, hub_id)
 
-    @staticmethod
-    def _convert_file(input_path, output_path, res_format):
+    @classmethod
+    def _convert_file(cls, input_path, output_path, res_format, hub_id=None):
         """
         Convert a file from given input_path to res_format.
         """
         if res_format == "v1_1":
             VersionConverter(input_path).write_to_file(output_path)
         elif res_format == "odml":
-            if output_path.endswith(".xml"):
+            if not output_path.endswith(".odml"):
                 p, _ = os.path.splitext(output_path)
                 output_path = p + ".odml"
             odml.save(odml.load(input_path), output_path)
-        else:
-            # TODO implement conversion to rdfs, json etc.
-            # Discuss how exceptions can be managed:
-            # 1) Ignore not valid files (no way to convert from xml to rdf, or version1 xml to odml)
-            # Warn about about ignored files.
-            # 2) Run converting functions if problems detected and only then warn.
-            return
+        elif res_format in cls._conversion_formats:
+            if not output_path.endswith(cls._conversion_formats[res_format]):
+                p, _ = os.path.splitext(output_path)
+                output_path = p + cls._conversion_formats[res_format]
+            RDFWriter(odml.load(input_path), hub_id).write_file(output_path, res_format)
 
     @staticmethod
     def _create_sub_directory(dir_path):
