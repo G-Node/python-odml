@@ -65,6 +65,7 @@ class Property(Format):
         'uncertainty': 0,
         'reference': 0,
         'type': 0,
+        'value_origin': 0
     }
     _map = {
         'dependencyvalue': 'dependency_value',
@@ -77,7 +78,9 @@ class Property(Format):
         'dtype': _ns.hasDtype,
         'unit': _ns.hasUnit,
         'uncertainty': _ns.hasUncertainty,
-        'value': _ns.hasValue
+        'reference': _ns.hasReference,
+        'value': _ns.hasValue,
+        'value_origin': _ns.hasValueOrigin
     }
 
 

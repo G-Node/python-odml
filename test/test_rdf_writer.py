@@ -145,6 +145,8 @@ class TestRDFWriter(unittest.TestCase):
         p_def = "p comment"
         p_uncertainty = "un"
         p_dtype = "string"
+        p_value_origin = "value"
+        p_ref = "p_ref"
 
         doc.version = version
         doc.date = date
@@ -156,6 +158,8 @@ class TestRDFWriter(unittest.TestCase):
         doc.sections[0].properties[0].definition = p_def
         doc.sections[0].properties[0].uncertainty = p_uncertainty
         doc.sections[0].properties[0].dtype = p_dtype
+        doc.sections[0].properties[0].value_origin = p_value_origin
+        doc.sections[0].properties[0].reference = p_ref
 
         w = RDFWriter([doc])
         w.convert_to_rdf(w.docs)
@@ -173,3 +177,5 @@ class TestRDFWriter(unittest.TestCase):
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDefinition, object=Literal(p_def)))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasUncertainty, object=Literal(p_uncertainty)))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDtype, object=Literal(p_dtype)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasValueOrigin, object=Literal(p_value_origin)))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasReference, object=Literal(p_ref)))), 1)

@@ -1,7 +1,8 @@
 import unittest
-from odml.section import BaseSection
-from odml.property import BaseProperty
+
 from odml import Property, Section, Document, DType
+from odml.property import BaseProperty
+from odml.section import BaseSection
 
 
 class TestProperty(unittest.TestCase):
@@ -79,6 +80,18 @@ class TestProperty(unittest.TestCase):
     def test_path(self):
         pass
 
+    def test_value_origin(self):
+        p = Property("P")
+        self.assertEqual(p.value_origin, None)
+        p = Property("P", value_origin="V")
+        self.assertEqual(p.value_origin, "V")
+
+    def test_set_id(self):
+        p = Property("P", id="79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertEqual(p.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
+
+        Property("P", id="id")
+        self.assertNotEqual(p.id, "id")
 
 if __name__ == "__main__":
     print("TestProperty")
