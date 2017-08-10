@@ -196,13 +196,12 @@ class FormatConverter(object):
         parser.add_argument("-out", "--output_dir", help="Path for output directory")
         parser.add_argument("-r", "--recursive", action="store_true",
                             help="Enable converting files from subdirectories")
-        parser.add_argument("-hub", "--hub_id", help="Id of the Hub for rdf docs")
         args = parser.parse_args(args)
         r = True if args.recursive else False
-        cls.convert_dir(args.input_dir, args.output_dir, r, args.result_format, args.hub_id)
+        cls.convert_dir(args.input_dir, args.output_dir, r, args.result_format)
 
     @classmethod
-    def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format, hub_id=None):
+    def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format):
         """
         Convert files from given input directory to the specified res_format.
         :param input_dir: Path to input directory
@@ -213,7 +212,6 @@ class FormatConverter(object):
                                              "odml" (converts to .odml from version 1.1 .xml files)
                                              "turtle", "nt" etc. (converts to rdf formats from version 1.1 .odml files)
                                              (see full list of rdf serializers in FormatConverter._conversion_formats)
-        :param hub_id: Id of the Hub for rdf docs
         """
         if res_format not in cls._conversion_formats:
             raise ValueError("Format for output files is incorrect. "
@@ -235,7 +233,7 @@ class FormatConverter(object):
             for file_name in os.listdir(input_dir):
                 if os.path.isfile(os.path.join(input_dir, file_name)):
                     cls._convert_file(os.path.join(input_dir, file_name), os.path.join(output_dir, file_name),
-                                      res_format, hub_id)
+                                      res_format)
         else:
             for dir_path, dir_names, file_names in os.walk(input_dir):
                 for file_name in file_names:
@@ -243,10 +241,10 @@ class FormatConverter(object):
                     out_dir = re.sub(r"" + input_dir, r"" + output_dir, dir_path)
                     out_file_path = os.path.join(out_dir, file_name)
                     cls._create_sub_directory(out_dir)
-                    cls._convert_file(in_file_path, out_file_path, res_format, hub_id)
+                    cls._convert_file(in_file_path, out_file_path, res_format)
 
     @classmethod
-    def _convert_file(cls, input_path, output_path, res_format, hub_id=None):
+    def _convert_file(cls, input_path, output_path, res_format):
         """
         Convert a file from given input_path to res_format.
         """
@@ -261,7 +259,7 @@ class FormatConverter(object):
             if not output_path.endswith(cls._conversion_formats[res_format]):
                 p, _ = os.path.splitext(output_path)
                 output_path = p + cls._conversion_formats[res_format]
-            RDFWriter(odml.load(input_path), hub_id).write_file(output_path, res_format)
+            RDFWriter(odml.load(input_path)).write_file(output_path, res_format)
 
     @staticmethod
     def _create_sub_directory(dir_path):
