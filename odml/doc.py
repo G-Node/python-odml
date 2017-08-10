@@ -32,7 +32,7 @@ class BaseDocument(base.sectionable, Document):
                 self._id = str(uuid.uuid4())
         except ValueError as e:
             print(e)
-        self._id = str(uuid.uuid4())
+            self._id = str(uuid.uuid4())
         self._author = author
         self._date = date  # date must be a datetime
         self._version = version

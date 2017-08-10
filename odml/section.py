@@ -37,7 +37,7 @@ class BaseSection(base.sectionable, Section):
                 self._id = str(uuid.uuid4())
         except ValueError as e:
             print(e)
-        self._id = str(uuid.uuid4())
+            self._id = str(uuid.uuid4())
         self._parent = None
         self._name = name
         self._props = base.SmartList()

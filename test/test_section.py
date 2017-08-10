@@ -1,4 +1,5 @@
 import unittest
+
 from odml import Property, Section, Document
 from odml.doc import BaseDocument
 from odml.section import BaseSection
@@ -54,3 +55,10 @@ class TestSection(unittest.TestCase):
 
     def test_path(self):
         pass
+
+    def test_set_id(self):
+        s = Section("S", id="79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertEqual(s.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
+
+        Section("S", id="id")
+        self.assertNotEqual(s.id, "id")
