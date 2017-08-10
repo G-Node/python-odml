@@ -189,9 +189,7 @@ class FormatConverter(object):
         """
         parser = argparse.ArgumentParser(description="Convert directory with odml files to another format")
         parser.add_argument("input_dir", help="Path to input directory")
-        parser.add_argument("result_format", choices=['v1_1', 'odml', 'xml' 'pretty-xml', 'trix',
-                                                      'n3', 'turtle', 'ttl', 'ntriples',
-                                                      'nt', 'nt11', 'trig', 'json-ld'],
+        parser.add_argument("result_format", choices=list(cls._conversion_formats),
                             help="Format of output files")
         parser.add_argument("-out", "--output_dir", help="Path for output directory")
         parser.add_argument("-r", "--recursive", action="store_true",
@@ -286,3 +284,6 @@ class FormatConverter(object):
             if os.path.dirname(input_dir) == input_dir:
                 raise ValueError("The input directory cannot be a root folder of the File System if "
                                  "output directory was not specified")
+
+if __name__ == "__main__":
+    FormatConverter.convert(sys.argv[1:])
