@@ -1,4 +1,3 @@
-import sys
 import uuid
 
 from rdflib import Graph, Literal, URIRef
@@ -20,25 +19,19 @@ class RDFWriter(object):
     Creates the RDF graph storing information about the odML document 
     """
 
-    def __init__(self, odml_documents, hub_id=None):
-        self.docs = odml_documents
-        self.hub_id = hub_id
+    def __init__(self, odml_documents):
+        """
+        :param odml_documents: list of odml documents 
+        """
+        self.docs = odml_documents if not isinstance(odml_documents, odml.doc.BaseDocument) else [odml_documents]
         self.hub_root = None
         self.g = Graph()
         self.g.bind("odml", odmlns)
 
-    def create_hub_root(self):
-        if self.hub_root is None:
-            if self.hub_id is None:
-                self.hub_root = URIRef(odmlns + str(uuid.uuid4()))
-            else:
-                self.hub_root = URIRef(odmlns + self.hub_id)
-
-    def convert_to_rdf(self, docs):
-        self.create_hub_root()
-        if docs:
-            self.g.add((self.hub_root, RDF.type, URIRef(odmlns.Hub)))
-            for doc in docs:
+    def convert_to_rdf(self):
+        self.hub_root = URIRef(odmlns.Hub)
+        if self.docs:
+            for doc in self.docs:
                 self.save_element(doc)
         return self.g
 
@@ -118,17 +111,24 @@ class RDFWriter(object):
         return self.g.value(predicate=RDF.type, object=URIRef(url))
 
     def __str__(self):
-        return self.convert_to_rdf(self.docs).serialize(format='turtle').decode("utf-8")
+        return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
 
     def __unicode__(self):
-        return self.convert_to_rdf(self.docs).serialize(format='turtle').decode("utf-8")
+        return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
 
-    def write_file(self, filename):
-        if sys.version_info < (3,):
-            data = unicode(self).encode('utf-8')
-        else:
-            data = str(self)
+    def get_rdf_str(self, rdf_format):
+        """
+        Get converted into one of the supported formats data 
+        :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 
+                                             'nt', 'pretty-xml', 'trix', 
+                                             'trig', 'nquads', 'json-ld'.
+               Full lists see in odml.tools.format_converter.FormatConverter._conversion_formats
+        :return: string object
+        """
+        return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
+    def write_file(self, filename, rdf_format):
+        data = self.get_rdf_str(rdf_format)
         f = open(filename, "w")
         f.write(data)
         f.close()

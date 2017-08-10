@@ -21,41 +21,28 @@ class TestRDFWriter(unittest.TestCase):
         self.doc = doc
         self.doc1 = doc1
 
-    def test_create_hub_root(self):
-        w = RDFWriter([self.doc])
-        w.create_hub_root()
-        self.assertNotEqual(w.hub_root, None)
-
-        w = RDFWriter([self.doc], "hub1")
-        w.create_hub_root()
-        self.assertEqual(w.hub_root, URIRef(odmlns + w.hub_id))
-
-        old_hub_root = w.hub_root
-        w.create_hub_root()
-        self.assertEqual(old_hub_root, w.hub_root)
-
     def test_convert_to_rdf(self):
         w = RDFWriter([self.doc, self.doc1])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         doc_subjects = w.g.subjects(predicate=RDF.type, object=URIRef(odmlns.Document))
         self.assertEqual(len(list(doc_subjects)), 2)
 
     def test_adding_doc_to_the_hub(self):
         w = RDFWriter([self.doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         hub_hasDocument = w.g.objects(subject=w.hub_root, predicate=odmlns.hasDocument)
         self.assertEqual(len(list(hub_hasDocument)), 1)
 
     def test_adding_repository(self):
         w = RDFWriter([self.doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.objects(subject=w.hub_root, predicate=odmlns.hasTerminology))), 0)
         self.assertEqual(len(list(w.g.objects(subject=URIRef(odmlns + w.docs[0].id), predicate=odmlns.hasTerminology))), 0)
 
         url = "terminology_url"
         self.doc.repository = url
         w = RDFWriter([self.doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.type, object=URIRef(url)))), 1)
         self.assertEqual(len(list(w.g.objects(subject=w.hub_root, predicate=odmlns.hasTerminology))), 1)
         self.assertEqual(len(list(w.g.objects(subject=URIRef(odmlns + w.docs[0].id), predicate=odmlns.hasTerminology))), 1)
@@ -63,15 +50,15 @@ class TestRDFWriter(unittest.TestCase):
     def test_adding_sections(self):
         doc = odml.Document()
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.hasSection))), 0)
 
         w = RDFWriter([self.doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.hasSection))), 9)
 
         w = RDFWriter([self.doc, self.doc1])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.hasSection))), 18)
 
     def test_adding_properties(self):
@@ -81,15 +68,15 @@ class TestRDFWriter(unittest.TestCase):
             s2[t2]
             """)
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.hasProperty))), 0)
 
         w = RDFWriter([self.doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.hasProperty))), 12)
 
         w = RDFWriter([self.doc, self.doc1])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=odmlns.hasProperty))), 24)
 
     def test_adding_values(self):
@@ -98,7 +85,7 @@ class TestRDFWriter(unittest.TestCase):
             """)
 
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=RDF.li))), 0)
 
         doc = parse("""
@@ -107,12 +94,12 @@ class TestRDFWriter(unittest.TestCase):
             """)
 
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 1)
 
         doc.sections[0].properties[0].value.append("val2")
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=RDF.li))), 2)
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val2")))), 1)
@@ -126,7 +113,7 @@ class TestRDFWriter(unittest.TestCase):
              """)
 
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 3)
 
     def test_adding_other_entities_properties(self):
@@ -158,7 +145,7 @@ class TestRDFWriter(unittest.TestCase):
         doc.sections[0].properties[0].dtype = p_dtype
 
         w = RDFWriter([doc])
-        w.convert_to_rdf(w.docs)
+        w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDocVersion, object=Literal(version)))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDate, object=Literal(date, datatype=XSD.date)))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasAuthor, object=Literal(author)))), 1)
