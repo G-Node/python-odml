@@ -10,6 +10,8 @@ parts
 
 # odml files
 *.odml
+# except
+!THGTTG.odml
 
 # installer logs
 pip-log.txt
