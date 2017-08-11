@@ -1,215 +1,215 @@
-
-author: D. N. Adams
-date: '1979-10-12'
-sections:
-- definition: Information on the crew
-  name: TheCrew
-  properties:
-  - definition: List of crew members names
-    dtype: person
-    name: NameCrewMembers
-    value:
-    - Arthur Philip Dent
-    - Zaphod Beeblebrox
-    - Tricia Marie McMillan
-    - Ford Prefect
-  - definition: Number of crew members
-    dtype: int
-    name: NoCrewMembers
-    value:
-    - 4
+Document:
+  author: D. N. Adams
+  date: '1979-10-12'
   sections:
-  - definition: Information on Arthur Dent
-    name: Arthur Philip Dent
+  - definition: Information on the crew
+    name: TheCrew
     properties:
-    - definition: Species to which subject belongs to
-      dtype: string
-      name: Species
+    - definition: List of crew members names
+      dtype: person
+      name: NameCrewMembers
       value:
-      - Human
-    - definition: Nickname(s) of the subject
-      dtype: string
-      name: Nickname
-      value:
-      - The sandwich-maker
-    - definition: Occupation of the subject
-      dtype: string
-      name: Occupation
-      value:
-      - '-'
-    - definition: Sex of the subject
-      dtype: string
-      name: Gender
-      value:
-      - male
-    - definition: Home planet of the subject
-      dtype: string
-      name: HomePlanet
-      value:
-      - Earth
-    sections: []
-    type: crew/person
-  - definition: Information on Zaphod Beeblebrox
-    name: Zaphod Beeblebrox
-    properties:
-    - definition: Species to which subject belongs to
-      dtype: string
-      name: Species
-      value:
-      - Betelgeusian
-    - definition: Nickname(s) of the subject
-      dtype: string
-      name: Nickname
-      value:
-      - '-'
-    - definition: Occupation of the subject
-      dtype: string
-      name: Occupation
-      value:
-      - Ex-Galactic President
-    - definition: Sex of the subject
-      dtype: string
-      name: Gender
-      value:
-      - male
-    - definition: Home planet of the subject
-      dtype: string
-      name: HomePlanet
-      value:
-      - A planet in the vicinity of Betelgeuse
-    sections: []
-    type: crew/person
-  - definition: Information on Trillian Astra
-    name: Tricia Marie McMillan
-    properties:
-    - definition: Species to which subject belongs to
-      dtype: string
-      name: Species
-      value:
-      - Betelgeusian
-    - definition: Nickname(s) of the subject
-      dtype: string
-      name: Nickname
-      value:
-      - Trillian Astra
-    - definition: Occupation of the subject
-      dtype: string
-      name: Occupation
-      value:
-      - '-'
-    - definition: Sex of the subject
-      dtype: string
-      name: Gender
-      value:
-      - female
-    - definition: Home planet of the subject
-      dtype: string
-      name: HomePlanet
-      value:
-      - Earth
-    sections: []
-    type: crew/person
-  - definition: Information on Ford Prefect
-    name: Ford Prefect
-    properties:
-    - definition: Species to which subject belongs to
-      dtype: string
-      name: Species
-      value:
-      - Betelgeusian
-    - definition: Nickname(s) of the subject
-      dtype: string
-      name: Nickname
-      value:
-      - Ix
-    - definition: Occupation of the subject
-      dtype: string
-      name: Occupation
-      value:
-      - Researcher for the Hitchhiker's Guide to the Galaxy
-    - definition: Sex of the subject
-      dtype: string
-      name: Gender
-      value:
-      - male
-    - definition: Home planet of the subject
-      dtype: string
-      name: HomePlanet
-      value:
-      - A planet in the vicinity of Betelgeuse
-    sections: []
-    type: crew/person
-  type: crew
-- definition: Information on the crew
-  name: TheStarship
-  properties:
-  - definition: Name of person/device
-    dtype: string
-    name: Name
-    value:
-    - Heart of Gold
-  - definition: Owner status of device
-    dtype: string
-    name: OwnerStatus
-    value:
-    - stolen
-  - definition: Type of drive
-    dtype: string
-    name: DriveType
-    value:
-    - Infinite Propability Drive
-  - definition: Technology used to built device
-    dtype: string
-    name: Technology
-    value:
-    - secret
-  - definition: Length of device
-    dtype: float
-    name: Length
-    unit: m
-    value:
-    - 150.0
-  - definition: Shape of device
-    dtype: string
-    name: Shape
-    value:
-    - various
-  - definition: Planet where device was constructed
-    dtype: string
-    name: FactoryPlanet
-    value:
-    - Damogran
-  sections:
-  - definition: Information on cybernetics present on the ship
-    name: Cybernetics
-    properties:
-    - definition: Type of robots
-      dtype: string
-      name: RobotType
-      value:
-      - Genuine People Personalities
-    - definition: Manufacturer of robots
-      dtype: string
-      name: Manufacturer
-      value:
-      - Sirius Cybernetics Corporation
-    - definition: Number of cybernetic robots on the ship
+      - Arthur Philip Dent
+      - Zaphod Beeblebrox
+      - Tricia Marie McMillan
+      - Ford Prefect
+    - definition: Number of crew members
       dtype: int
-      name: NoOfCybernetics
+      name: NoCrewMembers
       value:
-      - 2
+      - 4
     sections:
-    - definition: Information on Marvin
-      name: Marvin
-      properties: []
+    - definition: Information on Arthur Dent
+      name: Arthur Philip Dent
+      properties:
+      - definition: Species to which subject belongs to
+        dtype: string
+        name: Species
+        value:
+        - Human
+      - definition: Nickname(s) of the subject
+        dtype: string
+        name: Nickname
+        value:
+        - The sandwich-maker
+      - definition: Occupation of the subject
+        dtype: string
+        name: Occupation
+        value:
+        - '-'
+      - definition: Sex of the subject
+        dtype: string
+        name: Gender
+        value:
+        - male
+      - definition: Home planet of the subject
+        dtype: string
+        name: HomePlanet
+        value:
+        - Earth
       sections: []
-      type: starship/cybernetics
-    - definition: Information on Eddie
-      name: Eddie
-      properties: []
+      type: crew/person
+    - definition: Information on Zaphod Beeblebrox
+      name: Zaphod Beeblebrox
+      properties:
+      - definition: Species to which subject belongs to
+        dtype: string
+        name: Species
+        value:
+        - Betelgeusian
+      - definition: Nickname(s) of the subject
+        dtype: string
+        name: Nickname
+        value:
+        - '-'
+      - definition: Occupation of the subject
+        dtype: string
+        name: Occupation
+        value:
+        - Ex-Galactic President
+      - definition: Sex of the subject
+        dtype: string
+        name: Gender
+        value:
+        - male
+      - definition: Home planet of the subject
+        dtype: string
+        name: HomePlanet
+        value:
+        - A planet in the vicinity of Betelgeuse
       sections: []
+      type: crew/person
+    - definition: Information on Trillian Astra
+      name: Tricia Marie McMillan
+      properties:
+      - definition: Species to which subject belongs to
+        dtype: string
+        name: Species
+        value:
+        - Betelgeusian
+      - definition: Nickname(s) of the subject
+        dtype: string
+        name: Nickname
+        value:
+        - Trillian Astra
+      - definition: Occupation of the subject
+        dtype: string
+        name: Occupation
+        value:
+        - '-'
+      - definition: Sex of the subject
+        dtype: string
+        name: Gender
+        value:
+        - female
+      - definition: Home planet of the subject
+        dtype: string
+        name: HomePlanet
+        value:
+        - Earth
+      sections: []
+      type: crew/person
+    - definition: Information on Ford Prefect
+      name: Ford Prefect
+      properties:
+      - definition: Species to which subject belongs to
+        dtype: string
+        name: Species
+        value:
+        - Betelgeusian
+      - definition: Nickname(s) of the subject
+        dtype: string
+        name: Nickname
+        value:
+        - Ix
+      - definition: Occupation of the subject
+        dtype: string
+        name: Occupation
+        value:
+        - Researcher for the Hitchhiker's Guide to the Galaxy
+      - definition: Sex of the subject
+        dtype: string
+        name: Gender
+        value:
+        - male
+      - definition: Home planet of the subject
+        dtype: string
+        name: HomePlanet
+        value:
+        - A planet in the vicinity of Betelgeuse
+      sections: []
+      type: crew/person
+    type: crew
+  - definition: Information on the crew
+    name: TheStarship
+    properties:
+    - definition: Name of person/device
+      dtype: string
+      name: Name
+      value:
+      - Heart of Gold
+    - definition: Owner status of device
+      dtype: string
+      name: OwnerStatus
+      value:
+      - stolen
+    - definition: Type of drive
+      dtype: string
+      name: DriveType
+      value:
+      - Infinite Propability Drive
+    - definition: Technology used to built device
+      dtype: string
+      name: Technology
+      value:
+      - secret
+    - definition: Length of device
+      dtype: float
+      name: Length
+      unit: m
+      value:
+      - 150.0
+    - definition: Shape of device
+      dtype: string
+      name: Shape
+      value:
+      - various
+    - definition: Planet where device was constructed
+      dtype: string
+      name: FactoryPlanet
+      value:
+      - Damogran
+    sections:
+    - definition: Information on cybernetics present on the ship
+      name: Cybernetics
+      properties:
+      - definition: Type of robots
+        dtype: string
+        name: RobotType
+        value:
+        - Genuine People Personalities
+      - definition: Manufacturer of robots
+        dtype: string
+        name: Manufacturer
+        value:
+        - Sirius Cybernetics Corporation
+      - definition: Number of cybernetic robots on the ship
+        dtype: int
+        name: NoOfCybernetics
+        value:
+        - 2
+      sections:
+      - definition: Information on Marvin
+        name: Marvin
+        properties: []
+        sections: []
+        type: starship/cybernetics
+      - definition: Information on Eddie
+        name: Eddie
+        properties: []
+        sections: []
+        type: starship/cybernetics
       type: starship/cybernetics
-    type: starship/cybernetics
-  type: crew
-version: '42'
-
+    type: crew
+  version: '42'
+odml-version: '1.1'
