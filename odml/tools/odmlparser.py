@@ -12,10 +12,12 @@ import json
 from odml import format
 from . import xmlparser
 
-
 # FIX ME: Version should not be hardcoded here. Import from odML module after
 #         fixing the circular imports issue.
-odml_version = '1.3.dev0'
+odml_version = '1.1'
+
+allowed_parsers = ['XML', 'YAML', 'JSON']
+
 
 class ODMLWriter:
     '''
@@ -29,7 +31,10 @@ class ODMLWriter:
     def __init__(self, parser='XML'):
         self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
-        self.parser = parser.upper()
+        parser = parser.upper()
+        if parser not in allowed_parsers:
+            raise NotImplementedError("'%s' odML parser does not exist!" % parser)
+        self.parser = parser
 
     def to_dict(self, odml_document):
         parsed_doc = {}
@@ -126,7 +131,10 @@ class ODMLReader:
         self.odml_version = None  # odML version of input file
         self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
-        self.parser = parser.upper()
+        parser = parser.upper()
+        if parser not in allowed_parsers:
+            raise NotImplementedError("'%s' odML parser does not exist!" % parser)
+        self.parser = parser
 
     def is_valid_attribute(self, attr, fmt):
         if attr in fmt._args:
@@ -150,9 +158,10 @@ class ODMLReader:
                 doc_secs = self.parse_sections(self.parsed_doc['sections'])
             elif attr:
                 doc_attrs[i] = self.parsed_doc[i]
-            
+
         doc = format.Document.create(**doc_attrs)
-        doc._sections = doc_secs
+        for sec in doc_secs:
+            doc.append(sec)
         self.doc = doc
         return self.doc
 
@@ -174,8 +183,10 @@ class ODMLReader:
                     sec_attrs[attr] = section[attr]
 
             sec = format.Section.create(**sec_attrs)
-            sec._props = sec_props
-            sec._sections = children_secs
+            for prop in sec_props:
+                sec.append(prop)
+            for child_sec in children_secs:
+                sec.append(child_sec)
             odml_sections.append(sec)
 
         return odml_sections
@@ -186,17 +197,17 @@ class ODMLReader:
 
         for _property in props_list:
             prop_attrs = {}
-            value = []
+            values = []
 
             for i in _property:
                 attr = self.is_valid_attribute(i, format.Property)
                 if attr == 'value':
-                    value = _property['value']
+                    values = _property['value']
                 if attr:
                     prop_attrs[attr] = _property[attr]
 
             prop = format.Property.create(**prop_attrs)
-            prop._value = value
+            prop._value = values
             odml_props.append(prop)
 
         return odml_props
