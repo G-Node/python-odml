@@ -17,7 +17,7 @@ matrix:
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
   - pip install --upgrade coveralls
-  - pip install lxml enum34
+  - pip install lxml enum34 pyyaml
 
 script:
   - python setup.py build
