@@ -19,7 +19,7 @@ class BaseProperty(base.baseobject, Property):
 
     def __init__(self, name, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
-                 dependency=None, dependency_value=None, dtype=None, value_origin=None):
+                 dependency=None, dependency_value=None, dtype=None, value_origin=None, id=None):
         #TODO add description to :param value_origin
         """
         Create a new Property with a single value. The method will try to infer
