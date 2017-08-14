@@ -1,0 +1,416 @@
+{
+    "Document": {
+        "author": "D. N. Adams",
+        "date": "1979-10-12",
+        "version": "42",
+        "sections": [
+            {
+                "name": "TheCrew",
+                "properties": [
+                    {
+                        "values": [
+                            {
+                                "dtype": "person",
+                                "value": "Arthur Philip Dent"
+                            },
+                            {
+                                "dtype": "person",
+                                "value": "Zaphod Beeblebrox"
+                            },
+                            {
+                                "dtype": "person",
+                                "value": "Tricia Marie McMillan"
+                            },
+                            {
+                                "dtype": "person",
+                                "value": "Ford Prefect"
+                            }
+                        ],
+                        "definition": "List of crew members names",
+                        "name": "NameCrewMembers"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "int",
+                                "value": "4"
+                            }
+                        ],
+                        "definition": "Number of crew members",
+                        "name": "NoCrewMembers"
+                    }
+                ],
+                "definition": "Information on the crew",
+                "sections": [
+                    {
+                        "name": "Arthur Philip Dent",
+                        "properties": [
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Human"
+                                    }
+                                ],
+                                "definition": "Species to which subject belongs to",
+                                "name": "Species"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "The sandwich-maker"
+                                    }
+                                ],
+                                "definition": "Nickname(s) of the subject",
+                                "name": "Nickname"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "-"
+                                    }
+                                ],
+                                "definition": "Occupation of the subject",
+                                "name": "Occupation"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "male"
+                                    }
+                                ],
+                                "definition": "Sex of the subject",
+                                "name": "Gender"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Earth"
+                                    }
+                                ],
+                                "definition": "Home planet of the subject",
+                                "name": "HomePlanet"
+                            }
+                        ],
+                        "definition": "Information on Arthur Dent",
+                        "sections": [],
+                        "type": "crew/person"
+                    },
+                    {
+                        "name": "Zaphod Beeblebrox",
+                        "properties": [
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Betelgeusian"
+                                    }
+                                ],
+                                "definition": "Species to which subject belongs to",
+                                "name": "Species"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "-"
+                                    }
+                                ],
+                                "definition": "Nickname(s) of the subject",
+                                "name": "Nickname"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Ex-Galactic President"
+                                    }
+                                ],
+                                "definition": "Occupation of the subject",
+                                "name": "Occupation"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "male"
+                                    }
+                                ],
+                                "definition": "Sex of the subject",
+                                "name": "Gender"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "A planet in the vicinity of Betelgeuse"
+                                    }
+                                ],
+                                "definition": "Home planet of the subject",
+                                "name": "HomePlanet"
+                            }
+                        ],
+                        "definition": "Information on Zaphod Beeblebrox",
+                        "sections": [],
+                        "type": "crew/person"
+                    },
+                    {
+                        "name": "Tricia Marie McMillan",
+                        "properties": [
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Betelgeusian"
+                                    }
+                                ],
+                                "definition": "Species to which subject belongs to",
+                                "name": "Species"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Trillian Astra"
+                                    }
+                                ],
+                                "definition": "Nickname(s) of the subject",
+                                "name": "Nickname"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "-"
+                                    }
+                                ],
+                                "definition": "Occupation of the subject",
+                                "name": "Occupation"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "female"
+                                    }
+                                ],
+                                "definition": "Sex of the subject",
+                                "name": "Gender"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Earth"
+                                    }
+                                ],
+                                "definition": "Home planet of the subject",
+                                "name": "HomePlanet"
+                            }
+                        ],
+                        "definition": "Information on Trillian Astra",
+                        "sections": [],
+                        "type": "crew/person"
+                    },
+                    {
+                        "name": "Ford Prefect",
+                        "properties": [
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Betelgeusian"
+                                    }
+                                ],
+                                "definition": "Species to which subject belongs to",
+                                "name": "Species"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Ix"
+                                    }
+                                ],
+                                "definition": "Nickname(s) of the subject",
+                                "name": "Nickname"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Researcher for the Hitchhiker's Guide to the Galaxy"
+                                    }
+                                ],
+                                "definition": "Occupation of the subject",
+                                "name": "Occupation"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "male"
+                                    }
+                                ],
+                                "definition": "Sex of the subject",
+                                "name": "Gender"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "A planet in the vicinity of Betelgeuse"
+                                    }
+                                ],
+                                "definition": "Home planet of the subject",
+                                "name": "HomePlanet"
+                            }
+                        ],
+                        "definition": "Information on Ford Prefect",
+                        "sections": [],
+                        "type": "crew/person"
+                    }
+                ],
+                "type": "crew"
+            },
+            {
+                "name": "TheStarship",
+                "properties": [
+                    {
+                        "values": [
+                            {
+                                "dtype": "string",
+                                "value": "Heart of Gold"
+                            }
+                        ],
+                        "definition": "Name of person/device",
+                        "name": "Name"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "string",
+                                "value": "stolen"
+                            }
+                        ],
+                        "definition": "Owner status of device",
+                        "name": "OwnerStatus"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "string",
+                                "value": "Infinite Propability Drive"
+                            }
+                        ],
+                        "definition": "Type of drive",
+                        "name": "DriveType"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "string",
+                                "value": "secret"
+                            }
+                        ],
+                        "definition": "Technology used to built device",
+                        "name": "Technology"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "float",
+                                "value": "150.0",
+                                "unit": "m"
+                            }
+                        ],
+                        "definition": "Length of device",
+                        "name": "Length"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "string",
+                                "value": "various"
+                            }
+                        ],
+                        "definition": "Shape of device",
+                        "name": "Shape"
+                    },
+                    {
+                        "values": [
+                            {
+                                "dtype": "string",
+                                "value": "Damogran"
+                            }
+                        ],
+                        "definition": "Planet where device was constructed",
+                        "name": "FactoryPlanet"
+                    }
+                ],
+                "definition": "Information on the crew",
+                "sections": [
+                    {
+                        "name": "Cybernetics",
+                        "properties": [
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Genuine People Personalities"
+                                    }
+                                ],
+                                "definition": "Type of robots",
+                                "name": "RobotType"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "string",
+                                        "value": "Sirius Cybernetics Corporation"
+                                    }
+                                ],
+                                "definition": "Manufacturer of robots",
+                                "name": "Manufacturer"
+                            },
+                            {
+                                "values": [
+                                    {
+                                        "dtype": "int",
+                                        "value": "2"
+                                    }
+                                ],
+                                "definition": "Number of cybernetic robots on the ship",
+                                "name": "NoOfCybernetics"
+                            }
+                        ],
+                        "definition": "Information on cybernetics present on the ship",
+                        "sections": [
+                            {
+                                "name": "Marvin",
+                                "properties": [],
+                                "definition": "Information on Marvin",
+                                "sections": [],
+                                "type": "starship/cybernetics"
+                            },
+                            {
+                                "name": "Eddie",
+                                "properties": [],
+                                "definition": "Information on Eddie",
+                                "sections": [],
+                                "type": "starship/cybernetics"
+                            }
+                        ],
+                        "type": "starship/cybernetics"
+                    }
+                ],
+                "type": "crew"
+            }
+        ]
+    },
+    "odml-version": "1"
+}
