@@ -292,7 +292,7 @@ checksums = {
 
 # allow to use any available algorithm
 try:
-    hash_algorithms = hashlib.algoritms
+    hash_algorithms = hashlib.algorithms
 except AttributeError:
     hash_algorithms = hashlib.algorithms_guaranteed
 for algo in hash_algorithms:
