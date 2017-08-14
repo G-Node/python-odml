@@ -29,6 +29,14 @@ class RDFWriter(object):
         RDFWriter().write_file("/output_path", "rdf_format")
     """
 
+    # Dictionary for mapping known subclasses of a section to ontology namespace
+    section_subclasses = {
+        'stimulus': odmlns.Stimulus,
+        'subject': odmlns.Subject,
+        'Cell properties': odmlns.CellProperties,
+        'recording': odmlns.Recording
+    }
+
     def __init__(self, odml_documents):
         """
         :param odml_documents: list of odml documents 
@@ -59,7 +67,12 @@ class RDFWriter(object):
         else:
             curr_node = node
 
-        self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
+        if fmt._name == "section":
+            s = self._get_section_subclass(e)
+            self.g.add((curr_node, RDF.type, URIRef(s))) if s \
+                else self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
+        else:
+            self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
 
         # adding doc to the hub
         if isinstance(fmt, odml.format.Document.__class__):
@@ -119,6 +132,18 @@ class RDFWriter(object):
 
     def _get_terminology_by_value(self, url):
         return self.g.value(predicate=RDF.type, object=URIRef(url))
+
+    def _get_section_subclass(self, e):
+        """
+        :return: RDF indentifier of section subclass type if present in section_subclasses dict
+        """
+        type = getattr(e, "type")
+        if type is None or not type:
+            return None
+        elif type in self.section_subclasses:
+            return self.section_subclasses[type]
+        else:
+            return None
 
     def __str__(self):
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
