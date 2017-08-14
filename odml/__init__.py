@@ -5,6 +5,9 @@ from odml import section
 from odml import value
 from odml.dtypes import DType
 
+
+__version__ = '1.3.1'
+
 # the original property-function is overwritten
 # so get it back!
 try:

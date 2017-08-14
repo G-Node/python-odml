@@ -5,19 +5,14 @@ odML libraries and editor
 .. image:: https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master
     :target: https://coveralls.io/github/G-Node/python-odml?branch=master
 
-The Python-odML library (including the odML-Editor) is available on
-`GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with
-the version control system **git**, but still want to use it, have a look at
-the documentaion available on the `git-scm website <https://git-scm.com/>`_.
-
 Dependencies
 ------------
 
 * Python 2.7 or 3.5
 * Python packages:
 
-  * enum (version 0.4.4)
-  * lxml (version 3.7.2)
+  * enum
+  * lxml
 
 * These packages will be downloaded and installed automatically if the :code:`pip` method is used to install odML. Alternatively, they can be installed from the OS package manager. On Ubuntu, they are available as:
 
@@ -38,9 +33,11 @@ The simplest way to install Python-odML is from PyPI using the pip tool::
 
   $ pip install odml
 
-On Ubuntu, the pip package manager is available in the repositories as :code:`python-pip`.
+On Ubuntu, the pip package manager is available in the repositories as :code:`python-pip` and :code:`python3-pip`.
 
 If this method is used, the appropriate Python dependencies (enum and lxml) are downloaded and installed automatically.
+
+On Linux it is more convenient to obtain the lxml library via the distribution's package manager (e.g., :code:`apt-get install python-lxml` for Ubuntu).
 
 
 Building from source
