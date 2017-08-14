@@ -116,6 +116,17 @@ class TestRDFWriter(unittest.TestCase):
         w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 3)
 
+    def test_section_subclass(self):
+        subclass = RDFWriter.section_subclasses
+        doc = odml.Document()
+        subclass_key = next(iter(subclass))
+        s = odml.Section("S", type=subclass_key)
+        doc.append(s)
+        w = RDFWriter(doc)
+        w.convert_to_rdf()
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.type, object=URIRef(subclass[subclass_key])))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.type, object=URIRef(odmlns.Section)))), 0)
+
     def test_adding_other_entities_properties(self):
         doc = parse("""
             s1[t1]
