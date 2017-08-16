@@ -114,27 +114,18 @@ class SectionNode(ParentedNode):
 class PropertyNode(ParentedNode):
     @property
     def children(self):
-        return self.values
+        return self.pseudo_values
 
     def successor(self):
         return self.parent._props[self.position + 1]
 
     def path_to(self, child):
-        return (identity_index(self.values, child),)
-
-class ValueNode(ParentedNode):
-    def path_from(self, path):
-        raise TypeError("Value objects have no children")
-
-    def path_to(self, child):
-        raise TypeError("Value objects have no children")
+        return (identity_index(self.pseudo_values, child),)
 
 #TODO? provide this externally?
 name = "nodes"
 provides = event.provides + ["nodes"]
 class Document(event.Document, RootNode): pass
-# class Value(event.Value, ValueNode): pass
-class Value(ValueNode): pass
 class Property(event.Property, PropertyNode): pass
 class Section(event.Section, SectionNode): pass
 

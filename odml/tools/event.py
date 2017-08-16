@@ -228,11 +228,6 @@ class ModificationNotifier(ChangeHandlable):
 name = "event"
 provides = odml.getImplementation().provides + ["event"]
 
-
-# class Value(ModificationNotifier, odml.getImplementation().Value):
-#     _Changed = Event("value")
-
-
 class Property(ModificationNotifier, odml.getImplementation().Property):
     _Changed = Event("prop")
 
@@ -263,7 +258,6 @@ def pass_on_change_section(context):
     if document is not None:
         context.passOn(document)
 
-# Value._Changed.finish    = pass_on_change
 Property._Changed.finish = pass_on_change
 Section._Changed.finish  = pass_on_change_section
 
