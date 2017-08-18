@@ -9,7 +9,7 @@ Parses odML files and documents.
 
 import yaml
 import json
-from odml import format
+from .. import format
 from . import xmlparser
 
 # FIX ME: Version should not be hardcoded here. Import from odML module after
