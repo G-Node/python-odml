@@ -11,13 +11,15 @@ Dependencies
 * Python 2.7 or 3.5
 * Python packages:
 
-  * enum
+  * enum34
   * lxml
+  * pyyaml
 
 * These packages will be downloaded and installed automatically if the :code:`pip` method is used to install odML. Alternatively, they can be installed from the OS package manager. On Ubuntu, they are available as:
 
   * python-enum
   * python-lxml
+  * python-yaml
 
 * If you prefer installing using the Python package manager, the following packages are required to build the lxml Python package on Ubuntu 14.04:
 
