@@ -36,6 +36,6 @@ class TestTypes(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             odml.save(doc, self.file + '_copy_html', 'html')
 
-        # odml.display not implemented
-        # with self.assertRaises(NotImplementedError):
-        #     odml.display(doc, 'html')
+        with self.assertRaises(NotImplementedError):
+            odml.display(doc, 'html')
+
