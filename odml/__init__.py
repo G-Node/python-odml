@@ -1,10 +1,11 @@
 _property = property
 
-from odml import doc
-from odml import property
-from odml import section
-from odml.dtypes import DType
-from .addons import load, save, display
+from . import doc
+from . import property
+from . import section
+from .dtypes import DType
+from .fileio import load, save, display
+from .tools.odmlparser import allowed_parsers as parsers
 
 __version__ = '1.3.dev0'
 
