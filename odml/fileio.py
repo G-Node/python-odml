@@ -14,5 +14,5 @@ def save(obj, filename, backend="xml"):
 
 
 def display(obj, backend="xml"):
-    # needs to be handled through the generic ODMLWriter
-    pass
+    writer = ODMLWriter(backend)
+    print(writer.to_string(obj))
