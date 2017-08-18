@@ -8,7 +8,7 @@ from .fileio import load, save, display
 from .tools.odmlparser import allowed_parsers as parsers
 
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 
 # the original property-function is overwritten
 # so get it back!

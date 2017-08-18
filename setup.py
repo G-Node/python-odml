@@ -18,7 +18,7 @@ if sys.version_info < (3, 4):
 
 setup(
     name='odML',
-    version='1.3.1',
+    version='1.3.2',
     description='open metadata Markup Language',
     author='G-Node',
     author_email='dev@g-node.org',
