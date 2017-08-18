@@ -5,7 +5,7 @@ parsers = ["xml", "json", "yaml"]
 
 def load(filename, backend="xml"):
     reader = ODMLReader(backend)
-    return reader.fromFile(filename)
+    return reader.from_file(filename)
 
 
 def save(obj, filename, backend="xml"):
