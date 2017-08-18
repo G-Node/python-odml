@@ -1,3 +1,5 @@
+import sys
+
 from rdflib import Namespace
 
 import odml
@@ -37,11 +39,13 @@ class Format(object):
         if self._rev_map is None:
             # create the reverse map only if requested
             self._rev_map = {}
-            for k, v in self._map.items():
-                self._rev_map[v] = k
-    
-        # If the requested attribute does not exist, return None                
-        return self._rev_map.get(name, None)
+            if sys.version_info < (3, 0):
+                for k, v in self._map.iteritems():
+                    self._rev_map[v] = k
+            else:
+                for k, v in self._map.items():
+                    self._rev_map[v] = k
+        return self._rev_map.get(name, name)
 
     def __iter__(self):
         """ Iterates each python property name """
