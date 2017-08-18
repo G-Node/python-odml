@@ -142,7 +142,8 @@ class ODMLWriter:
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4)
-            return string_doc
+        
+        return string_doc
 
 
 class ODMLReader:
