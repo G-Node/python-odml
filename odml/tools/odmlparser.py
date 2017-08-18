@@ -122,21 +122,26 @@ class ODMLWriter:
         return value_seq
 
     def write_file(self, odml_document, filename):
+        file = open(filename, 'w')
+        file.write(self.to_string(odml_document))
+        file.close()
+
+    def to_string(self, odml_document):
+        string_doc = ''
 
         if self.parser == 'XML' or self.parser == 'ODML':
-            xmlparser.XMLWriter(odml_document).write_file(filename)
+            string_doc = str(xmlparser.XMLWriter(odml_document))
         else:
             self.to_dict(odml_document)
             odml_output = {}
             odml_output['Document'] = self.parsed_doc
             odml_output['odml-version'] = odml_version
 
-            f = open(filename, 'w')
             if self.parser == 'YAML':
-                f.write(yaml.dump(odml_output, default_flow_style=False))
+                string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
-                f.write(json.dumps(odml_output, indent=4))
-            f.close()
+                string_doc = json.dumps(odml_output, indent=4)
+        return string_doc
 
 
 class ODMLReader:
@@ -253,7 +258,7 @@ class ODMLReader:
         return odml_values
 
 
-    def fromFile(self, file):
+    def from_file(self, file):
 
         if self.parser == 'XML' or self.parser == 'ODML':
             odml_doc = xmlparser.XMLReader().fromFile(file)
@@ -281,7 +286,7 @@ class ODMLReader:
             return self.to_odml()
 
 
-    def fromString(self, string):
+    def from_string(self, string):
 
         if self.parser == 'XML' or self.parser == 'ODML':
             odml_doc = xmlparser.XMLReader().fromString(string)
