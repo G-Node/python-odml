@@ -8,7 +8,7 @@ odML libraries and editor
 Dependencies
 ------------
 
-* Python 2.7 or 3.5
+* Python 2.7+ or 3.4+
 * Python packages:
 
   * enum34
@@ -39,7 +39,7 @@ On Ubuntu, the pip package manager is available in the repositories as :code:`py
 
 If this method is used, the appropriate Python dependencies (enum and lxml) are downloaded and installed automatically.
 
-On Linux it is more convenient to obtain the lxml library via the distribution's package manager (e.g., :code:`apt-get install python-lxml` for Ubuntu).
+On Linux it is more convenient to obtain the lxml and yaml libraries via the distribution's package manager (e.g., :code:`apt-get install python-lxml` and :code:`apt-get install python-yaml` for Ubuntu).
 
 
 Building from source
