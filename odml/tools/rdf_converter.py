@@ -70,7 +70,7 @@ class RDFWriter(object):
             if k == 'id':
                 continue
             elif (isinstance(fmt, odml.format.Document.__class__) or
-                      isinstance(fmt, odml.format.Section.__class__)) and k == "repository":
+                    isinstance(fmt, odml.format.Section.__class__)) and k == "repository":
                 terminology_url = getattr(e, k)
                 if terminology_url is None or not terminology_url:
                     continue
@@ -85,7 +85,7 @@ class RDFWriter(object):
                     self.g.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, odml.format.Document.__class__) or
-                      isinstance(fmt, odml.format.Section.__class__)) and \
+                    isinstance(fmt, odml.format.Section.__class__)) and \
                             k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
@@ -162,6 +162,9 @@ class RDFReader(object):
             self.g = Graph().parse(source=filename, format=doc_format)
 
     def to_odml(self):
+        """
+        :return: list of converter odml documents
+        """
         docs_uris = list(self.g.objects(subject=URIRef(odmlns.Hub), predicate=odmlns.hasDocument))
         o = ODMLReader()
         for doc in docs_uris:
@@ -254,7 +257,7 @@ class RDFReader(object):
         if len(self.docs) > 1:
             raise Exception("Cannot write multiple docs to one file, please choose RDFReader.write_files() instead")
         else:
-            odml.save(self.docs, output_file)
+            odml.save(self.docs[0], output_file)
 
     def write_files(self, filename, doc_format, dir_path):
         """
