@@ -99,9 +99,6 @@ def setMinimumImplementation(key):
 
 addImplementation(current_implementation)
 
-# def Value(*args, **kwargs):
-    # return current_implementation.Value(*args, **kwargs)
-
 def Property(*args, **kwargs):
     return current_implementation.Property(*args, **kwargs)
 
