@@ -7,7 +7,7 @@ from .dtypes import DType
 from .fileio import load, save, display
 from .tools.odmlparser import allowed_parsers as parsers
 
-__version__ = '1.3.dev0'
+__version__ = '1.4.dev0'
 
 
 class odml_implementation(object):
@@ -99,7 +99,6 @@ def setMinimumImplementation(key):
 
 addImplementation(current_implementation)
 
-
 def Property(*args, **kwargs):
     return current_implementation.Property(*args, **kwargs)
 
@@ -111,4 +110,4 @@ def Section(*args, **kwargs):
 def Document(*args, **kwargs):
     return current_implementation.Document(*args, **kwargs)
 
-# __all__ = [Property, Section, Document]
+

@@ -28,6 +28,17 @@ class DType(str, Enum):
     def __str__(self):
         return self.name
 
+default_values = {
+    'string': '',
+    'text': '',
+    'int': 0,
+    'float': 0.0,
+    'url': '',
+    'datetime': '2015-06-20 10:00:00',
+    'date': '2015-06-20',
+    'time': '10:00:00',
+    'boolean': False
+}
 
 _dtype_map = {'str': 'string', 'bool': 'boolean'}
 

@@ -91,6 +91,9 @@ class baseobject(_baseobj):
         """
         raise NotImplementedError
 
+    def __hash__(self):
+        return id(self)
+
 
 class SafeList(list):
 
