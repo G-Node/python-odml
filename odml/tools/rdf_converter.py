@@ -24,10 +24,9 @@ class RDFWriter(object):
     A writer to parse odML files into RDF documents.
 
     Usage:
-        file = RDFReader().fromFile("/path_to_input_rdf", "rdf_format")
-        file = RDFReader().fromString("rdf file as string", "rdf_format")
-        RDFReader().write_file("/input_path", "rdf_format", "/output_path")
-        RDFReader().write_files("/input_path", "rdf_format", "/output_directory_path")
+        file = RDFWriter().fromFile("/path_to_input_rdf", "rdf_format")
+        file = RDFWriter().fromString("rdf file as string", "rdf_format")
+        RDFWriter().write_file("/output_path", "rdf_format")
     """
 
     def __init__(self, odml_documents):
@@ -153,7 +152,6 @@ class RDFReader(object):
         file = RDFReader().fromFile("/path_to_input_rdf", "rdf_format")
         file = RDFReader().fromString("rdf file as string", "rdf_format")
         RDFReader().write_file("/input_path", "rdf_format", "/output_path")
-        RDFReader().write_files("/input_path", "rdf_format", "/output_directory_path")
     """
 
     def __init__(self, filename=None, doc_format=None):
@@ -172,11 +170,11 @@ class RDFReader(object):
             self.docs.append(o.to_odml())
         return self.docs
 
-    def fromFile(self, filename, doc_format):
+    def from_file(self, filename, doc_format):
         self.g = Graph().parse(source=filename, format=doc_format)
         return self.to_odml()
 
-    def fromString(self, file, doc_format):
+    def from_string(self, file, doc_format):
         self.g = Graph().parse(source=StringIO(file), format=doc_format)
         return self.to_odml()
 
@@ -245,32 +243,28 @@ class RDFReader(object):
             else:
                 raise ParserException("Some entities does not have required \"name\" attribute")
 
-    def write_file(self, filename, doc_format, output_file):
+    def write_file(self, filename, doc_format, output_path):
         """
-        Writes result to specified output_file if rdf doc contains exactly one odml document
+        Writes result to specified output_path if rdf doc contains exactly one odml document.
+        If several odml docs found - creates files in specified directory and writes parsed docs to them.
+        Example of created file: /<dir_path>/doc_<id>.odml (<id> - id of the document).
+        
         :param filename: path to input file
         :param doc_format: rdf format of the file
-        :param output_file: path to output file
+        :param output_path: path to the output file or directory
         """
         self.g = Graph().parse(source=filename, format=doc_format)
         self.to_odml()
-        if len(self.docs) > 1:
-            raise Exception("Cannot write multiple docs to one file, please choose RDFReader.write_files() instead")
-        else:
-            odml.save(self.docs[0], output_file)
-
-    def write_files(self, filename, doc_format, dir_path):
-        """
-        Creates file in specified directory and writes parsed docs to them
-        Example of created file: /<dir_path>/doc_<id>.odml (<id> - id of the document)
-        :param filename: path to input file
-        :param doc_format: rdf format of the file
-        :param dir_path: path to output directory
-        """
-        self.g = Graph().parse(source=filename, format=doc_format)
-        self.to_odml()
-        if os.path.exists(dir_path):
-            for doc in self.docs:
-                if doc:
-                    path = os.path.join(dir_path, "doc_" + doc.id)
-                    odml.save(doc, path)
+        if len(self.docs) > 1 and os.path.isdir(output_path):
+            if os.path.exists(output_path):
+                for doc in self.docs:
+                    if doc:
+                        path = os.path.join(output_path, "doc_" + doc.id)
+                        odml.save(doc, path)
+        elif len(self.docs) > 1 and not os.path.isdir(output_path):
+            raise ValueError("Input file consists of multiple odml docs. output_path is not a valid path to directory.")
+        elif len(self.docs) == 1 and os.path.isfile(output_path):
+            odml.save(self.docs[0], output_path)
+        elif len(self.docs) == 1 and not os.path.isfile(output_path):
+            raise ValueError("Input file consists of a one odml doc. "
+                             "output_path is not a valid path to the output file.")
