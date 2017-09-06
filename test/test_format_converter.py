@@ -11,7 +11,6 @@ FC = FormatConverter
 class TestFormatConverter(unittest.TestCase):
     def setUp(self):
         self.doc = """<odML version="1.1">
-                        <repository>http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml</repository>
                         <section>
                             <type>some</type>
                             <name>S</name>
