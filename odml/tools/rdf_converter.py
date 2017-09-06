@@ -101,21 +101,21 @@ class RDFWriter(object):
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, odml.format.Document.__class__) or
                     isinstance(fmt, odml.format.Section.__class__)) and \
-                            k == 'sections' and len(getattr(e, k)) > 0:
+                    k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
                     node = URIRef(odmlns + str(s.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
             elif isinstance(fmt, odml.format.Section.__class__) and \
-                            k == 'properties' and len(getattr(e, k)) > 0:
+                    k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
                     node = URIRef(odmlns + str(p.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, odml.format.Property.__class__) and \
-                            k == 'value' and len(getattr(e, k)) > 0:
+                    k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
                 bag = URIRef(odmlns + str(uuid.uuid4()))
                 self.g.add((bag, RDF.type, RDF.Bag))
