@@ -1,7 +1,9 @@
 import os
 import uuid
 from io import StringIO
+from os.path import dirname, abspath
 
+import yaml
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import XSD, RDF
 
@@ -29,14 +31,6 @@ class RDFWriter(object):
         RDFWriter().write_file("/output_path", "rdf_format")
     """
 
-    # Dictionary for mapping known subclasses of a section to ontology namespace
-    section_subclasses = {
-        'stimulus': odmlns.Stimulus,
-        'subject': odmlns.Subject,
-        'Cell properties': odmlns.CellProperties,
-        'recording': odmlns.Recording
-    }
-
     def __init__(self, odml_documents):
         """
         :param odml_documents: list of odml documents 
@@ -45,6 +39,15 @@ class RDFWriter(object):
         self.hub_root = None
         self.g = Graph()
         self.g.bind("odml", odmlns)
+
+        self.section_subclasses = {}
+        p = os.path.join(dirname(dirname(dirname(abspath(__file__)))), 'doc', 'section_subclasses.yaml')
+        with open(p, "r") as f:
+            try:
+                self.section_subclasses = yaml.load(f)
+            except yaml.parser.ParserError as e:
+                print(e)
+                return
 
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
@@ -69,8 +72,8 @@ class RDFWriter(object):
 
         if fmt._name == "section":
             s = self._get_section_subclass(e)
-            self.g.add((curr_node, RDF.type, URIRef(s))) if s \
-                else self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
+            u = s if s else fmt.rdf_type()
+            self.g.add((curr_node, RDF.type, URIRef(u)))
         else:
             self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
 
@@ -137,11 +140,9 @@ class RDFWriter(object):
         """
         :return: RDF indentifier of section subclass type if present in section_subclasses dict
         """
-        type = getattr(e, "type")
-        if type is None or not type:
-            return None
-        elif type in self.section_subclasses:
-            return self.section_subclasses[type]
+        sec_type = getattr(e, "type")
+        if sec_type and sec_type in self.section_subclasses:
+            return odmlns[self.section_subclasses[sec_type]]
         else:
             return None
 
