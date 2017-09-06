@@ -94,6 +94,7 @@ class TestVersionConverter(unittest.TestCase):
             ET.fromstring(file.getvalue())
 
     def test_convert_odml_file(self):
+        self.assertEqual(VS.convert_odml_file("/not_valid_path"), None)
         root = ET.fromstring(self.doc)
         prop = root.find("section").find("property")
         val_elems = []
