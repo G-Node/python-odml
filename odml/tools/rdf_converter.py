@@ -1,10 +1,15 @@
+import os
 import uuid
+from io import StringIO
 
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import XSD, RDF
 
 import odml
 import odml.format
+from odml.tools.odmlparser import ODMLReader
+from odml.tools.xmlparser import ParserException
+from odml.tools.xmlparser import XML_VERSION
 
 try:
     unicode = unicode
@@ -15,8 +20,13 @@ odmlns = odml.format.Format.namespace()
 
 
 class RDFWriter(object):
-    """ 
-    Creates the RDF graph storing information about the odML document 
+    """
+    A writer to parse odML files into RDF documents.
+
+    Usage:
+        file = RDFWriter().fromFile("/path_to_input_rdf", "rdf_format")
+        file = RDFWriter().fromString("rdf file as string", "rdf_format")
+        RDFWriter().write_file("/output_path", "rdf_format")
     """
 
     def __init__(self, odml_documents):
@@ -59,7 +69,7 @@ class RDFWriter(object):
             if k == 'id':
                 continue
             elif (isinstance(fmt, odml.format.Document.__class__) or
-                      isinstance(fmt, odml.format.Section.__class__)) and k == "repository":
+                    isinstance(fmt, odml.format.Section.__class__)) and k == "repository":
                 terminology_url = getattr(e, k)
                 if terminology_url is None or not terminology_url:
                     continue
@@ -74,7 +84,7 @@ class RDFWriter(object):
                     self.g.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, odml.format.Document.__class__) or
-                      isinstance(fmt, odml.format.Section.__class__)) and \
+                    isinstance(fmt, odml.format.Section.__class__)) and \
                             k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
@@ -132,3 +142,129 @@ class RDFWriter(object):
         f = open(filename, "w")
         f.write(data)
         f.close()
+
+
+class RDFReader(object):
+    """
+    A reader to parse odML RDF files or strings into odml documents.
+
+    Usage:
+        file = RDFReader().fromFile("/path_to_input_rdf", "rdf_format")
+        file = RDFReader().fromString("rdf file as string", "rdf_format")
+        RDFReader().write_file("/input_path", "rdf_format", "/output_path")
+    """
+
+    def __init__(self, filename=None, doc_format=None):
+        self.docs = []  # list of parsed odml docs
+        if filename and doc_format:
+            self.g = Graph().parse(source=filename, format=doc_format)
+
+    def to_odml(self):
+        """
+        :return: list of converter odml documents
+        """
+        docs_uris = list(self.g.objects(subject=URIRef(odmlns.Hub), predicate=odmlns.hasDocument))
+        o = ODMLReader()
+        for doc in docs_uris:
+            o.parsed_doc = self.parse_document(doc)
+            self.docs.append(o.to_odml())
+        return self.docs
+
+    def from_file(self, filename, doc_format):
+        self.g = Graph().parse(source=filename, format=doc_format)
+        return self.to_odml()
+
+    def from_string(self, file, doc_format):
+        self.g = Graph().parse(source=StringIO(file), format=doc_format)
+        return self.to_odml()
+
+    # TODO check mandatory attrs
+    def parse_document(self, doc_uri):
+        rdf_doc = odml.format.Document
+        doc_attrs = {}
+        for attr in rdf_doc._rdf_map.items():
+            elems = list(self.g.objects(subject=doc_uri, predicate=attr[1]))
+            if attr[0] == "sections":
+                doc_attrs[attr[0]] = []
+                for s in elems:
+                    doc_attrs[attr[0]].append(self.parse_section(s))
+            elif attr[0] == "id":
+                doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
+            else:
+                if len(elems) > 0:
+                    doc_attrs[attr[0]] = str(elems[0].toPython())
+
+        return {'Document': doc_attrs, 'odml-version': XML_VERSION}
+
+    # TODO section subclass conversion
+    def parse_section(self, sec_uri):
+        rdf_sec = odml.format.Section
+        sec_attrs = {}
+        for attr in rdf_sec._rdf_map.items():
+            elems = list(self.g.objects(subject=sec_uri, predicate=attr[1]))
+            if attr[0] == "sections":
+                sec_attrs[attr[0]] = []
+                for s in elems:
+                    sec_attrs[attr[0]].append(self.parse_section(s))
+            elif attr[0] == "properties":
+                sec_attrs[attr[0]] = []
+                for p in elems:
+                    sec_attrs[attr[0]].append(self.parse_property(p))
+            elif attr[0] == "id":
+                sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
+            else:
+                if len(elems) > 0:
+                    sec_attrs[attr[0]] = str(elems[0].toPython())
+        self._check_mandatory_attrs(sec_attrs)
+        return sec_attrs
+
+    def parse_property(self, prop_uri):
+        rdf_prop = odml.format.Property
+        prop_attrs = {}
+        for attr in rdf_prop._rdf_map.items():
+            elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
+            if attr[0] == "value" and len(elems) > 0:
+                prop_attrs[attr[0]] = []
+                values = list(self.g.objects(subject=elems[0], predicate=RDF.li))
+                for v in values:
+                    prop_attrs[attr[0]].append(v.toPython())
+            elif attr[0] == "id":
+                prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
+            else:
+                if len(elems) > 0:
+                    prop_attrs[attr[0]] = str(elems[0].toPython())
+        self._check_mandatory_attrs(prop_attrs)
+        return prop_attrs
+
+    def _check_mandatory_attrs(self, attrs):
+        if "name" not in attrs:
+            if "id" in attrs:
+                raise ParserException("Entity with id: %s does not have required \"name\" attribute" % attrs["id"])
+            else:
+                raise ParserException("Some entities does not have required \"name\" attribute")
+
+    def write_file(self, filename, doc_format, output_path):
+        """
+        Writes result to specified output_path if rdf doc contains exactly one odml document.
+        If several odml docs found - creates files in specified directory and writes parsed docs to them.
+        Example of created file: /<dir_path>/doc_<id>.odml (<id> - id of the document).
+        
+        :param filename: path to input file
+        :param doc_format: rdf format of the file
+        :param output_path: path to the output file or directory
+        """
+        self.g = Graph().parse(source=filename, format=doc_format)
+        self.to_odml()
+        if len(self.docs) > 1 and os.path.isdir(output_path):
+            if os.path.exists(output_path):
+                for doc in self.docs:
+                    if doc:
+                        path = os.path.join(output_path, "doc_" + doc.id)
+                        odml.save(doc, path)
+        elif len(self.docs) > 1 and not os.path.isdir(output_path):
+            raise ValueError("Input file consists of multiple odml docs. output_path is not a valid path to directory.")
+        elif len(self.docs) == 1 and os.path.isfile(output_path):
+            odml.save(self.docs[0], output_path)
+        elif len(self.docs) == 1 and not os.path.isfile(output_path):
+            raise ValueError("Input file consists of a one odml doc. "
+                             "output_path is not a valid path to the output file.")

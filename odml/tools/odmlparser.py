@@ -7,8 +7,10 @@ Parses odML files and documents.
 
 """
 
-import yaml
 import json
+
+import yaml
+
 from odml import format
 from . import xmlparser
 
@@ -16,7 +18,7 @@ from . import xmlparser
 #         fixing the circular imports issue.
 odml_version = '1.1'
 
-allowed_parsers = ['XML', 'YAML', 'JSON']
+allowed_parsers = ['XML', 'YAML', 'JSON', 'RDF']
 
 
 class ODMLWriter:
@@ -96,7 +98,7 @@ class ODMLWriter:
                         prop_dict[attr] = t
 
             props_seq.append(prop_dict)
-        
+
         return props_seq
 
     def write_file(self, odml_document, filename):
@@ -166,7 +168,7 @@ class ODMLReader:
         return self.doc
 
     def parse_sections(self, section_list):
-        
+
         odml_sections = []
 
         for section in section_list:
@@ -191,7 +193,6 @@ class ODMLReader:
 
         return odml_sections
 
-
     def parse_properties(self, props_list):
         odml_props = []
 
@@ -212,8 +213,7 @@ class ODMLReader:
 
         return odml_props
 
-
-    def fromFile(self, file):
+    def fromFile(self, file, doc_format=None):
 
         if self.parser == 'XML':
             odml_doc = xmlparser.XMLReader().fromFile(file)
@@ -240,13 +240,21 @@ class ODMLReader:
                 file.close()
             return self.to_odml()
 
+        # TODO discuss whether local import is appropriate here
+        elif self.parser == 'RDF':
+            if not doc_format:
+                raise KeyError("Format of the rdf file was not specified")
+            from odml.tools.rdf_converter import RDFReader
+            self.doc = RDFReader().fromFile(file, doc_format)
+            return self.doc
 
-    def fromString(self, string):
+    def fromString(self, string, doc_format=None):
 
         if self.parser == 'XML':
             odml_doc = xmlparser.XMLReader().fromString(string)
             self.doc = odml_doc
             return self.doc
+
         elif self.parser == 'YAML':
             try:
                 odml_doc = yaml.load(string)
@@ -254,6 +262,7 @@ class ODMLReader:
                 print(e)
                 return
             return self.to_odml()
+
         elif self.parser == 'JSON':
             try:
                 odml_doc = json.loads(string)
@@ -261,3 +270,10 @@ class ODMLReader:
                 print(e)
                 return
             return self.to_odml()
+
+        elif self.parser == 'RDF':
+            if not doc_format:
+                raise KeyError("Format of the rdf file was not specified")
+            from odml.tools.rdf_converter import RDFReader
+            self.doc = RDFReader().fromString(string, doc_format)
+            return self.doc
