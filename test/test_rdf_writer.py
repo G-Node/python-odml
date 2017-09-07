@@ -1,6 +1,9 @@
 import datetime
+import os
 import unittest
+from os.path import dirname, abspath
 
+import yaml
 from rdflib import URIRef, Literal
 from rdflib.namespace import XSD, RDF
 
@@ -115,6 +118,20 @@ class TestRDFWriter(unittest.TestCase):
         w = RDFWriter([doc])
         w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 3)
+
+    def test_section_subclass(self):
+        p = os.path.join(dirname(dirname(abspath(__file__))), 'doc', 'section_subclasses.yaml')
+        with open(p, "r") as f:
+            subclass = yaml.load(f)
+
+        doc = odml.Document()
+        subclass_key = next(iter(subclass))
+        s = odml.Section("S", type=subclass_key)
+        doc.append(s)
+        w = RDFWriter(doc)
+        w.convert_to_rdf()
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.type, object=URIRef(odmlns[subclass[subclass_key]])))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.type, object=URIRef(odmlns.Section)))), 0)
 
     def test_adding_other_entities_properties(self):
         doc = parse("""

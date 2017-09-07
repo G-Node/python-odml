@@ -1,7 +1,9 @@
 import os
 import uuid
 from io import StringIO
+from os.path import dirname, abspath
 
+import yaml
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import XSD, RDF
 
@@ -38,6 +40,15 @@ class RDFWriter(object):
         self.g = Graph()
         self.g.bind("odml", odmlns)
 
+        self.section_subclasses = {}
+        p = os.path.join(dirname(dirname(dirname(abspath(__file__)))), 'doc', 'section_subclasses.yaml')
+        with open(p, "r") as f:
+            try:
+                self.section_subclasses = yaml.load(f)
+            except yaml.parser.ParserError as e:
+                print(e)
+                return
+
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
         if self.docs:
@@ -59,7 +70,12 @@ class RDFWriter(object):
         else:
             curr_node = node
 
-        self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
+        if fmt._name == "section":
+            s = self._get_section_subclass(e)
+            u = s if s else fmt.rdf_type()
+            self.g.add((curr_node, RDF.type, URIRef(u)))
+        else:
+            self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
 
         # adding doc to the hub
         if isinstance(fmt, odml.format.Document.__class__):
@@ -85,21 +101,21 @@ class RDFWriter(object):
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, odml.format.Document.__class__) or
                     isinstance(fmt, odml.format.Section.__class__)) and \
-                            k == 'sections' and len(getattr(e, k)) > 0:
+                    k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
                     node = URIRef(odmlns + str(s.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
             elif isinstance(fmt, odml.format.Section.__class__) and \
-                            k == 'properties' and len(getattr(e, k)) > 0:
+                    k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
                     node = URIRef(odmlns + str(p.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, odml.format.Property.__class__) and \
-                            k == 'value' and len(getattr(e, k)) > 0:
+                    k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
                 bag = URIRef(odmlns + str(uuid.uuid4()))
                 self.g.add((bag, RDF.type, RDF.Bag))
@@ -119,6 +135,16 @@ class RDFWriter(object):
 
     def _get_terminology_by_value(self, url):
         return self.g.value(predicate=RDF.type, object=URIRef(url))
+
+    def _get_section_subclass(self, e):
+        """
+        :return: RDF indentifier of section subclass type if present in section_subclasses dict
+        """
+        sec_type = getattr(e, "type")
+        if sec_type and sec_type in self.section_subclasses:
+            return odmlns[self.section_subclasses[sec_type]]
+        else:
+            return None
 
     def __str__(self):
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
