@@ -17,7 +17,7 @@ except ImportError:
 
 import threading
 
-CACHE_AGE = datetime.timedelta(days=1)
+CACHE_AGE = datetime.timedelta(days=14)
 
 
 def cache_load(url):
@@ -100,9 +100,47 @@ load = terminologies.load
 deferred_load = terminologies.deferred_load
 
 
+
+class TerminologyManager(object) :
+
+    def __init__(self, terminology_url='https://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'):
+        self.t = Terminologies()
+        self.types_map = {}
+        if (terminology_url is not None):
+            self.load(terminology_url)
+
+    def load(self, url):
+        self.t.load(url)
+        self.__parse_terminology(url, self.t[url])
+
+    def type_list(self):
+        types = []
+        for k in self.t.itervalues():
+            temp = [s.type for s in k.itersections()]
+            types.extend(temp)
+        return types
+
+    def __parse_terminology(self, url=None, doc=None):
+        if url is None or doc is None:
+            print("some is None")
+            return
+        for s in doc.itersections():
+            if s.type in self.types_map.keys():
+                type_map = self.types_map[s.type]
+                if url in type_map.keys() and s.get_path() in type_map.itervalues():
+                    continue
+                type_map[url] = s.get_path()
+            else:
+                self.types_map[s.type] = {url: s.get_path()}
+
+
 if __name__ == "__main__":
+    from IPython import embed
     print ("Terminologies!")
-    t = Terminologies()
-    t.load('http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml')
+    terms = TerminologyManager()
+    
+    # t = Terminologies()
+    # t.load('http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml')
+    embed()
     # t.load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/power_spectrum.xml')
 
