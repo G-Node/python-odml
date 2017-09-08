@@ -95,6 +95,22 @@ class Terminologies(dict):
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
+    def show_cache(self):
+        cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+        onlyfiles = [f for f in os.listdir(cache_dir) if os.path.isfile(os.path.join(cache_dir, f))]
+        print("terminology %s \t updated"%(19*" "))
+        print(60*"-")
+        for f in onlyfiles:
+            cache_file = os.path.join(cache_dir, f)
+            file_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(cache_file))
+            disp_name = '_'.join(f.split('__')[1:])
+            if len(disp_name) > 30:
+                disp_name = disp_name[:16] + "..."
+            if len(disp_name) < 30:
+                disp_name = disp_name + (30 -len(disp_name)) * " "
+            print(" %s \t %s"%(disp_name, file_timestamp))
+
+
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
