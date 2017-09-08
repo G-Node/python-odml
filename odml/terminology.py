@@ -25,15 +25,16 @@ def cache_load(url):
     load the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version
     """
-    filename = md5(url.encode()).hexdigest() + os.path.basename(url)
+    filename = md5(url.encode()).hexdigest() + '__' + os.path.basename(url)
     cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+    cache_file = os.path.join(cache_dir, filename)
     if not os.path.exists(cache_dir):
         try:
             os.makedirs(cache_dir)
         except OSError:  # might happen due to concurrency
             if not os.path.exists(cache_dir):
                 raise
-    cache_file = os.path.join(cache_dir, filename)
+
     if not os.path.exists(cache_file) \
        or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
        datetime.datetime.now() - CACHE_AGE:
