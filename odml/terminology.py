@@ -110,6 +110,12 @@ class Terminologies(dict):
                 disp_name = disp_name + (30 -len(disp_name)) * " "
             print(" %s \t %s"%(disp_name, file_timestamp))
 
+    def clear_cache(self):
+        cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+        filelist = [ f for f in os.listdir(cache_dir) if f.endswith(".xml") ]
+        for f in filelist:
+            os.remove(os.path.join(cache_dir, f))
+
 
 terminologies = Terminologies()
 load = terminologies.load
