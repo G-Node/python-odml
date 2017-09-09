@@ -9,15 +9,33 @@ import datetime
 import odml.tools.xmlparser
 from hashlib import md5
 py3 = True
-
 try:
     from urllib.request import urlopen
 except ImportError:
     from urllib import urlopen
-
 import threading
 
 CACHE_AGE = datetime.timedelta(days=14)
+CACHE_DIR = os.path.join(tempfile.gettempdir(), "odml.cache")
+FILE_MAP_FILE = os.path.join(CACHE_DIR, "odml_filemap.csv")
+if not os.path.exists(CACHE_DIR):
+    try:
+        os.makedirs(CACHE_DIR)
+    except OSError:  # might happen due to concurrency
+        if not os.path.exists(CACHE_DIR):
+            raise
+
+
+def open_file_map():
+    file_map = {}
+    if not os.path.exists(FILE_MAP_FILE):
+       return file_map
+    else:
+        with open(FILE_MAP_FILE, 'r') as f:
+            for l in f.readlines():
+                parts = l.strip().split(';')
+                file_map[parts[0].strip()] = parts[1].strip()
+    return file_map
 
 
 def cache_load(url):
@@ -26,14 +44,7 @@ def cache_load(url):
     subsequent requests for this url will use the cached version
     """
     filename = md5(url.encode()).hexdigest() + '__' + os.path.basename(url)
-    cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
-    cache_file = os.path.join(cache_dir, filename)
-    if not os.path.exists(cache_dir):
-        try:
-            os.makedirs(cache_dir)
-        except OSError:  # might happen due to concurrency
-            if not os.path.exists(cache_dir):
-                raise
+    cache_file = os.path.join(CACHE_DIR, filename)
 
     if not os.path.exists(cache_file) \
        or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
@@ -43,17 +54,16 @@ def cache_load(url):
         except Exception as e:
             print("Failed loading '%s': %s" % (url, e))
             return
-
         fp = open(cache_file, "w")
         fp.write(data)
         fp.close()
-
+        with open(FILE_MAP_FILE, 'a') as fm:
+            fm.write(filename + "; " + url + "\n")
     return open(cache_file)
 
 
 class Terminologies(dict):
     loading = {}
-
     def load(self, url):
         """
         load and cache a terminology-url
@@ -63,11 +73,14 @@ class Terminologies(dict):
         if url in self:
             return self[url]
 
+        encode_name =  md5(url.encode()).hexdigest() + '__' + os.path.basename(url)
+        if encode_name in self:
+            return self[encode_name]
+
         if url in self.loading:
             self.loading[url].join()
             self.loading.pop(url, None)
             return self.load(url)
-
         return self._load(url)
 
     def _load(self, url):
