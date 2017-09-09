@@ -109,13 +109,16 @@ class Terminologies(dict):
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
+    def cached_files(self):
+        filelist = [ f for f in os.listdir(CACHE_DIR) if \
+                     (f.endswith(".xml") and os.path.isfile(os.path.join(CACHE_DIR, f)))]
+        return filelist
+
     def show_cache(self):
-        cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
-        onlyfiles = [f for f in os.listdir(cache_dir) if os.path.isfile(os.path.join(cache_dir, f))]
         print("terminology %s \t updated"%(19*" "))
         print(60*"-")
-        for f in onlyfiles:
-            cache_file = os.path.join(cache_dir, f)
+        for f in self.cached_files():
+            cache_file = os.path.join(CACHE_DIR, f)
             file_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(cache_file))
             disp_name = '_'.join(f.split('__')[1:])
             if len(disp_name) > 30:
@@ -125,11 +128,11 @@ class Terminologies(dict):
             print(" %s \t %s"%(disp_name, file_timestamp))
 
     def clear_cache(self):
-        cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
-        filelist = [ f for f in os.listdir(cache_dir) if f.endswith(".xml") ]
+        filelist = self.cached_files();
         for f in filelist:
-            os.remove(os.path.join(cache_dir, f))
-
+            os.remove(os.path.join(CACHE_DIR, f))
+        if os.path.exists(FILE_MAP_FILE):
+            os.remove(FILE_MAP_FILE)
 
 terminologies = Terminologies()
 load = terminologies.load
