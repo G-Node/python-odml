@@ -64,6 +64,10 @@ def cache_load(url):
 
 class Terminologies(dict):
     loading = {}
+
+    def __init__(self):
+        from_cache()
+
     def load(self, url):
         """
         load and cache a terminology-url
