@@ -134,6 +134,13 @@ class Terminologies(dict):
         if os.path.exists(FILE_MAP_FILE):
             os.remove(FILE_MAP_FILE)
 
+    def from_cache(self):
+        file_list = self.cached_files();
+        file_map = open_file_map();
+        for f in file_map:
+            if file_map[f] not in self:
+                self.load(file_map[f])
+        
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
