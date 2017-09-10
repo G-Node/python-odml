@@ -65,10 +65,7 @@ def cache_load(url):
 class Terminologies(dict):
     loading = {}
 
-    def __init__(self):
-        from_cache()
-
-    def load(self, url):
+    def load(self, url="http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml"):
         """
         load and cache a terminology-url
 
