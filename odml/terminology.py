@@ -18,6 +18,7 @@ import threading
 CACHE_AGE = datetime.timedelta(days=14)
 CACHE_DIR = os.path.join(tempfile.gettempdir(), "odml.cache")
 FILE_MAP_FILE = os.path.join(CACHE_DIR, "odml_filemap.csv")
+
 if not os.path.exists(CACHE_DIR):
     try:
         os.makedirs(CACHE_DIR)
@@ -101,6 +102,7 @@ def from_cache(term):
 
 class Terminologies(dict):
     loading = {}
+    types = None
 
     def load(self, url="http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml"):
         """
@@ -147,6 +149,21 @@ class Terminologies(dict):
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
+    def empty(self):
+        return len(self) == 0
+
+    def type_list(self):
+        if self.empty():
+            from_cache(self)
+        if not self.types:
+            self.types = {}
+            for k in self.items():
+                for s in k[1].itersections():
+                    if s.type in self.types:
+                        self.types[s.type].append((k[0], s.get_path()))
+                    else:
+                        self.types[s.type] = [(k[0], s.get_path())]
+        return self.types
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
