@@ -62,6 +62,43 @@ def cache_load(url):
     return open(cache_file)
 
 
+def cached_files():
+    filelist = [ f for f in os.listdir(CACHE_DIR) if \
+                 (f.endswith(".xml") and os.path.isfile(os.path.join(CACHE_DIR, f)))]
+    return filelist
+
+
+def show_cache():
+    print("terminology %s \t updated"%(19*" "))
+    print(60*"-")
+    files = cached_files()
+    for f in files:
+        cache_file = os.path.join(CACHE_DIR, f)
+        file_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(cache_file))
+        disp_name = '_'.join(f.split('__')[1:])
+        if len(disp_name) > 30:
+            disp_name = disp_name[:16] + "..."
+        if len(disp_name) < 30:
+            disp_name = disp_name + (30 -len(disp_name)) * " "
+        print(" %s \t %s"%(disp_name, file_timestamp))
+
+
+def clear_cache():
+    filelist = cached_files();
+    for f in filelist:
+        os.remove(os.path.join(CACHE_DIR, f))
+    if os.path.exists(FILE_MAP_FILE):
+        os.remove(FILE_MAP_FILE)
+
+
+def from_cache(term):
+    file_list = cached_files();
+    file_map = open_file_map();
+    for f in file_map:
+        if file_map[f] not in term:
+            term.load(file_map[f])
+
+
 class Terminologies(dict):
     loading = {}
 
@@ -110,38 +147,6 @@ class Terminologies(dict):
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
-    def cached_files(self):
-        filelist = [ f for f in os.listdir(CACHE_DIR) if \
-                     (f.endswith(".xml") and os.path.isfile(os.path.join(CACHE_DIR, f)))]
-        return filelist
-
-    def show_cache(self):
-        print("terminology %s \t updated"%(19*" "))
-        print(60*"-")
-        for f in self.cached_files():
-            cache_file = os.path.join(CACHE_DIR, f)
-            file_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(cache_file))
-            disp_name = '_'.join(f.split('__')[1:])
-            if len(disp_name) > 30:
-                disp_name = disp_name[:16] + "..."
-            if len(disp_name) < 30:
-                disp_name = disp_name + (30 -len(disp_name)) * " "
-            print(" %s \t %s"%(disp_name, file_timestamp))
-
-    def clear_cache(self):
-        filelist = self.cached_files();
-        for f in filelist:
-            os.remove(os.path.join(CACHE_DIR, f))
-        if os.path.exists(FILE_MAP_FILE):
-            os.remove(FILE_MAP_FILE)
-
-    def from_cache(self):
-        file_list = self.cached_files();
-        file_map = open_file_map();
-        for f in file_map:
-            if file_map[f] not in self:
-                self.load(file_map[f])
-        
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
