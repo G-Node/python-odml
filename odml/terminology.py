@@ -164,11 +164,77 @@ class Terminologies(dict):
                     else:
                         self.types[s.type] = [(k[0], s.get_path())]
         return self.types
+
+    def _compare_repo(self, candidate_repo, candidate_path, pattern, relaxed):
+        parts = pattern.lower().split()
+        match = True
+        repo = candidate_repo.lower()
+        path = candidate_path.lower()
+        for p in parts:
+            if p.startswith("!"):
+                if relaxed:
+                    match = match or (p[1:] not in repo.lower() and p[1:] not in path)
+                else:
+                    match = match and (p[1:] not in repo and p[1:] not in path)
+            else:
+                if relaxed:
+                    match = match or (p in repo or p in path)
+                else:
+                    match = match and (p in repo or p in path)
+        return match
+
+    def _find_match(self, type_matches, pattern, relaxed=False):
+        if pattern:
+             for i, (r, p) in enumerate(type_matches):
+                if self._compare_repo(r, p, pattern, relaxed):
+                    return type_matches[i]
+        else: # simply return first
+            return type_matches[0]
+        return None
+
+    def _get_section_by_type(self, section_type, pattern=None, relaxed=False):
+        if self.empty() or len(self.types) == 0:
+            self.type_list()
+        match = None
+        if section_type in self.types:
+            match = self._find_match(self.types[section_type], pattern, relaxed)
+        if match:
+            return self[match[0]].get_section_by_path(match[1]).clone()
+        else:
+            return None
+
+
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
 
 
+def get_section_by_type(section_type, pattern=None, relaxed=False):
+    """
+    Finds a section type in the cached repositories and returns it.
+
+    @param section_type  the type of the section must be a valid full match. Returns the
+                         first match.
+    @param pattern       a optional filter pattern, i.e. a string with characteristics
+                         regarding the repository the section should originate from
+                         and its path in the file (see below)
+    @param relaxed       optional, defines whether all criteria must be met or not.
+
+    @return  Section     the first match or None
+
+    Example:
+    Suppose we are looking for a section type 'analysis' and it should be from the g-node
+    terminologies.
+    s = get_section_by_type("analysis", "g-node")
+    print(s)
+    <Section Analysis[analysis] (0)>
+    If we want to exclude the g-node terminologies, simply put an ! in front of the pattern
+    s = get_section_by_type("analysis", "!g-node")
+
+    Multiple criteria can be combined (e.g. get_section_by_type("setup/daq", "g-node blackrock !cerebus")). 
+    The relaxed parameter controls whether all criteria have to match.
+    """
+    return terminologies._get_section_by_type(section_type, pattern, relaxed)
 
 
 if __name__ == "__main__":
