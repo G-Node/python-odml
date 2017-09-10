@@ -28,6 +28,10 @@ if not os.path.exists(CACHE_DIR):
 
 
 def open_file_map():
+    """
+    Opens the file_map file stored in the cache that maps the filenames to the urls of the 
+    respective terminolgies.
+    """
     file_map = {}
     if not os.path.exists(FILE_MAP_FILE):
        return file_map
@@ -41,7 +45,7 @@ def open_file_map():
 
 def cache_load(url):
     """
-    load the url and store it in a temporary cache directory
+    Load the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version
     """
     filename = md5(url.encode()).hexdigest() + '__' + os.path.basename(url)
@@ -64,12 +68,18 @@ def cache_load(url):
 
 
 def cached_files():
+    """
+    Returns a list of all locally cached files.
+    """
     filelist = [ f for f in os.listdir(CACHE_DIR) if \
                  (f.endswith(".xml") and os.path.isfile(os.path.join(CACHE_DIR, f)))]
     return filelist
 
 
 def show_cache():
+    """
+    Show all locally cached files. Just for display.
+    """
     print("terminology %s \t updated"%(19*" "))
     print(60*"-")
     files = cached_files()
@@ -85,6 +95,9 @@ def show_cache():
 
 
 def clear_cache():
+    """
+    Clears the cache, i.e. deletes all locally stored files. Does not remove the cache folder, though.
+    """
     filelist = cached_files();
     for f in filelist:
         os.remove(os.path.join(CACHE_DIR, f))
@@ -93,6 +106,10 @@ def clear_cache():
 
 
 def from_cache(term):
+    """
+    Fills the terminology with the definitions stored in the cache.
+    """
+    assert isinstance(term, Terminologies)
     file_list = cached_files();
     file_map = open_file_map();
     for f in file_map:
@@ -150,9 +167,15 @@ class Terminologies(dict):
         self.loading[url].start()
 
     def empty(self):
+        """
+        Tells whether there are no terminolgies stored.
+        """
         return len(self) == 0
 
     def type_list(self):
+        """
+        returns a dict of all types stored in the cache together with the terminologies it is defined in.
+        """
         if self.empty():
             from_cache(self)
         if not self.types:
@@ -240,7 +263,7 @@ def get_section_by_type(section_type, pattern=None, relaxed=False):
 if __name__ == "__main__":
     from IPython import embed
     print ("Terminologies!")
+#    from_cache(terminologies)
     # t.load('http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml')
-    embed()
     # t.load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/power_spectrum.xml')
-
+    embed()
