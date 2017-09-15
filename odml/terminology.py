@@ -220,7 +220,7 @@ class Terminologies(dict):
     def _get_section_by_type(self, section_type, pattern=None, relaxed=False, find_all=False):
         if self.empty() or len(self.types) == 0:
             self.type_list()
-        matches = None
+        matches = []
         if section_type in self.types:
             matches = self._find_match(self.types[section_type], pattern, relaxed)
         if len(matches) > 0:
