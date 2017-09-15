@@ -208,21 +208,29 @@ class Terminologies(dict):
 
     def _find_match(self, type_matches, pattern, relaxed=False):
         if pattern:
-             for i, (r, p) in enumerate(type_matches):
+            matches = []
+            for i, (r, p) in enumerate(type_matches):
                 if self._compare_repo(r, p, pattern, relaxed):
-                    return type_matches[i]
+                    matches.append(type_matches[i])
+            return matches
         else: # simply return first
-            return type_matches[0]
-        return None
+            return type_matches
+        return []
 
-    def _get_section_by_type(self, section_type, pattern=None, relaxed=False):
+    def _get_section_by_type(self, section_type, pattern=None, relaxed=False, find_all=False):
         if self.empty() or len(self.types) == 0:
             self.type_list()
-        match = None
+        matches = None
         if section_type in self.types:
-            match = self._find_match(self.types[section_type], pattern, relaxed)
-        if match:
-            return self[match[0]].get_section_by_path(match[1]).clone()
+            matches = self._find_match(self.types[section_type], pattern, relaxed)
+        if len(matches) > 0:
+            if len(matches) > 1 and find_all:
+                sections = []
+                for m in matches:
+                    sections.append(self[m[0]].get_section_by_path(m[1]).clone())
+                return sections
+            else:
+                return self[matches[0][0]].get_section_by_path(matches[0][1]).clone()
         else:
             return None
 
@@ -232,7 +240,7 @@ load = terminologies.load
 deferred_load = terminologies.deferred_load
 
 
-def get_section_by_type(section_type, pattern=None, relaxed=False):
+def get_section_by_type(section_type, pattern=None, relaxed=False, find_all=False):
     """
     Finds a section type in the cached repositories and returns it.
 
@@ -242,8 +250,10 @@ def get_section_by_type(section_type, pattern=None, relaxed=False):
                          regarding the repository the section should originate from
                          and its path in the file (see below)
     @param relaxed       optional, defines whether all criteria must be met or not.
+    @param find_all      optional, sets whether all possible matches are returned
 
-    @return  Section     the first match or None
+    @return  Section or list of sections depending on the find_all parameter, None,
+                         if no match was found.
 
     Example:
     Suppose we are looking for a section type 'analysis' and it should be from the g-node
@@ -254,10 +264,10 @@ def get_section_by_type(section_type, pattern=None, relaxed=False):
     If we want to exclude the g-node terminologies, simply put an ! in front of the pattern
     s = get_section_by_type("analysis", "!g-node")
 
-    Multiple criteria can be combined (e.g. get_section_by_type("setup/daq", "g-node blackrock !cerebus")). 
+    Multiple criteria can be combined (e.g. get_section_by_type("setup/daq", "g-node blackrock !cerebus")).
     The relaxed parameter controls whether all criteria have to match.
     """
-    return terminologies._get_section_by_type(section_type, pattern, relaxed)
+    return terminologies._get_section_by_type(section_type, pattern, relaxed, find_all)
 
 def find_definitions(section_type):
     """
@@ -277,7 +287,8 @@ def find_definitions(section_type):
 if __name__ == "__main__":
     from IPython import embed
     print ("Terminologies!")
-#    from_cache(terminologies)
+    from_cache(terminologies)
     # t.load('http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml')
     # t.load('http://portal.g-node.org/odml/terminologies/v1.0/analysis/power_spectrum.xml')
+    find_definitions("analysis")
     embed()
