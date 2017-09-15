@@ -259,6 +259,20 @@ def get_section_by_type(section_type, pattern=None, relaxed=False):
     """
     return terminologies._get_section_by_type(section_type, pattern, relaxed)
 
+def find_definitions(section_type):
+    """
+    Finds repositories that define the provided section type.
+
+    @param section_type   the requested section type
+
+    @return  list of tuples containing the repository and the path at which the respective
+             section can be found. List may be empty.
+    """
+    tl = terminologies.type_list()
+    if section_type in tl:
+        return tl[section_type]
+    else:
+        return []
 
 if __name__ == "__main__":
     from IPython import embed
