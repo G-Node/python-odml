@@ -26,9 +26,8 @@ class RDFWriter(object):
     A writer to parse odML files into RDF documents.
 
     Usage:
-        file = RDFWriter().fromFile("/path_to_input_rdf", "rdf_format")
-        file = RDFWriter().fromString("rdf file as string", "rdf_format")
-        RDFWriter().write_file("/output_path", "rdf_format")
+        RDFWriter(odml_docs).get_rdf_str('turtle')
+        RDFWriter(odml_docs).write_file("/output_path", "rdf_format")
     """
 
     def __init__(self, odml_documents):
@@ -175,8 +174,8 @@ class RDFReader(object):
     A reader to parse odML RDF files or strings into odml documents.
 
     Usage:
-        file = RDFReader().fromFile("/path_to_input_rdf", "rdf_format")
-        file = RDFReader().fromString("rdf file as string", "rdf_format")
+        file = RDFReader().from_file("/path_to_input_rdf", "rdf_format")
+        file = RDFReader().from_string("rdf file as string", "rdf_format")
         RDFReader().write_file("/input_path", "rdf_format", "/output_path")
     """
 

@@ -245,7 +245,7 @@ class ODMLReader:
             if not doc_format:
                 raise KeyError("Format of the rdf file was not specified")
             from odml.tools.rdf_converter import RDFReader
-            self.doc = RDFReader().fromFile(file, doc_format)
+            self.doc = RDFReader().from_file(file, doc_format)
             return self.doc
 
     def fromString(self, string, doc_format=None):
@@ -275,5 +275,5 @@ class ODMLReader:
             if not doc_format:
                 raise KeyError("Format of the rdf file was not specified")
             from odml.tools.rdf_converter import RDFReader
-            self.doc = RDFReader().fromString(string, doc_format)
+            self.doc = RDFReader().from_string(string, doc_format)
             return self.doc
