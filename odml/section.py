@@ -76,6 +76,8 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
             return
 
         term = terminology.load(url)
+        if not term:
+            return
         new_section = term.get_section_by_path(path) if path is not None else term.sections[0]
 
         if self._include is not None:
