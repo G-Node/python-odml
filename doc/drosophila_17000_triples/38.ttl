@@ -1,0 +1,686 @@
+@prefix odml: <https://g-node.org/projects/odml-rdf#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+odml:Hub odml:hasDocument odml:a4cb82a2-09a0-4cb8-8e44-9be9420c921c ;
+    odml:hasTerminology odml:c4c90f57-6a97-4b19-a200-9020ff5370b8 .
+
+<https://g-node.org/projects/odml-rdf#0013ffd3-e42d-4854-ad33-c06298fb8760> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Recording quality" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#7ba5fe74-890c-4295-b387-a2c295a40900> .
+
+<https://g-node.org/projects/odml-rdf#02222dea-04d6-46f8-a3cd-e31287174bb0> a rdf:Bag ;
+    rdf:li 8e-01 .
+
+<https://g-node.org/projects/odml-rdf#04a16cdc-390c-4f58-8c8c-96dd534a1263> a rdf:Bag ;
+    rdf:li "12:33:41"^^xsd:time .
+
+<https://g-node.org/projects/odml-rdf#0543b1c5-9b15-4f87-a6fa-911eabda8579> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "PWM1" ;
+    odml:hasUnit "bit" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#124a4958-c023-4fc1-a8dd-8094e16077cf> .
+
+<https://g-node.org/projects/odml-rdf#090131ec-366d-4493-a9fb-bab335caec41> a odml:Section ;
+    odml:hasName "hardware-Miscellaneous-2012-02-05-ad" ;
+    odml:hasType "Miscellaneous" .
+
+<https://g-node.org/projects/odml-rdf#09059e10-a6c5-40fe-ad5b-0c926983ab38> a odml:Property ;
+    odml:hasDtype "date" ;
+    odml:hasName "date" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#0c3d4ba4-2b52-4817-be72-bdd45155acfc> .
+
+<https://g-node.org/projects/odml-rdf#0915317a-d0f8-479e-907f-6a42a9e6d5a0> a rdf:Bag ;
+    rdf:li 2.5e+02 .
+
+<https://g-node.org/projects/odml-rdf#091e4f82-e8c8-48ef-b516-d7bdd68a40f6> a odml:Property ;
+    odml:hasDtype "integer" ;
+    odml:hasName "channels" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#1220b197-7c45-4efb-9c3d-6092166dec88> .
+
+<https://g-node.org/projects/odml-rdf#09a36cd8-d20b-4dc1-9f9d-138de7e19794> a rdf:Bag ;
+    rdf:li 4e+03 .
+
+<https://g-node.org/projects/odml-rdf#0b939cee-a0ae-4535-8fe1-c9e7bce46808> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "class" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#47e8155a-65cb-4141-995c-49709489ef47> .
+
+<https://g-node.org/projects/odml-rdf#0c3d4ba4-2b52-4817-be72-bdd45155acfc> a rdf:Bag ;
+    rdf:li "2012-01-19"^^xsd:date .
+
+<https://g-node.org/projects/odml-rdf#0de56afa-8d07-4863-8d20-d74e02a0130f> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Sex" ;
+    odml:hasValue odml:f5354873-b2d7-4cc5-91d2-e94c76122ad7 .
+
+<https://g-node.org/projects/odml-rdf#1220b197-7c45-4efb-9c3d-6092166dec88> a rdf:Bag ;
+    rdf:li "16" .
+
+<https://g-node.org/projects/odml-rdf#124a4958-c023-4fc1-a8dd-8094e16077cf> a rdf:Bag ;
+    rdf:li 2.95e+02 .
+
+<https://g-node.org/projects/odml-rdf#12d15ef7-207b-4bea-b1b6-4fba528d688e> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "OffDuration" ;
+    odml:hasUnit "ms" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#1967402f-db5e-4ca4-84cd-a4107d3a1a4f> .
+
+<https://g-node.org/projects/odml-rdf#15aedfaa-f4d6-4a64-b0a8-d49a43d53065> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Preparation" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#1a854f85-1f0f-4cb2-ba22-ee449b0ee3f0> .
+
+<https://g-node.org/projects/odml-rdf#1629f3e5-07ed-46a2-9efd-6d1f46d3ab9c> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "experiment" .
+
+<https://g-node.org/projects/odml-rdf#1641ee12-03d1-4cba-b94a-00c856b73a0c> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "File" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#63801aa3-4e97-47ab-9f70-df299c652f9d> .
+
+<https://g-node.org/projects/odml-rdf#18bc9bba-1607-4397-b38c-6c2fd43c5458> a rdf:Bag ;
+    rdf:li "Christian Garbers" .
+
+<https://g-node.org/projects/odml-rdf#193f944b-a1e3-445b-bdbd-4861db871ca9> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Genotype" ;
+    odml:hasValue odml:b126f699-909c-480c-82d0-3fe6753e274a .
+
+<https://g-node.org/projects/odml-rdf#1967402f-db5e-4ca4-84cd-a4107d3a1a4f> a rdf:Bag ;
+    rdf:li 5e+02 .
+
+<https://g-node.org/projects/odml-rdf#1a854f85-1f0f-4cb2-ba22-ee449b0ee3f0> a rdf:Bag ;
+    rdf:li "ERG" .
+
+<https://g-node.org/projects/odml-rdf#1caf91e7-b9c3-4007-b92c-613c0f4b4846> a rdf:Bag ;
+    rdf:li "16" .
+
+<https://g-node.org/projects/odml-rdf#1d8e030d-66b5-4d52-8ac5-6c6175259c4c> a rdf:Bag ;
+    rdf:li "pci-6221" .
+
+<https://g-node.org/projects/odml-rdf#1dd88cb6-e151-4942-85af-fd4992207541> a rdf:Bag ;
+    rdf:li 1e+02 .
+
+<https://g-node.org/projects/odml-rdf#220d345d-6896-42f0-b9bc-45cd60b7087f> a odml:Hardware ;
+    odml:hasName "hardware-2012-02-05-ad" ;
+    odml:hasSection <https://g-node.org/projects/odml-rdf#090131ec-366d-4493-a9fb-bab335caec41>,
+        <https://g-node.org/projects/odml-rdf#822f3b61-a1a8-40cb-a7bc-380a57b7d702>,
+        <https://g-node.org/projects/odml-rdf#8ef069e5-90e1-4a05-a2af-653e15e9bf60> ;
+    odml:hasType "hardware" .
+
+<https://g-node.org/projects/odml-rdf#2750f7da-b03c-4f63-94e1-2fb418621020> a rdf:Bag ;
+    rdf:li "pci-6221" .
+
+<https://g-node.org/projects/odml-rdf#297b06f2-4e2a-4db7-9abd-c55c2a682a77> a rdf:Bag ;
+    rdf:li 1e-01 .
+
+<https://g-node.org/projects/odml-rdf#29b2703c-1cb2-47a5-9114-833fd47b3fc6> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "OnDuration" ;
+    odml:hasUnit "ms" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#1dd88cb6-e151-4942-85af-fd4992207541> .
+
+<https://g-node.org/projects/odml-rdf#2b4d65a9-41b8-410a-92e0-c2c78f9fcbc2> a rdf:Bag ;
+    rdf:li "linearDynamic" .
+
+<https://g-node.org/projects/odml-rdf#2b924b77-5c43-42d7-a442-2d5693603370> a rdf:Bag ;
+    rdf:li "Drosophila melanogaster" .
+
+<https://g-node.org/projects/odml-rdf#2d37f5dd-c1a9-446c-9d57-8a731247296a> a rdf:Bag ;
+    rdf:li "16" .
+
+<https://g-node.org/projects/odml-rdf#2fa3e9a8-9350-4fec-8f68-b15603bb1271> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "File" ;
+    odml:hasValue odml:af0dcb81-e4a4-491f-8c7e-0269dee2e3ae .
+
+<https://g-node.org/projects/odml-rdf#309ef972-84c4-4a71-92c8-a4912b5b614a> a rdf:Bag ;
+    rdf:li "Yes" .
+
+<https://g-node.org/projects/odml-rdf#334a08ba-7799-43c9-9312-c872e25a99f8> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "name" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#1d8e030d-66b5-4d52-8ac5-6c6175259c4c> .
+
+<https://g-node.org/projects/odml-rdf#33b1eeb5-2dc5-4cb7-9285-8d2c228fb221> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "repro" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#78bca8e9-ee92-47ce-bbb0-1aed0acaad03> .
+
+<https://g-node.org/projects/odml-rdf#340613a0-dd88-43d4-a62f-e3476fb47801> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "max sampling rate" ;
+    odml:hasUnit "kHz" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#0915317a-d0f8-479e-907f-6a42a9e6d5a0> .
+
+<https://g-node.org/projects/odml-rdf#34268d19-4832-42f4-8938-be6b282395b6> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "class" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#59379890-c3eb-4bb9-9334-104d96689d84> .
+
+<https://g-node.org/projects/odml-rdf#362dfcc9-56b1-4928-b9b2-abcba11dbb16> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Before" ;
+    odml:hasUnit "ms" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#9d32edde-4e62-4bee-8501-175ebfde835f> .
+
+<https://g-node.org/projects/odml-rdf#3635cff3-94a1-41f2-b93d-06200288df48> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "max sampling rate" ;
+    odml:hasUnit "kHz" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#573e0d5f-123a-4d7d-8410-4d78f3b9ad45> .
+
+<https://g-node.org/projects/odml-rdf#373dec7b-f4fa-478c-848e-74bb8c735bfb> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Folder" ;
+    odml:hasValue odml:c2c2bc2d-067f-4d94-911c-3524d15a5368 .
+
+<https://g-node.org/projects/odml-rdf#3c697067-e652-4aa2-a1a2-b83826ea8570> a rdf:Bag ;
+    rdf:li "1.0" .
+
+<https://g-node.org/projects/odml-rdf#40850df3-6bf6-4197-adac-d0db2466b22f> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "file" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#55ad4cb2-f626-4882-98cb-ba9e65ee1dbc> .
+
+<https://g-node.org/projects/odml-rdf#43de501f-67a6-4674-8f4f-7ed1744c53e6> a rdf:Bag ;
+    rdf:li 2e+00 .
+
+<https://g-node.org/projects/odml-rdf#4472cd73-82ef-45d5-b3af-791893a1e3e0> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Mode" ;
+    odml:hasValue odml:bfbb0828-ea70-407f-8755-6ff11a35cf57 .
+
+<https://g-node.org/projects/odml-rdf#47e8155a-65cb-4141-995c-49709489ef47> a rdf:Bag ;
+    rdf:li "ComediAnalogInput" .
+
+<https://g-node.org/projects/odml-rdf#484ec65b-0818-4dca-a473-64f58f904a6b> a rdf:Bag ;
+    rdf:li "Jan Benda" .
+
+<https://g-node.org/projects/odml-rdf#4ab9e62b-e3d0-4363-914e-090f3f1e4a04> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Lab" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#484ec65b-0818-4dca-a473-64f58f904a6b> .
+
+<https://g-node.org/projects/odml-rdf#4e14161b-cbfc-4292-8811-a2b0f3e5c801> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Software" ;
+    odml:hasValue odml:d74a78bc-65ea-4741-9694-7cfe994c56cf .
+
+<https://g-node.org/projects/odml-rdf#4f310d1b-b891-4eae-a106-5db711e76eab> a odml:Property ;
+    odml:hasDtype "integer" ;
+    odml:hasName "bits" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#2d37f5dd-c1a9-446c-9d57-8a731247296a> .
+
+<https://g-node.org/projects/odml-rdf#55ad4cb2-f626-4882-98cb-ba9e65ee1dbc> a rdf:Bag ;
+    rdf:li "/dev/comedi1" .
+
+<https://g-node.org/projects/odml-rdf#573e0d5f-123a-4d7d-8410-4d78f3b9ad45> a rdf:Bag ;
+    rdf:li 8.33333e+02 .
+
+<https://g-node.org/projects/odml-rdf#58b214ee-788c-476c-b99b-200059dee1d2> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "file" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#6f0e8ae6-5b92-42d2-b372-fa02fee8772f> .
+
+<https://g-node.org/projects/odml-rdf#5932403b-354a-478a-8bd8-b76aebcb4f73> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "UseOff" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#309ef972-84c4-4a71-92c8-a4912b5b614a> .
+
+<https://g-node.org/projects/odml-rdf#59379890-c3eb-4bb9-9334-104d96689d84> a rdf:Bag ;
+    rdf:li "Comedi Analog Output" .
+
+<https://g-node.org/projects/odml-rdf#59b19472-5e49-4098-8258-a754ffa96200> a rdf:Bag ;
+    rdf:li "open" .
+
+<https://g-node.org/projects/odml-rdf#5a327c4c-5376-4d46-9cea-963850e74735> a rdf:Bag ;
+    rdf:li "2012-02-05-ad" .
+
+<https://g-node.org/projects/odml-rdf#5ae4807e-0be3-433f-9dcb-3a6f2690c020> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Experimentalist" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#75c6f61a-8ea0-41a8-9f21-df65569bfe0f> .
+
+<https://g-node.org/projects/odml-rdf#5bdc7eba-0285-4c9f-b928-f1207e98637e> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "University" ;
+    odml:hasValue odml:c31507aa-bad2-4cd8-9335-bda5743a15e3 .
+
+<https://g-node.org/projects/odml-rdf#5fb40570-6063-47df-9a57-6c4a5ae0c2b0> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "version" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#3c697067-e652-4aa2-a1a2-b83826ea8570> .
+
+<https://g-node.org/projects/odml-rdf#60a79632-3dda-454d-9f13-cb2f9f770c30> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "status" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#59b19472-5e49-4098-8258-a754ffa96200> .
+
+<https://g-node.org/projects/odml-rdf#6204df2b-2143-482f-8403-c886d6a411c8> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "filename.dat" ;
+    odml:hasValue odml:adf3e1e0-a319-4e95-8711-6186436dfa8c .
+
+<https://g-node.org/projects/odml-rdf#6283ba11-6180-4dca-9347-c9a54b7c92b9> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Room" ;
+    odml:hasValue odml:a51ce2cc-283e-4e07-ab2f-47f4780ed2f2 .
+
+<https://g-node.org/projects/odml-rdf#635bbf3c-7726-43d9-8bd6-de471fbaa366> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Current1" ;
+    odml:hasUnit "bit" ;
+    odml:hasValue odml:a062959d-9394-4e88-8462-06a26ebdc70b .
+
+<https://g-node.org/projects/odml-rdf#63801aa3-4e97-47ab-9f70-df299c652f9d> a rdf:Bag ;
+    rdf:li " ergs_1.dat",
+        " results.dat",
+        "pwm_steps_1.dat" .
+
+<https://g-node.org/projects/odml-rdf#6389be7e-855b-44d1-a7c7-908963cbd181> a rdf:Bag ;
+    rdf:li "ni_pcimio" .
+
+<https://g-node.org/projects/odml-rdf#66b81f55-4e9d-464d-9856-d3f47b185310> a rdf:Bag ;
+    rdf:li 4.8e+01 .
+
+<https://g-node.org/projects/odml-rdf#670194d9-3cae-4411-8e2c-f284c8b32056> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "status" ;
+    odml:hasValue odml:a82cbc63-aac7-4e3c-b74b-366906b78d4c .
+
+<https://g-node.org/projects/odml-rdf#69b35a6c-5034-4c90-8dd9-793b89f2e2dd> a rdf:Bag ;
+    rdf:li "ni_pcimio" .
+
+<https://g-node.org/projects/odml-rdf#6f0e8ae6-5b92-42d2-b372-fa02fee8772f> a rdf:Bag ;
+    rdf:li "/dev/comedi1" .
+
+<https://g-node.org/projects/odml-rdf#6fbeede1-0951-4497-985e-21eac5c39607> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "AlgoType" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#2b4d65a9-41b8-410a-92e0-c2c78f9fcbc2> .
+
+<https://g-node.org/projects/odml-rdf#730d6ae0-b2bb-4316-8666-7c834757663d> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "ident" ;
+    odml:hasValue odml:f847bd58-9923-4804-ae10-477bfad742bc .
+
+<https://g-node.org/projects/odml-rdf#75c6f61a-8ea0-41a8-9f21-df65569bfe0f> a rdf:Bag ;
+    rdf:li "Christian" .
+
+<https://g-node.org/projects/odml-rdf#75fe2027-aa66-4a40-a66f-7889ddec552f> a rdf:Bag ;
+    rdf:li "Christian Garbers" .
+
+<https://g-node.org/projects/odml-rdf#78bca8e9-ee92-47ce-bbb0-1aed0acaad03> a rdf:Bag ;
+    rdf:li "Patch2LED" .
+
+<https://g-node.org/projects/odml-rdf#7ba5fe74-890c-4295-b387-a2c295a40900> a rdf:Bag ;
+    rdf:li "Fair" .
+
+<https://g-node.org/projects/odml-rdf#7bad8d43-25b1-4e60-9a31-7d39318f2e68> a rdf:Bag ;
+    rdf:li "Setup1" .
+
+<https://g-node.org/projects/odml-rdf#7bef66ac-ba02-47d4-a245-734a9de52bb1> a rdf:Bag ;
+    rdf:li "0.9.7 (01/24/12)" .
+
+<https://g-node.org/projects/odml-rdf#7c431caf-1eb6-4cf5-8f9b-875e52478681> a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Name" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#5a327c4c-5376-4d46-9cea-963850e74735> .
+
+<https://g-node.org/projects/odml-rdf#822f3b61-a1a8-40cb-a7bc-380a57b7d702> a odml:Section ;
+    odml:hasName "hardware-DataAcquisition-2012-02-05-ad-2" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#34268d19-4832-42f4-8938-be6b282395b6>,
+        <https://g-node.org/projects/odml-rdf#3635cff3-94a1-41f2-b93d-06200288df48>,
+        <https://g-node.org/projects/odml-rdf#4f310d1b-b891-4eae-a106-5db711e76eab>,
+        <https://g-node.org/projects/odml-rdf#58b214ee-788c-476c-b99b-200059dee1d2>,
+        <https://g-node.org/projects/odml-rdf#670194d9-3cae-4411-8e2c-f284c8b32056>,
+        <https://g-node.org/projects/odml-rdf#730d6ae0-b2bb-4316-8666-7c834757663d>,
+        <https://g-node.org/projects/odml-rdf#9c622a1b-3ef4-4155-aaac-1dbd7959f1d3>,
+        odml:cc778ce3-aab7-48c0-804c-bc5c17c46c7c,
+        odml:e5388257-4335-4af5-ba9a-2428036b1346 ;
+    odml:hasType "DataAcquisition" .
+
+<https://g-node.org/projects/odml-rdf#832a22bd-d36b-4664-8d8d-5905493cd270> a rdf:Bag ;
+    rdf:li "0" .
+
+<https://g-node.org/projects/odml-rdf#86ffb148-21fc-421c-80d5-9b7a48ce5b44> a rdf:Bag ;
+    rdf:li "2012-02-05"^^xsd:date .
+
+<https://g-node.org/projects/odml-rdf#8e778a0d-8281-4a65-9940-5c7200fcabdc> a rdf:Bag ;
+    rdf:li 1e+01 .
+
+<https://g-node.org/projects/odml-rdf#8ef069e5-90e1-4a05-a2af-653e15e9bf60> a odml:Section ;
+    odml:hasName "hardware-DataAcquisition-2012-02-05-ad" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#091e4f82-e8c8-48ef-b516-d7bdd68a40f6>,
+        <https://g-node.org/projects/odml-rdf#0b939cee-a0ae-4535-8fe1-c9e7bce46808>,
+        <https://g-node.org/projects/odml-rdf#334a08ba-7799-43c9-9312-c872e25a99f8>,
+        <https://g-node.org/projects/odml-rdf#340613a0-dd88-43d4-a62f-e3476fb47801>,
+        <https://g-node.org/projects/odml-rdf#40850df3-6bf6-4197-adac-d0db2466b22f>,
+        <https://g-node.org/projects/odml-rdf#60a79632-3dda-454d-9f13-cb2f9f770c30>,
+        <https://g-node.org/projects/odml-rdf#92bc6b06-bd5e-48e6-b8f0-f1bff2d7978a>,
+        odml:b4810c17-1fee-4906-a574-fc60a876cd33,
+        odml:e232ef9a-a518-446a-8973-57b9d25381d0 ;
+    odml:hasType "DataAcquisition" .
+
+<https://g-node.org/projects/odml-rdf#92bc6b06-bd5e-48e6-b8f0-f1bff2d7978a> a odml:Property ;
+    odml:hasDtype "integer" ;
+    odml:hasName "bits" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#1caf91e7-b9c3-4007-b92c-613c0f4b4846> .
+
+<https://g-node.org/projects/odml-rdf#99342d7a-d066-43b8-a4ef-d2cdc875d824> a rdf:Bag ;
+    rdf:li "ai-1" .
+
+<https://g-node.org/projects/odml-rdf#9a7b9ebe-2665-48b0-bb6b-c4d0c1f54488> a odml:Section ;
+    odml:hasName "Subject-2012-02-05-ad" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#0de56afa-8d07-4863-8d20-d74e02a0130f>,
+        <https://g-node.org/projects/odml-rdf#15aedfaa-f4d6-4a64-b0a8-d49a43d53065>,
+        <https://g-node.org/projects/odml-rdf#193f944b-a1e3-445b-bdbd-4861db871ca9>,
+        <https://g-node.org/projects/odml-rdf#9d2b95be-59ee-4a25-a494-72adee687c73>,
+        odml:ff73232b-b745-432c-8310-4419579ffc66 ;
+    odml:hasType "Subject" .
+
+<https://g-node.org/projects/odml-rdf#9c622a1b-3ef4-4155-aaac-1dbd7959f1d3> a odml:Property ;
+    odml:hasDtype "integer" ;
+    odml:hasName "channels" ;
+    odml:hasValue odml:cea66802-c446-4e92-9390-ed6aeb40cf90 .
+
+<https://g-node.org/projects/odml-rdf#9d2b95be-59ee-4a25-a494-72adee687c73> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Age" ;
+    odml:hasUnit "days" ;
+    odml:hasValue odml:ec0025d7-f076-47cb-bb5c-3358d7ce8545 .
+
+<https://g-node.org/projects/odml-rdf#9d32edde-4e62-4bee-8501-175ebfde835f> a rdf:Bag ;
+    rdf:li 1e+01 .
+
+<https://g-node.org/projects/odml-rdf#9d79f747-db4f-4d53-bfb2-f4793eec6898> a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Recording duration" ;
+    odml:hasUnit "min" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#02222dea-04d6-46f8-a3cd-e31287174bb0> .
+
+odml:a062959d-9394-4e88-8462-06a26ebdc70b a rdf:Bag ;
+    rdf:li 4e+03 .
+
+odml:a073fbae-3c93-4795-affa-dad606de2e89 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Current2" ;
+    odml:hasUnit "bit" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#09a36cd8-d20b-4dc1-9f9d-138de7e19794> .
+
+odml:a4cb82a2-09a0-4cb8-8e44-9be9420c921c a odml:Document ;
+    odml:hasSection <https://g-node.org/projects/odml-rdf#220d345d-6896-42f0-b9bc-45cd60b7087f>,
+        <https://g-node.org/projects/odml-rdf#9a7b9ebe-2665-48b0-bb6b-c4d0c1f54488>,
+        odml:c75a76dd-85fc-4a51-8c31-0f79c004f76b,
+        odml:e99bc7fd-4ccc-42c7-a88e-80b8a29a98a7,
+        odml:fdb1d3e2-8e79-43a9-a824-516479d3259f ;
+    odml:hasTerminology odml:c4c90f57-6a97-4b19-a200-9020ff5370b8 .
+
+odml:a51ce2cc-283e-4e07-ab2f-47f4780ed2f2 a rdf:Bag ;
+    rdf:li "D01.043" .
+
+odml:a6a63ca4-0c47-4d96-8e06-a67bb1d71dd8 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "After" ;
+    odml:hasUnit "ms" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#8e778a0d-8281-4a65-9940-5c7200fcabdc> .
+
+odml:a82cbc63-aac7-4e3c-b74b-366906b78d4c a rdf:Bag ;
+    rdf:li "open" .
+
+odml:a96ac12c-4710-4760-8b68-e15d5b2dee7b a rdf:Bag ;
+    rdf:li " 82152 Planegg-Martinsried",
+        " Germany",
+        "Grosshaderner Str. 2" .
+
+odml:ab9c3075-5b94-4b20-9b34-79dc0385e409 a odml:Property ;
+    odml:hasDtype "date" ;
+    odml:hasName "Date" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#86ffb148-21fc-421c-80d5-9b7a48ce5b44> .
+
+odml:abeb1da5-5c8b-4a15-93ea-8a3f13fd0d27 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Address" ;
+    odml:hasValue odml:a96ac12c-4710-4760-8b68-e15d5b2dee7b .
+
+odml:adf3e1e0-a319-4e95-8711-6186436dfa8c a rdf:Bag ;
+    rdf:li "1.dat" .
+
+odml:af0dcb81-e4a4-491f-8c7e-0269dee2e3ae a rdf:Bag ;
+    rdf:li " metadata.xml",
+        " recording-events.dat",
+        " restart-events.dat",
+        " stimuli.dat",
+        " stimulus-descriptions.dat",
+        " stimulus-events.dat",
+        " stimulus-metadata.xml",
+        " trace-2.raw",
+        " trigger-1-events.dat",
+        " trigger-2-events.dat",
+        "trace-1.raw" .
+
+odml:b126f699-909c-480c-82d0-3fe6753e274a a rdf:Bag ;
+    rdf:li "CS" .
+
+odml:b44e63e9-aa3a-4707-81a7-2636cb999f28 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "author" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#75fe2027-aa66-4a40-a66f-7889ddec552f> .
+
+odml:b4810c17-1fee-4906-a574-fc60a876cd33 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "ident" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#99342d7a-d066-43b8-a4ef-d2cdc875d824> .
+
+odml:b844d2d8-7f1c-4ee0-bdcd-016c820b536e a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Maintainer" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#18bc9bba-1607-4397-b38c-6c2fd43c5458> .
+
+odml:b906f792-e5af-4f75-8d0f-ed646e1a86dc a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Comment" ;
+    odml:hasValue odml:d0f568f8-4815-4c25-a83f-d8008fe8c3fa .
+
+odml:bd389790-2c05-4325-aba1-297938ff2338 a odml:Property ;
+    odml:hasDtype "time" ;
+    odml:hasName "Time" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#04a16cdc-390c-4f58-8c8c-96dd534a1263> .
+
+odml:bd7c517d-7e07-46b7-a845-b56ae7ab2620 a rdf:Bag ;
+    rdf:li 2.4e+01 .
+
+odml:be0bab33-faaf-4160-9f7e-8ffc0e89f710 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "LED1" ;
+    odml:hasUnit "LEDNr." ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#43de501f-67a6-4674-8f4f-7ed1744c53e6> .
+
+odml:be71225c-d024-4e50-b938-5ea8cd4afde9 a rdf:Bag ;
+    rdf:li "Department Biology II" .
+
+odml:bfbb0828-ea70-407f-8755-6ff11a35cf57 a rdf:Bag ;
+    rdf:li "Acquisition" .
+
+odml:c2c2bc2d-067f-4d94-911c-3524d15a5368 a rdf:Bag ;
+    rdf:li "/home/erg/relacs/plugins/erg/2012-02-05-ad" .
+
+odml:c31507aa-bad2-4cd8-9335-bda5743a15e3 a rdf:Bag ;
+    rdf:li " Munich",
+        "Ludwig-Maximilian University" .
+
+odml:c3a3a7ed-2bc6-4f6e-b19d-7435c70dc75d a rdf:Bag ;
+    rdf:li 5e+00 .
+
+odml:c75a76dd-85fc-4a51-8c31-0f79c004f76b a odml:Section ;
+    odml:hasName "Recording-2012-02-05-ad" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#0013ffd3-e42d-4854-ad33-c06298fb8760>,
+        <https://g-node.org/projects/odml-rdf#2fa3e9a8-9350-4fec-8f68-b15603bb1271>,
+        <https://g-node.org/projects/odml-rdf#373dec7b-f4fa-478c-848e-74bb8c735bfb>,
+        <https://g-node.org/projects/odml-rdf#4472cd73-82ef-45d5-b3af-791893a1e3e0>,
+        <https://g-node.org/projects/odml-rdf#4e14161b-cbfc-4292-8811-a2b0f3e5c801>,
+        <https://g-node.org/projects/odml-rdf#5ae4807e-0be3-433f-9dcb-3a6f2690c020>,
+        <https://g-node.org/projects/odml-rdf#7c431caf-1eb6-4cf5-8f9b-875e52478681>,
+        <https://g-node.org/projects/odml-rdf#9d79f747-db4f-4d53-bfb2-f4793eec6898>,
+        odml:ab9c3075-5b94-4b20-9b34-79dc0385e409,
+        odml:b906f792-e5af-4f75-8d0f-ed646e1a86dc,
+        odml:bd389790-2c05-4325-aba1-297938ff2338,
+        odml:e0971131-2c90-404c-b70b-22d834ba9c01,
+        odml:fe5c2a46-4412-49a7-ab96-7957d9f374bc ;
+    odml:hasType "Recording" .
+
+odml:c8fb9425-11ff-4e55-8ee5-7a4bec1665bb a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Creator" ;
+    odml:hasValue odml:e2b72392-950f-4d0b-a716-860905bfbbc7 .
+
+odml:cc778ce3-aab7-48c0-804c-bc5c17c46c7c a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "vendor" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#6389be7e-855b-44d1-a7c7-908963cbd181> .
+
+odml:cea66802-c446-4e92-9390-ed6aeb40cf90 a rdf:Bag ;
+    rdf:li "2" .
+
+odml:d0f568f8-4815-4c25-a83f-d8008fe8c3fa a rdf:Bag ;
+    rdf:li "lich an" .
+
+odml:d74a78bc-65ea-4741-9694-7cfe994c56cf a rdf:Bag ;
+    rdf:li "RELACS" .
+
+odml:dd2a8cbf-13f7-458a-bec9-e7bdb5cbd803 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Name" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#7bad8d43-25b1-4e60-9a31-7d39318f2e68> .
+
+odml:dec58898-2e4d-454e-880e-2fca2c91ff90 a odml:Section ;
+    odml:hasName "dataset-settings-2012-02-05-ad-Patch2LED-0" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#0543b1c5-9b15-4f87-a6fa-911eabda8579>,
+        <https://g-node.org/projects/odml-rdf#12d15ef7-207b-4bea-b1b6-4fba528d688e>,
+        <https://g-node.org/projects/odml-rdf#29b2703c-1cb2-47a5-9114-833fd47b3fc6>,
+        <https://g-node.org/projects/odml-rdf#362dfcc9-56b1-4928-b9b2-abcba11dbb16>,
+        <https://g-node.org/projects/odml-rdf#5932403b-354a-478a-8bd8-b76aebcb4f73>,
+        <https://g-node.org/projects/odml-rdf#6204df2b-2143-482f-8403-c886d6a411c8>,
+        <https://g-node.org/projects/odml-rdf#635bbf3c-7726-43d9-8bd6-de471fbaa366>,
+        <https://g-node.org/projects/odml-rdf#6fbeede1-0951-4497-985e-21eac5c39607>,
+        odml:a073fbae-3c93-4795-affa-dad606de2e89,
+        odml:a6a63ca4-0c47-4d96-8e06-a67bb1d71dd8,
+        odml:be0bab33-faaf-4160-9f7e-8ffc0e89f710,
+        odml:ee244d3f-5423-4660-bfbb-89df10a3dcf5,
+        odml:f6000c95-e140-483b-863e-873f0c826e15,
+        odml:fcd93745-ed40-4986-9736-92b08b00bbf2,
+        odml:fd0d3525-ef6a-4887-a578-a894ccc146b5 ;
+    odml:hasType "settings" .
+
+odml:dff922fb-fa2b-4eb3-9e99-eb0d037848d9 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Institute" ;
+    odml:hasValue odml:be71225c-d024-4e50-b938-5ea8cd4afde9 .
+
+odml:e0971131-2c90-404c-b70b-22d834ba9c01 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Temperature" ;
+    odml:hasUnit "C" ;
+    odml:hasValue odml:bd7c517d-7e07-46b7-a845-b56ae7ab2620 .
+
+odml:e232ef9a-a518-446a-8973-57b9d25381d0 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "vendor" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#69b35a6c-5034-4c90-8dd9-793b89f2e2dd> .
+
+odml:e2b72392-950f-4d0b-a716-860905bfbbc7 a rdf:Bag ;
+    rdf:li "Jan Benda" .
+
+odml:e5388257-4335-4af5-ba9a-2428036b1346 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "name" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#2750f7da-b03c-4f63-94e1-2fb418621020> .
+
+odml:e6b75a20-dede-481e-b4f6-8797b0ec15ff a rdf:Bag ;
+    rdf:li 5e-02 .
+
+odml:e99bc7fd-4ccc-42c7-a88e-80b8a29a98a7 a odml:Section ;
+    odml:hasName "Setup-2012-02-05-ad" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#4ab9e62b-e3d0-4363-914e-090f3f1e4a04>,
+        <https://g-node.org/projects/odml-rdf#5bdc7eba-0285-4c9f-b928-f1207e98637e>,
+        <https://g-node.org/projects/odml-rdf#6283ba11-6180-4dca-9347-c9a54b7c92b9>,
+        odml:abeb1da5-5c8b-4a15-93ea-8a3f13fd0d27,
+        odml:b844d2d8-7f1c-4ee0-bdcd-016c820b536e,
+        odml:c8fb9425-11ff-4e55-8ee5-7a4bec1665bb,
+        odml:dd2a8cbf-13f7-458a-bec9-e7bdb5cbd803,
+        odml:dff922fb-fa2b-4eb3-9e99-eb0d037848d9 ;
+    odml:hasType "Setup" .
+
+odml:ec0025d7-f076-47cb-bb5c-3358d7ce8545 a rdf:Bag ;
+    rdf:li 4e+00 .
+
+odml:ee244d3f-5423-4660-bfbb-89df10a3dcf5 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "EThreshold" ;
+    odml:hasUnit "ms" ;
+    odml:hasValue odml:e6b75a20-dede-481e-b4f6-8797b0ec15ff .
+
+odml:f2d9e216-d152-4f55-b413-870a9ffdab7f a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "project" .
+
+odml:f34b1fc8-6da2-4e6d-80a9-5cb00af169e6 a odml:Property ;
+    odml:hasDtype "integer" ;
+    odml:hasName "run" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#832a22bd-d36b-4664-8d8d-5905493cd270> .
+
+odml:f5354873-b2d7-4cc5-91d2-e94c76122ad7 a rdf:Bag ;
+    rdf:li "Male" .
+
+odml:f6000c95-e140-483b-863e-873f0c826e15 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "Repeats" ;
+    odml:hasUnit "times" ;
+    odml:hasValue odml:c3a3a7ed-2bc6-4f6e-b19d-7435c70dc75d .
+
+odml:f847bd58-9923-4804-ae10-477bfad742bc a rdf:Bag ;
+    rdf:li "ao-1" .
+
+odml:fcd93745-ed40-4986-9736-92b08b00bbf2 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "EThreshold2" ;
+    odml:hasUnit "ms" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#297b06f2-4e2a-4db7-9abd-c55c2a682a77> .
+
+odml:fd0d3525-ef6a-4887-a578-a894ccc146b5 a odml:Property ;
+    odml:hasDtype "float" ;
+    odml:hasName "LED2" ;
+    odml:hasUnit "LEDNr." ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#66b81f55-4e9d-464d-9856-d3f47b185310> .
+
+odml:fdb1d3e2-8e79-43a9-a824-516479d3259f a odml:Dataset ;
+    odml:hasName "dataset-2012-02-05-ad-Patch2LED-0" ;
+    odml:hasProperty <https://g-node.org/projects/odml-rdf#09059e10-a6c5-40fe-ad5b-0c926983ab38>,
+        <https://g-node.org/projects/odml-rdf#1629f3e5-07ed-46a2-9efd-6d1f46d3ab9c>,
+        <https://g-node.org/projects/odml-rdf#1641ee12-03d1-4cba-b94a-00c856b73a0c>,
+        <https://g-node.org/projects/odml-rdf#33b1eeb5-2dc5-4cb7-9285-8d2c228fb221>,
+        <https://g-node.org/projects/odml-rdf#5fb40570-6063-47df-9a57-6c4a5ae0c2b0>,
+        odml:b44e63e9-aa3a-4707-81a7-2636cb999f28,
+        odml:f2d9e216-d152-4f55-b413-870a9ffdab7f,
+        odml:f34b1fc8-6da2-4e6d-80a9-5cb00af169e6 ;
+    odml:hasSection odml:dec58898-2e4d-454e-880e-2fca2c91ff90 ;
+    odml:hasType "dataset" .
+
+odml:fe5c2a46-4412-49a7-ab96-7957d9f374bc a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Software version" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#7bef66ac-ba02-47d4-a245-734a9de52bb1> .
+
+odml:ff73232b-b745-432c-8310-4419579ffc66 a odml:Property ;
+    odml:hasDtype "string" ;
+    odml:hasName "Species" ;
+    odml:hasValue <https://g-node.org/projects/odml-rdf#2b924b77-5c43-42d7-a442-2d5693603370> .
+
+odml:c4c90f57-6a97-4b19-a200-9020ff5370b8 a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+

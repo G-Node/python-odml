@@ -1,0 +1,14 @@
+@prefix odml: <https://g-node.org/projects/odml-rdf#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+odml:Hub odml:hasDocument <https://g-node.org/projects/odml-rdf#611673db-174f-444e-8b0f-30e7673f9743> ;
+    odml:hasTerminology <https://g-node.org/projects/odml-rdf#387de5d3-fd09-4f95-aaa0-079008a899bc> .
+
+<https://g-node.org/projects/odml-rdf#611673db-174f-444e-8b0f-30e7673f9743> a odml:Document ;
+    odml:hasTerminology <https://g-node.org/projects/odml-rdf#387de5d3-fd09-4f95-aaa0-079008a899bc> .
+
+<https://g-node.org/projects/odml-rdf#387de5d3-fd09-4f95-aaa0-079008a899bc> a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+
