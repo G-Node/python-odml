@@ -1,110 +1,132 @@
-import re
+import pprint
+import time
 
-from rdflib import Namespace, RDF
-from rdflib.plugins.sparql import prepareQuery
-
-from odml.format import Document
-from odml.format import Property
-from odml.format import Section
+from odml.tools.query_creator import QueryCreator
 
 
 class FuzzyFinder(object):
-    """ 
-    Class for simplifying the creation of prepared SPARQL queries 
-    
-    Usage:
-        q = "doc(author:D. N. Adams) section(name:Stimulus) prop(name:Contrast, value:20, unit:%)"
-        prepared_query = FuzzyFinder().get_query(q)
     """
-    def __init__(self):
-        self.q_dict = {}
-        self.query = ''
+    FuzzyFinder tool for querying graph through 'fuzzy' queries. 
+    If the user do not know exact attributes and structure of the odML data model,
+    the finder executes multiple queries to better match the parameters and returns sets of triples.
+    """
+    def __init__(self, graph=None, q_params=None):
+        self.graph = graph
+        self.q_params = q_params
+        self.prepared_queries_list = []
+        self._subsets = []
 
-    def get_query(self, q_str):
-        # TODO find out if the validation for the q_str is important
-        # We can possibly warn about not used parts and print the parsed dictionary
-        self._parse_query_string(q_str)
-        self._prepare_query()
-        q = prepareQuery(self.query, initNs={"odml": Namespace("https://g-node.org/projects/odml-rdf#"),
-                                             "rdf": RDF})
-        return q
+    def find(self, graph, q_str=None, q_params=None):
+        """
+        Apply set of queries to the graph and returns info that was retrieved from queries.
+        
+        :param graph: graph object
+        :param q_params: dictionary object with set of parameters for a query
+        :param q_str: query string which used in QueryCreator class
+        :return: string which contains set of triples
+        """
+        self.graph = graph
+        if q_str and q_params:
+            raise ValueError("Please pass query parameters either as string or dict object")
 
-    def _prepare_query(self):
-        # TODO queries for multiple section included e.g. "sec(name:test1) sec(name:test2)"
-        self.query += 'SELECT * WHERE {\n'
+        if q_str:
+            creator = QueryCreator()
+            creator.parse_query_string(q_str)
+            self.q_params = creator.q_dict
+        elif q_params:
+            self.q_params = q_params
 
-        doc_attrs = self.q_dict['Doc']
-        if len(doc_attrs) > 0:
-            self.query += '?d rdf:type odml:Document .\n'
-            for i in doc_attrs:
-                if len(i) > 2:
-                    raise ValueError("Attributes in the query \"{}\" are not valid.".format(i))
-                else:
-                    attr = Document.rdf_map(i[0])
-                    if attr:
-                        self.query += '?d {0} \"{1}\" .\n'.format(re.sub("https://g-node.org/projects/odml-rdf#",
-                                                                         "odml:", attr), i[1])
+        self._generate_parameters_subsets()
 
-        sec_attrs = self.q_dict['Sec']
-        if len(sec_attrs) > 0:
-            self.query += '?d odml:hasSection ?s .\n' \
-                          '?s rdf:type odml:Section .\n'
-            for i in sec_attrs:
-                if len(i) > 2:
-                    raise ValueError("Attributes in the query \"{}\" are not valid.".format(i))
-                else:
-                    attr = Section.rdf_map(i[0])
-                    if attr:
-                        self.query += '?s {0} \"{1}\" .\n'.format(re.sub("https://g-node.org/projects/odml-rdf#",
-                                                                         "odml:", attr), i[1])
+        output_triples_string = ""
+        # TODO define when we want to stop loop, influence factors(time, previous result etc.)
+        for query in self._subsets:
+            q = self._prepare_query(query)
+            triples = self._execute_query(q)
+            if triples:
+                output_triples_string += q
+                output_triples_string += triples
+        return output_triples_string
 
-        prop_attrs = self.q_dict['Prop']
-        if len(prop_attrs) > 0:
-            self.query += '?s odml:hasProperty ?p .\n' \
-                          '?p rdf:type odml:Property .\n'
-            for i in prop_attrs:
-                if len(i) > 2:
-                    raise ValueError("Attributes in the query \"{}\" are not valid.".format(i))
-                elif i[0] == 'value':
-                    values = i[1]
-                    if values:
-                        self.query += "?p odml:hasValue ?v .\n?v rdf:type rdf:Bag .\n"
-                        for v in values:
-                            self.query += '?v rdf:li \"{}\" .\n'.format(v)
-                else:
-                    attr = Property.rdf_map(i[0])
-                    if attr:
-                        self.query += '?p {0} \"{1}\" .\n'.format(re.sub("https://g-node.org/projects/odml-rdf#",
-                                                                         "odml:", attr), i[1])
+    def _subsets_util_dfs(self, index, path, res, attrs):
+        """
+        Generates all subsets of attrs set using Depth-first search
+        Example (with numbers for explicity: [1,2,3] -> [[], [1], [2], [3], [1,2], [1,3], [2,3], [1,2,3]]
+        :param index: help index for going through list
+        :param path: array for saving subsets
+        :param res: result subset
+        :param attrs: input list of attrs e.g. [('Sec', ('name', 'some_name')), ('Sec', ('type', 'Stimulus'))]
+        """
+        if path:
+            res.append(path)
+        for i in range(index, len(attrs)):
+            self._subsets_util_dfs(i + 1, path + [attrs[i]], res, attrs)
 
-        self.query += '}'
+    def _generate_parameters_subsets(self):
+        """
+        Generates the set of parameters to create queries from specific to more broad ones.
+        """
+        attrs = []
+        possible_keys = QueryCreator.possible_q_dict_keys
+        for key in possible_keys:
+            if key in self.q_params.keys():
+                sec_attrs = self.q_params[key]
+                for i in sec_attrs:
+                    s = tuple([key, i])
+                    attrs.append(s)
 
-    def _parse_query_string(self, q_str):
-        doc_pattern = re.compile("(doc|document)\(.*?\)")
-        self._parse_doc(re.search(doc_pattern, q_str))
+        if len(attrs) > 0:
+            self._subsets_util_dfs(0, [], self._subsets, sorted(attrs))
 
-        sec_pattern = re.compile("(sec|section)\(.*?\)")
-        self._parse_sec(re.search(sec_pattern, q_str))
-        print(re.search(sec_pattern, q_str))
+        self._subsets.sort(key=len, reverse=True)
+        pprint.pprint(self._subsets)  # debug statement, left to explicitly show the list of subsets
 
-        prop_pattern = re.compile("(prop|property)\(.*?\)")
-        self._parse_prop(re.search(prop_pattern, q_str))
+    def _execute_query(self, query):
+        """
+        Execute prepared query on the graph
+        :param query: prepared query object
+        :return: string with output triples
+        """
+        t0 = time.perf_counter()
+        output_string = ""
+        for row in self.graph.query(query):
+            row_string = self._build_output_str(row)
+            output_string += row_string
+        t1 = time.perf_counter()
+        print('Execution time: ', t1-t0)  # left for debug and benchmarking
+        return output_string
 
-    def _parse_doc(self, doc):
-        p = re.compile("(id|author|date|version|repository|sections):(.*?)[,|\)]")
-        self.q_dict['Doc'] = re.findall(p, doc.group(0))
+    @staticmethod
+    def _build_output_str(row):
+        """
+        Build output string depending on the query variables
+        :param row: rdflib query row
+        :return: string with values
+        """
+        out_str = ""
+        possible_vars = QueryCreator.possible_query_variables
 
-    def _parse_sec(self, sec):
-        p = re.compile("(id|name|definition|type|repository|reference|sections|properties):(.*?)[,|\)]")
-        self.q_dict['Sec'] = re.findall(p, sec.group(0))
-        print("sec sdfds ", re.findall(p, sec.group(0)))
+        for v in possible_vars.keys():
+            try:
+                val = getattr(row, v)
+                out_str += '{0}: {1}\n'.format(possible_vars[v], val)
+            except AttributeError:
+                pass
+        return out_str
 
-    def _parse_prop(self, prop):
-        p = re.compile("(id|name|definition|dtype|unit|uncertainty|reference|value_origin):(.*?)[,|\)]")
-        self.q_dict['Prop'] = re.findall(p, prop.group(0))
-
-        p_value = re.compile("value:\[(.*)]")
-        value_group = re.findall(p_value, prop.group(0))
-        if value_group:
-            values = re.split(", ?", value_group[0])
-            self.q_dict['Prop'].append(('value', values))
+    @staticmethod
+    def _prepare_query(args):
+        """
+        Return a query for given parameters
+        :param args: dict with list of odML object attributes for creation query
+                     Example: {'Sec': [('name', 'some_name'), ('type', 'Stimulus')]}
+        :return: rdflib prepared query
+        """
+        q_params = {}
+        for arg in args:
+            if arg[0] in q_params:
+                q_params[arg[0]].append(arg[1])
+            else:
+                q_params[arg[0]] = [arg[1]]
+        creator = QueryCreator(q_params)
+        return creator.prepare_query()
