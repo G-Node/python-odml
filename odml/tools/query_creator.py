@@ -49,7 +49,7 @@ class QueryParser2(BaseQueryParser):
     def parse_query_string(self, q_str):
         """
         :param q_str: query string
-                      Example: select sec(name, type) prop(name) where Stimulus, Contrast
+                      Example: select sec(name, type) prop(type) where Stimulus, Contrast
         :return: dict object
                  Example: {'Sec': ['name', 'type'],
                            'Doc': ['author'],
