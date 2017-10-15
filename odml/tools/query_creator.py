@@ -41,86 +41,89 @@ class BaseQueryParser(ABC):
         pass
 
 
-class QueryParser2(BaseQueryParser):
+class QueryParserFuzzy(BaseQueryParser):
 
     def __init__(self):
-        super(QueryParser2, self).__init__()
+        super(QueryParserFuzzy, self).__init__()
 
     def parse_query_string(self, q_str):
         """
-        :param q_str: query string
-                      Example: select sec(name, type) prop(type) where Stimulus, Contrast
-        :return: dict object
+        Parse query string and returns dict object with parameters.
+        :param q_str: query string.
+                      Example: FIND sec(name, type) prop(type) HAVING Stimulus, Contrast
+        :return: dict object.
                  Example: {'Sec': ['name', 'type'],
                            'Doc': ['author'],
                            'Search': ['Stimulus', 'Contrast']}
         """
         self.q_dict = {}
-        select_pattern = re.compile("select(.*?)where")
-        select_group = re.search(select_pattern, q_str).group(1).strip()
-        if select_group:
-            self._parse_select(select_group)
+        find_pattern = re.compile("FIND(.*?)HAVING")
+        find_group = re.search(find_pattern, q_str).group(1).strip()
+        if find_group:
+            self._parse_find(find_group)
 
-        where_pattern = re.compile("where(.*)")
-        where_group = re.search(where_pattern, q_str).group(1).strip()
-        if where_group:
+        having_pattern = re.compile("HAVING(.*)")
+        having_group = re.search(having_pattern, q_str).group(1).strip()
+        if having_group:
             if 'Search' in self.q_dict.keys():
                 raise ValueError('Search values are already parsed')
-            self._parse_where(where_group)
+            self._parse_having(having_group)
         else:
-            raise ValueError('Search values in where part were not specified')
+            raise ValueError('Search values in having part were not specified')
 
         return self.q_dict
 
-    def _parse_select(self, select_part):
+    def _parse_find(self, find_part):
         """
-        Parses select string part into list of specific keys to whih search values would be apllied
+        Parses find string part into list of specific keys to whih search values would be apllied
         e.g. 'sec(name, type) prop(name)' into {'Sec': ['name', 'type'], 'Prop': ['name']} .
-        :param select_part: string which represent list of searchable odML data model objects 
+        
+        :param find_part: string which represent list of searchable odML data model objects 
                             like document(doc), sections(sec) or properties(prop).
                             e.g. 'sec(name, type) prop(name)'
         """
         doc_pattern = re.compile("(doc|document)\(.*?\)")
-        doc = re.search(doc_pattern, select_part)
+        doc = re.search(doc_pattern, find_part)
         if doc:
             self._parse_doc(doc)
 
         sec_pattern = re.compile("(sec|section)\(.*?\)")
-        sec = re.search(sec_pattern, select_part)
+        sec = re.search(sec_pattern, find_part)
         if sec:
             self._parse_sec(sec)
 
         prop_pattern = re.compile("(prop|property)\(.*?\)")
-        prop = re.search(prop_pattern, select_part)
+        prop = re.search(prop_pattern, find_part)
         if prop:
             self._parse_prop(prop)
 
     def _parse_doc(self, doc):
-        p = re.compile("(id|author|date|version|repository|sections)")
+        p = re.compile("[\(|, ](id|author|date|version|repository|sections)[\)|,]")
         if doc:
             self.q_dict['Doc'] = re.findall(p, doc.group(0))
 
     def _parse_sec(self, sec):
-        p = re.compile("(id|name|definition|type|repository|reference|sections|properties)")
+        p = re.compile("[\(|, ](id|name|definition|type|repository|reference|sections|properties)[\)|,]")
         if sec:
             self.q_dict['Sec'] = re.findall(p, sec.group(0))
 
     def _parse_prop(self, prop):
-        p = re.compile("(id|name|definition|dtype|unit|uncertainty|reference|value_origin)")
+        p = re.compile("[\(|, ](id|name|definition|dtype|unit|uncertainty|reference|value_origin)[\)|,]")
         if prop:
             self.q_dict['Prop'] = re.findall(p, prop.group(0))
 
-    def _parse_where(self, where_part):
+    def _parse_having(self, having_part):
         """
         Parses search value string into list of specific values 
-        e.g. 'Stimulus, Contrast, Date' into [Stimulus, Contrast, Date].
-        :param where_part: string with search values, e.g. 'Stimulus, Contrast'
+        e.g. 'Stimulus, Contrast, Date' into list [Stimulus, Contrast, Date].
+        
+        :param having_part: string with search values, e.g. 'Stimulus, Contrast'
                       Also spaces errors in the string like 'Stimulus,    ,  Contrast' will be ignored.
         """
         search_values_list = []
         search_params = re.compile("(.*?)(?:,|$)")
-        if where_part:
-            search_values = re.findall(search_params, where_part)
+        if having_part:
+            search_values = re.findall(search_params, having_part)
             for v in search_values:
                 if v.strip():
                     search_values_list.append(v.strip())
@@ -159,17 +162,17 @@ class QueryParser(BaseQueryParser):
         return self.q_dict
 
     def _parse_doc(self, doc):
-        p = re.compile("(id|author|date|version|repository|sections):(.*?)[,|\)]")
+        p = re.compile("[, |\(](id|author|date|version|repository|sections):(.*?)[,|\)]")
         if doc:
             self.q_dict['Doc'] = re.findall(p, doc.group(0))
 
     def _parse_sec(self, sec):
-        p = re.compile("(id|name|definition|type|repository|reference|sections|properties):(.*?)[,|\)]")
+        p = re.compile("[, |\(](id|name|definition|type|repository|reference|sections|properties):(.*?)[,|\)]")
         if sec:
             self.q_dict['Sec'] = re.findall(p, sec.group(0))
 
     def _parse_prop(self, prop):
-        p = re.compile("(id|name|definition|dtype|unit|uncertainty|reference|value_origin):(.*?)[,|\)]")
+        p = re.compile("[, |\(](id|name|definition|dtype|unit|uncertainty|reference|value_origin):(.*?)[,|\)]")
         if prop:
             self.q_dict['Prop'] = re.findall(p, prop.group(0))
 
@@ -189,7 +192,7 @@ class QueryCreator(BaseQueryCreator):
         q = "doc(author:D. N. Adams) section(name:Stimulus) prop(name:Contrast, value:20, unit:%)"
         prepared_query = QueryCreator().get_query(q, QueryParser())
         
-        q = "select sec(name, type) prop(name) where Recording, Recording-2012-04-04-ab, Date"
+        q = "FIND sec(name, type) prop(name) HAVING Recording, Recording-2012-04-04-ab, Date"
         prepared_query = QueryCreator().get_query(q, QueryParser2())
     """
 
@@ -201,10 +204,9 @@ class QueryCreator(BaseQueryCreator):
 
     def get_query(self, q_str=None, q_parser=None):
         """
-
-        :param q_parser: one of possible query parsers
+        :param q_parser: one of possible query parsers.
         :param q_str: doc(author:D. N. Adams) section(name:Stimulus) prop(name:Contrast, value:20, unit:%)
-        :return rdflib prepare query
+        :return rdflib prepare query.
         """
         # TODO find out if the validation for the q_str is important
         # We can possibly warn about not used parts and print the parsed dictionary
@@ -220,10 +222,11 @@ class QueryCreator(BaseQueryCreator):
 
     def _prepare_query(self):
         """
-        Creates rdflib query using parameters from self.q_dict
-        :return: string representing rdflib query
+        Creates rdflib query using parameters from self.q_dict.
+        :return: string representing rdflib query.
         """
-        # TODO queries for multiple section included e.g. "sec(name:test1) sec(name:test2)"
+
+        odml_uri = "https://g-node.org/projects/odml-rdf#"
         self.query = 'SELECT * WHERE {\n'
 
         if 'Doc' in self.q_dict.keys():
@@ -236,10 +239,9 @@ class QueryCreator(BaseQueryCreator):
                     else:
                         attr = Document.rdf_map(i[0])
                         if attr:
-                            self.query += '?d {0} \"{1}\" .\n'.format(re.sub("https://g-node.org/projects/odml-rdf#",
+                            self.query += '?d {0} \"{1}\" .\n'.format(re.sub(odml_uri,
                                                                              "odml:", attr), i[1])
         if 'Sec' in self.q_dict.keys():
-            print(self.q_dict)
             sec_attrs = self.q_dict['Sec']
             if len(sec_attrs) > 0:
                 self.query += '?d odml:hasSection ?s .\n' \
@@ -250,7 +252,7 @@ class QueryCreator(BaseQueryCreator):
                     else:
                         attr = Section.rdf_map(i[0])
                         if attr:
-                            self.query += '?s {0} \"{1}\" .\n'.format(re.sub("https://g-node.org/projects/odml-rdf#",
+                            self.query += '?s {0} \"{1}\" .\n'.format(re.sub(odml_uri,
                                                                              "odml:", attr), i[1])
         if 'Prop' in self.q_dict.keys():
             prop_attrs = self.q_dict['Prop']
@@ -269,7 +271,7 @@ class QueryCreator(BaseQueryCreator):
                     else:
                         attr = Property.rdf_map(i[0])
                         if attr:
-                            self.query += '?p {0} \"{1}\" .\n'.format(re.sub("https://g-node.org/projects/odml-rdf#",
+                            self.query += '?p {0} \"{1}\" .\n'.format(re.sub(odml_uri,
                                                                              "odml:", attr), i[1])
 
         self.query += '}\n'
