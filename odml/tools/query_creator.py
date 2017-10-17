@@ -1,5 +1,5 @@
 import re
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 
 from rdflib import Namespace, RDF
 from rdflib.plugins.sparql import prepareQuery
@@ -9,7 +9,10 @@ from odml.format import Property
 from odml.format import Section
 
 
-class BaseQueryCreator(ABC):
+class BaseQueryCreator:
+
+    __metaclass__ = ABCMeta
+
     possible_query_variables = {'d': 'Document', 's': 'Section',
                                 'p': 'Property', 'v': 'Bag URI', 'value': 'Value'}
 
@@ -32,7 +35,10 @@ class BaseQueryCreator(ABC):
         pass
 
 
-class BaseQueryParser(ABC):
+class BaseQueryParser:
+
+    __metaclass__ = ABCMeta
+
     def __init__(self):
         self.q_dict = {}
 
