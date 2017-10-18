@@ -43,7 +43,9 @@ class VersionConverter(object):
             tree = ET.ElementTree(ET.fromstring(filename.getvalue()))
         elif os.path.exists(filename) and os.path.getsize(filename) > 0:
             cls._fix_unmatching_tags(filename)
-            tree = ET.parse(filename)
+            # Make pretty print available by resetting format
+            parser = ET.XMLParser(remove_blank_text=True)
+            tree = ET.parse(filename, parser)
         else:
             print("File \"{}\" has not been converted because it is not a valid path to odml .xml file "
                   "nor io.StringIO object".format(filename))
