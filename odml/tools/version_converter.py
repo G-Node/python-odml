@@ -66,7 +66,9 @@ class VersionConverter(object):
                             value.remove(val_elem)
                     one_value = False
                 else:
-                    first_value.text += ", " + value.text
+                    if value.text:
+                        first_value.text += ", " + value.text
+
                     prop.remove(value)
         return tree
 
