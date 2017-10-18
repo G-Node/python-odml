@@ -3,6 +3,7 @@ import os
 import sys
 
 from lxml import etree as ET
+from .. import format
 from odml.tools.xmlparser import XML_VERSION
 
 try:
@@ -51,18 +52,24 @@ class VersionConverter(object):
         root = tree.getroot()
         root.set("version", XML_VERSION)
         for prop in root.iter("property"):
-            multiple_values = False
             main_val = None
+            multiple_values = False
+            prop_name = prop.find("name").text
             for value in prop.iter("value"):
                 if main_val is None:
                     main_val = value
                     for val_elem in value.iter():
+                        # Exclude handling the actual value entry
                         if val_elem.tag != "value":
-                            elem_name = cls._version_map[val_elem.tag] \
-                                if val_elem.tag in cls._version_map else val_elem.tag
-                            new_elem = ET.Element(elem_name)
-                            new_elem.text = val_elem.text
-                            value.getparent().append(new_elem)  # appending to the property
+                            # Export only attributes Property supports
+                            if val_elem.tag in format.Property._args:
+                                new_elem = ET.Element(val_elem.tag)
+                                new_elem.text = val_elem.text
+                                value.getparent().append(new_elem)  # appending to the property
+                            else:
+                                print("[Info] Value attribute '%s/%s' of Property '%s' will not be exported" %
+                                      (val_elem.tag, val_elem.text, prop_name))
+
                             value.remove(val_elem)
                 else:
                     if value.text:
