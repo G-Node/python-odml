@@ -70,6 +70,11 @@ class VersionConverter(object):
                         first_value.text += ", " + value.text
 
                     prop.remove(value)
+
+            # remove value element, if it does not contain any actual value
+            if not first_value.text:
+                prop.remove(first_value)
+
         return tree
 
     @classmethod
