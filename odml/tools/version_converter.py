@@ -55,20 +55,21 @@ class VersionConverter(object):
             main_val = None
             multiple_values = False
             prop_name = prop.find("name").text
+
+            # Special handling of Values
             for value in prop.iter("value"):
                 if main_val is None:
                     main_val = value
                     for val_elem in value.iter():
-                        # Exclude handling the actual value entry
                         if val_elem.tag != "value":
-                            # Export only attributes Property supports
+                            # Include only supported Property attributes
                             if val_elem.tag in format.Property._args:
                                 new_elem = ET.Element(val_elem.tag)
                                 new_elem.text = val_elem.text
                                 value.getparent().append(new_elem)  # appending to the property
                             else:
-                                print("[Info] Value attribute '%s/%s' of Property '%s' will not be exported" %
-                                      (val_elem.tag, val_elem.text, prop_name))
+                                print("[Info] Omitted non-Value attribute '%s: %s/%s'" %
+                                      (prop_name, val_elem.tag, val_elem.text))
 
                             value.remove(val_elem)
                 else:
@@ -87,6 +88,26 @@ class VersionConverter(object):
             # multiple values require brackets
             elif main_val.text and multiple_values:
                 main_val.text = "[" + main_val.text + "]"
+
+            # Exclude unsupported Property attributes
+            for e in prop:
+                if e.tag not in format.Property._args and e.tag != "value":
+                    print("[Info] Omitted non-Property attribute '%s: %s/%s'" % (prop_name, e.tag, e.text))
+                    prop.remove(e)
+
+        # Exclude unsupported Section attributes
+        for sec in root.iter("section"):
+            sec_name = sec.find("name").text
+            for e in sec:
+                if e.tag not in format.Section._args and e.tag != "value":
+                    print("[Info] Omitted non-Section attribute '%s: %s/%s'" % (sec_name, e.tag, e.text))
+                    sec.remove(e)
+
+        # Exclude unsupported Document attributes
+        for e in root:
+            if e.tag not in format.Document._args and e.tag != "value":
+                print("[Info] Omitted non-Document attribute '%s/%s'" % (e.tag, e.text))
+                root.remove(e)
 
         return tree
 
