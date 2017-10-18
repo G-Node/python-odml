@@ -19,7 +19,8 @@ class VersionConverter(object):
     header = """<?xml version="1.0" encoding="UTF-8"?>\n"""
 
     _version_map = {
-        'type': 'type'
+        'type': 'type',
+        'filename': 'value_origin'
     }
 
     _error_strings = {
@@ -67,6 +68,10 @@ class VersionConverter(object):
                                 new_elem = ET.Element(val_elem.tag)
                                 new_elem.text = val_elem.text
                                 value.getparent().append(new_elem)  # appending to the property
+                            elif val_elem.tag in cls._version_map:
+                                new_elem = ET.Element(cls._version_map[val_elem.tag])
+                                new_elem.text = val_elem.text
+                                value.getparent().append(new_elem)
                             else:
                                 print("[Info] Omitted non-Value attribute '%s: %s/%s'" %
                                       (prop_name, val_elem.tag, val_elem.text))
