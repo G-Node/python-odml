@@ -53,46 +53,53 @@ class VersionConverter(object):
         root = tree.getroot()
         root.set("version", XML_VERSION)
         for prop in root.iter("property"):
-            main_val = None
+            main_val = ET.Element("value")
             multiple_values = False
             prop_name = prop.find("name").text
 
             # Special handling of Values
             for value in prop.iter("value"):
-                if main_val is None:
-                    main_val = value
-                    for val_elem in value.iter():
-                        if val_elem.tag != "value":
-                            # Include only supported Property attributes
-                            if val_elem.tag in format.Property._args:
-                                new_elem = ET.Element(val_elem.tag)
-                                new_elem.text = val_elem.text
-                                value.getparent().append(new_elem)  # appending to the property
-                            elif val_elem.tag in cls._version_map:
-                                new_elem = ET.Element(cls._version_map[val_elem.tag])
-                                new_elem.text = val_elem.text
-                                value.getparent().append(new_elem)
-                            else:
-                                print("[Info] Omitted non-Value attribute '%s: %s/%s'" %
-                                      (prop_name, val_elem.tag, val_elem.text))
+                for val_elem in value.iter():
+                    if val_elem.tag != "value":
+                        # Check whether current Value attribute has already been exported
+                        # under its own or a different name. Give a warning, if the values differ.
+                        check_export = value.getparent().find(cls._version_map[val_elem.tag]) \
+                            if val_elem.tag in cls._version_map else value.getparent().find(val_elem.tag)
 
-                            value.remove(val_elem)
-                else:
-                    if value.text:
-                        if main_val.text:
-                            main_val.text += ", " + value.text
-                            multiple_values = True
+                        if check_export is not None:
+                            if check_export.text != val_elem.text:
+                                print("[Warning] Property '%s' Value attribute '%s/%s' "
+                                      "already exported, omitting '%s'" %
+                                      (prop_name, val_elem.tag, check_export.text, val_elem.text))
+                        # Include only supported Property attributes
+                        elif val_elem.tag in format.Property._args:
+                            new_elem = ET.Element(val_elem.tag)
+                            new_elem.text = val_elem.text
+                            value.getparent().append(new_elem)
+                        elif val_elem.tag in cls._version_map:
+                            new_elem = ET.Element(cls._version_map[val_elem.tag])
+                            new_elem.text = val_elem.text
+                            value.getparent().append(new_elem)
                         else:
-                            main_val.text = value.text
+                            print("[Info] Omitted non-Value attribute '%s: %s/%s'" %
+                                  (prop_name, val_elem.tag, val_elem.text))
 
-                    prop.remove(value)
+                if value.text:
+                    if main_val.text:
+                        main_val.text += ", " + value.text
+                        multiple_values = True
+                    else:
+                        main_val.text = value.text
 
-            # remove value element, if it does not contain any actual value
-            if not main_val.text:
-                prop.remove(main_val)
-            # multiple values require brackets
-            elif main_val.text and multiple_values:
-                main_val.text = "[" + main_val.text + "]"
+                prop.remove(value)
+
+            # Append value element only if it contains an actual value
+            if main_val.text:
+                # Multiple values require brackets
+                if multiple_values:
+                    main_val.text = "[" + main_val.text + "]"
+
+                prop.append(main_val)
 
             # Exclude unsupported Property attributes
             for e in prop:
