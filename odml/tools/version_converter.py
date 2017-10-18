@@ -51,6 +51,7 @@ class VersionConverter(object):
         root = tree.getroot()
         root.set("version", XML_VERSION)
         for prop in root.iter("property"):
+            multiple_values = False
             main_val = None
             for value in prop.iter("value"):
                 if main_val is None:
@@ -65,13 +66,20 @@ class VersionConverter(object):
                             value.remove(val_elem)
                 else:
                     if value.text:
-                        main_val.text += ", " + value.text
+                        if main_val.text:
+                            main_val.text += ", " + value.text
+                            multiple_values = True
+                        else:
+                            main_val.text = value.text
 
                     prop.remove(value)
 
             # remove value element, if it does not contain any actual value
             if not main_val.text:
                 prop.remove(main_val)
+            # multiple values require brackets
+            elif main_val.text and multiple_values:
+                main_val.text = "[" + main_val.text + "]"
 
         return tree
 
