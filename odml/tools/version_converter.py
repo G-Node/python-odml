@@ -51,29 +51,27 @@ class VersionConverter(object):
         root = tree.getroot()
         root.set("version", XML_VERSION)
         for prop in root.iter("property"):
-            one_value = True
-            first_value = None
+            main_val = None
             for value in prop.iter("value"):
-                if one_value:
-                    first_value = value
+                if main_val is None:
+                    main_val = value
                     for val_elem in value.iter():
-                        if val_elem.tag != "value" and one_value:
+                        if val_elem.tag != "value":
                             elem_name = cls._version_map[val_elem.tag] \
                                 if val_elem.tag in cls._version_map else val_elem.tag
                             new_elem = ET.Element(elem_name)
                             new_elem.text = val_elem.text
                             value.getparent().append(new_elem)  # appending to the property
                             value.remove(val_elem)
-                    one_value = False
                 else:
                     if value.text:
-                        first_value.text += ", " + value.text
+                        main_val.text += ", " + value.text
 
                     prop.remove(value)
 
             # remove value element, if it does not contain any actual value
-            if not first_value.text:
-                prop.remove(first_value)
+            if not main_val.text:
+                prop.remove(main_val)
 
         return tree
 
