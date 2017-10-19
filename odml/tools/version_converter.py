@@ -110,9 +110,9 @@ class VersionConverter(object):
 
                 prop.append(main_val)
 
-            # Exclude unsupported Property attributes
+            # Exclude unsupported Property attributes, ignore comments
             for e in prop:
-                if e.tag not in format.Property._args and e.tag != "value":
+                if e.tag not in format.Property._args and isinstance(e.tag, str):
                     print("[Info] Omitted non-Property attribute '%s: %s/%s'" % (prop_name, e.tag, e.text))
                     prop.remove(e)
 
@@ -126,13 +126,13 @@ class VersionConverter(object):
         for sec in root.iter("section"):
             sec_name = sec.find("name").text
             for e in sec:
-                if e.tag not in format.Section._args and e.tag != "value":
+                if e.tag not in format.Section._args and isinstance(e.tag, str):
                     print("[Info] Omitted non-Section attribute '%s: %s/%s'" % (sec_name, e.tag, e.text))
                     sec.remove(e)
 
-        # Exclude unsupported Document attributes
+        # Exclude unsupported Document attributes, ignore comments
         for e in root:
-            if e.tag not in format.Document._args and e.tag != "value":
+            if e.tag not in format.Document._args and isinstance(e.tag, str):
                 print("[Info] Omitted non-Document attribute '%s/%s'" % (e.tag, e.text))
                 root.remove(e)
 
