@@ -54,11 +54,18 @@ class VersionConverter(object):
         tree = cls._replace_same_name_entities(tree)
         root = tree.getroot()
         root.set("version", XML_VERSION)
+
+        rem_property = []
         for prop in root.iter("property"):
             main_val = ET.Element("value")
             multiple_values = False
-            prop_name = prop.find("name").text
 
+            # If a property has no name tag, mark it for removal
+            if prop.find("name") is None:
+                rem_property.append(prop)
+                continue
+
+            prop_name = prop.find("name").text
             # Special handling of Values
             for value in prop.iter("value"):
                 for val_elem in value.iter():
@@ -109,7 +116,13 @@ class VersionConverter(object):
                     print("[Info] Omitted non-Property attribute '%s: %s/%s'" % (prop_name, e.tag, e.text))
                     prop.remove(e)
 
-        # Exclude unsupported Section attributes
+        # Exclude Properties without name tags
+        for p in rem_property:
+            print("[Warning] Omitted Property without name tag: '%s'" % ET.tostring(p))
+            parent = p.getparent()
+            parent.remove(p)
+
+        # Exclude unsupported Section attributes, ignore comments
         for sec in root.iter("section"):
             sec_name = sec.find("name").text
             for e in sec:
