@@ -13,7 +13,7 @@ def load(filename, backend="xml"):
 
 def save(obj, filename, backend="xml"):
     writer = ODMLWriter(backend)
-    if ".%s" % backend not in filename:
+    if "." not in filename.split(os.pathsep)[-1]:
         filename = filename + ".%s" % backend
     return writer.write_file(obj, filename)
 
