@@ -215,41 +215,84 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test valid section tags
         self.assertEqual(len(sec[0]), 10)
-        self.assertEqual(len(sec[0].findall("name")), 1)
         self.assertEqual(sec[0].find("name").text, "Section name")
-        self.assertEqual(len(sec[0].findall("type")), 1)
         self.assertEqual(sec[0].find("type").text, "Section type")
-        self.assertEqual(len(sec[0].findall("definition")), 1)
         self.assertEqual(sec[0].find("definition").text, "Section definition")
-        self.assertEqual(len(sec[0].findall("reference")), 1)
         self.assertEqual(sec[0].find("reference").text, "Section reference")
-        self.assertEqual(len(sec[0].findall("link")), 1)
         self.assertEqual(sec[0].find("link").text, "Section link")
-        self.assertEqual(len(sec[0].findall("repository")), 1)
         self.assertEqual(sec[0].find("repository").text, "Section repository")
-        self.assertEqual(len(sec[0].findall("include")), 1)
         self.assertEqual(sec[0].find("include").text, "Section include")
         self.assertEqual(len(sec[0].findall("property")), 2)
+        self.assertEqual(len(sec[0].findall("section")), 1)
 
         # Test valid subsection tags
         subsec = sec[0].find("section")
         self.assertEqual(len(subsec), 8)
-        self.assertEqual(len(subsec.findall("name")), 1)
         self.assertEqual(subsec.find("name").text, "SubSection name")
-        self.assertEqual(len(subsec.findall("type")), 1)
         self.assertEqual(subsec.find("type").text, "SubSection type")
-        self.assertEqual(len(subsec.findall("definition")), 1)
         self.assertEqual(subsec.find("definition").text, "SubSection definition")
-        self.assertEqual(len(subsec.findall("reference")), 1)
         self.assertEqual(subsec.find("reference").text, "SubSection reference")
-        self.assertEqual(len(subsec.findall("link")), 1)
         self.assertEqual(subsec.find("link").text, "SubSection link")
-        self.assertEqual(len(subsec.findall("repository")), 1)
         self.assertEqual(subsec.find("repository").text, "SubSection repository")
-        self.assertEqual(len(subsec.findall("include")), 1)
         self.assertEqual(subsec.find("include").text, "SubSection include")
         self.assertEqual(len(subsec.findall("property")), 1)
 
         # Test absence of non-Section tags
         self.assertEqual(len(sec[1]), 1)
         self.assertEqual(len(sec[1].findall("name")), 1)
+
+    def test_convert_odml_file_property(self):
+        """Test proper conversion of the odml.Property entity from
+        odml model version 1 to version 1.1.
+
+        The test checks for the proper conversion of all valid
+        Property tags and exclusion of non-Property tags.
+        """
+
+        doc = """
+                <odML version="1">
+                  <section>
+                    <name>Valid Property tags test</name>
+                    <property>
+                      <name>Property name</name>
+                      <type>Property type</type>
+                      <definition>Property definition</definition>
+                      <dependency>Property dependency</dependency>
+                      <dependencyvalue>Property dependency value</dependencyvalue>
+                    </property>
+                  </section>
+
+                  <section>
+                    <name>Unsupported Property tags test</name>
+                    <property>
+                      <name>Invalid Property</name>
+                      <invalid>Invalid tag</invalid>
+                      <section><name>Invalid Section</name></section>
+                    </property>
+                    <property>Property with no name</property>
+                  </section>
+                </odML>
+        """
+
+        file = io.StringIO(unicode(doc))
+        conv_doc = VC.convert_odml_file(file)
+        root = conv_doc.getroot()
+        sec = root.findall("section")
+
+        # Test valid Property tags
+        self.assertEqual(sec[0].find("name").text, "Valid Property tags test")
+        self.assertEqual(len(sec[0].findall("property")), 1)
+        prop = sec[0].find("property")
+        self.assertEqual(len(prop), 5)
+        self.assertEqual(prop.find("name").text, "Property name")
+        self.assertEqual(prop.find("type").text, "Property type")
+        self.assertEqual(prop.find("definition").text, "Property definition")
+        self.assertEqual(prop.find("dependency").text, "Property dependency")
+        self.assertEqual(prop.find("dependencyvalue").text, "Property dependency value")
+
+        # Test non-import of Property w/o name
+        self.assertEqual(len(sec[1].findall("property")), 1)
+        # Test absence of non-Property tags
+        prop = sec[1].find("property")
+        self.assertEqual(len(prop), 1)
+        self.assertEqual(len(prop.findall("name")), 1)
