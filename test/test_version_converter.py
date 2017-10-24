@@ -296,3 +296,129 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec[1].find("property")
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
+
+    def test_convert_odml_file_value(self):
+        """Test proper conversion of the odml.Value entity from
+        odml model version 1 to version 1.1.
+
+        The test checks for the proper conversion of all valid
+        Value tags and exclusion of non-Value tags.
+        """
+
+        doc = """
+                <odML version="1">
+                  <section>
+                    <name>Values export test</name>
+                    <property>
+                      <name>Single value export</name>
+                      <value>1</value>
+                    </property>
+                
+                    <property>
+                      <name>Multiple values export</name>
+                      <value>1</value>
+                      <value>2</value>
+                      <value>3</value>
+                    </property>
+                
+                    <property>
+                      <name>Empty value export</name>
+                      <value></value>
+                      <value></value>
+                      <value></value>
+                      <value></value>
+                    </property>
+                
+                    <property>
+                      <name>Supported Value tags export</name>
+                      <value>0.1
+                        <type>float</type>
+                        <uncertainty>0.05</uncertainty>
+                        <unit>mV</unit>
+                        <filename>raw.txt</filename>
+                        <reference>Value reference</reference>
+                      </value>
+                    </property>
+                
+                    <property>
+                      <name>Supported Multiple Value tags export</name>
+                      <value>0.1
+                        <unit>mV</unit>
+                        <filename>raw.txt</filename>
+                        <reference>Value reference</reference>
+                      </value>
+                      <value>0.2
+                        <type>float</type>
+                        <uncertainty>0.05</uncertainty>
+                        <unit>mV</unit>
+                        <filename>raw.txt</filename>
+                        <reference>Value reference</reference>
+                      </value>
+                      <value>3
+                        <type>int</type>
+                        <uncertainty>0.06</uncertainty>
+                        <unit>kV</unit>
+                        <filename>raw2.txt</filename>
+                        <reference>Value reference 2</reference>
+                      </value>
+                    </property>
+                
+                    <property>
+                      <name>Unsupported Value tags export</name>
+                      <value>
+                        <invalid>Invalid Value tag</invalid>
+                        <encoder>Encoder</encoder>
+                        <checksum>Checksum</checksum>
+                      </value>
+                    </property>
+                
+                  </section>
+                </odML>
+        """
+
+        file = io.StringIO(unicode(doc))
+        conv_doc = VC.convert_odml_file(file)
+        root = conv_doc.getroot()
+        sec = root.find("section")
+        self.assertEqual(len(sec), 7)
+
+        # Test single value export
+        prop = sec.findall("property")[0]
+        self.assertEqual(len(prop), 2)
+        self.assertEqual(prop.find("value").text, "1")
+
+        # Test multiple value export
+        prop = sec.findall("property")[1]
+        self.assertEqual(len(prop), 2)
+        self.assertEqual(prop.find("value").text, "[1, 2, 3]")
+
+        # Test empty value export
+        prop = sec.findall("property")[2]
+        self.assertEqual(len(prop), 1)
+        self.assertEqual(prop.find("name").text, "Empty value export")
+
+        # Test valid Value tags
+        prop = sec.findall("property")[3]
+        self.assertEqual(len(prop), 7)
+        self.assertEqual(prop.find("value").text, "0.1")
+        self.assertEqual(prop.find("type").text, "float")
+        self.assertEqual(prop.find("uncertainty").text, "0.05")
+        self.assertEqual(prop.find("unit").text, "mV")
+        self.assertEqual(prop.find("value_origin").text, "raw.txt")
+        self.assertEqual(prop.find("reference").text, "Value reference")
+        self.assertEqual(len(prop.findall("filename")), 0)
+
+        # Test valid multiple Value tag export
+        prop = sec.findall("property")[4]
+        self.assertEqual(len(prop), 7)
+        self.assertEqual(prop.find("value").text, "[0.1, 0.2, 3]")
+        self.assertEqual(prop.find("type").text, "float")
+        self.assertEqual(prop.find("uncertainty").text, "0.05")
+        self.assertEqual(prop.find("unit").text, "mV")
+        self.assertEqual(prop.find("value_origin").text, "raw.txt")
+        self.assertEqual(prop.find("reference").text, "Value reference")
+
+        # Test non-export of invalid Value tags
+        prop = sec.findall("property")[5]
+        self.assertEqual(len(prop), 1)
+        self.assertEqual(len(prop.findall("name")), 1)
