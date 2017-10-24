@@ -94,10 +94,10 @@ class VersionConverter(object):
 
                 if value.text:
                     if main_val.text:
-                        main_val.text += ", " + value.text
+                        main_val.text += ", " + value.text.strip()
                         multiple_values = True
                     else:
-                        main_val.text = value.text
+                        main_val.text = value.text.strip()
 
                 prop.remove(value)
 
