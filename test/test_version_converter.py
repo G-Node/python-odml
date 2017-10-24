@@ -1,10 +1,9 @@
 import io
 import re
 import unittest
+
 from contextlib import contextmanager
-
 from lxml import etree as ET
-
 from odml.tools.version_converter import VersionConverter
 
 try:
@@ -119,7 +118,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(val_elems[0].find("unit"), None)
         self.assertEqual(val_elems[0].find("type"), None)
         self.assertEqual(val_elems[0].find("uncertainty"), None)
-        self.assertEqual(val_elems[0].text, "0, 45")
+        self.assertEqual(val_elems[0].text, "[0, 45]")
         self.assertEqual(prop.find("unit").text, "deg")
         self.assertEqual(len(prop.findall("unit")), 1)
         self.assertEqual(prop.find("type").text, "int")
