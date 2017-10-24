@@ -8,10 +8,8 @@ Parses odML files and documents.
 """
 
 import json
-
 import yaml
-
-from odml import format
+from .. import format
 from . import xmlparser
 
 # FIX ME: Version should not be hardcoded here. Import from odML module after
@@ -103,20 +101,26 @@ class ODMLWriter:
 
     def write_file(self, odml_document, filename):
 
-        if self.parser == 'XML':
-            xmlparser.XMLWriter(odml_document).write_file(filename)
+        file = open(filename, 'w')
+        file.write(self.to_string(odml_document))
+        file.close()
+
+    def to_string(self, odml_document):
+        string_doc = ''
+
+        if self.parser == 'XML' or self.parser == 'ODML':
+            string_doc = str(xmlparser.XMLWriter(odml_document))
         else:
             self.to_dict(odml_document)
             odml_output = {}
             odml_output['Document'] = self.parsed_doc
             odml_output['odml-version'] = odml_version
 
-            f = open(filename, 'w')
             if self.parser == 'YAML':
-                f.write(yaml.dump(odml_output, default_flow_style=False))
+                string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
-                f.write(json.dumps(odml_output, indent=4))
-            f.close()
+                string_doc = json.dumps(odml_output, indent=4)
+        return string_doc
 
 
 class ODMLReader:
@@ -213,7 +217,7 @@ class ODMLReader:
 
         return odml_props
 
-    def fromFile(self, file, doc_format=None):
+    def from_file(self, file, doc_format=None):
 
         if self.parser == 'XML':
             odml_doc = xmlparser.XMLReader().fromFile(file)
@@ -248,7 +252,7 @@ class ODMLReader:
             self.doc = RDFReader().from_file(file, doc_format)
             return self.doc
 
-    def fromString(self, string, doc_format=None):
+    def from_string(self, string, doc_format=None):
 
         if self.parser == 'XML':
             odml_doc = xmlparser.XMLReader().fromString(string)

@@ -42,7 +42,8 @@ def to_csv(val):
     writer = csv.writer(stream, dialect="excel")
     writer.writerow(unicode_values)
     csv_string = stream.getvalue().strip()
-    csv_string = "[" + csv_string + "]"
+    if len(unicode_values) > 1:
+        csv_string = "[" + csv_string + "]"
     return csv_string
 
 
