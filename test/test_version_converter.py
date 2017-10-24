@@ -11,7 +11,7 @@ try:
 except NameError:
     unicode = str
 
-VS = VersionConverter
+VC = VersionConverter
 
 
 class TestVersionConverter(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(props_names[0], props_names[1])
 
         tree = ET.ElementTree(root)
-        tree = VS._replace_same_name_entities(tree)
+        tree = VC._replace_same_name_entities(tree)
         root = tree.getroot()
         sec_names = []
         sec_elems = []
@@ -83,17 +83,17 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(props_names[1], "prop_name-2")
 
     def test_fix_unmatching_tags(self):
-        first_elem = list(VS._error_strings.keys())[0]
+        first_elem = list(VC._error_strings.keys())[0]
         self.doc = re.sub("<value>", "<value>" + first_elem, self.doc, count=1)
         file = io.StringIO(unicode(self.doc))
         with self.assertRaises(Exception):
             ET.fromstring(file.getvalue())
-        file = VS._fix_unmatching_tags(file)
+        file = VC._fix_unmatching_tags(file)
         with self.assertNotRaises(Exception):
             ET.fromstring(file.getvalue())
 
     def test_convert_odml_file(self):
-        self.assertEqual(VS.convert_odml_file("/not_valid_path"), None)
+        self.assertEqual(VC.convert_odml_file("/not_valid_path"), None)
         root = ET.fromstring(self.doc)
         prop = root.find("section").find("property")
         val_elems = []
@@ -107,7 +107,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("type"), None)
 
         file = io.StringIO(unicode(self.doc))
-        tree = VS.convert_odml_file(file)
+        tree = VC.convert_odml_file(file)
         root = tree.getroot()
         prop = root.find("section").find("property")
         val_elems = []
@@ -124,3 +124,41 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("type").text, "int")
         self.assertEqual(len(prop.findall("type")), 1)
         self.assertEqual(prop.find("uncertainty").text, None)
+
+    def test_convert_odml_file_document(self):
+        """Test proper conversion of the odml.Document entity from
+        odml model version 1 to version 1.1.
+
+        The test checks for the proper conversion of all valid
+        Document tags and exclusion of non-Document tags.
+        """
+
+        doc = """
+                <odML version="1">
+                  <!-- Valid Document tags test -->
+                  <author>Document author</author>
+                  <version>1</version>
+                  <date>2017-10-18</date>
+                  <repository>Document repository</repository>
+                  <section><name>Document section</name></section>
+                
+                  <!-- Unsupported Document tags test -->
+                  <invalid>Invalid Document tag</invalid>
+                  <property>Invalid Document property</property>
+                  <value>Invalid Document value</value>
+                </odML>
+        """
+
+        file = io.StringIO(unicode(doc))
+        conv_doc = VC.convert_odml_file(file)
+        root = conv_doc.getroot()
+        # Test export of Document tags
+        self.assertEqual(len(root.findall("author")), 1)
+        self.assertEqual(len(root.findall("date")), 1)
+        self.assertEqual(len(root.findall("repository")), 1)
+        self.assertEqual(len(root.findall("section")), 1)
+
+        # Test absence of non-Document tags
+        self.assertEqual(len(root.findall("invalid")), 0)
+        self.assertEqual(len(root.findall("property")), 0)
+        self.assertEqual(len(root.findall("value")), 0)
