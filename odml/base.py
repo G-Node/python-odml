@@ -91,6 +91,12 @@ class baseobject(_baseobj):
         """
         raise NotImplementedError
 
+    def __hash__(self):
+        """
+        Allow all odML objects to be hash-able.
+        """
+        return id(self)
+
 
 class SafeList(list):
 
