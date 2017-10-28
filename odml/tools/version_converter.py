@@ -3,6 +3,7 @@ import os
 import sys
 
 from lxml import etree as ET
+from .. import format
 from odml.tools.xmlparser import XML_VERSION
 
 try:
@@ -18,7 +19,8 @@ class VersionConverter(object):
     header = """<?xml version="1.0" encoding="UTF-8"?>\n"""
 
     _version_map = {
-        'type': 'type'
+        'type': 'type',
+        'filename': 'value_origin'
     }
 
     _error_strings = {
@@ -41,7 +43,9 @@ class VersionConverter(object):
             tree = ET.ElementTree(ET.fromstring(filename.getvalue()))
         elif os.path.exists(filename) and os.path.getsize(filename) > 0:
             cls._fix_unmatching_tags(filename)
-            tree = ET.parse(filename)
+            # Make pretty print available by resetting format
+            parser = ET.XMLParser(remove_blank_text=True)
+            tree = ET.parse(filename, parser)
         else:
             print("File \"{}\" has not been converted because it is not a valid path to odml .xml file "
                   "nor io.StringIO object".format(filename))
@@ -50,24 +54,87 @@ class VersionConverter(object):
         tree = cls._replace_same_name_entities(tree)
         root = tree.getroot()
         root.set("version", XML_VERSION)
+        rem_property = []
         for prop in root.iter("property"):
-            one_value = True
-            first_value = None
+            main_val = ET.Element("value")
+            multiple_values = False
+
+            # If a property has no name tag, mark it for removal
+            if prop.find("name") is None:
+                rem_property.append(prop)
+                continue
+
+            prop_name = prop.find("name").text
+            # Special handling of Values
             for value in prop.iter("value"):
-                if one_value:
-                    first_value = value
-                    for val_elem in value.iter():
-                        if val_elem.tag != "value" and one_value:
-                            elem_name = cls._version_map[val_elem.tag] \
-                                if val_elem.tag in cls._version_map else val_elem.tag
-                            new_elem = ET.Element(elem_name)
+                for val_elem in value.iter():
+                    if val_elem.tag != "value":
+                        # Check whether current Value attribute has already been exported
+                        # under its own or a different name. Give a warning, if the values differ.
+                        check_export = value.getparent().find(cls._version_map[val_elem.tag]) \
+                            if val_elem.tag in cls._version_map else value.getparent().find(val_elem.tag)
+
+                        if check_export is not None:
+                            if check_export.text != val_elem.text:
+                                print("[Warning] Property '%s' Value attribute '%s/%s' "
+                                      "already exported, omitting '%s'" %
+                                      (prop_name, val_elem.tag, check_export.text, val_elem.text))
+                        # Include only supported Property attributes
+                        elif val_elem.tag in format.Property._args:
+                            new_elem = ET.Element(val_elem.tag)
                             new_elem.text = val_elem.text
-                            value.getparent().append(new_elem)  # appending to the property
-                            value.remove(val_elem)
-                    one_value = False
-                else:
-                    first_value.text += ", " + value.text
-                    prop.remove(value)
+                            value.getparent().append(new_elem)
+                        elif val_elem.tag in cls._version_map:
+                            new_elem = ET.Element(cls._version_map[val_elem.tag])
+                            new_elem.text = val_elem.text
+                            value.getparent().append(new_elem)
+                        else:
+                            print("[Info] Omitted non-Value attribute '%s: %s/%s'" %
+                                  (prop_name, val_elem.tag, val_elem.text))
+
+                if value.text:
+                    if main_val.text:
+                        main_val.text += ", " + value.text.strip()
+                        multiple_values = True
+                    else:
+                        main_val.text = value.text.strip()
+
+                prop.remove(value)
+
+            # Append value element only if it contains an actual value
+            if main_val.text:
+                # Multiple values require brackets
+                if multiple_values:
+                    main_val.text = "[" + main_val.text + "]"
+
+                prop.append(main_val)
+
+            # Exclude unsupported Property attributes, ignore comments
+            for e in prop:
+                if e.tag not in format.Property._args and isinstance(e.tag, str):
+                    print("[Info] Omitted non-Property attribute '%s: %s/%s'" % (prop_name, e.tag, e.text))
+                    prop.remove(e)
+
+        # Exclude Properties without name tags
+        for p in rem_property:
+            print("[Warning] Omitted Property without name tag: '%s'" % ET.tostring(p))
+            parent = p.getparent()
+            parent.remove(p)
+
+        # Exclude unsupported Section attributes, ignore comments
+        for sec in root.iter("section"):
+            sec_name = sec.find("name").text
+            for e in sec:
+                if e.tag not in format.Section._args and isinstance(e.tag, str):
+                    print("[Info] Omitted non-Section attribute '%s: %s/%s'" % (sec_name, e.tag, e.text))
+                    sec.remove(e)
+
+        # Exclude unsupported Document attributes, ignore comments
+        for e in root:
+            if e.tag not in format.Document._args and isinstance(e.tag, str):
+                print("[Info] Omitted non-Document attribute '%s/%s'" % (e.tag, e.text))
+                root.remove(e)
+
         return tree
 
     @classmethod

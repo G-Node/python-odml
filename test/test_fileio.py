@@ -29,12 +29,13 @@ class TestTypes(unittest.TestCase):
         odml.display(doc)
 
     def test_invalid_parser(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NotImplementedError):
             odml.load(self.file, 'html')
 
         doc = odml.load(self.file)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NotImplementedError):
             odml.save(doc, self.file + '_copy_html', 'html')
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NotImplementedError):
             odml.display(doc, 'html')
+
