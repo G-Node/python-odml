@@ -29,6 +29,30 @@ class DType(str, Enum):
         return self.name
 
 
+def default_values(dtype):
+    dtype = dtype.lower()
+    default_dtype_value = {
+        'string': '',
+        'text': '',
+        'int': 0,
+        'float': 0.0,
+        'url': '',
+        'boolean': False
+    }
+
+    if dtype in default_dtype_value:
+        return default_dtype_value[dtype]
+
+    if dtype == 'datetime':
+        return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    if dtype == 'date':
+        return datetime.datetime.now().strftime('%Y-%m-%d')
+    if dtype == 'time':
+        return datetime.datetime.now().strftime('%H:%M:%S')
+
+    return ''  # Maybe return None ?
+
+
 _dtype_map = {'str': 'string', 'bool': 'boolean'}
 
 
