@@ -150,8 +150,8 @@ class ODMLReader:
     based on the given data exchange format, like XML, YAML or JSON.
 
     Usage:
-        yaml_odml_doc = ODMLReader(parser='YAML').fromFile(open("odml_doc.yaml"))
-        json_odml_doc = ODMLReader(parser='JSON').fromFile(open("odml_doc.json"))
+        yaml_odml_doc = ODMLReader(parser='YAML').from_file("odml_doc.yaml")
+        json_odml_doc = ODMLReader(parser='JSON').from_file("odml_doc.json")
     """
 
     def __init__(self, parser='XML'):
@@ -266,13 +266,13 @@ class ODMLReader:
             return odml_doc
 
         elif self.parser == 'YAML':
-            try:
-                self.parsed_doc = yaml.load(file)
-            except yaml.parser.ParserError as e:
-                print(e)
-                return
-            finally:
-                file.close()
+            with open(file) as yaml_data:
+                try:
+                    self.parsed_doc = yaml.load(yaml_data)
+                except yaml.parser.ParserError as e:
+                    print(e)
+                    return
+
             return self.to_odml()
 
         elif self.parser == 'JSON':
