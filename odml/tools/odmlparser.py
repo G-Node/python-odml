@@ -7,8 +7,8 @@ Parses odML files and documents.
 
 """
 
-import yaml
 import json
+import yaml
 from .. import format
 from . import xmlparser
 
@@ -20,13 +20,13 @@ allowed_parsers = ['XML', 'YAML', 'JSON']
 
 
 class ODMLWriter:
-    '''
+    """
         A generic odML document writer, for XML, YAML and JSON.
 
         Usage:
             xml_writer = ODMLWriter(parser='XML')
             xml_writer.write_file(odml_document, filepath)
-    '''
+    """
 
     def __init__(self, parser='XML'):
         self.doc = None  # odML document
@@ -55,7 +55,6 @@ class ODMLWriter:
         self.parsed_doc = parsed_doc
 
     def get_sections(self, section_list):
-
         section_seq = []
 
         for section in section_list:
@@ -81,7 +80,6 @@ class ODMLWriter:
         return section_seq
 
     def get_properties(self, props_list):
-
         props_seq = []
 
         for prop in props_list:
@@ -96,11 +94,10 @@ class ODMLWriter:
                         prop_dict[attr] = t
 
             props_seq.append(prop_dict)
-        
+
         return props_seq
 
     def write_file(self, odml_document, filename):
-
         file = open(filename, 'w')
         file.write(self.to_string(odml_document))
         file.close()
@@ -151,7 +148,6 @@ class ODMLReader:
         return None
 
     def to_odml(self):
-
         self.odml_version = self.parsed_doc['odml-version']
         self.parsed_doc = self.parsed_doc['Document']
 
@@ -172,7 +168,6 @@ class ODMLReader:
         return self.doc
 
     def parse_sections(self, section_list):
-        
         odml_sections = []
 
         for section in section_list:
@@ -197,7 +192,6 @@ class ODMLReader:
 
         return odml_sections
 
-
     def parse_properties(self, props_list):
         odml_props = []
 
@@ -217,7 +211,6 @@ class ODMLReader:
             odml_props.append(prop)
 
         return odml_props
-
 
     def from_file(self, file):
 
@@ -245,7 +238,6 @@ class ODMLReader:
             finally:
                 file.close()
             return self.to_odml()
-
 
     def from_string(self, string):
 
