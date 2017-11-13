@@ -245,17 +245,19 @@ class ODMLReader:
             odml_doc = xmlparser.XMLReader().fromString(string)
             self.doc = odml_doc
             return self.doc
+
         elif self.parser == 'YAML':
             try:
-                odml_doc = yaml.load(string)
+                self.parsed_doc = yaml.load(string)
             except yaml.parser.ParserError as e:
                 print(e)
                 return
             return self.to_odml()
+
         elif self.parser == 'JSON':
             try:
-                odml_doc = json.loads(string)
-            except json.decoder.JSONDecodeError as e:
-                print(e)
+                self.parsed_doc = json.loads(string)
+            except ValueError as e:  # Python 2 does not support JSONDecodeError
+                print("JSON Decoder Error: %s" % e)
                 return
             return self.to_odml()
