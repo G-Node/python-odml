@@ -230,13 +230,13 @@ class ODMLReader:
             return self.to_odml()
 
         elif self.parser == 'JSON':
-            try:
-                self.parsed_doc = json.load(file)
-            except json.decoder.JSONDecodeError as e:
-                print(e)
-                return
-            finally:
-                file.close()
+            with open(file) as json_data:
+                try:
+                    self.parsed_doc = json.load(json_data)
+                except ValueError as e:  # Python 2 does not support JSONDecodeError
+                    print("JSON Decoder Error: %s" % e)
+                    return
+
             return self.to_odml()
 
     def from_string(self, string):
