@@ -7,8 +7,8 @@ Parses odML files and documents.
 
 """
 
-import yaml
 import json
+import yaml
 from .. import format
 from . import xmlparser
 
@@ -20,13 +20,13 @@ allowed_parsers = ['ODML', 'XML', 'YAML', 'JSON']
 
 
 class ODMLWriter:
-    '''
+    """
         A generic odML document writer, for XML, YAML and JSON.
 
         Usage:
             xml_writer = ODMLWriter(parser='XML')
             xml_writer.write_file(odml_document, filepath)
-    '''
+    """
 
     def __init__(self, parser='XML'):
         self.doc = None  # odML document
@@ -55,7 +55,6 @@ class ODMLWriter:
         self.parsed_doc = parsed_doc
 
     def get_sections(self, section_list):
-
         section_seq = []
 
         for section in section_list:
@@ -81,7 +80,6 @@ class ODMLWriter:
         return section_seq
 
     def get_properties(self, props_list):
-
         props_seq = []
 
         for prop in props_list:
@@ -100,7 +98,7 @@ class ODMLWriter:
                             prop_dict[attr] = t
 
             props_seq.append(prop_dict)
-        
+
         return props_seq
 
     def get_values(self, value_list):
@@ -172,7 +170,6 @@ class ODMLReader:
         return None
 
     def to_odml(self):
-
         self.odml_version = self.parsed_doc.get('odml-version', odml_version)
         self.parsed_doc = self.parsed_doc['Document']
 
@@ -193,7 +190,6 @@ class ODMLReader:
         return self.doc
 
     def parse_sections(self, section_list):
-        
         odml_sections = []
 
         for section in section_list:
@@ -217,7 +213,6 @@ class ODMLReader:
             odml_sections.append(sec)
 
         return odml_sections
-
 
     def parse_properties(self, props_list):
         odml_props = []
@@ -257,7 +252,6 @@ class ODMLReader:
 
         return odml_values
 
-
     def from_file(self, file):
 
         if self.parser == 'XML' or self.parser == 'ODML':
@@ -284,7 +278,6 @@ class ODMLReader:
                     return
 
             return self.to_odml()
-
 
     def from_string(self, string):
 
