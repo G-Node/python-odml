@@ -23,7 +23,6 @@ class TestParser(unittest.TestCase):
 
         self.odml_doc = self.xml_reader.from_file(self.basefile)
 
-
     def tearDown(self):
         if os.path.exists(self.xml_file):
             os.remove(self.xml_file)
@@ -34,32 +33,25 @@ class TestParser(unittest.TestCase):
         if os.path.exists(self.json_file):
             os.remove(self.json_file)
 
-
     def test_xml(self):
-
         self.xml_writer.write_file(self.odml_doc, self.xml_file)
         xml_doc = self.xml_reader.from_file(open(self.xml_file))
 
         self.assertEqual(xml_doc, self.odml_doc)
 
     def test_yaml(self):
-
         self.yaml_writer.write_file(self.odml_doc, self.yaml_file)
         yaml_doc = self.yaml_reader.from_file(open(self.yaml_file))
 
         self.assertEqual(yaml_doc, self.odml_doc)
 
-
     def test_json(self):
-
         self.json_writer.write_file(self.odml_doc, self.json_file)
         json_doc = self.json_reader.from_file(open(self.json_file))
 
         self.assertEqual(json_doc, self.odml_doc)
 
-
     def test_json_yaml_xml(self):
-
         self.json_writer.write_file(self.odml_doc, self.json_file)
         json_doc = self.json_reader.from_file(open(self.json_file))
         
