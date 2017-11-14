@@ -25,12 +25,17 @@ class BaseSection(base.sectionable, mapping.mapableSection, Section):
 
     _format = format.Section
 
-    def __init__(self, name, type="undefined", parent=None, definition=None, mapping=None):
+    def __init__(self, name, type="undefined", parent=None, definition=None,
+                 mapping=None, reference=None, repository=None, link=None, include=None):
         self._parent = parent
         self._name = name
         self._props = base.SmartList()
         self._definition = definition
         self._mapping = mapping
+        self._reference = reference
+        self._repository = repository
+        self._link = link
+        self._include = include
         super(BaseSection, self).__init__()
         # this may fire a change event, so have the section setup then
         self.type = type
