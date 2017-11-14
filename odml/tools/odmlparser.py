@@ -105,7 +105,7 @@ class ODMLWriter:
     def to_string(self, odml_document):
         string_doc = ''
 
-        if self.parser == 'XML' or self.parser == 'ODML':
+        if self.parser == 'XML':
             string_doc = str(xmlparser.XMLWriter(odml_document))
         else:
             self.to_dict(odml_document)
