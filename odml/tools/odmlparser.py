@@ -7,8 +7,8 @@ Parses odML files and documents.
 
 """
 
-import yaml
 import json
+import yaml
 from .. import format
 from . import xmlparser
 
@@ -20,13 +20,13 @@ allowed_parsers = ['XML', 'YAML', 'JSON']
 
 
 class ODMLWriter:
-    '''
+    """
         A generic odML document writer, for XML, YAML and JSON.
 
         Usage:
             xml_writer = ODMLWriter(parser='XML')
             xml_writer.write_file(odml_document, filepath)
-    '''
+    """
 
     def __init__(self, parser='XML'):
         self.doc = None  # odML document
@@ -55,7 +55,6 @@ class ODMLWriter:
         self.parsed_doc = parsed_doc
 
     def get_sections(self, section_list):
-
         section_seq = []
 
         for section in section_list:
@@ -81,7 +80,6 @@ class ODMLWriter:
         return section_seq
 
     def get_properties(self, props_list):
-
         props_seq = []
 
         for prop in props_list:
@@ -96,11 +94,10 @@ class ODMLWriter:
                         prop_dict[attr] = t
 
             props_seq.append(prop_dict)
-        
+
         return props_seq
 
     def write_file(self, odml_document, filename):
-
         file = open(filename, 'w')
         file.write(self.to_string(odml_document))
         file.close()
@@ -108,7 +105,7 @@ class ODMLWriter:
     def to_string(self, odml_document):
         string_doc = ''
 
-        if self.parser == 'XML' or self.parser == 'ODML':
+        if self.parser == 'XML':
             string_doc = str(xmlparser.XMLWriter(odml_document))
         else:
             self.to_dict(odml_document)
@@ -129,8 +126,8 @@ class ODMLReader:
     based on the given data exchange format, like XML, YAML or JSON.
 
     Usage:
-        yaml_odml_doc = ODMLReader(parser='YAML').fromFile(open("odml_doc.yaml"))
-        json_odml_doc = ODMLReader(parser='JSON').fromFile(open("odml_doc.json"))
+        yaml_odml_doc = ODMLReader(parser='YAML').from_file("odml_doc.yaml")
+        json_odml_doc = ODMLReader(parser='JSON').from_file("odml_doc.json")
     """
 
     def __init__(self, parser='XML'):
@@ -151,7 +148,6 @@ class ODMLReader:
         return None
 
     def to_odml(self):
-
         self.odml_version = self.parsed_doc['odml-version']
         self.parsed_doc = self.parsed_doc['Document']
 
@@ -172,7 +168,6 @@ class ODMLReader:
         return self.doc
 
     def parse_sections(self, section_list):
-        
         odml_sections = []
 
         for section in section_list:
@@ -197,7 +192,6 @@ class ODMLReader:
 
         return odml_sections
 
-
     def parse_properties(self, props_list):
         odml_props = []
 
@@ -218,7 +212,6 @@ class ODMLReader:
 
         return odml_props
 
-
     def from_file(self, file):
 
         if self.parser == 'XML':
@@ -227,25 +220,24 @@ class ODMLReader:
             return odml_doc
 
         elif self.parser == 'YAML':
-            try:
-                self.parsed_doc = yaml.load(file)
-            except yaml.parser.ParserError as e:
-                print(e)
-                return
-            finally:
-                file.close()
+            with open(file) as yaml_data:
+                try:
+                    self.parsed_doc = yaml.load(yaml_data)
+                except yaml.parser.ParserError as e:
+                    print(e)
+                    return
+
             return self.to_odml()
 
         elif self.parser == 'JSON':
-            try:
-                self.parsed_doc = json.load(file)
-            except json.decoder.JSONDecodeError as e:
-                print(e)
-                return
-            finally:
-                file.close()
-            return self.to_odml()
+            with open(file) as json_data:
+                try:
+                    self.parsed_doc = json.load(json_data)
+                except ValueError as e:  # Python 2 does not support JSONDecodeError
+                    print("JSON Decoder Error: %s" % e)
+                    return
 
+            return self.to_odml()
 
     def from_string(self, string):
 
@@ -253,17 +245,19 @@ class ODMLReader:
             odml_doc = xmlparser.XMLReader().fromString(string)
             self.doc = odml_doc
             return self.doc
+
         elif self.parser == 'YAML':
             try:
-                odml_doc = yaml.load(string)
+                self.parsed_doc = yaml.load(string)
             except yaml.parser.ParserError as e:
                 print(e)
                 return
             return self.to_odml()
+
         elif self.parser == 'JSON':
             try:
-                odml_doc = json.loads(string)
-            except json.decoder.JSONDecodeError as e:
-                print(e)
+                self.parsed_doc = json.loads(string)
+            except ValueError as e:  # Python 2 does not support JSONDecodeError
+                print("JSON Decoder Error: %s" % e)
                 return
             return self.to_odml()
