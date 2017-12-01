@@ -7,7 +7,7 @@ from .dtypes import DType
 from .fileio import load, save, display
 from .tools.odmlparser import allowed_parsers as parsers
 
-__version__ = '1.3.dev0'
+__version__ = '1.4.0'
 
 
 class odml_implementation(object):
