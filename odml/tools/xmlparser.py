@@ -176,6 +176,26 @@ class XMLReader(object):
         self.ignore_errors = ignore_errors
         self.filename = filename
 
+    @staticmethod
+    def _handle_version(root):
+        """
+        Check if the odML version of a handed in parsed lxml.etree is supported
+        by the current library and raise an Exception otherwise.
+        :param root: Root node of a parsed lxml.etree. Teh root tag has to
+                     contain a supported odML version number, otherwise it is not
+                     accepted as a valid odML file.
+        """
+        if root.tag != 'odML':
+            raise ParserException("Expecting <odML> start tag but got <%s>.\n" % root.tag)
+        elif 'version' not in root.attrib:
+            raise ParserException("Could not find format version attribute "
+                                  "in odML start tag.\n")
+        elif root.attrib['version'] != FORMAT_VERSION:
+            msg = ("Invalid odML document format version '%s'. "
+                   "Supported versions: '%s'."
+                   % (root.attrib['version'], FORMAT_VERSION))
+            raise ParserException(msg)
+
     def fromFile(self, xml_file):
         """
         parse the datastream from a file like object *xml_file*
@@ -187,6 +207,8 @@ class XMLReader(object):
                 xml_file.close()
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
+
+        self._handle_version(root)
         return self.parse_element(root)
 
     def fromString(self, string):
@@ -194,6 +216,8 @@ class XMLReader(object):
             root = ET.XML(string, self.parser)
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
+
+        self._handle_version(root)
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
