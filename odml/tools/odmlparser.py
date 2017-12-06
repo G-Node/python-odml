@@ -17,6 +17,10 @@ from . import xmlparser
 allowed_parsers = ['XML', 'YAML', 'JSON']
 
 
+class ParserException(Exception):
+    pass
+
+
 class ODMLWriter:
     """
         A generic odML document writer, for XML, YAML and JSON.
@@ -146,7 +150,16 @@ class ODMLReader:
         return None
 
     def to_odml(self):
-        self.odml_version = self.parsed_doc.get('odml-version', FORMAT_VERSION)
+        # Parse only odML documents of supported format versions.
+        if 'odml-version' not in self.parsed_doc:
+            raise ParserException("Invalid odML document: Could not find odml-version.")
+        elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
+            msg = ("Invalid odML document format version '%s'. "
+                   "Supported versions: '%s'."
+                   % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
+            raise ParserException(msg)
+
+        self.odml_version = self.parsed_doc.get('odml-version')
         self.parsed_doc = self.parsed_doc['Document']
 
         doc_attrs = {}
