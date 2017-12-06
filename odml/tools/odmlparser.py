@@ -9,12 +9,10 @@ Parses odML files and documents.
 
 import json
 import yaml
-from .. import format
-from . import xmlparser
 
-# FIX ME: Version should not be hardcoded here. Import from odML module after
-#         fixing the circular imports issue.
-odml_version = '1'
+from .. import format
+from ..info import FORMAT_VERSION
+from . import xmlparser
 
 allowed_parsers = ['ODML', 'XML', 'YAML', 'JSON']
 
@@ -133,7 +131,7 @@ class ODMLWriter:
             self.to_dict(odml_document)
             odml_output = {}
             odml_output['Document'] = self.parsed_doc
-            odml_output['odml-version'] = odml_version
+            odml_output['odml-version'] = FORMAT_VERSION
 
             if self.parser == 'YAML':
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
@@ -170,7 +168,7 @@ class ODMLReader:
         return None
 
     def to_odml(self):
-        self.odml_version = self.parsed_doc.get('odml-version', odml_version)
+        self.odml_version = self.parsed_doc.get('odml-version', FORMAT_VERSION)
         self.parsed_doc = self.parsed_doc['Document']
 
         doc_attrs = {}
