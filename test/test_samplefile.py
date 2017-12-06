@@ -5,6 +5,7 @@ import os
 import sys
 import re
 
+from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
 from odml.tools import jsonparser
 from odml.tools import dumper
@@ -141,10 +142,10 @@ class SampleFileOperationTest(unittest.TestCase):
             val = unicode(xmlparser.XMLWriter(doc))
         else:
             val = str(xmlparser.XMLWriter(doc))
-        self.assertIn('version="%s"' % xmlparser.XML_VERSION, val)
+        self.assertIn('version="%s"' % FORMAT_VERSION, val)
         doc = xmlparser.XMLReader().fromString(val)
         # this test is switched off until the XML versioning support is implemented
-        # self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
+        # self.assertEqual(doc._xml_version, FORMAT_VERSION)
 
     def test_save(self):
         for module in [xmlparser.XMLWriter, jsonparser.JSONWriter]:

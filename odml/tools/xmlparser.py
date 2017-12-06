@@ -13,6 +13,7 @@ from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
+from ..info import FORMAT_VERSION
 
 try:
     unicode = unicode
@@ -34,8 +35,6 @@ format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'nam
 format.Property._xml_attributes = {}
 format.Value._xml_attributes = {}
 format.Value._xml_content = 'value'
-
-XML_VERSION = "1"
 
 
 class XMLWriter:
@@ -66,7 +65,7 @@ class XMLWriter:
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
-            cur.attrib['version'] = XML_VERSION
+            cur.attrib['version'] = FORMAT_VERSION
 
         for k, v in fmt._xml_attributes.items():
             if not v or not hasattr(e, fmt.map(v)):
