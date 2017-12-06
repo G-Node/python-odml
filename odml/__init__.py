@@ -5,10 +5,10 @@ from . import property
 from . import section
 from .dtypes import DType
 from .fileio import load, save, display
+from .info import VERSION
 from .tools.odmlparser import allowed_parsers as parsers
 
-
-__version__ = '1.3.3'
+__version__ = VERSION
 
 # the original property-function is overwritten
 # so get it back!
