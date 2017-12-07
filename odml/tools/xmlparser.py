@@ -6,8 +6,6 @@ Parses odML files. Can be invoked standalone:
 
     python -m odml.tools.xmlparser file.odml
 """
-# TODO make this module a parser class, allow arguments (e.g.
-# skip_errors=1 to parse even broken documents)
 import sys
 import csv
 try:
@@ -175,6 +173,7 @@ class XMLReader(object):
         self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
         self.filename = filename
+        self.warnings = []
 
     @staticmethod
     def _handle_version(root):
@@ -245,6 +244,7 @@ class XMLReader(object):
                 self.filename, elem.sourceline, elem.tag, msg)
         else:
             msg = "warning: %s\n" % msg
+        self.warnings.append(msg)
         sys.stderr.write(msg)
 
     def parse_element(self, node):
