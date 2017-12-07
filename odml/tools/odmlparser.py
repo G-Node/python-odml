@@ -151,13 +151,16 @@ class ODMLReader:
         if parser not in allowed_parsers:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
+        self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
         if attr in fmt._args:
             return attr
         if fmt.revmap(attr):
             return attr
-        print("Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__))
+        msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
+        print(msg)
+        self.warnings.append(msg)
         return None
 
     def to_odml(self):
@@ -237,7 +240,9 @@ class ODMLReader:
     def from_file(self, file):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader(ignore_errors=True).fromFile(file)
+            par = xmlparser.XMLReader(ignore_errors=True)
+            self.warnings = par.warnings
+            odml_doc = par.fromFile(file)
             self.doc = odml_doc
             return odml_doc
 
