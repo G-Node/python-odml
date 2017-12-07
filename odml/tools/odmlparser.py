@@ -237,7 +237,7 @@ class ODMLReader:
     def from_file(self, file):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader().fromFile(file)
+            odml_doc = xmlparser.XMLReader(ignore_errors=True).fromFile(file)
             self.doc = odml_doc
             return odml_doc
 
