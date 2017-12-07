@@ -100,6 +100,17 @@ class ODMLWriter:
         return props_seq
 
     def write_file(self, odml_document, filename):
+        # Write document only if it does not contain validation errors.
+        from ..validation import Validation  # disgusting import problems
+        validation = Validation(odml_document)
+        msg = ""
+        for e in validation.errors:
+            if e.is_error:
+                msg += "\n\t- %s %s: %s" % (e.obj, e.type, e.msg)
+        if msg != "":
+            msg = "Resolve document validation errors before saving %s" % msg
+            raise ParserException(msg)
+
         file = open(filename, 'w')
         file.write(self.to_string(odml_document))
         file.close()
