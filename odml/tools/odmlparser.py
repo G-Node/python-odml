@@ -168,8 +168,8 @@ class ODMLReader:
         if 'odml-version' not in self.parsed_doc:
             raise ParserException("Invalid odML document: Could not find odml-version.")
         elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
-            msg = ("Invalid odML document format version '%s'. "
-                   "Supported versions: '%s'."
+            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
+                   "This package supports odML format versions: '%s'."
                    % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
             raise ParserException(msg)
 
