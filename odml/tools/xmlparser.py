@@ -154,15 +154,15 @@ class XMLReader(object):
         """
         Check if the odML version of a handed in parsed lxml.etree is supported
         by the current library and raise an Exception otherwise.
-        :param root: Root node of a parsed lxml.etree. Teh root tag has to
+        :param root: Root node of a parsed lxml.etree. The root tag has to
                      contain a supported odML version number, otherwise it is not
                      accepted as a valid odML file.
         """
         if root.tag != 'odML':
-            raise ParserException("Expecting <odML> start tag but got <%s>.\n" % root.tag)
+            raise ParserException("Expecting <odML> tag but got <%s>.\n" % root.tag)
         elif 'version' not in root.attrib:
             raise ParserException("Could not find format version attribute "
-                                  "in odML start tag.\n")
+                                  "in <odML> tag.\n")
         elif root.attrib['version'] != FORMAT_VERSION:
             msg = ("Cannot read file: invalid odML document format version '%s'. \n"
                    "This package supports odML format versions: '%s'."
