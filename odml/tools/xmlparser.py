@@ -6,13 +6,13 @@ Parses odML files. Can be invoked standalone:
 
     python -m odml.tools.xmlparser file.odml
 """
-#TODO make this module a parser class, allow arguments (e.g. skip_errors=1 to parse even broken documents)
 import sys
 from odml import format
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
+from ..info import FORMAT_VERSION
 
 try:
     unicode = unicode
@@ -34,8 +34,6 @@ format.Section._xml_attributes = {'name': None}  # attribute 'name' maps to 'nam
 format.Property._xml_attributes = {}
 format.Value._xml_attributes = {}
 format.Value._xml_content = 'value'
-
-XML_VERSION = "1"
 
 
 class XMLWriter:
@@ -66,7 +64,7 @@ class XMLWriter:
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
-            cur.attrib['version'] = XML_VERSION
+            cur.attrib['version'] = FORMAT_VERSION
 
         for k, v in fmt._xml_attributes.items():
             if not v or not hasattr(e, fmt.map(v)):
@@ -149,6 +147,27 @@ class XMLReader(object):
         self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
         self.filename = filename
+        self.warnings = []
+
+    @staticmethod
+    def _handle_version(root):
+        """
+        Check if the odML version of a handed in parsed lxml.etree is supported
+        by the current library and raise an Exception otherwise.
+        :param root: Root node of a parsed lxml.etree. The root tag has to
+                     contain a supported odML version number, otherwise it is not
+                     accepted as a valid odML file.
+        """
+        if root.tag != 'odML':
+            raise ParserException("Expecting <odML> tag but got <%s>.\n" % root.tag)
+        elif 'version' not in root.attrib:
+            raise ParserException("Could not find format version attribute "
+                                  "in <odML> tag.\n")
+        elif root.attrib['version'] != FORMAT_VERSION:
+            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
+                   "This package supports odML format versions: '%s'."
+                   % (root.attrib['version'], FORMAT_VERSION))
+            raise ParserException(msg)
 
     def fromFile(self, xml_file):
         """
@@ -159,6 +178,8 @@ class XMLReader(object):
             root = ET.parse(xml_file, self.parser).getroot()
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
+
+        self._handle_version(root)
         return self.parse_element(root)
 
     def fromString(self, string):
@@ -166,6 +187,8 @@ class XMLReader(object):
             root = ET.XML(string, self.parser)
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
+
+        self._handle_version(root)
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
@@ -189,6 +212,7 @@ class XMLReader(object):
             msg = "warning[%s:%d:<%s>]: %s\n" % (self.filename, elem.sourceline, elem.tag, msg)
         else:
             msg = "warning: %s\n" % msg
+        self.warnings.append(msg)
         sys.stderr.write(msg)
 
     def parse_element(self, node):

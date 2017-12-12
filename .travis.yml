@@ -14,13 +14,10 @@ matrix:
         - python: "3.4"
         - python: "3.5"
 
-before_install:
-  - sudo apt-get -qq  update
-  - sudo apt-get install -y python-enum python-lxml
-
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
   - pip install --upgrade coveralls
+  - pip install lxml enum34 pyyaml
 
 script:
   - python setup.py build
