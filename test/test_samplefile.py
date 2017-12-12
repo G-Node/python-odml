@@ -145,7 +145,7 @@ class SampleFileOperationTest(unittest.TestCase):
         else:
             val = str(xmlparser.XMLWriter(doc))
         self.assertIn('version="%s"' % FORMAT_VERSION, val)
-        doc = xmlparser.XMLReader().fromString(val)
+        doc = xmlparser.XMLReader().from_string(val)
         # This test is switched off until the XML versioning support is implemented
         # self.assertEqual(doc._xml_version, FORMAT_VERSION)
 
@@ -174,7 +174,7 @@ class SampleFileOperationTest(unittest.TestCase):
                 doc = StringIO(unicode(doc))
             else:
                 doc = StringIO(str(doc))
-            doc = Reader().fromFile(doc)
+            doc = Reader().from_file(doc)
             self.assertEqual(doc, self.doc)
 
 #        for a,b in zip(doc.sections, self.doc.sections):

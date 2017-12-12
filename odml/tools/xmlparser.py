@@ -150,9 +150,9 @@ class XMLWriter:
 
 def load(filename):
     """
-    shortcut function for XMLReader().fromFile(open(filename))
+    shortcut function for XMLReader().from_file(filename)
     """
-    return XMLReader().fromFile(open(filename))
+    return XMLReader().from_file(filename)
 
 
 class ParserException(Exception):
@@ -165,7 +165,7 @@ class XMLReader(object):
 
     Usage:
 
-        >>> doc = XMLReader().fromFile(open("file.odml"))
+        >>> doc = XMLReader().from_file("file.odml")
     """
 
     def __init__(self, ignore_errors=False, filename=None):
@@ -195,7 +195,7 @@ class XMLReader(object):
                    % (root.attrib['version'], FORMAT_VERSION))
             raise ParserException(msg)
 
-    def fromFile(self, xml_file):
+    def from_file(self, xml_file):
         """
         parse the datastream from a file like object *xml_file*
         and return an odml data structure
@@ -210,7 +210,7 @@ class XMLReader(object):
         self._handle_version(root)
         return self.parse_element(root)
 
-    def fromString(self, string):
+    def from_string(self, string):
         try:
             root = ET.XML(string, self.parser)
         except ET.XMLSyntaxError as e:

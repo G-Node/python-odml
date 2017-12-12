@@ -78,7 +78,7 @@ class Terminologies(dict):
             return
         try:
             term = odml.tools.xmlparser.XMLReader(
-                filename=url, ignore_errors=True).fromFile(fp)
+                filename=url, ignore_errors=True).from_file(fp)
             term.finalize()
         except odml.tools.xmlparser.ParserException as e:
             print("Failed to load %s due to parser errors" % url)

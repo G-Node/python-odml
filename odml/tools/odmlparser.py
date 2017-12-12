@@ -242,7 +242,7 @@ class ODMLReader:
         if self.parser == 'XML':
             par = xmlparser.XMLReader(ignore_errors=True)
             self.warnings = par.warnings
-            odml_doc = par.fromFile(file)
+            odml_doc = par.from_file(file)
             self.doc = odml_doc
             return odml_doc
 
@@ -269,7 +269,7 @@ class ODMLReader:
     def from_string(self, string):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader().fromString(string)
+            odml_doc = xmlparser.XMLReader().from_string(string)
             self.doc = odml_doc
             return self.doc
 

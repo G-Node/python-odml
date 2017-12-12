@@ -73,7 +73,7 @@ class TestInferType(unittest.TestCase):
             str_doc = unicode(XMLWriter(doc))
         else:
             str_doc = str(XMLWriter(doc))
-        new_doc = XMLReader().fromString(str_doc)
+        new_doc = XMLReader().from_string(str_doc)
         new_sec = new_doc.sections[0]
 
         p = new_sec.properties["strprop"]
