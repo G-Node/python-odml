@@ -1,12 +1,14 @@
 import os
-from .tools.odmlparser import ODMLReader, ODMLWriter
+from .tools.odmlparser import ODMLReader, ODMLWriter, allowed_parsers
 
-parsers = ["xml", "json", "yaml"]
+PARSERS = allowed_parsers
 
 
 def load(filename, backend="xml"):
     if not os.path.exists(filename):
-        raise FileNotFoundError("File \'%s\' was not found!" % (filename if len(filename) < 20 else "...%s" % filename[19:]))
+        msg = "File \'%s\' was not found!" % \
+              (filename if len(filename) < 20 else "...%s" % filename[19:])
+        raise FileNotFoundError(msg)
     reader = ODMLReader(backend)
     return reader.from_file(filename)
 
