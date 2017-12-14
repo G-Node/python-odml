@@ -4,7 +4,7 @@ import sys
 
 from lxml import etree as ET
 from .. import format
-from odml.tools.xmlparser import XML_VERSION
+from odml.tools.odmlparser import FORMAT_VERSION
 
 try:
     unicode = unicode
@@ -53,7 +53,7 @@ class VersionConverter(object):
 
         tree = cls._replace_same_name_entities(tree)
         root = tree.getroot()
-        root.set("version", XML_VERSION)
+        root.set("version", FORMAT_VERSION)
 
         rem_property = []
         for prop in root.iter("property"):

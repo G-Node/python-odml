@@ -9,14 +9,16 @@ Parses odML files and documents.
 
 import json
 import yaml
+
 from .. import format
+from ..info import FORMAT_VERSION
 from . import xmlparser
 
-# FIX ME: Version should not be hardcoded here. Import from odML module after
-#         fixing the circular imports issue.
-odml_version = '1.1'
-
 allowed_parsers = ['XML', 'YAML', 'JSON']
+
+
+class ParserException(Exception):
+    pass
 
 
 class ODMLWriter:
@@ -98,6 +100,17 @@ class ODMLWriter:
         return props_seq
 
     def write_file(self, odml_document, filename):
+        # Write document only if it does not contain validation errors.
+        from ..validation import Validation  # disgusting import problems
+        validation = Validation(odml_document)
+        msg = ""
+        for e in validation.errors:
+            if e.is_error:
+                msg += "\n\t- %s %s: %s" % (e.obj, e.type, e.msg)
+        if msg != "":
+            msg = "Resolve document validation errors before saving %s" % msg
+            raise ParserException(msg)
+
         file = open(filename, 'w')
         file.write(self.to_string(odml_document))
         file.close()
@@ -111,7 +124,7 @@ class ODMLWriter:
             self.to_dict(odml_document)
             odml_output = {}
             odml_output['Document'] = self.parsed_doc
-            odml_output['odml-version'] = odml_version
+            odml_output['odml-version'] = FORMAT_VERSION
 
             if self.parser == 'YAML':
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
@@ -138,17 +151,29 @@ class ODMLReader:
         if parser not in allowed_parsers:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
+        self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
         if attr in fmt._args:
             return attr
         if fmt.revmap(attr):
             return attr
-        print("Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__))
+        msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
+        print(msg)
+        self.warnings.append(msg)
         return None
 
     def to_odml(self):
-        self.odml_version = self.parsed_doc['odml-version']
+        # Parse only odML documents of supported format versions.
+        if 'odml-version' not in self.parsed_doc:
+            raise ParserException("Invalid odML document: Could not find odml-version.")
+        elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
+            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
+                   "This package supports odML format versions: '%s'."
+                   % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
+            raise ParserException(msg)
+
+        self.odml_version = self.parsed_doc.get('odml-version')
         self.parsed_doc = self.parsed_doc['Document']
 
         doc_attrs = {}
@@ -215,7 +240,9 @@ class ODMLReader:
     def from_file(self, file):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader().fromFile(file)
+            par = xmlparser.XMLReader(ignore_errors=True)
+            self.warnings = par.warnings
+            odml_doc = par.from_file(file)
             self.doc = odml_doc
             return odml_doc
 
@@ -242,7 +269,7 @@ class ODMLReader:
     def from_string(self, string):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader().fromString(string)
+            odml_doc = xmlparser.XMLReader().from_string(string)
             self.doc = odml_doc
             return self.doc
 
