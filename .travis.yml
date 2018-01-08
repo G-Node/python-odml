@@ -3,10 +3,6 @@ dist: trusty
 
 language: python
 
-env:
-    global:
-        - NIX_BRANCH=master
-
 matrix:
     include:
         - python: "2.7"
