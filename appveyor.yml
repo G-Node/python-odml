@@ -11,6 +11,9 @@ environment:
 
 build: false
 
+install:
+  - python -m pip install lxml enum34 pyyaml
+
 test_script:
   - python --version
   - python setup.py test
