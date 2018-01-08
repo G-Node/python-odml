@@ -30,9 +30,15 @@ install:
   - if [ $COVERALLS = 1 ]; then
         pip install --upgrade coveralls;
     fi;
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      which python;
+      source venv/bin/activate;
+      which python;
+    fi
   - pip install lxml enum34 pyyaml
 
 script:
+  - which python
   - python setup.py build
   - if [ $COVERALLS = 1 ]; then
         coverage${PYVER} run --source=odml setup.py test && coverage${PYVER} report -m;
