@@ -27,7 +27,9 @@ before_install:
 
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
-  - pip install --upgrade coveralls
+  - if [ $COVERALLS = 1 ]; then
+        pip install --upgrade coveralls;
+    fi;
   - pip install lxml enum34 pyyaml
 
 script:
