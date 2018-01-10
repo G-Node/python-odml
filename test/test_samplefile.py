@@ -4,7 +4,9 @@ import unittest
 import os
 import sys
 import re
+import tempfile
 
+from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
 from odml.tools import jsonparser
 from odml.tools import dumper
@@ -143,11 +145,10 @@ class SampleFileOperationTest(unittest.TestCase):
             val = unicode(xmlparser.XMLWriter(doc))
         else:
             val = str(xmlparser.XMLWriter(doc))
-        self.assertIn('version="%s"' % xmlparser.XML_VERSION, val)
-        doc = xmlparser.XMLReader().fromString(val)
-        # The following test is switched off until the XML versioning
-        # support is implemented.
-        # self.assertEqual(doc._xml_version, xmlparser.XML_VERSION)
+        self.assertIn('version="%s"' % FORMAT_VERSION, val)
+        doc = xmlparser.XMLReader().from_string(val)
+        # This test is switched off until the XML versioning support is implemented
+        # self.assertEqual(doc._xml_version, FORMAT_VERSION)
 
     def test_save(self):
         for module in [xmlparser.XMLWriter]:  # , jsonparser.JSONWriter]:
@@ -174,7 +175,7 @@ class SampleFileOperationTest(unittest.TestCase):
                 doc = StringIO(unicode(doc))
             else:
                 doc = StringIO(str(doc))
-            doc = Reader().fromFile(doc)
+            doc = Reader().from_file(doc)
             self.assertEqual(doc, self.doc)
 
 #        for a,b in zip(doc.sections, self.doc.sections):
@@ -369,9 +370,11 @@ class MiscTest(unittest.TestCase):
         self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
 
     def test_save_version(self):
+        tmp_file = os.path.join(tempfile.gettempdir(), "example.odml")
+
         self.doc.version = '2.4'
         writer = xmlparser.XMLWriter(self.doc)
-        writer.write_file("/tmp/example.odml")
+        writer.write_file(tmp_file)
 
-        restored = xmlparser.load("/tmp/example.odml")
+        restored = xmlparser.load(tmp_file)
         self.assertEqual(self.doc.version, restored.version)

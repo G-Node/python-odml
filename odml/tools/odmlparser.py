@@ -9,24 +9,26 @@ Parses odML files and documents.
 
 import json
 import yaml
-from .. import format
-from . import xmlparser
 
-# FIX ME: Version should not be hardcoded here. Import from odML module after
-#         fixing the circular imports issue.
-odml_version = '1.1'
+from .. import format
+from ..info import FORMAT_VERSION
+from . import xmlparser
 
 allowed_parsers = ['XML', 'YAML', 'JSON', 'RDF']
 
 
+class ParserException(Exception):
+    pass
+
+
 class ODMLWriter:
-    '''
+    """
         A generic odML document writer, for XML, YAML and JSON.
 
         Usage:
             xml_writer = ODMLWriter(parser='XML')
             xml_writer.write_file(odml_document, filepath)
-    '''
+    """
 
     def __init__(self, parser='XML'):
         self.doc = None  # odML document
@@ -55,7 +57,6 @@ class ODMLWriter:
         self.parsed_doc = parsed_doc
 
     def get_sections(self, section_list):
-
         section_seq = []
 
         for section in section_list:
@@ -81,7 +82,6 @@ class ODMLWriter:
         return section_seq
 
     def get_properties(self, props_list):
-
         props_seq = []
 
         for prop in props_list:
@@ -100,6 +100,16 @@ class ODMLWriter:
         return props_seq
 
     def write_file(self, odml_document, filename):
+        # Write document only if it does not contain validation errors.
+        from ..validation import Validation  # disgusting import problems
+        validation = Validation(odml_document)
+        msg = ""
+        for e in validation.errors:
+            if e.is_error:
+                msg += "\n\t- %s %s: %s" % (e.obj, e.type, e.msg)
+        if msg != "":
+            msg = "Resolve document validation errors before saving %s" % msg
+            raise ParserException(msg)
 
         file = open(filename, 'w')
         file.write(self.to_string(odml_document))
@@ -108,13 +118,13 @@ class ODMLWriter:
     def to_string(self, odml_document):
         string_doc = ''
 
-        if self.parser == 'XML' or self.parser == 'ODML':
+        if self.parser == 'XML':
             string_doc = str(xmlparser.XMLWriter(odml_document))
         else:
             self.to_dict(odml_document)
             odml_output = {}
             odml_output['Document'] = self.parsed_doc
-            odml_output['odml-version'] = odml_version
+            odml_output['odml-version'] = FORMAT_VERSION
 
             if self.parser == 'YAML':
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
@@ -129,8 +139,8 @@ class ODMLReader:
     based on the given data exchange format, like XML, YAML or JSON.
 
     Usage:
-        yaml_odml_doc = ODMLReader(parser='YAML').fromFile(open("odml_doc.yaml"))
-        json_odml_doc = ODMLReader(parser='JSON').fromFile(open("odml_doc.json"))
+        yaml_odml_doc = ODMLReader(parser='YAML').from_file("odml_doc.yaml")
+        json_odml_doc = ODMLReader(parser='JSON').from_file("odml_doc.json")
     """
 
     def __init__(self, parser='XML'):
@@ -141,18 +151,29 @@ class ODMLReader:
         if parser not in allowed_parsers:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
+        self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
         if attr in fmt._args:
             return attr
         if fmt.revmap(attr):
             return attr
-        print("Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__))
+        msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
+        print(msg)
+        self.warnings.append(msg)
         return None
 
     def to_odml(self):
+        # Parse only odML documents of supported format versions.
+        if 'odml-version' not in self.parsed_doc:
+            raise ParserException("Invalid odML document: Could not find odml-version.")
+        elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
+            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
+                   "This package supports odML format versions: '%s'."
+                   % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
+            raise ParserException(msg)
 
-        self.odml_version = self.parsed_doc['odml-version']
+        self.odml_version = self.parsed_doc.get('odml-version')
         self.parsed_doc = self.parsed_doc['Document']
 
         doc_attrs = {}
@@ -220,28 +241,29 @@ class ODMLReader:
     def from_file(self, file, doc_format=None):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader().fromFile(file)
+            par = xmlparser.XMLReader(ignore_errors=True)
+            self.warnings = par.warnings
+            odml_doc = par.from_file(file)
             self.doc = odml_doc
             return odml_doc
 
         elif self.parser == 'YAML':
-            try:
-                self.parsed_doc = yaml.load(file)
-            except yaml.parser.ParserError as e:
-                print(e)
-                return
-            finally:
-                file.close()
+            with open(file) as yaml_data:
+                try:
+                    self.parsed_doc = yaml.load(yaml_data)
+                except yaml.parser.ParserError as e:
+                    print(e)
+                    return
+
             return self.to_odml()
 
         elif self.parser == 'JSON':
-            try:
-                self.parsed_doc = json.load(file)
-            except json.decoder.JSONDecodeError as e:
-                print(e)
-                return
-            finally:
-                file.close()
+            with open(file) as json_data:
+                try:
+                    self.parsed_doc = json.load(json_data)
+                except ValueError as e:  # Python 2 does not support JSONDecodeError
+                    print("JSON Decoder Error: %s" % e)
+                    return
             return self.to_odml()
 
         # TODO discuss whether local import is appropriate here
@@ -250,18 +272,19 @@ class ODMLReader:
                 raise KeyError("Format of the rdf file was not specified")
             from odml.tools.rdf_converter import RDFReader
             self.doc = RDFReader().from_file(file, doc_format)
+
             return self.doc
 
     def from_string(self, string, doc_format=None):
 
         if self.parser == 'XML':
-            odml_doc = xmlparser.XMLReader().fromString(string)
+            odml_doc = xmlparser.XMLReader().from_string(string)
             self.doc = odml_doc
             return self.doc
 
         elif self.parser == 'YAML':
             try:
-                odml_doc = yaml.load(string)
+                self.parsed_doc = yaml.load(string)
             except yaml.parser.ParserError as e:
                 print(e)
                 return
@@ -269,9 +292,9 @@ class ODMLReader:
 
         elif self.parser == 'JSON':
             try:
-                odml_doc = json.loads(string)
-            except json.decoder.JSONDecodeError as e:
-                print(e)
+                self.parsed_doc = json.loads(string)
+            except ValueError as e:  # Python 2 does not support JSONDecodeError
+                print("JSON Decoder Error: %s" % e)
                 return
             return self.to_odml()
 

@@ -4,8 +4,6 @@ The XML parsing module.
 Parses odML files. Can be invoked standalone:
     python -m odml.tools.xmlparser file.odml
 """
-# TODO make this module a parser class, allow arguments (e.g.
-# skip_errors=1 to parse even broken documents)
 import csv
 import sys
 
@@ -17,6 +15,8 @@ from odml import format
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
+from lxml import _elementpath as _dummy
+from ..info import FORMAT_VERSION
 
 try:
     unicode = unicode
@@ -32,8 +32,6 @@ format.Document._xml_attributes = {}
 # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Section._xml_attributes = {'name': None}
 format.Property._xml_attributes = {}
-
-XML_VERSION = "1.1"
 
 
 def to_csv(val):
@@ -86,7 +84,7 @@ class XMLWriter:
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
-            cur.attrib['version'] = XML_VERSION
+            cur.attrib['version'] = FORMAT_VERSION
 
         for k, v in fmt._xml_attributes.items():
             if not v or not hasattr(e, fmt.map(v)):
@@ -151,9 +149,9 @@ class XMLWriter:
 
 def load(filename):
     """
-    shortcut function for XMLReader().fromFile(open(filename))
+    shortcut function for XMLReader().from_file(filename)
     """
-    return XMLReader().fromFile(open(filename))
+    return XMLReader().from_file(filename)
 
 
 class ParserException(Exception):
@@ -164,7 +162,7 @@ class XMLReader(object):
     """
     A reader to parse xml-files or strings into odml data structures
     Usage:
-        >>> doc = XMLReader().fromFile(open("file.odml"))
+        >>> doc = XMLReader().from_file("file.odml")
     """
 
     def __init__(self, ignore_errors=False, filename=None):
@@ -172,8 +170,29 @@ class XMLReader(object):
         self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
         self.filename = filename
+        self.warnings = []
 
-    def fromFile(self, xml_file):
+    @staticmethod
+    def _handle_version(root):
+        """
+        Check if the odML version of a handed in parsed lxml.etree is supported
+        by the current library and raise an Exception otherwise.
+        :param root: Root node of a parsed lxml.etree. The root tag has to
+                     contain a supported odML version number, otherwise it is not
+                     accepted as a valid odML file.
+        """
+        if root.tag != 'odML':
+            raise ParserException("Expecting <odML> tag but got <%s>.\n" % root.tag)
+        elif 'version' not in root.attrib:
+            raise ParserException("Could not find format version attribute "
+                                  "in <odML> tag.\n")
+        elif root.attrib['version'] != FORMAT_VERSION:
+            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
+                   "This package supports odML format versions: '%s'."
+                   % (root.attrib['version'], FORMAT_VERSION))
+            raise ParserException(msg)
+
+    def from_file(self, xml_file):
         """
         parse the datastream from a file like object *xml_file*
         and return an odml data structure
@@ -184,13 +203,17 @@ class XMLReader(object):
                 xml_file.close()
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
+
+        self._handle_version(root)
         return self.parse_element(root)
 
-    def fromString(self, string):
+    def from_string(self, string):
         try:
             root = ET.XML(string, self.parser)
         except ET.XMLSyntaxError as e:
             raise ParserException(e.msg)
+
+        self._handle_version(root)
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
@@ -218,6 +241,7 @@ class XMLReader(object):
                 self.filename, elem.sourceline, elem.tag, msg)
         else:
             msg = "warning: %s\n" % msg
+        self.warnings.append(msg)
         sys.stderr.write(msg)
 
     def parse_element(self, node):

@@ -11,7 +11,7 @@ import odml
 import odml.format
 from odml.tools.odmlparser import ODMLReader
 from odml.tools.xmlparser import ParserException
-from odml.tools.xmlparser import XML_VERSION
+from ..info import FORMAT_VERSION
 
 try:
     unicode = unicode
@@ -219,7 +219,7 @@ class RDFReader(object):
                 if len(elems) > 0:
                     doc_attrs[attr[0]] = str(elems[0].toPython())
 
-        return {'Document': doc_attrs, 'odml-version': XML_VERSION}
+        return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
 
     # TODO section subclass conversion
     def parse_section(self, sec_uri):
