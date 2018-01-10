@@ -4,6 +4,7 @@ import unittest
 import os
 import sys
 import re
+import tempfile
 
 from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
@@ -357,9 +358,11 @@ class MiscTest(unittest.TestCase):
         self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
 
     def test_save_version(self):
+        tmp_file = os.path.join(tempfile.gettempdir(), "example.odml")
+
         self.doc.version = '2.4'
         writer = xmlparser.XMLWriter(self.doc)
-        writer.write_file("/tmp/example.odml")
+        writer.write_file(tmp_file)
 
-        restored = xmlparser.load("/tmp/example.odml")
+        restored = xmlparser.load(tmp_file)
         self.assertEqual(self.doc.version, restored.version)
