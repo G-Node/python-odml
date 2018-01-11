@@ -17,6 +17,8 @@ except ImportError:
     import urllib2
 
 
+REPOSITORY = 'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+
 CACHE_AGE = datetime.timedelta(days=1)
 
 
@@ -96,11 +98,11 @@ class Terminologies(dict):
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
+
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
 
 
 if __name__ == "__main__":
-    f = cache_load('http://portal.g-node.org/odml/terminologies/v1.0/'
-                   'analysis/analysis.xml')
+    f = cache_load(REPOSITORY)

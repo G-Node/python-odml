@@ -1,14 +1,14 @@
 import odml
 import unittest
 
+from odml.terminology import REPOSITORY
+
 
 class BugTests(unittest.TestCase):
 
     def test_doc_repository_attribute_init(self):
-        repo = "http://portal.g-node.org/odml/terminologies/v1.0/" \
-               "terminologies.xml"
-        doc = odml.Document(repository=repo)
-        self.assertEqual(doc._repository, repo,
+        doc = odml.Document(repository=REPOSITORY)
+        self.assertEqual(doc._repository, REPOSITORY,
                          "Document needs to init its baseclass first, "
                          "as it overwrites the repository attribute")
-        self.assertEqual(doc.repository, repo)
+        self.assertEqual(doc.repository, REPOSITORY)
