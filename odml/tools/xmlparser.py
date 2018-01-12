@@ -50,6 +50,8 @@ def from_csv(value_string):
         return []
     if value_string[0] == "[":
         value_string = value_string[1:-1]
+    if not value_string:
+        return []
     stream = StringIO(value_string)
     stream.seek(0)
     reader = csv.reader(stream, dialect="excel")
