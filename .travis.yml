@@ -35,7 +35,7 @@ install:
       source venv/bin/activate;
       which python;
     fi
-  - pip install lxml enum34 pyyaml
+  - pip install lxml enum34 pyyaml rdflib
 
 script:
   - which python
