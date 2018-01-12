@@ -7,6 +7,9 @@ from odml.tools.format_converter import FormatConverter
 
 FC = FormatConverter
 
+# TODO The used NamedTemporaryFile does not play nice with Windows;
+# deactivating all affected tests for Windows until this has been fixed.
+
 
 class TestFormatConverter(unittest.TestCase):
     def setUp(self):
@@ -26,11 +29,17 @@ class TestFormatConverter(unittest.TestCase):
             raise self.failureException('{} raised'.format(exc_type.__name__))
 
     def test_convert(self):
+        if os.name == 'nt':
+            raise unittest.SkipTest("Skipping test on Windows")
+
         self.test_convert_dir_no_output_dir(False, FC.convert)
         self.test_convert_dir_no_output_dir(True, FC.convert)
         self.test_convert_dir_with_output_dir_specified(FC.convert)
 
     def test_convert_dir(self):
+        if os.name == 'nt':
+            raise unittest.SkipTest("Skipping test on Windows")
+
         with self.assertRaises(ValueError):
             FC.convert_dir(None, None, False, "not valid format")
 
@@ -38,6 +47,9 @@ class TestFormatConverter(unittest.TestCase):
         self.test_convert_dir_no_output_dir(True)
 
     def test_convert_dir_no_output_dir(self, recursive=False, func=None):
+        if os.name == 'nt':
+            raise unittest.SkipTest("Skipping test on Windows")
+
         work_dir = tempfile.mkdtemp()
         in_dir = tempfile.mkdtemp(dir=work_dir)
         in_file = self.create_open_file(in_dir)
@@ -73,6 +85,9 @@ class TestFormatConverter(unittest.TestCase):
         in_file2.close()
 
     def test_convert_dir_with_output_dir_specified(self, func=None):
+        if os.name == 'nt':
+            raise unittest.SkipTest("Skipping test on Windows")
+
         # Testing FC.convert_dir(in_dir, out_dir, False, "odml")
         in_dir = tempfile.mkdtemp()
         out_dir = tempfile.mkdtemp()
