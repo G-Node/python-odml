@@ -171,7 +171,8 @@ class BaseProperty(base.baseobject, Property):
 
     @value.setter
     def value(self, new_value):
-        if not new_value:
+        # Make sure boolean value 'False' gets through as well...
+        if new_value is None or new_value == "":
             return
         if isinstance(new_value, str):
             if new_value[0] == "[" and new_value[-1] == "]":
