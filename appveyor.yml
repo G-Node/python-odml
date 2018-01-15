@@ -1,0 +1,19 @@
+environment:
+  matrix:
+    - PYTHON: "C:\\Python27"
+      PYVER: "2.7"
+    - PYTHON: "C:\\Python35"
+      PYVER: "3.5"
+    - PYTHON: "C:\\Python27-x64"
+      PYVER: "2.7"
+    - PYTHON: "C:\\Python35-x64"
+      PYVER: "3.5"
+
+build: false
+
+install:
+  - python -m pip install lxml enum34 pyyaml
+
+test_script:
+  - python --version
+  - python setup.py test

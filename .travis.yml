@@ -3,23 +3,42 @@ dist: trusty
 
 language: python
 
-env:
-    global:
-        - NIX_BRANCH=master
-
 matrix:
     include:
-        - python: "2.7"
+        - os: linux
+          python: "2.7"
           env: COVERALLS=1
-        - python: "3.4"
-        - python: "3.5"
+        - os: linux
+          python: "3.4"
+        - os: linux
+          python: "3.5"
+
+        - os: osx
+          language: generic
+          env:
+            - OSXENV=2.7
+        - os: osx
+          language: generic
+          env:
+            - OSXENV=3.5
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash resources/install_osx_virtualenv.sh; fi
 
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
-  - pip install --upgrade coveralls
+  - if [ $COVERALLS = 1 ]; then
+        pip install --upgrade coveralls;
+    fi;
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      which python;
+      source venv/bin/activate;
+      which python;
+    fi
   - pip install lxml enum34 pyyaml
 
 script:
+  - which python
   - python setup.py build
   - if [ $COVERALLS = 1 ]; then
         coverage${PYVER} run --source=odml setup.py test && coverage${PYVER} report -m;

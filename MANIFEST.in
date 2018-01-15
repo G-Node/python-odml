@@ -1,4 +1,3 @@
-include LICENSE INSTALL
+include LICENSE
 include README.rst
 include odml.desktop
-recursive-include images *
