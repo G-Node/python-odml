@@ -17,7 +17,7 @@ except ImportError:
     import urllib2
 
 
-REPOSITORY = 'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+REPOSITORY = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
 
 CACHE_AGE = datetime.timedelta(days=1)
 
