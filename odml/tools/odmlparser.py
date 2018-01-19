@@ -14,7 +14,7 @@ from .. import format
 from ..info import FORMAT_VERSION
 from . import xmlparser
 
-allowed_parsers = ['XML', 'YAML', 'JSON']
+allowed_parsers = ['XML', 'YAML', 'JSON', 'RDF']
 
 
 class ParserException(Exception):
@@ -193,6 +193,7 @@ class ODMLReader:
         return self.doc
 
     def parse_sections(self, section_list):
+
         odml_sections = []
 
         for section in section_list:
@@ -237,7 +238,7 @@ class ODMLReader:
 
         return odml_props
 
-    def from_file(self, file):
+    def from_file(self, file, doc_format=None):
 
         if self.parser == 'XML':
             par = xmlparser.XMLReader(ignore_errors=True)
@@ -263,10 +264,18 @@ class ODMLReader:
                 except ValueError as e:  # Python 2 does not support JSONDecodeError
                     print("JSON Decoder Error: %s" % e)
                     return
-
             return self.to_odml()
 
-    def from_string(self, string):
+        # TODO discuss whether local import is appropriate here
+        elif self.parser == 'RDF':
+            if not doc_format:
+                raise KeyError("Format of the rdf file was not specified")
+            from odml.tools.rdf_converter import RDFReader
+            self.doc = RDFReader().from_file(file, doc_format)
+
+            return self.doc
+
+    def from_string(self, string, doc_format=None):
 
         if self.parser == 'XML':
             odml_doc = xmlparser.XMLReader().from_string(string)
@@ -288,3 +297,10 @@ class ODMLReader:
                 print("JSON Decoder Error: %s" % e)
                 return
             return self.to_odml()
+
+        elif self.parser == 'RDF':
+            if not doc_format:
+                raise KeyError("Format of the rdf file was not specified")
+            from odml.tools.rdf_converter import RDFReader
+            self.doc = RDFReader().from_string(string, doc_format)
+            return self.doc

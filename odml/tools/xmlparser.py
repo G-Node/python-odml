@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 """
 The XML parsing module.
-
 Parses odML files. Can be invoked standalone:
-
     python -m odml.tools.xmlparser file.odml
 """
-import sys
 import csv
+import sys
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -47,10 +46,10 @@ def to_csv(val):
 
 
 def from_csv(value_string):
-    if len(value_string) == 0:
-        return []
     if value_string[0] == "[":
         value_string = value_string[1:-1]
+    if len(value_string) == 0:
+        return []
     stream = StringIO(value_string)
     stream.seek(0)
     reader = csv.reader(stream, dialect="excel")
@@ -162,9 +161,7 @@ class ParserException(Exception):
 class XMLReader(object):
     """
     A reader to parse xml-files or strings into odml data structures
-
     Usage:
-
         >>> doc = XMLReader().from_file("file.odml")
     """
 
@@ -322,9 +319,12 @@ class XMLReader(object):
             obj = create(args=arguments, text=''.join(text), children=children)
 
         for k, v in arguments.items():
-            if hasattr(obj, k) and getattr(obj, k) is None:
+            if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
                 try:
-                    setattr(obj, k, v)
+                    if k == 'id' and v is not None:
+                        obj._id = v
+                    else:
+                        setattr(obj, k, v)
                 except Exception as e:
                     self.warn("cannot set '%s' property on <%s>: %s" %
                               (k, root.tag, repr(e)), root)
