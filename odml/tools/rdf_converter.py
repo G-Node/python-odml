@@ -69,7 +69,7 @@ class RDFWriter(object):
         else:
             curr_node = node
 
-        if fmt._name == "section":
+        if fmt.name() == "section":
             s = self._get_section_subclass(e)
             u = s if s else fmt.rdf_type()
             self.g.add((curr_node, RDF.type, URIRef(u)))

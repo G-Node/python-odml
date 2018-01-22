@@ -11,11 +11,16 @@ and mappings of xml-attributes to their python class equivalents
 
 
 class Format(object):
+    _name = ""
     _map = {}
     _rev_map = None
     _rdf_map = {}
     _rdf_type = None
     _ns = Namespace("https://g-node.org/projects/odml-rdf#")
+
+    def name(self):
+        """Returns the name of the current odML format"""
+        return self._name
 
     def map(self, name):
         """ Maps an odml name to a python name """

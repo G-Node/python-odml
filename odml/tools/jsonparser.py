@@ -93,7 +93,7 @@ class OdmlReader(object):
                     objects.append(self.to_odml(nobj))
             elif v is not None:
                 kargs[fmt.map(k)] = v
-        return getattr(self, "create_%s" % fmt._name)(fmt, kargs, obj, objects)
+        return getattr(self, "create_%s" % fmt.name())(fmt, kargs, obj, objects)
 
     def create_odML(self, fmt, kargs, obj, children):
         obj = fmt.create(**kargs)

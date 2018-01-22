@@ -80,9 +80,9 @@ class XMLWriter:
             val = getattr(e, fmt.map(fmt._xml_content))
             if val is None:
                 val = ''
-            cur = E(fmt._name, val)
+            cur = E(fmt.name(), val)
         else:
-            cur = E(fmt._name)
+            cur = E(fmt.name())
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
