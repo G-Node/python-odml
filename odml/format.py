@@ -43,6 +43,14 @@ class Format(object):
         """ Maps a python name to a odml rdf namespace """
         return self._rdf_map.get(name, name)
 
+    def rdf_map_keys(self):
+        """Returns all keys of the current odML format RDF map dict"""
+        return self._rdf_map.keys()
+
+    def rdf_map_items(self):
+        """Returns all items of the current odML format RDF map dict"""
+        return self._rdf_map.items()
+
     def rdf_type(self):
         """ Return rdf type of an object """
         return self._rdf_type

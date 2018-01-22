@@ -80,7 +80,7 @@ class RDFWriter(object):
         if isinstance(fmt, odml.format.Document.__class__):
             self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
 
-        for k in fmt._rdf_map:
+        for k in fmt.rdf_map_keys():
             if k == 'id':
                 continue
             elif (isinstance(fmt, odml.format.Document.__class__) or
@@ -207,7 +207,7 @@ class RDFReader(object):
     def parse_document(self, doc_uri):
         rdf_doc = odml.format.Document
         doc_attrs = {}
-        for attr in rdf_doc._rdf_map.items():
+        for attr in rdf_doc.rdf_map_items():
             elems = list(self.g.objects(subject=doc_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 doc_attrs[attr[0]] = []
@@ -225,7 +225,7 @@ class RDFReader(object):
     def parse_section(self, sec_uri):
         rdf_sec = odml.format.Section
         sec_attrs = {}
-        for attr in rdf_sec._rdf_map.items():
+        for attr in rdf_sec.rdf_map_items():
             elems = list(self.g.objects(subject=sec_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 sec_attrs[attr[0]] = []
@@ -246,7 +246,7 @@ class RDFReader(object):
     def parse_property(self, prop_uri):
         rdf_prop = odml.format.Property
         prop_attrs = {}
-        for attr in rdf_prop._rdf_map.items():
+        for attr in rdf_prop.rdf_map_items():
             elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
             if attr[0] == "value" and len(elems) > 0:
                 prop_attrs[attr[0]] = []
