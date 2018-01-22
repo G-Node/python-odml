@@ -35,6 +35,10 @@ class Format(object):
         """ Maps an odml name to a python name """
         return self._map.get(name, name)
 
+    def map_keys(self):
+        """Returns all keys of the current odML format map dict"""
+        return self._map.keys()
+
     def rdf_map(self, name):
         """ Maps a python name to a odml rdf namespace """
         return self._rdf_map.get(name, name)

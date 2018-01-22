@@ -43,7 +43,7 @@ class ODMLWriter:
 
         for i in format.Document.arguments_keys():
             attr = i
-            if i in format.Document._map:
+            if i in format.Document.map_keys():
                 attr = format.Document.map(i)
             if hasattr(odml_document, attr):
                 if attr == 'sections':
@@ -63,7 +63,7 @@ class ODMLWriter:
             section_dict = {}
             for i in format.Section.arguments_keys():
                 attr = i
-                if i in format.Section._map:
+                if i in format.Section.map_keys():
                     attr = format.Section.map(i)
                 if hasattr(section, attr):
                     if attr == 'properties':

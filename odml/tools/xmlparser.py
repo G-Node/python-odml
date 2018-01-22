@@ -281,7 +281,7 @@ class XMLReader(object):
             self.is_valid_argument(node.tag, fmt, root, node)
             if node.tag in fmt.arguments_keys():
                 # this is a heuristic, but works for now
-                if node.tag in self.tags and node.tag in fmt._map:
+                if node.tag in self.tags and node.tag in fmt.map_keys():
                     sub_obj = self.parse_element(node)
                     if sub_obj is not None:
                         extra_args[fmt.map(node.tag)] = sub_obj
