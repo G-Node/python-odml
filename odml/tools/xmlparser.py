@@ -46,9 +46,11 @@ def to_csv(val):
 
 
 def from_csv(value_string):
+    if not value_string:
+        return []
     if value_string[0] == "[":
         value_string = value_string[1:-1]
-    if len(value_string) == 0:
+    if not value_string:
         return []
     stream = StringIO(value_string)
     stream.seek(0)
@@ -292,13 +294,13 @@ class XMLReader(object):
                         self.warn("Element <%s> is given multiple times in "
                                   "<%s> tag" % (node.tag, root.tag), node)
 
-                    # Special handling of values
-                    if tag == "value" and node.text:
-                        content = from_csv(node.text.strip())
+                    # Special handling of values;
+                    curr_text = node.text.strip() if node.text else None
+                    if tag == "value" and curr_text:
+                        content = from_csv(node.text)
                         arguments[tag] = content
                     else:
-                        arguments[tag] = node.text.strip(
-                        ) if node.text else None
+                        arguments[tag] = curr_text
             else:
                 self.error("Invalid element <%s> in odML document section <%s>"
                            % (node.tag, root.tag), node)

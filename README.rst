@@ -1,14 +1,17 @@
-odML libraries and editor
-=========================
 .. image:: https://travis-ci.org/G-Node/python-odml.svg?branch=master
     :target: https://travis-ci.org/G-Node/python-odml
+.. image:: https://ci.appveyor.com/api/projects/status/2wfvsu7boe18kwjy?svg=true
+    :target: https://ci.appveyor.com/project/mpsonntag/python-odml
 .. image:: https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master
     :target: https://coveralls.io/github/G-Node/python-odml?branch=master
+
+odML libraries and editor
+=========================
 
 The Python-odML library (including the odML-Editor) is available on
 `GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar with
 the version control system **git**, but still want to use it, have a look at
-the documentaion available on the `git-scm website <https://git-scm.com/>`_.
+the documentation available on the `git-scm website <https://git-scm.com/>`_.
 
 Dependencies
 ------------
