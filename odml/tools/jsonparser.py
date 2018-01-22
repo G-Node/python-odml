@@ -30,7 +30,7 @@ class OdmlSerializer(object):
         cur = {'_type': fmt.__class__.__name__}
 
         # Generate elements
-        for k in fmt._args:
+        for k in fmt.arguments_keys():
             if not hasattr(e, fmt.map(k)):
                 continue
 
@@ -86,7 +86,7 @@ class OdmlReader(object):
         fmt = getattr(odml.format, obj['_type'])
         kargs = {}
         objects = []
-        for k in fmt._args:
+        for k in fmt.arguments_keys():
             v = obj.get(k, None)
             if isinstance(v, list):
                 for i, nobj in enumerate(v):

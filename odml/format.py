@@ -27,6 +27,10 @@ class Format(object):
         """Returns all items in the current odML format argument dict"""
         return self._args.items()
 
+    def arguments_keys(self):
+        """Returns all keys of the current odML format argument dict"""
+        return self._args.keys()
+
     def map(self, name):
         """ Maps an odml name to a python name """
         return self._map.get(name, name)

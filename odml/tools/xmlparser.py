@@ -101,7 +101,7 @@ class XMLWriter:
                 cur.attrib[k] = str(val)
 
         # generate elements
-        for k in fmt._args:
+        for k in fmt.arguments_keys():
             if (k in fmt._xml_attributes and
                 fmt._xml_attributes[k] is not None) \
                or not hasattr(e, fmt.map(k)) \
@@ -225,7 +225,7 @@ class XMLReader(object):
                            (k, tag_name) + repr(data), node)
 
     def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
-        if tag_name not in ArgClass._args:
+        if tag_name not in ArgClass.arguments_keys():
             self.error("Invalid element <%s> inside <%s> tag" %
                        (tag_name, parent_node.tag),
                        parent_node if child is None else child)
@@ -279,7 +279,7 @@ class XMLReader(object):
         for node in root:
             node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
-            if node.tag in fmt._args:
+            if node.tag in fmt.arguments_keys():
                 # this is a heuristic, but works for now
                 if node.tag in self.tags and node.tag in fmt._map:
                     sub_obj = self.parse_element(node)

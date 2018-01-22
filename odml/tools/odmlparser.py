@@ -41,7 +41,7 @@ class ODMLWriter:
     def to_dict(self, odml_document):
         parsed_doc = {}
 
-        for i in format.Document._args:
+        for i in format.Document.arguments_keys():
             attr = i
             if i in format.Document._map:
                 attr = format.Document._map[i]
@@ -61,7 +61,7 @@ class ODMLWriter:
 
         for section in section_list:
             section_dict = {}
-            for i in format.Section._args:
+            for i in format.Section.arguments_keys():
                 attr = i
                 if i in format.Section._map:
                     attr = format.Section._map[i]
@@ -86,7 +86,7 @@ class ODMLWriter:
 
         for prop in props_list:
             prop_dict = {}
-            for i in format.Property._args:
+            for i in format.Property.arguments_keys():
                 attr = i
                 if i in format.Property._map:
                     attr = format.Property._map[i]
@@ -154,7 +154,7 @@ class ODMLReader:
         self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
-        if attr in fmt._args:
+        if attr in fmt.arguments_keys():
             return attr
         if fmt.revmap(attr):
             return attr
