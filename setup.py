@@ -13,9 +13,6 @@ packages = [
 with open('README.rst') as f:
     description_text = f.read()
 
-with open("LICENSE") as f:
-    license_text = f.read()
-
 install_req = ["lxml", "pyyaml"]
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
@@ -32,5 +29,5 @@ setup(
     install_requires=install_req,
     long_description=description_text,
     classifiers=CLASSIFIERS,
-    license=license_text
+    license="BSD"
 )
