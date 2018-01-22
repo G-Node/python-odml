@@ -44,7 +44,7 @@ class ODMLWriter:
         for i in format.Document.arguments_keys():
             attr = i
             if i in format.Document._map:
-                attr = format.Document._map[i]
+                attr = format.Document.map(i)
             if hasattr(odml_document, attr):
                 if attr == 'sections':
                     sections = self.get_sections(odml_document.sections)
@@ -64,7 +64,7 @@ class ODMLWriter:
             for i in format.Section.arguments_keys():
                 attr = i
                 if i in format.Section._map:
-                    attr = format.Section._map[i]
+                    attr = format.Section.map(i)
                 if hasattr(section, attr):
                     if attr == 'properties':
                         properties = self.get_properties(section.properties)
@@ -89,7 +89,7 @@ class ODMLWriter:
             for i in format.Property.arguments_keys():
                 attr = i
                 if i in format.Property._map:
-                    attr = format.Property._map[i]
+                    attr = format.Property.map(i)
                 if hasattr(prop, attr):
                     t = getattr(prop, attr)
                     if (t == []) or t:  # Even if 'value' is empty, allow '[]'
