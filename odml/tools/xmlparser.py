@@ -219,7 +219,7 @@ class XMLReader(object):
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
-        for k, v in ArgClass._args.items():
+        for k, v in ArgClass.arguments():
             if v != 0 and not ArgClass.map(k) in data:
                 self.error("missing element <%s> within <%s> tag" %
                            (k, tag_name) + repr(data), node)

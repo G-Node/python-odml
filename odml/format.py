@@ -12,6 +12,7 @@ and mappings of xml-attributes to their python class equivalents
 
 class Format(object):
     _name = ""
+    _args = {}
     _map = {}
     _rev_map = None
     _rdf_map = {}
@@ -21,6 +22,10 @@ class Format(object):
     def name(self):
         """Returns the name of the current odML format"""
         return self._name
+
+    def arguments(self):
+        """Returns all items in the current odML format argument dict"""
+        return self._args.items()
 
     def map(self, name):
         """ Maps an odml name to a python name """
