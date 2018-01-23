@@ -329,12 +329,6 @@ class XMLReader(object):
         create = lambda children, args, **kargs: fmt.create(**args)
         return self.parse_tag(root, fmt, insert_children=False, create=create)
 
-    """
-    def parse_value(self, root, fmt):
-        create = lambda text, args, **kargs: fmt.create(text, **args)
-        return self.parse_tag(root, fmt, insert_children=False, create=create)
-    """
-
 
 if __name__ == '__main__':
     from optparse import OptionParser
