@@ -72,13 +72,7 @@ class XMLWriter:
         returns an xml node for the odML object e
         """
         fmt = e._format
-        if hasattr(fmt, "_xml_content"):
-            val = getattr(e, fmt.map(fmt._xml_content))
-            if val is None:
-                val = ''
-            cur = E(fmt.name(), val)
-        else:
-            cur = E(fmt.name())
+        cur = E(fmt.name())
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
@@ -98,11 +92,9 @@ class XMLWriter:
 
         # generate elements
         for k in fmt.arguments_keys():
-            if (k in fmt._xml_attributes and
-                fmt._xml_attributes[k] is not None) \
-               or not hasattr(e, fmt.map(k)) \
-               or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
-                    continue
+            if (k in fmt._xml_attributes and fmt._xml_attributes[k] is not None) \
+               or not hasattr(e, fmt.map(k)):
+                continue
 
             val = getattr(e, fmt.map(k))
             if val is None:
