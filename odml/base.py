@@ -15,6 +15,9 @@ class _baseobj(object):
 class baseobject(_baseobj):
     _format = None
 
+    def format(self):
+        return self._format
+
     @property
     def document(self):
         """ Returns the Document object in which this object is contained """

@@ -26,7 +26,7 @@ class OdmlSerializer(object):
         """
         Returns an xml node for the odML object e
         """
-        fmt = e._format
+        fmt = e.format()
         cur = {'_type': fmt.__class__.__name__}
 
         # Generate elements

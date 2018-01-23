@@ -72,7 +72,7 @@ class Validation(object):
                 self.validate(prop)
 
     def validate(self, obj):
-        handlers = self._handlers.get(obj._format.name(), [])
+        handlers = self._handlers.get(obj.format().name(), [])
         for handler in handlers:
             for err in handler(obj):
                 self.error(err)

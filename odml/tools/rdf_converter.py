@@ -62,7 +62,7 @@ class RDFWriter(object):
         :param node: A node to pass the earlier created node to inner elements
         :return: the RDF graph 
         """
-        fmt = e._format
+        fmt = e.format()
 
         if not node:
             curr_node = URIRef(odmlns + str(e.id))

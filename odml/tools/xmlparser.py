@@ -65,7 +65,7 @@ class XMLWriter:
         """
         returns an xml node for the odML object e
         """
-        fmt = e._format
+        fmt = e.format()
         cur = E(fmt.name())
 
         # generate attributes
