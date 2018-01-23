@@ -24,12 +24,6 @@ except NameError:
     unicode = str
 
 
-format.Document._xml_attributes = {}
-# attribute 'name' maps to 'name', but writing it as a tag is preferred
-format.Section._xml_attributes = {'name': None}
-format.Property._xml_attributes = {}
-
-
 def to_csv(val):
     unicode_values = list(map(unicode, val))
     stream = StringIO()
@@ -78,22 +72,9 @@ class XMLWriter:
         if isinstance(fmt, format.Document.__class__):
             cur.attrib['version'] = FORMAT_VERSION
 
-        for k, v in fmt._xml_attributes.items():
-            if not v or not hasattr(e, fmt.map(v)):
-                continue
-
-            val = getattr(e, fmt.map(v))
-            if val is None:
-                continue  # no need to save this
-            if sys.version_info < (3, 0):
-                cur.attrib[k] = unicode(val)
-            else:
-                cur.attrib[k] = str(val)
-
         # generate elements
         for k in fmt.arguments_keys():
-            if (k in fmt._xml_attributes and fmt._xml_attributes[k] is not None) \
-               or not hasattr(e, fmt.map(k)):
+            if not hasattr(e, fmt.map(k)):
                 continue
 
             val = getattr(e, fmt.map(k))
@@ -255,15 +236,13 @@ class XMLReader(object):
 
         for k, v in root.attrib.iteritems():
             k = k.lower()
-            self.is_valid_argument(k, fmt, root)
+            # 'version' is currently the only supported XML attribute.
             if k == 'version' and root.tag == 'odML':
-                continue  # special case for XML version
-            if k not in fmt._xml_attributes:
-                self.error("<%s %s=...>: is not a valid attribute for %s" %
-                           (root.tag, k, root.tag), root)
-            else:
-                k = fmt._xml_attributes[k] or k
-                arguments[k] = v
+                continue
+
+            # We currently do not support XML attributes.
+            self.error("Attribute not supported, ignoring '%s=%s'" % (k, v), root)
+
         for node in root:
             node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
