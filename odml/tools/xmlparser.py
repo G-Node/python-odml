@@ -24,10 +24,6 @@ except NameError:
     unicode = str
 
 
-format.Document._xml_name = "odML"
-format.Section._xml_name = "section"
-format.Property._xml_name = "property"
-
 format.Document._xml_attributes = {}
 # attribute 'name' maps to 'name', but writing it as a tag is preferred
 format.Section._xml_attributes = {'name': None}
@@ -169,7 +165,7 @@ class XMLReader(object):
 
     def __init__(self, ignore_errors=False, filename=None):
         self.parser = ET.XMLParser(remove_comments=True)
-        self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
+        self.tags = dict([(obj.name(), obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
         self.filename = filename
         self.warnings = []
