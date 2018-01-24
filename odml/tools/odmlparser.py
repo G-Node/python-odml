@@ -17,6 +17,7 @@ from ..info import FORMAT_VERSION
 from .parser_utils import ParserException
 from .parser_utils import SUPPORTED_PARSERS
 from .rdf_converter import RDFReader
+from ..validation import Validation
 
 
 class ODMLWriter:
@@ -99,7 +100,6 @@ class ODMLWriter:
 
     def write_file(self, odml_document, filename):
         # Write document only if it does not contain validation errors.
-        from ..validation import Validation  # disgusting import problems
         validation = Validation(odml_document)
         msg = ""
         for e in validation.errors:
