@@ -12,7 +12,7 @@ import yaml
 
 from .. import format
 from . import xmlparser
-from .dict_parser import DictReader
+from .dict_parser import DictWriter, DictReader
 from ..info import FORMAT_VERSION
 from .parser_utils import ParserException
 from .parser_utils import SUPPORTED_PARSERS
@@ -37,67 +37,6 @@ class ODMLWriter:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
 
-    def to_dict(self, odml_document):
-        parsed_doc = {}
-
-        for i in format.Document.arguments_keys():
-            attr = i
-            if i in format.Document.map_keys():
-                attr = format.Document.map(i)
-            if hasattr(odml_document, attr):
-                if attr == 'sections':
-                    sections = self.get_sections(odml_document.sections)
-                    parsed_doc[attr] = sections
-                else:
-                    t = getattr(odml_document, attr)
-                    if t:
-                        parsed_doc[attr] = t
-
-        self.parsed_doc = parsed_doc
-
-    def get_sections(self, section_list):
-        section_seq = []
-
-        for section in section_list:
-            section_dict = {}
-            for i in format.Section.arguments_keys():
-                attr = i
-                if i in format.Section.map_keys():
-                    attr = format.Section.map(i)
-                if hasattr(section, attr):
-                    if attr == 'properties':
-                        properties = self.get_properties(section.properties)
-                        section_dict[attr] = properties
-                    elif attr == 'sections':
-                        sections = self.get_sections(section.sections)
-                        section_dict[attr] = sections
-                    else:
-                        t = getattr(section, attr)
-                        if t:
-                            section_dict[attr] = t
-
-            section_seq.append(section_dict)
-
-        return section_seq
-
-    def get_properties(self, props_list):
-        props_seq = []
-
-        for prop in props_list:
-            prop_dict = {}
-            for i in format.Property.arguments_keys():
-                attr = i
-                if i in format.Property._map:
-                    attr = format.Property.map(i)
-                if hasattr(prop, attr):
-                    t = getattr(prop, attr)
-                    if (t == []) or t:  # Even if 'value' is empty, allow '[]'
-                        prop_dict[attr] = t
-
-            props_seq.append(prop_dict)
-
-        return props_seq
-
     def write_file(self, odml_document, filename):
         # Write document only if it does not contain validation errors.
         validation = Validation(odml_document)
@@ -119,10 +58,10 @@ class ODMLWriter:
         if self.parser == 'XML':
             string_doc = str(xmlparser.XMLWriter(odml_document))
         else:
-            self.to_dict(odml_document)
-            odml_output = {}
-            odml_output['Document'] = self.parsed_doc
-            odml_output['odml-version'] = FORMAT_VERSION
+            self.parsed_doc = DictWriter().to_dict(odml_document)
+
+            odml_output = {'Document': self.parsed_doc,
+                           'odml-version': FORMAT_VERSION}
 
             if self.parser == 'YAML':
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
