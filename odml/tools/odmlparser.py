@@ -13,13 +13,10 @@ import yaml
 from .. import format
 from . import xmlparser
 from .dict_parser import DictReader
+from .parser_utils import ParserException
 from ..info import FORMAT_VERSION
 
 allowed_parsers = ['XML', 'YAML', 'JSON', 'RDF']
-
-
-class ParserException(Exception):
-    pass
 
 
 class ODMLWriter:

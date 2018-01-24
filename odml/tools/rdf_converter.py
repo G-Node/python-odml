@@ -10,7 +10,7 @@ from rdflib.namespace import XSD, RDF
 import odml
 import odml.format
 from .dict_parser import DictReader
-from odml.tools.xmlparser import ParserException
+from .parser_utils import ParserException
 from ..info import FORMAT_VERSION
 
 try:

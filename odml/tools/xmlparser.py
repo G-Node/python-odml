@@ -5,18 +5,20 @@ Parses odML files. Can be invoked standalone:
     python -m odml.tools.xmlparser file.odml
 """
 import csv
+from lxml import etree as ET
+from lxml.builder import E
+# this is needed for py2exe to include lxml completely
+from lxml import _elementpath as _dummy
 import sys
 
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
+
 from odml import format
-from lxml import etree as ET
-from lxml.builder import E
-# this is needed for py2exe to include lxml completely
-from lxml import _elementpath as _dummy
 from ..info import FORMAT_VERSION
+from .parser_utils import ParserException
 
 try:
     unicode = unicode
@@ -123,10 +125,6 @@ def load(filename):
     shortcut function for XMLReader().from_file(filename)
     """
     return XMLReader().from_file(filename)
-
-
-class ParserException(Exception):
-    pass
 
 
 class XMLReader(object):

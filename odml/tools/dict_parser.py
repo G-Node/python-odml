@@ -3,12 +3,9 @@ Dict parser converts the content of a dictionary
 into a proper and verified odML document.
 """
 
-from ..info import FORMAT_VERSION
 from .. import format as odmlfmt
-
-
-class ParserException(Exception):
-    pass
+from ..info import FORMAT_VERSION
+from .parser_utils import ParserException
 
 
 class DictReader:
