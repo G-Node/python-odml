@@ -11,8 +11,9 @@ import json
 import yaml
 
 from .. import format
-from ..info import FORMAT_VERSION
 from . import xmlparser
+from .dict_parser import DictReader
+from ..info import FORMAT_VERSION
 
 allowed_parsers = ['XML', 'YAML', 'JSON', 'RDF']
 
@@ -255,7 +256,8 @@ class ODMLReader:
                     print(e)
                     return
 
-            return self.to_odml()
+            self.doc = DictReader().to_odml(self.parsed_doc)
+            return self.doc
 
         elif self.parser == 'JSON':
             with open(file) as json_data:
@@ -264,7 +266,9 @@ class ODMLReader:
                 except ValueError as e:  # Python 2 does not support JSONDecodeError
                     print("JSON Decoder Error: %s" % e)
                     return
-            return self.to_odml()
+
+            self.doc = DictReader().to_odml(self.parsed_doc)
+            return self.doc
 
         # TODO discuss whether local import is appropriate here
         elif self.parser == 'RDF':
@@ -288,7 +292,9 @@ class ODMLReader:
             except yaml.parser.ParserError as e:
                 print(e)
                 return
-            return self.to_odml()
+
+            self.doc = DictReader().to_odml(self.parsed_doc)
+            return self.doc
 
         elif self.parser == 'JSON':
             try:
@@ -296,7 +302,9 @@ class ODMLReader:
             except ValueError as e:  # Python 2 does not support JSONDecodeError
                 print("JSON Decoder Error: %s" % e)
                 return
-            return self.to_odml()
+
+            self.doc = DictReader().to_odml(self.parsed_doc)
+            return self.doc
 
         elif self.parser == 'RDF':
             if not doc_format:
