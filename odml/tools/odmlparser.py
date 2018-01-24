@@ -13,9 +13,10 @@ import yaml
 from .. import format
 from . import xmlparser
 from .dict_parser import DictReader
+from ..info import FORMAT_VERSION
 from .parser_utils import ParserException
 from .parser_utils import SUPPORTED_PARSERS
-from ..info import FORMAT_VERSION
+from .rdf_converter import RDFReader
 
 
 class ODMLWriter:
@@ -266,13 +267,11 @@ class ODMLReader:
             self.doc = DictReader().to_odml(self.parsed_doc)
             return self.doc
 
-        # TODO discuss whether local import is appropriate here
         elif self.parser == 'RDF':
             if not doc_format:
                 raise KeyError("Format of the rdf file was not specified")
-            from odml.tools.rdf_converter import RDFReader
-            self.doc = RDFReader().from_file(file, doc_format)
 
+            self.doc = RDFReader().from_file(file, doc_format)
             return self.doc
 
     def from_string(self, string, doc_format=None):
@@ -305,6 +304,6 @@ class ODMLReader:
         elif self.parser == 'RDF':
             if not doc_format:
                 raise KeyError("Format of the rdf file was not specified")
-            from odml.tools.rdf_converter import RDFReader
+
             self.doc = RDFReader().from_string(string, doc_format)
             return self.doc
