@@ -33,8 +33,14 @@ class ODMLWriter:
         self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
         parser = parser.upper()
+
         if parser not in SUPPORTED_PARSERS:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
+
+        if parser == 'RDF':
+            msg = "The odML writer for RDF is currently not supported"
+            raise NotImplementedError(msg)
+
         self.parser = parser
 
     def write_file(self, odml_document, filename):
