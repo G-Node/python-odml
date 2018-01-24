@@ -40,13 +40,20 @@ class RDFWriter(object):
         self.g.bind("odml", odmlns)
 
         self.section_subclasses = {}
-        p = os.path.join(dirname(dirname(dirname(abspath(__file__)))), 'doc', 'section_subclasses.yaml')
-        with open(p, "r") as f:
-            try:
-                self.section_subclasses = yaml.load(f)
-            except yaml.parser.ParserError as e:
-                print(e)
-                return
+
+        # TODO doc/section_subclasses.yaml has to be exported on install, otherwise
+        # the RDFWriter is broken. Below is a quick and dirty fix to at least
+        # unbreak on install.
+        subclass_path = os.path.join(dirname(dirname(dirname(abspath(__file__)))),
+                         'doc', 'section_subclasses.yaml')
+
+        if os.path.isfile(subclass_path):
+            with open(subclass_path, "r") as f:
+                try:
+                    self.section_subclasses = yaml.load(f)
+                except yaml.parser.ParserError as err:
+                    print(err)
+                    return
 
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
