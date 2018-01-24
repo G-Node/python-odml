@@ -30,7 +30,6 @@ class ODMLWriter:
     """
 
     def __init__(self, parser='XML'):
-        self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
         parser = parser.upper()
 
@@ -47,16 +46,15 @@ class ODMLWriter:
         # Write document only if it does not contain validation errors.
         validation = Validation(odml_document)
         msg = ""
-        for e in validation.errors:
-            if e.is_error:
-                msg += "\n\t- %s %s: %s" % (e.obj, e.type, e.msg)
+        for err in validation.errors:
+            if err.is_error:
+                msg += "\n\t- %s %s: %s" % (err.obj, err.type, err.msg)
         if msg != "":
             msg = "Resolve document validation errors before saving %s" % msg
             raise ParserException(msg)
 
-        file = open(filename, 'w')
-        file.write(self.to_string(odml_document))
-        file.close()
+        with open(filename, 'w') as file:
+            file.write(self.to_string(odml_document))
 
     def to_string(self, odml_document):
         string_doc = ''
@@ -73,6 +71,7 @@ class ODMLWriter:
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4)
+
         return string_doc
 
 
