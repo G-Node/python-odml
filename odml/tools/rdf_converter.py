@@ -144,7 +144,7 @@ class RDFWriter(object):
 
     def _get_section_subclass(self, e):
         """
-        :return: RDF indentifier of section subclass type if present in section_subclasses dict
+        :return: RDF identifier of section subclass type if present in section_subclasses dict
         """
         sec_type = getattr(e, "type")
         if sec_type and sec_type in self.section_subclasses:
@@ -171,9 +171,8 @@ class RDFWriter(object):
 
     def write_file(self, filename, rdf_format):
         data = self.get_rdf_str(rdf_format)
-        f = open(filename, "w")
-        f.write(data)
-        f.close()
+        with open(filename, "w") as file:
+            file.write(data)
 
 
 class RDFReader(object):
