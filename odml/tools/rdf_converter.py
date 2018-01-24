@@ -269,29 +269,3 @@ class RDFReader(object):
                 raise ParserException("Entity with id: %s does not have required \"name\" attribute" % attrs["id"])
             else:
                 raise ParserException("Some entities does not have required \"name\" attribute")
-
-    def write_file(self, filename, doc_format, output_path):
-        """
-        Writes result to specified output_path if rdf doc contains exactly one odml document.
-        If several odml docs found - creates files in specified directory and writes parsed docs to them.
-        Example of created file: /<dir_path>/doc_<id>.odml (<id> - id of the document).
-
-        :param filename: path to input file
-        :param doc_format: rdf format of the file
-        :param output_path: path to the output file or directory
-        """
-        self.g = Graph().parse(source=filename, format=doc_format)
-        self.to_odml()
-        if len(self.docs) > 1 and os.path.isdir(output_path):
-            if os.path.exists(output_path):
-                for doc in self.docs:
-                    if doc:
-                        path = os.path.join(output_path, "doc_" + doc.id)
-                        odml.save(doc, path)
-        elif len(self.docs) > 1 and not os.path.isdir(output_path):
-            raise ValueError("Input file consists of multiple odml docs. output_path is not a valid path to directory.")
-        elif len(self.docs) == 1 and os.path.isfile(output_path):
-            odml.save(self.docs[0], output_path)
-        elif len(self.docs) == 1 and not os.path.isfile(output_path):
-            raise ValueError("Input file consists of a one odml doc. "
-                             "output_path is not a valid path to the output file.")
