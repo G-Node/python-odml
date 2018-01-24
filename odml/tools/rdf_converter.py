@@ -9,7 +9,7 @@ from rdflib.namespace import XSD, RDF
 
 import odml
 import odml.format
-from odml.tools.odmlparser import ODMLReader
+from .dict_parser import DictReader
 from odml.tools.xmlparser import ParserException
 from ..info import FORMAT_VERSION
 
@@ -188,11 +188,13 @@ class RDFReader(object):
         """
         :return: list of converter odml documents
         """
-        docs_uris = list(self.g.objects(subject=URIRef(odmlns.Hub), predicate=odmlns.hasDocument))
-        o = ODMLReader()
+        docs_uris = list(self.g.objects(subject=URIRef(odmlns.Hub),
+                                        predicate=odmlns.hasDocument))
         for doc in docs_uris:
-            o.parsed_doc = self.parse_document(doc)
-            self.docs.append(o.to_odml())
+            par = self.parse_document(doc)
+            par_doc = DictReader().to_odml(par)
+            self.docs.append(par_doc)
+
         return self.docs
 
     def from_file(self, filename, doc_format):
