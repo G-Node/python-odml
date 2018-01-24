@@ -4,8 +4,9 @@ Collects common base functionality
 """
 
 import posixpath
-from odml import terminology
-from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
+from . import terminology
+from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class _baseobj(object):

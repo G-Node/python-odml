@@ -2,10 +2,10 @@
 
 import uuid
 
-import odml.base as base
-import odml.dtypes as dtypes
-import odml.format as frmt
-from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from . import base
+from . import dtypes
+from . import format as frmt
+from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Property(base._baseobj):

@@ -4,8 +4,9 @@ The JSON import/export module.
 This is rudimentary for now, assuming everything is well-formed.
 """
 import sys
-import odml
 import json
+
+from .. import format as odml_fmt
 
 try:
     unicode = unicode
@@ -83,7 +84,7 @@ class OdmlReader(object):
     """
 
     def to_odml(self, obj):
-        fmt = getattr(odml.format, obj['_type'])
+        fmt = getattr(odml_fmt.format, obj['_type'])
         kargs = {}
         objects = []
         for k in fmt.arguments_keys():

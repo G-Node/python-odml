@@ -16,7 +16,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from odml import format
+from .. import format
 from ..info import FORMAT_VERSION
 from .parser_utils import ParserException
 

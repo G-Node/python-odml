@@ -1,7 +1,7 @@
 """
 Dumps odML-Structures
 """
-from odml.tools.xmlparser import to_csv
+from .xmlparser import to_csv
 
 
 def get_props(obj, props):

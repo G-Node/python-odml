@@ -4,7 +4,7 @@ import sys
 
 from lxml import etree as ET
 from .. import format
-from odml.tools.odmlparser import FORMAT_VERSION
+from ..info import FORMAT_VERSION
 
 try:
     unicode = unicode

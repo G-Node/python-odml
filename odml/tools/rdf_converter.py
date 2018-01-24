@@ -1,14 +1,14 @@
 import os
 import uuid
+import yaml
+
 from io import StringIO
 from os.path import dirname, abspath
-
-import yaml
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import XSD, RDF
 
 import odml
-import odml.format
+from ..format import Format, Document, Section, Property
 from .dict_parser import DictReader
 from .parser_utils import ParserException
 from ..info import FORMAT_VERSION
@@ -18,7 +18,7 @@ try:
 except NameError:
     unicode = str
 
-odmlns = odml.format.Format.namespace()
+odmlns = Format.namespace()
 
 
 class RDFWriter(object):
@@ -77,14 +77,14 @@ class RDFWriter(object):
             self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type())))
 
         # adding doc to the hub
-        if isinstance(fmt, odml.format.Document.__class__):
+        if isinstance(fmt, Document.__class__):
             self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
 
         for k in fmt.rdf_map_keys():
             if k == 'id':
                 continue
-            elif (isinstance(fmt, odml.format.Document.__class__) or
-                    isinstance(fmt, odml.format.Section.__class__)) and k == "repository":
+            elif (isinstance(fmt, Document.__class__) or
+                    isinstance(fmt, Section.__class__)) and k == "repository":
                 terminology_url = getattr(e, k)
                 if terminology_url is None or not terminology_url:
                     continue
@@ -98,22 +98,22 @@ class RDFWriter(object):
                     self.g.add((self.hub_root, odmlns.hasTerminology, node))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
-            elif (isinstance(fmt, odml.format.Document.__class__) or
-                    isinstance(fmt, odml.format.Section.__class__)) and \
+            elif (isinstance(fmt, Document.__class__) or
+                    isinstance(fmt, Section.__class__)) and \
                     k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
                     node = URIRef(odmlns + str(s.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
-            elif isinstance(fmt, odml.format.Section.__class__) and \
+            elif isinstance(fmt, Section.__class__) and \
                     k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
                     node = URIRef(odmlns + str(p.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
-            elif isinstance(fmt, odml.format.Property.__class__) and \
+            elif isinstance(fmt, Property.__class__) and \
                     k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
                 bag = URIRef(odmlns + str(uuid.uuid4()))
@@ -207,7 +207,7 @@ class RDFReader(object):
 
     # TODO check mandatory attrs
     def parse_document(self, doc_uri):
-        rdf_doc = odml.format.Document
+        rdf_doc = Document
         doc_attrs = {}
         for attr in rdf_doc.rdf_map_items():
             elems = list(self.g.objects(subject=doc_uri, predicate=attr[1]))
@@ -225,7 +225,7 @@ class RDFReader(object):
 
     # TODO section subclass conversion
     def parse_section(self, sec_uri):
-        rdf_sec = odml.format.Section
+        rdf_sec = Section
         sec_attrs = {}
         for attr in rdf_sec.rdf_map_items():
             elems = list(self.g.objects(subject=sec_uri, predicate=attr[1]))
@@ -246,7 +246,7 @@ class RDFReader(object):
         return sec_attrs
 
     def parse_property(self, prop_uri):
-        rdf_prop = odml.format.Property
+        rdf_prop = Property
         prop_attrs = {}
         for attr in rdf_prop.rdf_map_items():
             elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
@@ -275,7 +275,7 @@ class RDFReader(object):
         Writes result to specified output_path if rdf doc contains exactly one odml document.
         If several odml docs found - creates files in specified directory and writes parsed docs to them.
         Example of created file: /<dir_path>/doc_<id>.odml (<id> - id of the document).
-        
+
         :param filename: path to input file
         :param doc_format: rdf format of the file
         :param output_path: path to the output file or directory
