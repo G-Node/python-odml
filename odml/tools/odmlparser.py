@@ -14,9 +14,8 @@ from .. import format
 from . import xmlparser
 from .dict_parser import DictReader
 from .parser_utils import ParserException
+from .parser_utils import SUPPORTED_PARSERS
 from ..info import FORMAT_VERSION
-
-allowed_parsers = ['XML', 'YAML', 'JSON', 'RDF']
 
 
 class ODMLWriter:
@@ -32,7 +31,7 @@ class ODMLWriter:
         self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
         parser = parser.upper()
-        if parser not in allowed_parsers:
+        if parser not in SUPPORTED_PARSERS:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
 
@@ -146,7 +145,7 @@ class ODMLReader:
         self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
         parser = parser.upper()
-        if parser not in allowed_parsers:
+        if parser not in SUPPORTED_PARSERS:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
         self.warnings = []
