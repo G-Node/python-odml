@@ -8,10 +8,90 @@ from ..info import FORMAT_VERSION
 from .parser_utils import ParserException
 
 
+class DictWriter:
+    """
+    A writer to parse an odML document to a Python dictionary object equivalent.
+    """
+
+    def __init__(self):
+        self.doc = None  # odML document
+
+    def to_dict(self, odml_document):
+        self.doc = odml_document
+        parsed_doc = {}
+
+        for i in odmlfmt.Document.arguments_keys():
+            attr = i
+            if i in odmlfmt.Document.map_keys():
+                attr = odmlfmt.Document.map(i)
+
+            if hasattr(odml_document, attr):
+                if attr == 'sections':
+                    sections = self.get_sections(odml_document.sections)
+                    parsed_doc[attr] = sections
+                else:
+                    tag = getattr(odml_document, attr)
+
+                    if tag:
+                        parsed_doc[attr] = tag
+
+        return parsed_doc
+
+    def get_sections(self, section_list):
+        section_seq = []
+
+        for section in section_list:
+            section_dict = {}
+
+            for i in odmlfmt.Section.arguments_keys():
+                attr = i
+
+                if i in odmlfmt.Section.map_keys():
+                    attr = odmlfmt.Section.map(i)
+
+                if hasattr(section, attr):
+                    if attr == 'properties':
+                        properties = self.get_properties(section.properties)
+                        section_dict[attr] = properties
+                    elif attr == 'sections':
+                        sections = self.get_sections(section.sections)
+                        section_dict[attr] = sections
+                    else:
+                        tag = getattr(section, attr)
+
+                        if tag:
+                            section_dict[attr] = tag
+
+            section_seq.append(section_dict)
+
+        return section_seq
+
+    @staticmethod
+    def get_properties(props_list):
+        props_seq = []
+
+        for prop in props_list:
+            prop_dict = {}
+
+            for i in odmlfmt.Property.arguments_keys():
+                attr = i
+                if i in odmlfmt.Property.map_keys():
+                    attr = odmlfmt.Property.map(i)
+
+                if hasattr(prop, attr):
+                    tag = getattr(prop, attr)
+
+                    if (tag == []) or tag:  # Even if 'value' is empty, allow '[]'
+                        prop_dict[attr] = tag
+
+            props_seq.append(prop_dict)
+
+        return props_seq
+
+
 class DictReader:
     """
-    A reader to parse dictionaries with odML content into,
-    full a proper odML document.
+    A reader to parse dictionaries with odML content into a proper odML document.
     """
 
     def __init__(self):
