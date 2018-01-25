@@ -81,7 +81,7 @@ class VersionConverter(object):
                                       "already exported, omitting '%s'" %
                                       (prop_name, val_elem.tag, check_export.text, val_elem.text))
                         # Include only supported Property attributes
-                        elif val_elem.tag in format.Property.arguments_keys():
+                        elif val_elem.tag in format.Property.arguments_keys:
                             new_elem = ET.Element(val_elem.tag)
                             new_elem.text = val_elem.text
                             value.getparent().append(new_elem)
@@ -112,7 +112,7 @@ class VersionConverter(object):
 
             # Exclude unsupported Property attributes, ignore comments
             for e in prop:
-                if e.tag not in format.Property.arguments_keys() and isinstance(e.tag, str):
+                if e.tag not in format.Property.arguments_keys and isinstance(e.tag, str):
                     print("[Info] Omitted non-Property attribute '%s: %s/%s'" % (prop_name, e.tag, e.text))
                     prop.remove(e)
 
@@ -126,13 +126,13 @@ class VersionConverter(object):
         for sec in root.iter("section"):
             sec_name = sec.find("name").text
             for e in sec:
-                if e.tag not in format.Section.arguments_keys() and isinstance(e.tag, str):
+                if e.tag not in format.Section.arguments_keys and isinstance(e.tag, str):
                     print("[Info] Omitted non-Section attribute '%s: %s/%s'" % (sec_name, e.tag, e.text))
                     sec.remove(e)
 
         # Exclude unsupported Document attributes, ignore comments
         for e in root:
-            if e.tag not in format.Document.arguments_keys() and isinstance(e.tag, str):
+            if e.tag not in format.Document.arguments_keys and isinstance(e.tag, str):
                 print("[Info] Omitted non-Document attribute '%s/%s'" % (e.tag, e.text))
                 root.remove(e)
 

@@ -68,14 +68,14 @@ class XMLWriter:
         returns an xml node for the odML object e
         """
         fmt = e.format()
-        cur = E(fmt.name())
+        cur = E(fmt.name)
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
             cur.attrib['version'] = FORMAT_VERSION
 
         # generate elements
-        for k in fmt.arguments_keys():
+        for k in fmt.arguments_keys:
             if not hasattr(e, fmt.map(k)):
                 continue
 
@@ -136,7 +136,7 @@ class XMLReader(object):
 
     def __init__(self, ignore_errors=False, filename=None):
         self.parser = ET.XMLParser(remove_comments=True)
-        self.tags = dict([(obj.name(), obj) for obj in format.__all__])
+        self.tags = dict([(obj.name, obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
         self.filename = filename
         self.warnings = []
@@ -186,13 +186,13 @@ class XMLReader(object):
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
-        for k, v in ArgClass.arguments():
+        for k, v in ArgClass.arguments:
             if v != 0 and not ArgClass.map(k) in data:
                 self.error("missing element <%s> within <%s> tag" %
                            (k, tag_name) + repr(data), node)
 
     def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
-        if tag_name not in ArgClass.arguments_keys():
+        if tag_name not in ArgClass.arguments_keys:
             self.error("Invalid element <%s> inside <%s> tag" %
                        (tag_name, parent_node.tag),
                        parent_node if child is None else child)
@@ -244,9 +244,9 @@ class XMLReader(object):
         for node in root:
             node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
-            if node.tag in fmt.arguments_keys():
+            if node.tag in fmt.arguments_keys:
                 # this is a heuristic, but works for now
-                if node.tag in self.tags and node.tag in fmt.map_keys():
+                if node.tag in self.tags and node.tag in fmt.map_keys:
                     sub_obj = self.parse_element(node)
                     if sub_obj is not None:
                         extra_args[fmt.map(node.tag)] = sub_obj

@@ -31,7 +31,7 @@ class OdmlSerializer(object):
         cur = {'_type': fmt.__class__.__name__}
 
         # Generate elements
-        for k in fmt.arguments_keys():
+        for k in fmt.arguments_keys:
             if not hasattr(e, fmt.map(k)):
                 continue
 
@@ -87,14 +87,14 @@ class OdmlReader(object):
         fmt = getattr(odml_fmt.format, obj['_type'])
         kargs = {}
         objects = []
-        for k in fmt.arguments_keys():
+        for k in fmt.arguments_keys:
             v = obj.get(k, None)
             if isinstance(v, list):
                 for i, nobj in enumerate(v):
                     objects.append(self.to_odml(nobj))
             elif v is not None:
                 kargs[fmt.map(k)] = v
-        return getattr(self, "create_%s" % fmt.name())(fmt, kargs, obj, objects)
+        return getattr(self, "create_%s" % fmt.name)(fmt, kargs, obj, objects)
 
     def create_odML(self, fmt, kargs, obj, children):
         obj = fmt.create(**kargs)

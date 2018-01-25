@@ -19,14 +19,17 @@ class Format(object):
     _rdf_type = None
     _ns = Namespace("https://g-node.org/projects/odml-rdf#")
 
+    @property
     def name(self):
         """Returns the name of the current odML format"""
         return self._name
 
+    @property
     def arguments(self):
         """Returns all items in the current odML format argument dict"""
         return self._args.items()
 
+    @property
     def arguments_keys(self):
         """Returns all keys of the current odML format argument dict"""
         return self._args.keys()
@@ -35,6 +38,7 @@ class Format(object):
         """ Maps an odml name to a python name """
         return self._map.get(name, name)
 
+    @property
     def map_keys(self):
         """Returns all keys of the current odML format map dict"""
         return self._map.keys()
@@ -43,14 +47,17 @@ class Format(object):
         """ Maps a python name to a odml rdf namespace """
         return self._rdf_map.get(name, name)
 
+    @property
     def rdf_map_keys(self):
         """Returns all keys of the current odML format RDF map dict"""
         return self._rdf_map.keys()
 
+    @property
     def rdf_map_items(self):
         """Returns all items of the current odML format RDF map dict"""
         return self._rdf_map.items()
 
+    @property
     def rdf_type(self):
         """ Return rdf type of an object """
         return self._rdf_type

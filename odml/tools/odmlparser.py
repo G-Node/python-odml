@@ -92,7 +92,7 @@ class ODMLReader:
         self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
-        if attr in fmt.arguments_keys():
+        if attr in fmt.arguments_keys:
             return attr
 
         if fmt.revmap(attr):

@@ -20,9 +20,9 @@ class DictWriter:
         self.doc = odml_document
         parsed_doc = {}
 
-        for i in odmlfmt.Document.arguments_keys():
+        for i in odmlfmt.Document.arguments_keys:
             attr = i
-            if i in odmlfmt.Document.map_keys():
+            if i in odmlfmt.Document.map_keys:
                 attr = odmlfmt.Document.map(i)
 
             if hasattr(odml_document, attr):
@@ -43,10 +43,10 @@ class DictWriter:
         for section in section_list:
             section_dict = {}
 
-            for i in odmlfmt.Section.arguments_keys():
+            for i in odmlfmt.Section.arguments_keys:
                 attr = i
 
-                if i in odmlfmt.Section.map_keys():
+                if i in odmlfmt.Section.map_keys:
                     attr = odmlfmt.Section.map(i)
 
                 if hasattr(section, attr):
@@ -73,9 +73,9 @@ class DictWriter:
         for prop in props_list:
             prop_dict = {}
 
-            for i in odmlfmt.Property.arguments_keys():
+            for i in odmlfmt.Property.arguments_keys:
                 attr = i
-                if i in odmlfmt.Property.map_keys():
+                if i in odmlfmt.Property.map_keys:
                     attr = odmlfmt.Property.map(i)
 
                 if hasattr(prop, attr):
@@ -99,7 +99,7 @@ class DictReader:
         self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
-        if attr in fmt.arguments_keys():
+        if attr in fmt.arguments_keys:
             return attr
 
         if fmt.revmap(attr):
