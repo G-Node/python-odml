@@ -8,7 +8,6 @@ import tempfile
 
 from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
-from odml.tools import jsonparser
 from odml.tools import dumper
 
 try:
@@ -151,7 +150,7 @@ class SampleFileOperationTest(unittest.TestCase):
         # self.assertEqual(doc._xml_version, FORMAT_VERSION)
 
     def test_save(self):
-        for module in [xmlparser.XMLWriter]:  # , jsonparser.JSONWriter]:
+        for module in [xmlparser.XMLWriter]:
             doc = module(self.doc)
             import tempfile
 
@@ -166,7 +165,6 @@ class SampleFileOperationTest(unittest.TestCase):
         except ImportError:
             from io import StringIO
         modules = [(xmlparser.XMLWriter, xmlparser.XMLReader)]
-        # (jsonparser.JSONWriter, jsonparser.JSONReader)]
 
         for Writer, Reader in modules:
 

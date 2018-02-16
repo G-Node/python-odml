@@ -4,9 +4,9 @@ from abc import ABCMeta, abstractmethod
 from rdflib import Namespace, RDF
 from rdflib.plugins.sparql import prepareQuery
 
-from odml.format import Document
-from odml.format import Property
-from odml.format import Section
+from ..format import Document
+from ..format import Property
+from ..format import Section
 
 
 class BaseQueryCreator:

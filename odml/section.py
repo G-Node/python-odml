@@ -1,14 +1,14 @@
 # -*- coding: utf-8
 import uuid
 
-import odml.base as base
-import odml.format as format
-import odml.terminology as terminology
-from odml.doc import BaseDocument
+from . import base
+from . import format
+from . import terminology
+from .doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
-from odml.property import Property
+from .property import Property
 # it MUST however not be used to create any Property objects
-from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Section(base._baseobj):

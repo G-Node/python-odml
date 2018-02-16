@@ -16,6 +16,8 @@ try:
 except ImportError:
     import urllib2
 
+from .tools.parser_utils import ParserException
+
 
 REPOSITORY = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
 
@@ -82,7 +84,7 @@ class Terminologies(dict):
             term = odml.tools.xmlparser.XMLReader(
                 filename=url, ignore_errors=True).from_file(fp)
             term.finalize()
-        except odml.tools.xmlparser.ParserException as e:
+        except ParserException as e:
             print("Failed to load %s due to parser errors" % url)
             print(' "%s"' % e)
             term = None

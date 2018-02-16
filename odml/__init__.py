@@ -6,7 +6,7 @@ from . import section
 from .dtypes import DType
 from .fileio import load, save, display
 from .info import VERSION
-from .tools.odmlparser import allowed_parsers as parsers
+from .tools.parser_utils import SUPPORTED_PARSERS as PARSERS
 
 __version__ = VERSION
 

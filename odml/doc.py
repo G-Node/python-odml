@@ -1,11 +1,11 @@
 # -*- coding: utf-8
 import uuid
 
-import odml.base as base
-import odml.dtypes as dtypes
-import odml.format as format
-import odml.terminology as terminology
-from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from . import base
+from . import dtypes
+from . import format
+from . import terminology
+from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Document(base._baseobj):

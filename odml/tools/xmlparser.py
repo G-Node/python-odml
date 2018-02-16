@@ -5,33 +5,25 @@ Parses odML files. Can be invoked standalone:
     python -m odml.tools.xmlparser file.odml
 """
 import csv
+from lxml import etree as ET
+from lxml.builder import E
+# this is needed for py2exe to include lxml completely
+from lxml import _elementpath as _dummy
 import sys
 
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-from odml import format
-from lxml import etree as ET
-from lxml.builder import E
-# this is needed for py2exe to include lxml completely
-from lxml import _elementpath as _dummy
+
+from .. import format
 from ..info import FORMAT_VERSION
+from .parser_utils import ParserException
 
 try:
     unicode = unicode
 except NameError:
     unicode = str
-
-
-format.Document._xml_name = "odML"
-format.Section._xml_name = "section"
-format.Property._xml_name = "property"
-
-format.Document._xml_attributes = {}
-# attribute 'name' maps to 'name', but writing it as a tag is preferred
-format.Section._xml_attributes = {'name': None}
-format.Property._xml_attributes = {}
 
 
 def to_csv(val):
@@ -75,38 +67,17 @@ class XMLWriter:
         """
         returns an xml node for the odML object e
         """
-        fmt = e._format
-        if hasattr(fmt, "_xml_content"):
-            val = getattr(e, fmt.map(fmt._xml_content))
-            if val is None:
-                val = ''
-            cur = E(fmt._name, val)
-        else:
-            cur = E(fmt._name)
+        fmt = e.format()
+        cur = E(fmt.name)
 
         # generate attributes
         if isinstance(fmt, format.Document.__class__):
             cur.attrib['version'] = FORMAT_VERSION
 
-        for k, v in fmt._xml_attributes.items():
-            if not v or not hasattr(e, fmt.map(v)):
-                continue
-
-            val = getattr(e, fmt.map(v))
-            if val is None:
-                continue  # no need to save this
-            if sys.version_info < (3, 0):
-                cur.attrib[k] = unicode(val)
-            else:
-                cur.attrib[k] = str(val)
-
         # generate elements
-        for k in fmt._args:
-            if (k in fmt._xml_attributes and
-                fmt._xml_attributes[k] is not None) \
-               or not hasattr(e, fmt.map(k)) \
-               or (hasattr(fmt, "_xml_content") and fmt._xml_content == k):
-                    continue
+        for k in fmt.arguments_keys:
+            if not hasattr(e, fmt.map(k)):
+                continue
 
             val = getattr(e, fmt.map(k))
             if val is None:
@@ -156,10 +127,6 @@ def load(filename):
     return XMLReader().from_file(filename)
 
 
-class ParserException(Exception):
-    pass
-
-
 class XMLReader(object):
     """
     A reader to parse xml-files or strings into odml data structures
@@ -169,7 +136,7 @@ class XMLReader(object):
 
     def __init__(self, ignore_errors=False, filename=None):
         self.parser = ET.XMLParser(remove_comments=True)
-        self.tags = dict([(obj._xml_name, obj) for obj in format.__all__])
+        self.tags = dict([(obj.name, obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
         self.filename = filename
         self.warnings = []
@@ -219,13 +186,13 @@ class XMLReader(object):
         return self.parse_element(root)
 
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
-        for k, v in ArgClass._args.items():
+        for k, v in ArgClass.arguments:
             if v != 0 and not ArgClass.map(k) in data:
                 self.error("missing element <%s> within <%s> tag" %
                            (k, tag_name) + repr(data), node)
 
     def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
-        if tag_name not in ArgClass._args:
+        if tag_name not in ArgClass.arguments_keys:
             self.error("Invalid element <%s> inside <%s> tag" %
                        (tag_name, parent_node.tag),
                        parent_node if child is None else child)
@@ -267,21 +234,19 @@ class XMLReader(object):
 
         for k, v in root.attrib.iteritems():
             k = k.lower()
-            self.is_valid_argument(k, fmt, root)
+            # 'version' is currently the only supported XML attribute.
             if k == 'version' and root.tag == 'odML':
-                continue  # special case for XML version
-            if k not in fmt._xml_attributes:
-                self.error("<%s %s=...>: is not a valid attribute for %s" %
-                           (root.tag, k, root.tag), root)
-            else:
-                k = fmt._xml_attributes[k] or k
-                arguments[k] = v
+                continue
+
+            # We currently do not support XML attributes.
+            self.error("Attribute not supported, ignoring '%s=%s'" % (k, v), root)
+
         for node in root:
             node.tag = node.tag.lower()
             self.is_valid_argument(node.tag, fmt, root, node)
-            if node.tag in fmt._args:
+            if node.tag in fmt.arguments_keys:
                 # this is a heuristic, but works for now
-                if node.tag in self.tags and node.tag in fmt._map:
+                if node.tag in self.tags and node.tag in fmt.map_keys:
                     sub_obj = self.parse_element(node)
                     if sub_obj is not None:
                         extra_args[fmt.map(node.tag)] = sub_obj
@@ -361,12 +326,6 @@ class XMLReader(object):
     def parse_property(self, root, fmt):
         create = lambda children, args, **kargs: fmt.create(**args)
         return self.parse_tag(root, fmt, insert_children=False, create=create)
-
-    """
-    def parse_value(self, root, fmt):
-        create = lambda text, args, **kargs: fmt.create(text, **args)
-        return self.parse_tag(root, fmt, insert_children=False, create=create)
-    """
 
 
 if __name__ == '__main__':

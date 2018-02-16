@@ -1,7 +1,5 @@
 import os
-from .tools.odmlparser import ODMLReader, ODMLWriter, allowed_parsers
-
-PARSERS = allowed_parsers
+from .tools.odmlparser import ODMLReader, ODMLWriter
 
 
 def load(filename, backend="xml"):

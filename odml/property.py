@@ -2,10 +2,10 @@
 
 import uuid
 
-import odml.base as base
-import odml.dtypes as dtypes
-import odml.format as frmt
-from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from . import base
+from . import dtypes
+from . import format as frmt
+from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class Property(base._baseobj):
@@ -19,8 +19,8 @@ class BaseProperty(base.baseobject, Property):
 
     def __init__(self, name, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
-                 dependency=None, dependency_value=None, dtype=None, value_origin=None, id=None):
-        #TODO add description to :param value_origin
+                 dependency=None, dependency_value=None, dtype=None,
+                 value_origin=None, id=None):
         """
         Create a new Property with a single value. The method will try to infer
         the value's dtype from the type of the value if not explicitly stated.
@@ -46,7 +46,7 @@ class BaseProperty(base.baseobject, Property):
         :param dependency_value: Dependency on a certain value.
         :param dtype: the data type of the values stored in the property,
                      if dtype is not given, the type is deduced from the values
-        :param value_origin:
+        :param value_origin: Reference where the value originated from e.g. a file name.
         """
         # TODO validate arguments
         try:
@@ -90,16 +90,19 @@ class BaseProperty(base.baseobject, Property):
     def dtype(self):
         """
         The data type of the value
-        If the data type is changed, it is tried, to convert the value to the
-        new type.
-        If this doesn't work, the change is refused.
-        This behaviour can be overridden by directly accessing the *_dtype*
-        attribute and adjusting the *data* attribute manually.
         """
         return self._dtype
 
     @dtype.setter
     def dtype(self, new_type):
+        """
+        If the data type of a property value is changed, it is tried
+        to convert the value to the new type.
+        If this doesn't work, the change is refused.
+
+        This behaviour can be overridden by directly accessing the *_dtype*
+        attribute and adjusting the *data* attribute manually.
+        """
         # check if this is a valid type
         if not dtypes.valid_type(new_type):
             raise AttributeError("'%s' is not a valid type." % new_type)
@@ -138,7 +141,8 @@ class BaseProperty(base.baseobject, Property):
                 "odml.Property.parent: passed value is not of consistent type!"
                 "odml.Section expected")
 
-    def _validate_parent(self, new_parent):
+    @staticmethod
+    def _validate_parent(new_parent):
         from odml.section import BaseSection
         if isinstance(new_parent, BaseSection):
             return True
@@ -146,7 +150,6 @@ class BaseProperty(base.baseobject, Property):
 
     @property
     def value(self):
-        # FIXME check the usage of value in the xmlwriter, jsonwriter
         return self._value
 
     def value_str(self, index=0):

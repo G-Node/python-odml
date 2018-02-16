@@ -4,8 +4,9 @@ Collects common base functionality
 """
 
 import posixpath
-from odml import terminology
-from odml.tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+
+from . import terminology
+from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 class _baseobj(object):
@@ -14,6 +15,9 @@ class _baseobj(object):
 
 class baseobject(_baseobj):
     _format = None
+
+    def format(self):
+        return self._format
 
     @property
     def document(self):

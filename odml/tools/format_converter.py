@@ -4,8 +4,8 @@ import re
 import sys
 
 import odml
-from odml.tools.rdf_converter import RDFWriter
-from odml.tools.version_converter import VersionConverter
+from .rdf_converter import RDFWriter
+from .version_converter import VersionConverter
 
 try:
     unicode = unicode
