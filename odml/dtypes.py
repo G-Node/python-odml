@@ -196,7 +196,7 @@ def datetime_set(value):
 def boolean_get(string):
     if string is None:
         return None
-    if isinstance(string, unicode):
+    if type(string) in (unicode, str):
         string = string.lower()
     truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False
     if string in truth:
