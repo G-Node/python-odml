@@ -32,7 +32,7 @@ packages = [
 with open('README.rst') as f:
     description_text = f.read()
 
-install_req = ["lxml", "pyyaml", "rdflib", "rdflib-jsonld"]
+install_req = ["lxml", "pyyaml", "rdflib"]
 
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
