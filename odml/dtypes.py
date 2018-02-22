@@ -204,8 +204,8 @@ def boolean_get(string):
     false = ["false", "0", False, "f"]
     if string in false:
         return False
-    return bool(string)
-
+    # disallow any values that cannot be interpreted as boolean.
+    raise ValueError
 
 # Alias boolean_set to boolean_get. Both perform same function.
 
