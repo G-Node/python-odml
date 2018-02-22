@@ -45,6 +45,24 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(s.value[0], 'Jerin')
         self.assertEqual(s.dtype, 'string')
 
+    def test_bool(self):
+        self.assertEqual(None, typ.boolean_get(None))
+
+        true_values = [True, "TRUE", "true", "T", "t", "1", 1]
+        for val in true_values:
+            self.assertTrue(typ.boolean_get(val))
+
+        false_values = [False, "FALSE", "false", "F", "f", "0", 0]
+        for val in false_values:
+            self.assertFalse(typ.boolean_get(val))
+
+        with self.assertRaises(ValueError):
+            typ.boolean_get("text")
+        with self.assertRaises(ValueError):
+            typ.boolean_get(12)
+        with self.assertRaises(ValueError):
+            typ.boolean_get(2.1)
+
     def test_tuple(self):
         # Success test
         t = odml.Property(name="Location", value='(39.12; 67.19)', dtype='2-tuple')
