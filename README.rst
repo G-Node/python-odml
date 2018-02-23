@@ -21,13 +21,20 @@ Dependencies
 
   * enum (version 0.4.4)
   * lxml (version 3.7.2)
+  * yaml (version 3.12)
+  * rdflib (version >=4.2.2)
 
-* These packages will be downloaded and installed automatically if the :code:`pip` method is used to install odML. Alternatively, they can be installed from the OS package manager. On Ubuntu, they are available as:
+* These packages will be downloaded and installed automatically if the :code:`pip`
+  method is used to install odML. Alternatively, they can be installed from the OS
+  package manager. On Ubuntu, they are available as:
 
   * python-enum
   * python-lxml
+  * python-yaml
+  * python-rdflib
 
-* If you prefer installing using the Python package manager, the following packages are required to build the lxml Python package on Ubuntu 14.04:
+* If you prefer installing using the Python package manager, the following packages are
+  required to build the lxml Python package on Ubuntu 14.04:
 
   * libxml2-dev
   * libxslt1-dev
@@ -43,7 +50,8 @@ The simplest way to install Python-odML is from PyPI using the pip tool::
 
 On Ubuntu, the pip package manager is available in the repositories as :code:`python-pip`.
 
-If this method is used, the appropriate Python dependencies (enum and lxml) are downloaded and installed automatically.
+If this method is used, the appropriate Python dependencies are downloaded and installed
+automatically.
 
 
 Building from source
@@ -63,7 +71,8 @@ To install the Python-odML library, enter the corresponding directory and run::
   $ cd python-odml
   $ python setup.py install
 
-**Note** The master branch is our current development branch, not all features might be working as expected. Use the release tags instead.
+**Note** The master branch is our current development branch, not all features might be
+working as expected. Use the release tags instead.
 
 Documentation
 -------------
@@ -76,4 +85,6 @@ Bugs & Questions
 Should you find a behaviour that is likely a bug, please file a bug report at
 `the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
 
-If you have questions regarding the use of the library or the editor, feel free to join the `#gnode <http://webchat.freenode.net?channels=%23gnode>`_ IRC channel on freenode.
+If you have questions regarding the use of the library or the editor, feel free to
+join the `#gnode <http://webchat.freenode.net?channels=%23gnode>`_ IRC channel
+on freenode.
