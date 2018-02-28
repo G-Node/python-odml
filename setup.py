@@ -1,3 +1,5 @@
+import json
+import os
 import sys
 
 try:
@@ -5,24 +7,17 @@ try:
 except ImportError as ex:
     from distutils.core import setup
 
-try:
-    from odml.info import AUTHOR, CONTACT, CLASSIFIERS, HOMEPAGE, VERSION
-except ImportError as ex:
-    # Read the information from odml.info.py if package dependencies
-    # are not yet available during a local install.
-    CLASSIFIERS = ""
-    with open('odml/info.py') as f:
-        for line in f:
-            curr_args = line.split(" = ")
-            if len(curr_args) == 2:
-                if curr_args[0] == "AUTHOR":
-                    AUTHOR = curr_args[1].replace('\'', '').replace('\\', '').strip()
-                elif curr_args[0] == "CONTACT":
-                    CONTACT = curr_args[1].replace('\'', '').strip()
-                elif curr_args[0] == "HOMEPAGE":
-                    HOMEPAGE = curr_args[1].replace('\'', '').strip()
-                elif curr_args[0] == "VERSION":
-                    VERSION = curr_args[1].replace('\'', '').strip()
+with open(os.path.join("odml", "info.json")) as infofile:
+    infodict = json.load(infofile)
+
+VERSION = infodict["VERSION"]
+FORMAT_VERSION = infodict["FORMAT_VERSION"]
+AUTHOR = infodict["AUTHOR"]
+COPYRIGHT = infodict["COPYRIGHT"]
+CONTACT = infodict["CONTACT"]
+HOMEPAGE = infodict["HOMEPAGE"]
+CLASSIFIERS = infodict["CLASSIFIERS"]
+
 
 packages = [
     'odml',
@@ -32,7 +27,7 @@ packages = [
 with open('README.rst') as f:
     description_text = f.read()
 
-install_req = ["lxml", "pyyaml", "rdflib", "rdflib-jsonld"]
+install_req = ["lxml", "pyyaml", "rdflib"]
 
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
@@ -47,6 +42,7 @@ setup(
     packages=packages,
     test_suite='test',
     install_requires=install_req,
+    include_package_data=True,
     long_description=description_text,
     classifiers=CLASSIFIERS,
     license="BSD"

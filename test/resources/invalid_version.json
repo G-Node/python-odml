@@ -1,0 +1,9 @@
+{
+    "odml-version": "invalid",
+    "Document": {
+        "date": "2018-02-27",
+        "version": "1.0",
+        "sections": [],
+        "author": "Test author"
+    }
+}

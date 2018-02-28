@@ -16,18 +16,35 @@ class TestProperty(unittest.TestCase):
 
     def test_bool_conversion(self):
 
-        p = Property(name='received', value=[3, 0, 1, 0, 8])
+        # Success tests
+        p = Property(name='received', value=[1, 0, 1, 0, 1])
         assert(p.dtype == 'int')
         p.dtype = DType.boolean
         assert(p.dtype == 'boolean')
         assert(p.value == [True, False, True, False, True])
 
-        q = Property(name='sent',
-                     value=['False', True, 'TRUE', '0', 't', 'F', 'Ft'])
+        q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', 'F', '1'])
         assert(q.dtype == 'string')
         q.dtype = DType.boolean
         assert(q.dtype == 'boolean')
         assert(q.value == [False, True, True, False, True, False, True])
+
+        # Failure tests
+        curr_val = [3, 0, 1, 0, 8]
+        curr_type = 'int'
+        p = Property(name='received', value=curr_val)
+        assert(p.dtype == curr_type)
+        with self.assertRaises(ValueError):
+            p.dtype = DType.boolean
+        assert(p.dtype == curr_type)
+        assert(p.value == curr_val)
+
+        curr_type = 'string'
+        q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', '12', 'Ft'])
+        assert(q.dtype == curr_type)
+        with self.assertRaises(ValueError):
+            q.dtype = DType.boolean
+        assert(q.dtype == curr_type)
 
     def test_str_to_int_convert(self):
 
