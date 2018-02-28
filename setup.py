@@ -7,7 +7,7 @@ try:
 except ImportError as ex:
     from distutils.core import setup
 
-with open(os.path.join("odml/info.json")) as infofile:
+with open(os.path.join("odml", "info.json")) as infofile:
     infodict = json.load(infofile)
 
 VERSION = infodict["VERSION"]
