@@ -48,7 +48,7 @@ class VersionConverter(object):
             tree = ET.parse(self.filename, parser)
         else:
             self._update_messages("File '%s' is not an .xml file "
-                                         "nor an io.StringIO object" % self.filename)
+                                  "nor an io.StringIO object" % self.filename)
             return
 
         tree = self._replace_same_name_entities(tree)
@@ -65,7 +65,14 @@ class VersionConverter(object):
                 rem_property.append(prop)
                 continue
 
-            prop_name = prop.find("name").text
+            curr_sec = prop.getparent()
+            sname = "unnamed"
+            if curr_sec.find("name") is not None:
+                sname = curr_sec.find("name").text
+            stype = "untyped"
+            if curr_sec.find("type") is not None:
+                stype = curr_sec.find("type").text
+            prop_id = "%s|%s:%s" % (sname, stype, prop.find("name").text)
             # Special handling of Values
             for value in prop.iter("value"):
                 for val_elem in value.iter():
@@ -80,7 +87,7 @@ class VersionConverter(object):
                                 self._update_messages("[Warning] Property '%s' Value "
                                                       "attribute '%s/%s' already "
                                                       "exported, omitting '%s'" %
-                                                      (prop_name, val_elem.tag,
+                                                      (prop_id, val_elem.tag,
                                                        check_export.text, val_elem.text))
 
                         # Include only supported Property attributes
@@ -94,7 +101,7 @@ class VersionConverter(object):
                             value.getparent().append(new_elem)
                         else:
                             self._update_messages("[Info] Omitted non-Value attribute "
-                                                  "'%s: %s/%s'" % (prop_name,
+                                                  "'%s: %s/%s'" % (prop_id,
                                                                    val_elem.tag,
                                                                    val_elem.text))
 
@@ -119,7 +126,7 @@ class VersionConverter(object):
             for e in prop:
                 if e.tag not in format.Property.arguments_keys and isinstance(e.tag, str):
                     self._update_messages("[Info] Omitted non-Property attribute "
-                                          "'%s: %s/%s'" % (prop_name, e.tag, e.text))
+                                          "'%s: %s/%s'" % (prop_id, e.tag, e.text))
                     prop.remove(e)
 
         # Exclude Properties without name tags
