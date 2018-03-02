@@ -30,8 +30,7 @@ class VersionConverter(object):
     def __init__(self, filename):
         self.filename = filename
 
-    @classmethod
-    def convert_odml_file(cls, filename):
+    def convert_odml_file(self, filename):
         """
         Converts a given file to the odml version 1.1.
         Unites multiple value objects and brings value attributes out of the <value> tag.
@@ -39,10 +38,10 @@ class VersionConverter(object):
         """
         tree = None
         if isinstance(filename, io.StringIO):
-            cls._fix_unmatching_tags(filename)
+            self._fix_unmatching_tags(filename)
             tree = ET.ElementTree(ET.fromstring(filename.getvalue()))
         elif os.path.exists(filename) and os.path.getsize(filename) > 0:
-            cls._fix_unmatching_tags(filename)
+            self._fix_unmatching_tags(filename)
             # Make pretty print available by resetting format
             parser = ET.XMLParser(remove_blank_text=True)
             tree = ET.parse(filename, parser)
@@ -51,7 +50,7 @@ class VersionConverter(object):
                   "nor io.StringIO object".format(filename))
             return
 
-        tree = cls._replace_same_name_entities(tree)
+        tree = self._replace_same_name_entities(tree)
         root = tree.getroot()
         root.set("version", FORMAT_VERSION)
 
@@ -72,8 +71,8 @@ class VersionConverter(object):
                     if val_elem.tag != "value":
                         # Check whether current Value attribute has already been exported
                         # under its own or a different name. Give a warning, if the values differ.
-                        check_export = value.getparent().find(cls._version_map[val_elem.tag]) \
-                            if val_elem.tag in cls._version_map else value.getparent().find(val_elem.tag)
+                        check_export = value.getparent().find(self._version_map[val_elem.tag]) \
+                            if val_elem.tag in self._version_map else value.getparent().find(val_elem.tag)
 
                         if check_export is not None:
                             if check_export.text != val_elem.text:
@@ -85,8 +84,8 @@ class VersionConverter(object):
                             new_elem = ET.Element(val_elem.tag)
                             new_elem.text = val_elem.text
                             value.getparent().append(new_elem)
-                        elif val_elem.tag in cls._version_map:
-                            new_elem = ET.Element(cls._version_map[val_elem.tag])
+                        elif val_elem.tag in self._version_map:
+                            new_elem = ET.Element(self._version_map[val_elem.tag])
                             new_elem.text = val_elem.text
                             value.getparent().append(new_elem)
                         else:
@@ -138,8 +137,7 @@ class VersionConverter(object):
 
         return tree
 
-    @classmethod
-    def _fix_unmatching_tags(cls, filename):
+    def _fix_unmatching_tags(self, filename):
         """
         Fix an xml file by deleting known mismatching tags.
         :param filename: The path to the file or io.StringIO object
@@ -150,9 +148,9 @@ class VersionConverter(object):
         elif os.path.exists(filename) and os.path.getsize(filename) > 0:
             f = open(filename, 'r+')
             doc = f.read()
-        for k, v in cls._error_strings.items():
+        for k, v in self._error_strings.items():
             if k in doc:
-                doc = doc.replace(k, cls._error_strings[k])
+                doc = doc.replace(k, self._error_strings[k])
                 changes = True
 
         if changes:
@@ -163,8 +161,7 @@ class VersionConverter(object):
                 f.write(doc)
                 f.close()
 
-    @classmethod
-    def _replace_same_name_entities(cls, tree):
+    def _replace_same_name_entities(self, tree):
         """
         Changes same section names in the doc by adding <-{index}> to the next section occurrences.
         :param tree: ElementTree of the doc
@@ -176,14 +173,14 @@ class VersionConverter(object):
         for sec in root.iter("section"):
             n = sec.find("name")
             if n is not None:
-                cls._change_entity_name(sec_map, n)
+                self._change_entity_name(sec_map, n)
             else:
                 raise Exception("Section attribute name is not specified")
             for prop in sec.iter("property"):
                 if prop.getparent() == sec:
                     n = prop.find("name")
                     if n is not None:
-                        cls._change_entity_name(prop_map, n)
+                        self._change_entity_name(prop_map, n)
             prop_map.clear()
         return tree
 
