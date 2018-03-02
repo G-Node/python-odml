@@ -26,6 +26,7 @@ class VersionConverter(object):
 
     def __init__(self, filename):
         self.filename = filename
+        self.status_messages = []
 
     def convert_odml_file(self):
         """
@@ -33,6 +34,9 @@ class VersionConverter(object):
         Unites multiple value objects and brings value attributes out of the <value> tag.
         :param filename: The path to the file or io.StringIO object
         """
+        # Reset status messages
+        self.status_messages = []
+
         tree = None
         if isinstance(self.filename, io.StringIO):
             self._fix_unmatching_tags()
@@ -43,8 +47,8 @@ class VersionConverter(object):
             parser = ET.XMLParser(remove_blank_text=True)
             tree = ET.parse(self.filename, parser)
         else:
-            print("File \"{}\" has not been converted because it is not a valid path to odml .xml file "
-                  "nor io.StringIO object".format(self.filename))
+            self._update_messages("File '%s' is not an .xml file "
+                                         "nor an io.StringIO object" % self.filename)
             return
 
         tree = self._replace_same_name_entities(tree)
@@ -73,9 +77,12 @@ class VersionConverter(object):
 
                         if check_export is not None:
                             if check_export.text != val_elem.text:
-                                print("[Warning] Property '%s' Value attribute '%s/%s' "
-                                      "already exported, omitting '%s'" %
-                                      (prop_name, val_elem.tag, check_export.text, val_elem.text))
+                                self._update_messages("[Warning] Property '%s' Value "
+                                                      "attribute '%s/%s' already "
+                                                      "exported, omitting '%s'" %
+                                                      (prop_name, val_elem.tag,
+                                                       check_export.text, val_elem.text))
+
                         # Include only supported Property attributes
                         elif val_elem.tag in format.Property.arguments_keys:
                             new_elem = ET.Element(val_elem.tag)
@@ -86,8 +93,10 @@ class VersionConverter(object):
                             new_elem.text = val_elem.text
                             value.getparent().append(new_elem)
                         else:
-                            print("[Info] Omitted non-Value attribute '%s: %s/%s'" %
-                                  (prop_name, val_elem.tag, val_elem.text))
+                            self._update_messages("[Info] Omitted non-Value attribute "
+                                                  "'%s: %s/%s'" % (prop_name,
+                                                                   val_elem.tag,
+                                                                   val_elem.text))
 
                 if value.text:
                     if main_val.text:
@@ -109,12 +118,14 @@ class VersionConverter(object):
             # Exclude unsupported Property attributes, ignore comments
             for e in prop:
                 if e.tag not in format.Property.arguments_keys and isinstance(e.tag, str):
-                    print("[Info] Omitted non-Property attribute '%s: %s/%s'" % (prop_name, e.tag, e.text))
+                    self._update_messages("[Info] Omitted non-Property attribute "
+                                          "'%s: %s/%s'" % (prop_name, e.tag, e.text))
                     prop.remove(e)
 
         # Exclude Properties without name tags
         for p in rem_property:
-            print("[Warning] Omitted Property without name tag: '%s'" % ET.tostring(p))
+            self._update_messages("[Warning] Omitted Property "
+                                  "without name tag: '%s'" % ET.tostring(p))
             parent = p.getparent()
             parent.remove(p)
 
@@ -123,13 +134,15 @@ class VersionConverter(object):
             sec_name = sec.find("name").text
             for e in sec:
                 if e.tag not in format.Section.arguments_keys and isinstance(e.tag, str):
-                    print("[Info] Omitted non-Section attribute '%s: %s/%s'" % (sec_name, e.tag, e.text))
+                    self._update_messages("[Info] Omitted non-Section attribute "
+                                          "'%s: %s/%s'" % (sec_name, e.tag, e.text))
                     sec.remove(e)
 
         # Exclude unsupported Document attributes, ignore comments
         for e in root:
             if e.tag not in format.Document.arguments_keys and isinstance(e.tag, str):
-                print("[Info] Omitted non-Document attribute '%s/%s'" % (e.tag, e.text))
+                self._update_messages("[Info] Omitted non-Document attribute "
+                                      "'%s/%s'" % (e.tag, e.text))
                 root.remove(e)
 
         return tree
@@ -188,6 +201,14 @@ class VersionConverter(object):
         else:
             elem_map[name.text] += 1
             name.text += "-" + str(elem_map[name.text])
+
+    def _update_messages(self, msg):
+        """
+        Adds the passed message to the status_message attribute and
+        prints the message to the command line.
+        """
+        self.status_messages.append(msg)
+        print(msg)
 
     def __str__(self):
         tree = self.convert_odml_file()
