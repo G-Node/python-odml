@@ -30,24 +30,24 @@ class VersionConverter(object):
     def __init__(self, filename):
         self.filename = filename
 
-    def convert_odml_file(self, filename):
+    def convert_odml_file(self):
         """
         Converts a given file to the odml version 1.1.
         Unites multiple value objects and brings value attributes out of the <value> tag.
         :param filename: The path to the file or io.StringIO object
         """
         tree = None
-        if isinstance(filename, io.StringIO):
-            self._fix_unmatching_tags(filename)
-            tree = ET.ElementTree(ET.fromstring(filename.getvalue()))
-        elif os.path.exists(filename) and os.path.getsize(filename) > 0:
-            self._fix_unmatching_tags(filename)
+        if isinstance(self.filename, io.StringIO):
+            self._fix_unmatching_tags()
+            tree = ET.ElementTree(ET.fromstring(self.filename.getvalue()))
+        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+            self._fix_unmatching_tags()
             # Make pretty print available by resetting format
             parser = ET.XMLParser(remove_blank_text=True)
-            tree = ET.parse(filename, parser)
+            tree = ET.parse(self.filename, parser)
         else:
             print("File \"{}\" has not been converted because it is not a valid path to odml .xml file "
-                  "nor io.StringIO object".format(filename))
+                  "nor io.StringIO object".format(self.filename))
             return
 
         tree = self._replace_same_name_entities(tree)
@@ -137,16 +137,16 @@ class VersionConverter(object):
 
         return tree
 
-    def _fix_unmatching_tags(self, filename):
+    def _fix_unmatching_tags(self):
         """
         Fix an xml file by deleting known mismatching tags.
         :param filename: The path to the file or io.StringIO object
         """
         changes = False
-        if isinstance(filename, io.StringIO):
-            doc = filename.getvalue()
-        elif os.path.exists(filename) and os.path.getsize(filename) > 0:
-            f = open(filename, 'r+')
+        if isinstance(self.filename, io.StringIO):
+            doc = self.filename.getvalue()
+        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+            f = open(self.filename, 'r+')
             doc = f.read()
         for k, v in self._error_strings.items():
             if k in doc:
@@ -154,7 +154,7 @@ class VersionConverter(object):
                 changes = True
 
         if changes:
-            if isinstance(filename, io.StringIO):
+            if isinstance(self.filename, io.StringIO):
                 return io.StringIO(doc)
             else:
                 f.truncate(0)
@@ -193,11 +193,11 @@ class VersionConverter(object):
             name.text += "-" + str(elem_map[name.text])
 
     def __str__(self):
-        tree = self.convert_odml_file(self.filename)
+        tree = self.convert_odml_file()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def __unicode__(self):
-        tree = self.convert_odml_file(self.filename)
+        tree = self.convert_odml_file()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def write_to_file(self, filename):
