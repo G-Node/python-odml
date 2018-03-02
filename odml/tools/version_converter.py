@@ -17,7 +17,6 @@ class VersionConverter(object):
     Class for converting odml xml files from version 1.0 to 1.1
     """
     _version_map = {
-        'type': 'type',
         'filename': 'value_origin'
     }
 
