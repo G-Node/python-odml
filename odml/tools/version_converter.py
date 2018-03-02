@@ -16,8 +16,6 @@ class VersionConverter(object):
     """
     Class for converting odml xml files from version 1.0 to 1.1
     """
-    header = """<?xml version="1.0" encoding="UTF-8"?>\n"""
-
     _version_map = {
         'type': 'type',
         'filename': 'value_origin'
@@ -207,6 +205,6 @@ class VersionConverter(object):
             data = str(self)
         if data and "<odML " in data:
             f = open(filename, "w")
-            f.write(self.header)
+            f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write(data)
             f.close()
