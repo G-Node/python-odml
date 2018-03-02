@@ -140,7 +140,6 @@ class VersionConverter(object):
     def _fix_unmatching_tags(self):
         """
         Fix an xml file by deleting known mismatching tags.
-        :param filename: The path to the file or io.StringIO object
         """
         changes = False
         if isinstance(self.filename, io.StringIO):
@@ -161,7 +160,8 @@ class VersionConverter(object):
                 f.write(doc)
                 f.close()
 
-    def _replace_same_name_entities(self, tree):
+    @classmethod
+    def _replace_same_name_entities(cls, tree):
         """
         Changes same section names in the doc by adding <-{index}> to the next section occurrences.
         :param tree: ElementTree of the doc
@@ -173,14 +173,14 @@ class VersionConverter(object):
         for sec in root.iter("section"):
             n = sec.find("name")
             if n is not None:
-                self._change_entity_name(sec_map, n)
+                cls._change_entity_name(sec_map, n)
             else:
                 raise Exception("Section attribute name is not specified")
             for prop in sec.iter("property"):
                 if prop.getparent() == sec:
                     n = prop.find("name")
                     if n is not None:
-                        self._change_entity_name(prop_map, n)
+                        cls._change_entity_name(prop_map, n)
             prop_map.clear()
         return tree
 
