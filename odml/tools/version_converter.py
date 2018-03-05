@@ -73,37 +73,11 @@ class VersionConverter(object):
             if curr_sec.find("type") is not None:
                 stype = curr_sec.find("type").text
             prop_id = "%s|%s:%s" % (sname, stype, prop.find("name").text)
+
             # Special handling of Values
             for value in prop.iter("value"):
-                for val_elem in value.iter():
-                    if val_elem.tag != "value":
-                        # Check whether current Value attribute has already been exported
-                        # under its own or a different name. Give a warning, if the values differ.
-                        check_export = value.getparent().find(self._version_map[val_elem.tag]) \
-                            if val_elem.tag in self._version_map else value.getparent().find(val_elem.tag)
-
-                        if check_export is not None:
-                            if check_export.text != val_elem.text:
-                                self._update_messages("[Warning] Property '%s' Value "
-                                                      "attribute '%s/%s' already "
-                                                      "exported, omitting '%s'" %
-                                                      (prop_id, val_elem.tag,
-                                                       check_export.text, val_elem.text))
-
-                        # Include only supported Property attributes
-                        elif val_elem.tag in format.Property.arguments_keys:
-                            new_elem = ET.Element(val_elem.tag)
-                            new_elem.text = val_elem.text
-                            value.getparent().append(new_elem)
-                        elif val_elem.tag in self._version_map:
-                            new_elem = ET.Element(self._version_map[val_elem.tag])
-                            new_elem.text = val_elem.text
-                            value.getparent().append(new_elem)
-                        else:
-                            self._update_messages("[Info] Omitted non-Value attribute "
-                                                  "'%s: %s/%s'" % (prop_id,
-                                                                   val_elem.tag,
-                                                                   val_elem.text))
+                # Move supported elements from Value to parent Property.
+                self._handle_value(value, prop_id)
 
                 if value.text:
                     if main_val.text:
@@ -153,6 +127,42 @@ class VersionConverter(object):
                 root.remove(e)
 
         return tree
+
+    def _handle_value(self, value, log_id):
+        """
+        Values changed from odML v1.0 to v1.1. This function moves all supported
+        odML Property elements from a v1.0 Value element to the parent Property element.
+        :param value: etree element containing the v1.0 Value
+        :param log_id: String containing Section and Property name and type to log
+                       omitted tags and value contents.
+        """
+        for val_elem in value.iter():
+            if val_elem.tag != "value":
+                # Check whether current Value attribute has already been exported
+                # under its own or a different name. Give a warning, if the values differ.
+                check_export = value.getparent().find(self._version_map[val_elem.tag]) \
+                    if val_elem.tag in self._version_map else value.getparent().find(
+                    val_elem.tag)
+
+                if check_export is not None:
+                    if check_export.text != val_elem.text:
+                        self._update_messages("[Warning] Property '%s' Value  attribute "
+                                              "'%s/%s' already  exported, omitting '%s'"
+                                              % (log_id, val_elem.tag, check_export.text,
+                                                 val_elem.text))
+
+                # Include only supported Property attributes
+                elif val_elem.tag in format.Property.arguments_keys:
+                    new_elem = ET.Element(val_elem.tag)
+                    new_elem.text = val_elem.text
+                    value.getparent().append(new_elem)
+                elif val_elem.tag in self._version_map:
+                    new_elem = ET.Element(self._version_map[val_elem.tag])
+                    new_elem.text = val_elem.text
+                    value.getparent().append(new_elem)
+                else:
+                    self._update_messages("[Info] Omitted non-Value attribute '%s: %s/%s'"
+                                          % (log_id, val_elem.tag, val_elem.text))
 
     def _fix_unmatching_tags(self):
         """
