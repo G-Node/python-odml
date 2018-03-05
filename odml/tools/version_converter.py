@@ -28,6 +28,15 @@ class VersionConverter(object):
         self.filename = filename
         self.conversion_log = []
 
+    def convert(self):
+        """
+        This method returns the content of the provided file object converted
+        to odML version 1.1 as a string object which is directly consumable
+        by the odml.tools.ODMLReader.
+        """
+        tree = self.convert_odml_file()
+        return ET.tounicode(tree, pretty_print=True) if tree else ""
+
     def convert_odml_file(self):
         """
         Converts a given file to the odml version 1.1.
