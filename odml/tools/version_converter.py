@@ -132,22 +132,25 @@ class VersionConverter(object):
         """
         Values changed from odML v1.0 to v1.1. This function moves all supported
         odML Property elements from a v1.0 Value element to the parent Property element.
-        :param value: etree element containing the v1.0 Value
+        Adds a log entry for every non-exported element.
+        :param value: etree element containing the v1.0 Value.
         :param log_id: String containing Section and Property name and type to log
-                       omitted tags and value contents.
+                       omitted elements and value contents.
         """
         for val_elem in value.iter():
             if val_elem.tag != "value":
                 # Check whether current Value attribute has already been exported
                 # under its own or a different name. Give a warning, if the values differ.
-                check_export = value.getparent().find(self._version_map[val_elem.tag]) \
-                    if val_elem.tag in self._version_map else value.getparent().find(
-                    val_elem.tag)
+                parent = value.getparent()
+                if val_elem.tag in self._version_map:
+                    check_export = parent.find(self._version_map[val_elem.tag])
+                else:
+                    check_export = parent.find(val_elem.tag)
 
                 if check_export is not None:
                     if check_export.text != val_elem.text:
-                        self._log("[Warning] Property '%s' Value  attribute '%s/%s' "
-                                  "already  exported, omitting '%s'"
+                        self._log("[Warning] Value element '%s: %s/%s' already exported, "
+                                  "omitting further element value '%s'"
                                   % (log_id, val_elem.tag,
                                      check_export.text, val_elem.text))
 
@@ -155,11 +158,11 @@ class VersionConverter(object):
                 elif val_elem.tag in format.Property.arguments_keys:
                     new_elem = ET.Element(val_elem.tag)
                     new_elem.text = val_elem.text
-                    value.getparent().append(new_elem)
+                    parent.append(new_elem)
                 elif val_elem.tag in self._version_map:
                     new_elem = ET.Element(self._version_map[val_elem.tag])
                     new_elem.text = val_elem.text
-                    value.getparent().append(new_elem)
+                    parent.append(new_elem)
                 else:
                     self._log("[Info] Omitted non-Value attribute '%s: %s/%s'"
                               % (log_id, val_elem.tag, val_elem.text))
