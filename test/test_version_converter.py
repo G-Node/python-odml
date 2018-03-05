@@ -93,7 +93,10 @@ class TestVersionConverter(unittest.TestCase):
             ET.fromstring(file.getvalue())
 
     def test_convert_odml_file(self):
-        self.assertEqual(VC("/not_valid_path").convert_odml_file(), None)
+        with self.assertRaises(Exception) as exc:
+            VC("/not_valid_path").convert_odml_file()
+        self.assertIn("Cannot parse provided file", str(exc.exception))
+
         root = ET.fromstring(self.doc)
         prop = root.find("section").find("property")
         val_elems = []

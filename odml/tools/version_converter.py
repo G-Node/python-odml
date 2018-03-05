@@ -32,25 +32,11 @@ class VersionConverter(object):
         """
         Converts a given file to the odml version 1.1.
         Unites multiple value objects and brings value attributes out of the <value> tag.
-        :param filename: The path to the file or io.StringIO object
         """
         # Reset status messages
         self.conversion_log = []
 
-        tree = None
-        if isinstance(self.filename, io.StringIO):
-            self._fix_unmatching_tags()
-            tree = ET.ElementTree(ET.fromstring(self.filename.getvalue()))
-        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
-            self._fix_unmatching_tags()
-            # Make pretty print available by resetting format
-            parser = ET.XMLParser(remove_blank_text=True)
-            tree = ET.parse(self.filename, parser)
-        else:
-            self._log("File '%s' is not an .xml file nor "
-                      "an io.StringIO object" % self.filename)
-            return
-
+        tree = self._parse_document()
         tree = self._replace_same_name_entities(tree)
         root = tree.getroot()
         root.set("version", FORMAT_VERSION)
