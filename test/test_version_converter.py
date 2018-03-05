@@ -82,16 +82,6 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(props_names[0], "prop_name")
         self.assertEqual(props_names[1], "prop_name-2")
 
-    def test_fix_unmatching_tags(self):
-        first_elem = list(VC._error_strings.keys())[0]
-        self.doc = re.sub("<value>", "<value>" + first_elem, self.doc, count=1)
-        file = io.StringIO(unicode(self.doc))
-        with self.assertRaises(Exception):
-            ET.fromstring(file.getvalue())
-        file = VC(file)._fix_unmatching_tags()
-        with self.assertNotRaises(Exception):
-            ET.fromstring(file.getvalue())
-
     def test_convert_odml_file(self):
         with self.assertRaises(Exception) as exc:
             VC("/not_valid_path").convert_odml_file()

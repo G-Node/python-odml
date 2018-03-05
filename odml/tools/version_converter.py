@@ -153,29 +153,6 @@ class VersionConverter(object):
                     self._log("[Info] Omitted non-Value attribute '%s: %s/%s'"
                               % (log_id, val_elem.tag, val_elem.text))
 
-    def _fix_unmatching_tags(self):
-        """
-        Fix an xml file by deleting known mismatching tags.
-        """
-        changes = False
-        if isinstance(self.filename, io.StringIO):
-            doc = self.filename.getvalue()
-        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
-            f = open(self.filename, 'r+')
-            doc = f.read()
-        for k, v in self._error_strings.items():
-            if k in doc:
-                doc = doc.replace(k, self._error_strings[k])
-                changes = True
-
-        if changes:
-            if isinstance(self.filename, io.StringIO):
-                return io.StringIO(doc)
-            else:
-                f.truncate(0)
-                f.write(doc)
-                f.close()
-
     def _parse_document(self):
         """
         _parse_document checks whether the provided file object can be parsed,
