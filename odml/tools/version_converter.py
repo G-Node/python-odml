@@ -190,6 +190,32 @@ class VersionConverter(object):
                 f.write(doc)
                 f.close()
 
+    def _parse_document(self):
+        """
+        _parse_document checks whether the provided file object can be parsed,
+        fixes known mismatching elements and returns the parsed lxml tree.
+        :return: ElementTree
+        """
+        if isinstance(self.filename, io.StringIO):
+            doc = self.filename.getvalue()
+        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+            with open(self.filename, 'r+') as file:
+                doc = file.read()
+        else:
+            msg = "Cannot parse provided file object '%s'." % self.filename
+            raise Exception(msg)
+
+        # Fix known mismatching elements
+        for elem, val in self._error_strings.items():
+            if elem in doc:
+                doc = doc.replace(elem, val)
+
+        # Make pretty print available by resetting format
+        parser = ET.XMLParser(remove_blank_text=True)
+        tree = ET.ElementTree(ET.fromstring(doc, parser))
+
+        return tree
+
     @classmethod
     def _replace_same_name_entities(cls, tree):
         """
