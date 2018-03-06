@@ -15,6 +15,14 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p.value[0], 100)
         self.assertEqual(type(p.value), tuple)
 
+        p.append(10)
+        self.assertEqual(len(p.value), 2)
+        p.append([20, 30, '40'])
+        self.assertEqual(len(p.value), 5)
+        with self.assertRaises(ValueError):
+            p.append('invalid')
+            p.append(('5', 6, 7))
+
     def test_bool_conversion(self):
 
         # Success tests
