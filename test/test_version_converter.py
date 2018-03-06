@@ -1,6 +1,16 @@
 import io
+import os
 import re
 import unittest
+import urllib
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
+try:
+    from urllib.request import pathname2url
+except ImportError:
+    from urllib import pathname2url
 
 from contextlib import contextmanager
 from lxml import etree as ET
@@ -164,6 +174,15 @@ class TestVersionConverter(unittest.TestCase):
         Section tags and exclusion of non-Section tags.
         """
 
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        repo_file = os.path.join(dir_path, "resources",
+                                           "local_repository_file_v1.1.xml")
+        local_url = "file://%s" % repo_file
+
+        repo_old_file = os.path.join(dir_path, "resources",
+                                               "local_repository_file_v1.0.xml")
+        local_old_url = "file://%s" % repo_old_file
+
         doc = """
                 <odML version="1">
                   <!-- Valid Section tags test -->
@@ -173,7 +192,7 @@ class TestVersionConverter(unittest.TestCase):
                     <definition>Section definition</definition>
                     <reference>Section reference</reference>
                     <link>Section link</link>
-                    <repository>Section repository</repository>
+                    <repository>%s</repository>
                     <include>Section include</include>
                     <property><name>Section Property 1</name></property>
                     <property><name>Section Property 2</name></property>
@@ -184,7 +203,7 @@ class TestVersionConverter(unittest.TestCase):
                       <definition>SubSection definition</definition>
                       <reference>SubSection reference</reference>
                       <link>SubSection link</link>
-                      <repository>SubSection repository</repository>
+                      <repository>%s</repository>
                       <include>SubSection include</include>
                       <property><name>SubSection Property</name></property>
                     </section>
@@ -195,44 +214,54 @@ class TestVersionConverter(unittest.TestCase):
                     <invalid>Invalid tag</invalid>
                     <value>Invalid Value tag</value>
                     <mapping>Unsupported mapping tag</mapping>
+                    <repository>Unsupported section repository</repository>
+                  </section>
+                
+                  <section>
+                    <name>Unsupported Section repo test</name>
+                    <repository>%s</repository>
                   </section>
                 </odML>
-        """
+        """ % (local_url, local_url, local_old_url)
 
         file = io.StringIO(unicode(doc))
         conv_doc = VC(file).convert_odml_file()
         root = conv_doc.getroot()
 
         sec = root.findall("section")
-        self.assertEqual(len(sec), 2)
+        self.assertEqual(len(sec), 3)
 
-        # Test valid section tags, repository was excluded.
-        self.assertEqual(len(sec[0]), 9)
+        # Test valid section tags.
+        self.assertEqual(len(sec[0]), 10)
         self.assertEqual(sec[0].find("name").text, "Section name")
         self.assertEqual(sec[0].find("type").text, "Section type")
         self.assertEqual(sec[0].find("definition").text, "Section definition")
         self.assertEqual(sec[0].find("reference").text, "Section reference")
         self.assertEqual(sec[0].find("link").text, "Section link")
-        # self.assertEqual(sec[0].find("repository").text, "Section repository")
+        self.assertEqual(sec[0].find("repository").text, local_url)
         self.assertEqual(sec[0].find("include").text, "Section include")
         self.assertEqual(len(sec[0].findall("property")), 2)
         self.assertEqual(len(sec[0].findall("section")), 1)
 
-        # Test valid subsection tags, repository was excluded.
+        # Test valid subsection tags.
         subsec = sec[0].find("section")
-        self.assertEqual(len(subsec), 7)
+        self.assertEqual(len(subsec), 8)
         self.assertEqual(subsec.find("name").text, "SubSection name")
         self.assertEqual(subsec.find("type").text, "SubSection type")
         self.assertEqual(subsec.find("definition").text, "SubSection definition")
         self.assertEqual(subsec.find("reference").text, "SubSection reference")
         self.assertEqual(subsec.find("link").text, "SubSection link")
-        # self.assertEqual(subsec.find("repository").text, "SubSection repository")
+        self.assertEqual(subsec.find("repository").text, local_url)
         self.assertEqual(subsec.find("include").text, "SubSection include")
         self.assertEqual(len(subsec.findall("property")), 1)
 
         # Test absence of non-Section tags
         self.assertEqual(len(sec[1]), 1)
         self.assertEqual(len(sec[1].findall("name")), 1)
+
+        # Test absence of v1.0 repository tag
+        self.assertEqual(len(sec[2]), 1)
+        self.assertEqual(len(sec[2].findall("name")), 1)
 
     def test_convert_odml_file_property(self):
         """Test proper conversion of the odml.Property entity from
