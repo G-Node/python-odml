@@ -188,7 +188,7 @@ class DictReader:
                     prop_attrs[attr] = _property[attr]
 
             prop = odmlfmt.Property.create(**prop_attrs)
-            prop._value = values
+            prop.value = values
             odml_props.append(prop)
 
         return odml_props
