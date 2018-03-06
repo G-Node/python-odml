@@ -10,7 +10,7 @@ def get_props(obj, props):
         if hasattr(obj, p):
             x = getattr(obj, p)
             if x is not None:
-                if isinstance(x, list):
+                if isinstance(x, list) or isinstance(x, tuple):
                     out.append("%s=%s" % (p, to_csv(x)))
                 else:
                     out.append("%s=%s" % (p, repr(x)))

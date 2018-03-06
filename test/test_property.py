@@ -30,13 +30,13 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'int')
         p.dtype = DType.boolean
         assert(p.dtype == 'boolean')
-        assert(p.value == [True, False, True, False, True])
+        assert(p.value == (True, False, True, False, True))
 
         q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', 'F', '1'])
         assert(q.dtype == 'string')
         q.dtype = DType.boolean
         assert(q.dtype == 'boolean')
-        assert(q.value == [False, True, True, False, True, False, True])
+        assert(q.value == (False, True, True, False, True, False, True))
 
         # Failure tests
         curr_val = [3, 0, 1, 0, 8]
@@ -46,7 +46,7 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             p.dtype = DType.boolean
         assert(p.dtype == curr_type)
-        assert(p.value == curr_val)
+        assert(p.value == tuple(curr_val))
 
         curr_type = 'string'
         q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', '12', 'Ft'])
@@ -62,7 +62,7 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'string')
         p.dtype = DType.int
         assert(p.dtype == 'int')
-        assert(p.value == [3, 0, 1, 0, 8])
+        assert(p.value == (3, 0, 1, 0, 8))
 
         # Failure Test
         p = Property(name='dogs_onboard', value=['7', '20', '1 Dog', 'Seven'])
@@ -72,7 +72,7 @@ class TestProperty(unittest.TestCase):
             p.dtype = DType.int
 
         assert(p.dtype == 'string')
-        assert(p.value == ['7', '20', '1 Dog', 'Seven'])
+        assert(p.value == ('7', '20', '1 Dog', 'Seven'))
 
     def test_name(self):
         pass
