@@ -23,6 +23,10 @@ class TestProperty(unittest.TestCase):
             p.append('invalid')
             p.append(('5', 6, 7))
 
+        p2 = Property("property 2", 3)
+        p.append(p2)
+        self.assertEqual(len(p.value), 6)
+
     def test_bool_conversion(self):
 
         # Success tests
