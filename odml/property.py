@@ -286,9 +286,9 @@ class BaseProperty(base.baseobject, Property):
 
     def merge(self, property):
         """
-        Stub that doesn't do anything for this class
+        Merges the values in 'property' into self, if possible.
         """
-        pass
+        self.append(list(property.value))
 
     def unmerge(self, property):
         """
@@ -324,6 +324,9 @@ class BaseProperty(base.baseobject, Property):
         return self._value[key]
 
     def append(self, obj):
+        if isinstance(obj, BaseProperty):
+            self.merge(obj)
+            return
         if self._value == []:
             self.value = obj
         else:
