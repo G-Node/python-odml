@@ -112,23 +112,30 @@ class VersionConverter(object):
         self._log("[Warning] Excluded v1.0 repository '%s'." % content)
 
     def _handle_properties(self, root):
-        rem_property = []
+        """
+        Method removes all property elements w/o name attribute, converts Value
+        elements from v1.0 to v1.1 style and removes unsupported Property elements.
+        :param root:
+        """
         for prop in root.iter("property"):
             main_val = ET.Element("value")
             multiple_values = False
+            parent = prop.getparent()
 
-            # If a property has no name tag, mark it for removal
+            # If a Property has no name attribute, remove it from its parent and
+            # continue with the next Property.
             if prop.find("name") is None:
-                rem_property.append(prop)
+                self._log("[Warning] Omitted Property without "
+                          "name tag: '%s'" % ET.tostring(prop))
+                parent.remove(prop)
                 continue
 
-            curr_sec = prop.getparent()
             sname = "unnamed"
-            if curr_sec.find("name") is not None:
-                sname = curr_sec.find("name").text
+            if parent.find("name") is not None:
+                sname = parent.find("name").text
             stype = "untyped"
-            if curr_sec.find("type") is not None:
-                stype = curr_sec.find("type").text
+            if parent.find("type") is not None:
+                stype = parent.find("type").text
             prop_id = "%s|%s:%s" % (sname, stype, prop.find("name").text)
 
             # Special handling of Values
@@ -159,13 +166,6 @@ class VersionConverter(object):
                     self._log("[Info] Omitted non-Property attribute "
                               "'%s: %s/%s'" % (prop_id, e.tag, e.text))
                     prop.remove(e)
-
-        # Exclude Properties without name tags
-        for p in rem_property:
-            self._log("[Warning] Omitted Property "
-                      "without name tag: '%s'" % ET.tostring(p))
-            parent = p.getparent()
-            parent.remove(p)
 
     def _handle_value(self, value, log_id):
         """
