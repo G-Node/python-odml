@@ -20,6 +20,7 @@ from .tools.parser_utils import ParserException
 
 
 REPOSITORY = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
+REPOSITORY_BASE = 'http://portal.g-node.org/odml/terminologies/'
 
 CACHE_AGE = datetime.timedelta(days=1)
 
