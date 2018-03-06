@@ -322,3 +322,14 @@ class BaseProperty(base.baseobject, Property):
 
     def __getitem__(self, key):
         return self._value[key]
+
+    def append(self, obj):
+        if self._value == []:
+            self.value = obj
+        else:
+            new_value = self._convert_value_input(obj)
+            if not self._validate_values(new_value):
+                raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
+                                 "data type \'%s\'!" % self._dtype)
+            self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
+
