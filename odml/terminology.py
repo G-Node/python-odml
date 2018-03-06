@@ -3,20 +3,20 @@ Handles (deferred) loading of terminology data and access to it
 for odML documents
 """
 
-import os
-import tempfile
 import datetime
-import odml.tools.xmlparser
+import os
 import sys
+import tempfile
 import threading
-
-from hashlib import md5
 try:
     import urllib.request as urllib2
 except ImportError:
     import urllib2
 
+from hashlib import md5
+
 from .tools.parser_utils import ParserException
+from .tools.xmlparser import XMLReader
 
 
 REPOSITORY = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
@@ -82,8 +82,7 @@ class Terminologies(dict):
             print("did not successfully load '%s'" % url)
             return
         try:
-            term = odml.tools.xmlparser.XMLReader(
-                filename=url, ignore_errors=True).from_file(fp)
+            term = XMLReader(filename=url, ignore_errors=True).from_file(fp)
             term.finalize()
         except ParserException as e:
             print("Failed to load %s due to parser errors" % url)
