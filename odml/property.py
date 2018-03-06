@@ -281,7 +281,7 @@ class BaseProperty(base.baseobject, Property):
         """
         obj = super(BaseProperty, self).clone()
         obj._section = None
-        obj.value = self.value
+        obj.value = self._value
         return obj
 
     def merge(self, property):
