@@ -1,15 +1,11 @@
 import io
 import os
-import re
 import unittest
-import urllib
 try:
     import urllib.request as urllib2
-except ImportError:
-    import urllib2
-try:
     from urllib.request import pathname2url
 except ImportError:
+    import urllib2
     from urllib import pathname2url
 
 from contextlib import contextmanager
@@ -136,13 +132,22 @@ class TestVersionConverter(unittest.TestCase):
         Document tags and exclusion of non-Document tags.
         """
 
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        repo_file = os.path.join(dir_path, "resources",
+                                           "local_repository_file_v1.1.xml")
+        local_url = "file://%s" % repo_file
+
+        repo_old_file = os.path.join(dir_path, "resources",
+                                               "local_repository_file_v1.0.xml")
+        local_old_url = "file://%s" % repo_old_file
+
         doc = """
                 <odML version="1">
                   <!-- Valid Document tags test -->
                   <author>Document author</author>
                   <version>1</version>
                   <date>2017-10-18</date>
-                  <repository>Document repository</repository>
+                  <repository>%s</repository>
                   <section><name>Document section</name></section>
                 
                   <!-- Unsupported Document tags test -->
@@ -150,7 +155,21 @@ class TestVersionConverter(unittest.TestCase):
                   <property>Invalid Document property</property>
                   <value>Invalid Document value</value>
                 </odML>
+        """ % local_url
+
+        invalid_repo_doc = """
+                <odML version="1">
+                  <repository>Unresolvable</repository>
+                  <section><name>Document section</name></section>
+                </odML>
         """
+
+        old_repo_doc = """
+                <odML version="1">
+                  <repository>%s</repository>
+                  <section><name>Document section</name></section>
+                </odML>
+        """ % local_old_url
 
         file = io.StringIO(unicode(doc))
         conv_doc = VC(file).convert_odml_file()
@@ -158,13 +177,25 @@ class TestVersionConverter(unittest.TestCase):
         # Test export of Document tags, repository is excluded
         self.assertEqual(len(root.findall("author")), 1)
         self.assertEqual(len(root.findall("date")), 1)
-        self.assertEqual(len(root.findall("repository")), 0)
+        self.assertEqual(len(root.findall("repository")), 1)
         self.assertEqual(len(root.findall("section")), 1)
 
         # Test absence of non-Document tags
         self.assertEqual(len(root.findall("invalid")), 0)
         self.assertEqual(len(root.findall("property")), 0)
         self.assertEqual(len(root.findall("value")), 0)
+
+        # Test absence of non-importable repository
+        file = io.StringIO(unicode(invalid_repo_doc))
+        conv_doc = VC(file).convert_odml_file()
+        root = conv_doc.getroot()
+        self.assertEqual(len(root.findall("repository")), 0)
+
+        # Test absence of old repository
+        file = io.StringIO(unicode(old_repo_doc))
+        conv_doc = VC(file).convert_odml_file()
+        root = conv_doc.getroot()
+        self.assertEqual(len(root.findall("repository")), 0)
 
     def test_convert_odml_file_section(self):
         """Test proper conversion of the odml.Section entity from
