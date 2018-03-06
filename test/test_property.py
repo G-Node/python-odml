@@ -13,6 +13,7 @@ class TestProperty(unittest.TestCase):
     def test_value(self):
         p = Property("property", 100)
         self.assertEqual(p.value[0], 100)
+        self.assertEqual(type(p.value), tuple)
 
     def test_bool_conversion(self):
 
