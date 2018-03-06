@@ -5,6 +5,7 @@ import sys
 from lxml import etree as ET
 from .. import format
 from ..info import FORMAT_VERSION
+from ..terminology import Terminologies, REPOSITORY_BASE
 
 try:
     unicode = unicode
@@ -122,6 +123,37 @@ class VersionConverter(object):
                 root.remove(e)
 
         return tree
+
+    def _handle_repository(self, element):
+        """
+        The method handles provided odML repositories.
+        :param element: lxml element containing the provided odML repository link.
+        """
+        content = element.text
+        cache = {}
+        term_handler = Terminologies(cache)
+        term = term_handler.load(element.text)
+
+        # If the repository url can be loaded and parsed, everything is fine.
+        if term is not None:
+            return
+
+        # If the repository url is a v1.0 odml-terminology one,
+        # check whether a v1.1 is available and use it instead.
+        if os.path.join(REPOSITORY_BASE, "v1.0") in element.text:
+            element.text = element.text.replace('v1.0', 'v1.1')
+            term = term_handler.load(element.text)
+
+            if term is not None:
+                msg = "[Info] Replaced repository url '%s' with '%s'." \
+                      % (content, element.text)
+                self._log(msg)
+                return
+
+        # Remove a repo element if no v1.1 compatible repository url can be provided.
+        parent = element.getparent()
+        parent.remove(element)
+        self._log("[Warning] Excluded v1.0 repository '%s'." % content)
 
     def _handle_value(self, value, log_id):
         """
