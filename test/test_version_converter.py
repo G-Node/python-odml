@@ -145,10 +145,10 @@ class TestVersionConverter(unittest.TestCase):
         file = io.StringIO(unicode(doc))
         conv_doc = VC(file).convert_odml_file()
         root = conv_doc.getroot()
-        # Test export of Document tags
+        # Test export of Document tags, repository is excluded
         self.assertEqual(len(root.findall("author")), 1)
         self.assertEqual(len(root.findall("date")), 1)
-        self.assertEqual(len(root.findall("repository")), 1)
+        self.assertEqual(len(root.findall("repository")), 0)
         self.assertEqual(len(root.findall("section")), 1)
 
         # Test absence of non-Document tags
@@ -206,27 +206,27 @@ class TestVersionConverter(unittest.TestCase):
         sec = root.findall("section")
         self.assertEqual(len(sec), 2)
 
-        # Test valid section tags
-        self.assertEqual(len(sec[0]), 10)
+        # Test valid section tags, repository was excluded.
+        self.assertEqual(len(sec[0]), 9)
         self.assertEqual(sec[0].find("name").text, "Section name")
         self.assertEqual(sec[0].find("type").text, "Section type")
         self.assertEqual(sec[0].find("definition").text, "Section definition")
         self.assertEqual(sec[0].find("reference").text, "Section reference")
         self.assertEqual(sec[0].find("link").text, "Section link")
-        self.assertEqual(sec[0].find("repository").text, "Section repository")
+        # self.assertEqual(sec[0].find("repository").text, "Section repository")
         self.assertEqual(sec[0].find("include").text, "Section include")
         self.assertEqual(len(sec[0].findall("property")), 2)
         self.assertEqual(len(sec[0].findall("section")), 1)
 
-        # Test valid subsection tags
+        # Test valid subsection tags, repository was excluded.
         subsec = sec[0].find("section")
-        self.assertEqual(len(subsec), 8)
+        self.assertEqual(len(subsec), 7)
         self.assertEqual(subsec.find("name").text, "SubSection name")
         self.assertEqual(subsec.find("type").text, "SubSection type")
         self.assertEqual(subsec.find("definition").text, "SubSection definition")
         self.assertEqual(subsec.find("reference").text, "SubSection reference")
         self.assertEqual(subsec.find("link").text, "SubSection link")
-        self.assertEqual(subsec.find("repository").text, "SubSection repository")
+        # self.assertEqual(subsec.find("repository").text, "SubSection repository")
         self.assertEqual(subsec.find("include").text, "SubSection include")
         self.assertEqual(len(subsec.findall("property")), 1)
 

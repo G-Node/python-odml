@@ -106,7 +106,7 @@ class VersionConverter(object):
             parent = p.getparent()
             parent.remove(p)
 
-        # Exclude unsupported Section attributes, ignore comments
+        # Exclude unsupported Section attributes, ignore comments, handle repositories
         for sec in root.iter("section"):
             sec_name = sec.find("name").text
             for e in sec:
@@ -114,13 +114,21 @@ class VersionConverter(object):
                     self._log("[Info] Omitted non-Section attribute "
                               "'%s: %s/%s'" % (sec_name, e.tag, e.text))
                     sec.remove(e)
+                    continue
 
-        # Exclude unsupported Document attributes, ignore comments
+                if e.tag == "repository":
+                    self._handle_repository(e)
+
+        # Exclude unsupported Document attributes, ignore comments, handle repositories
         for e in root:
             if e.tag not in format.Document.arguments_keys and isinstance(e.tag, str):
                 self._log("[Info] Omitted non-Document "
                           "attribute '%s/%s'" % (e.tag, e.text))
                 root.remove(e)
+                continue
+
+            if e.tag == "repository":
+                self._handle_repository(e)
 
         return tree
 
