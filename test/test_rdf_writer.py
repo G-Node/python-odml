@@ -100,7 +100,7 @@ class TestRDFWriter(unittest.TestCase):
         w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 1)
 
-        doc.sections[0].properties[0].value.append("val2")
+        doc.sections[0].properties[0].append("val2")
         w = RDFWriter([doc])
         w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=RDF.li))), 2)
