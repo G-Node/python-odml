@@ -277,10 +277,20 @@ class VersionConverter(object):
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def write_to_file(self, filename):
+        """
+        This method converts the content of the provided converter file object
+        to odML version 1.1 and writes the results to `filename`.
+        :param filename: Output file.
+        """
         if sys.version_info < (3,):
             data = unicode(self).encode('utf-8')
         else:
             data = str(self)
+
+        ext = [".xml", ".odml"]
+        if not filename.endswith(tuple(ext)):
+            filename = "%s.xml" % filename
+
         if data and "<odML " in data:
             with open(filename, "w") as file:
                 file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
