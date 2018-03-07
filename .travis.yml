@@ -30,23 +30,34 @@ before_install:
 
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
-  - if [ $COVERALLS = 1 ]; then
-        pip install --upgrade coveralls;
+  - if [ $PYVER = 3 ]; then
+      export PYCMD=python3;
+      export PIPCMD=pip3;
+    else
+      export PYCMD=python;
+      export PIPCMD=pip;
     fi;
+
+  - if [ $COVERALLS = 1 ]; then
+        $PIPCMD install --upgrade coveralls;
+    fi;
+
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      which python;
+      which $PYCMD;
       source venv/bin/activate;
-      which python;
-    fi
-  - pip install lxml enum34 pyyaml rdflib
+      brew upgrade python;
+      which $PYCMD;
+    fi;
+
+  - $PIPCMD install lxml enum34 pyyaml rdflib
 
 script:
-  - which python
-  - python setup.py build
+  - which $PYCMD
+  - $PYCMD setup.py build
   - if [ $COVERALLS = 1 ]; then
         coverage${PYVER} run --source=odml setup.py test && coverage${PYVER} report -m;
     else
-        python setup.py test;
+        $PYCMD setup.py test;
     fi;
 
 after_success:

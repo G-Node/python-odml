@@ -80,8 +80,9 @@ class DictWriter:
 
                 if hasattr(prop, attr):
                     tag = getattr(prop, attr)
-
-                    if (tag == []) or tag:  # Even if 'value' is empty, allow '[]'
+                    if isinstance(tag, tuple):
+                        prop_dict[attr] = list(tag)
+                    elif (tag == []) or tag:  # Even if 'value' is empty, allow '[]'
                         prop_dict[attr] = tag
 
             props_seq.append(prop_dict)
@@ -187,7 +188,7 @@ class DictReader:
                     prop_attrs[attr] = _property[attr]
 
             prop = odmlfmt.Property.create(**prop_attrs)
-            prop._value = values
+            prop.value = values
             odml_props.append(prop)
 
         return odml_props

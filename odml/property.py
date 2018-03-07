@@ -150,7 +150,7 @@ class BaseProperty(base.baseobject, Property):
 
     @property
     def value(self):
-        return self._value
+        return tuple(self._value)
 
     def value_str(self, index=0):
         """
@@ -172,18 +172,32 @@ class BaseProperty(base.baseobject, Property):
                 return False
         return True
 
-    @value.setter
-    def value(self, new_value):
-        # Make sure boolean value 'False' gets through as well...
-        if new_value is None or new_value == "":
-            return
+    def _convert_value_input(self, new_value):
+        """
+        This method ensures, that the passed new value is a list.
+        If new_value is a string, it will convert it to a list of
+        strings if the new_value contains embracing brackets.
+
+        returns list of new_value
+        """
         if isinstance(new_value, str):
             if new_value[0] == "[" and new_value[-1] == "]":
                 new_value = new_value[1:-1].split(",")
         if not isinstance(new_value, list):
             new_value = [new_value]
+        return new_value
+
+    @value.setter
+    def value(self, new_value):
+        # Make sure boolean value 'False' gets through as well...
+        if new_value is None or new_value == "":
+            return
+
+        new_value = self._convert_value_input(new_value)
+
         if self._dtype is None:
             self._dtype = dtypes.infer_dtype(new_value[0])
+
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.value: passed values are not of "
                              "consistent type!")
@@ -267,14 +281,14 @@ class BaseProperty(base.baseobject, Property):
         """
         obj = super(BaseProperty, self).clone()
         obj._section = None
-        obj.value = self.value
+        obj.value = self._value
         return obj
 
     def merge(self, property):
         """
-        Stub that doesn't do anything for this class
+        Merges the values in 'property' into self, if possible.
         """
-        pass
+        self.append(list(property.value))
 
     def unmerge(self, property):
         """
@@ -308,3 +322,17 @@ class BaseProperty(base.baseobject, Property):
 
     def __getitem__(self, key):
         return self._value[key]
+
+    def append(self, obj):
+        if isinstance(obj, BaseProperty):
+            self.merge(obj)
+            return
+        if self._value == []:
+            self.value = obj
+        else:
+            new_value = self._convert_value_input(obj)
+            if not self._validate_values(new_value):
+                raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
+                                 "data type \'%s\'!" % self._dtype)
+            self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
+
