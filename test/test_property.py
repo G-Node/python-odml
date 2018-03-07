@@ -16,11 +16,11 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(type(p.value), list)
 
         p.append(10)
-        self.assertEqual(len(p.value), 2)
+        self.assertEqual(len(p), 2)
         self.assertRaises(ValueError, p.append, [1,2,3])
 
         p.extend([20, 30, '40'])
-        self.assertEqual(len(p.value), 5)
+        self.assertEqual(len(p), 5)
         with self.assertRaises(ValueError):
             p.append('invalid')
             p.extend(('5', 6, 7))
@@ -28,22 +28,22 @@ class TestProperty(unittest.TestCase):
         p2 = Property("property 2", 3)
         self.assertRaises(ValueError, p.append, p2)
         p.extend(p2)
-        self.assertEqual(len(p.value), 6)
+        self.assertEqual(len(p), 6)
 
         p.value = None
-        self.assertEqual(len(p.value), 0)
+        self.assertEqual(len(p), 0)
 
         p.value = [1, 2, 3]
         p.value = ""
-        self.assertEqual(len(p.value), 0)
+        self.assertEqual(len(p), 0)
 
         p.value = [1, 2, 3]
         p.value = []
-        self.assertEqual(len(p.value), 0)
+        self.assertEqual(len(p), 0)
 
         p.value = [1, 2, 3]
         p.value = ()
-        self.assertEqual(len(p.value), 0)
+        self.assertEqual(len(p), 0)
 
         p3 = Property("test", value=2, unit="Hz")
         p4 = Property("test", value=5.5, unit="s")
