@@ -136,6 +136,8 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p.value_origin, None)
         p = Property("P", value_origin="V")
         self.assertEqual(p.value_origin, "V")
+        p.value_origin = ""
+        self.assertEqual(p.value_origin, None)
 
     def test_set_id(self):
         p = Property("P", id="79b613eb-a256-46bf-84f6-207df465b8f7")

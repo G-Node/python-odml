@@ -210,6 +210,8 @@ class BaseProperty(base.baseobject, Property):
 
     @value_origin.setter
     def value_origin(self, new_value):
+        if new_value == "":
+            new_value = None
         self._value_origin = new_value
 
     @property
@@ -226,6 +228,8 @@ class BaseProperty(base.baseobject, Property):
 
     @unit.setter
     def unit(self, new_value):
+        if new_value == "":
+            new_value = None
         self._unit = new_value
 
     @property
@@ -234,6 +238,8 @@ class BaseProperty(base.baseobject, Property):
 
     @reference.setter
     def reference(self, new_value):
+        if new_value == "":
+            new_value = None
         self._reference = new_value
 
     @property
@@ -242,6 +248,8 @@ class BaseProperty(base.baseobject, Property):
 
     @definition.setter
     def definition(self, new_value):
+        if new_value == "":
+            new_value = None
         self._definition = new_value
 
     @property
@@ -250,6 +258,8 @@ class BaseProperty(base.baseobject, Property):
 
     @dependency.setter
     def dependency(self, new_value):
+        if new_value == "":
+            new_value = None
         self._dependency = new_value
 
     @property
@@ -258,6 +268,8 @@ class BaseProperty(base.baseobject, Property):
 
     @dependency_value.setter
     def dependency_value(self, new_value):
+        if new_value == "":
+            new_value = None
         self._dependency_value = new_value
 
     def remove(self, value):
