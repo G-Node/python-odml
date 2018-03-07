@@ -42,6 +42,12 @@ class TestProperty(unittest.TestCase):
         p.value = ()
         self.assertEqual(len(p.value), 0)
 
+        p3 = Property("test", value=2, unit="Hz")
+        p4 = Property("test", value=5.5, unit="s")
+
+        with self.assertRaises(ValueError):
+            p3.append(p4)
+
     def test_bool_conversion(self):
 
         # Success tests
