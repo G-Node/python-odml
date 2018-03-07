@@ -287,17 +287,14 @@ class BaseProperty(base.baseobject, Property):
 
     def merge(self, other):
         """
-        Merges the values in 'other' into self, if possible.
+        Merges the property 'other' into self, if possible.
         """
         assert(isinstance(other, (BaseProperty)))
-        if self.unit is None and other.unit is not None:
-            self.unit = other.unit
-        if other.unit != self.unit:
+
+        if self.unit is not None and other.unit is not None and self.unit != other.unit:
             raise ValueError("odml.Property.merge: src and dest units (%s, %s) do not match!"
                              % (other.unit, self.unit))
 
-        if self.definition is None and other.definition is not None:
-            self.definition = other.definition
         if self.definition is not None and other.definition is not None:
             self_def = ''.join(map(str.strip, self.definition.split())).lower()
             other_def = ''.join(map(str.strip, other.definition.split())).lower()
@@ -306,14 +303,30 @@ class BaseProperty(base.baseobject, Property):
 
         if self.uncertainty is not None and other.uncertainty is not None:
             raise ValueError("odml.Property.merge: src and dest uncertainty both set and do not match!")
-        if self.uncertainty is None and other.uncertainty is not None:
-            self.uncertainty = other.uncertainty
 
         if self.reference is not None and other.reference is not None:
-            self_ref = ''.join(map(str.strip(), self.reference.lower().split()))
-            other_ref = ''.join(map(str.strip(), other.reference.lower().split()))
+            self_ref = ''.join(map(str.strip, self.reference.lower().split()))
+            other_ref = ''.join(map(str.strip, other.reference.lower().split()))
             if self_ref != other_ref:
-                raise ValueError("odml.Property.merge: src and dest references do not match!")
+                raise ValueError("odml.Property.merge: src and dest references are in conflict!")
+
+        if self.value_origin is not None and other.value_origin is not None:
+            self_ori = ''.join(map(str.strip, self.value_origin.lower().split()))
+            other_ori = ''.join(map(str.strip, other.value_origin.lower().split()))
+            if self_ori != other_ori:
+                raise ValueError("odml.Property.merge: src and dest value_origin are in conflict!")
+
+        if self.value_origin is None and other.value_origin is not None:
+            self.value_origin = other.value_origin
+        if self.uncertainty is None and other.uncertainty is not None:
+            self.uncertainty = other.uncertainty
+        if self.reference is None and other.reference is not None:
+            self.reference = other.reference
+        if self.definition is None and other.definition is not None:
+            self.definition = other.definition
+        if self.unit is None and other.unit is not None:
+            self.unit = other.unit
+
         to_add = [v for v in other.value if v not in self._value]
         self.append(to_add)
 
