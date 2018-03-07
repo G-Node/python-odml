@@ -36,18 +36,21 @@ class VersionConverter(object):
         to odML version 1.1 as a string object which is directly consumable
         by the odml.tools.ODMLReader.
         """
-        tree = self._convert()
+        old_tree = self._parse_xml()
+
+        tree = self._convert(old_tree)
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
-    def _convert(self):
+    def _convert(self, tree):
         """
-        Converts a given file to the odml version 1.1.
-        Unites multiple value objects and brings value attributes out of the <value> tag.
+        Converts an lxml.ElementTree containing a v1.0 odML document to odML v1.1.
+        Unites multiple value objects and moves all supported Value elements to
+        its parent Property. Exports only Document, Section and Property elements,
+        that are supported by odML v1.1.
         """
         # Reset status messages
         self.conversion_log = []
 
-        tree = self._parse_xml()
         tree = self._replace_same_name_entities(tree)
         root = tree.getroot()
         root.set("version", FORMAT_VERSION)
