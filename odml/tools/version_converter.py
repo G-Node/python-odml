@@ -56,6 +56,28 @@ class VersionConverter(object):
 
         return tree
 
+    @classmethod
+    def _parse_dict_properties(cls, parent_element, props_list):
+        """
+        _parse_dict_properties parses a list containing python dictionaries of v1.0 odML
+        style properties into lxml.Element XML equivalents and appends the parsed
+        Properties to the provided lxml.Element parent.
+        :param parent_element: lxml.Element to which parsed properties will be appended.
+        :param props_list: list of python dictionaries containing valid v1.0 odML
+                           Properties.
+        """
+        for curr_prop in props_list:
+            prop = ET.Element("property")
+            for element in curr_prop:
+                if element == 'values':
+                    cls._parse_dict_values(prop, curr_prop['values'])
+                elif element:
+                    elem = ET.Element(element)
+                    elem.text = curr_prop[element]
+                    prop.append(elem)
+
+            parent_element.append(prop)
+
     @staticmethod
     def _parse_dict_values(parent_element, value_list):
         """
