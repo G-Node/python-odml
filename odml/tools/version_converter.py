@@ -1,6 +1,8 @@
 import io
+import json
 import os
 import sys
+import yaml
 
 from lxml import etree as ET
 from .. import format
@@ -55,6 +57,18 @@ class VersionConverter(object):
         tree = ET.ElementTree(ET.fromstring(doc, parser))
 
         return tree
+
+    def _parse_json(self):
+        with open(self.filename) as file:
+            parsed_doc = json.load(file)
+
+        return self._parse_dict_document(parsed_doc)
+
+    def _parse_yaml(self):
+        with open(self.filename) as file:
+            parsed_doc = yaml.load(file)
+
+        return self._parse_dict_document(parsed_doc)
 
     @classmethod
     def _parse_dict_document(cls, parsed_doc):
