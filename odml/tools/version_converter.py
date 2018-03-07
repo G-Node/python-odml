@@ -18,7 +18,8 @@ class VersionConverter(object):
     Class for converting odml xml files from version 1.0 to 1.1
     """
     _version_map = {
-        'filename': 'value_origin'
+        'filename': 'value_origin',
+        'dtype': 'type'
     }
 
     _error_strings = {
@@ -160,12 +161,16 @@ class VersionConverter(object):
 
                 prop.append(main_val)
 
-            # Exclude unsupported Property attributes, ignore comments
-            for e in prop:
-                if e.tag not in format.Property.arguments_keys and isinstance(e.tag, str):
+            # Reverse map "dependency_value", exclude unsupported Property attributes.
+            for elem in prop:
+                if elem.tag == "dependency_value":
+                    elem.tag = "dependencyvalue"
+
+                if (elem.tag not in format.Property.arguments_keys and
+                        isinstance(elem.tag, str)):
                     self._log("[Info] Omitted non-Property attribute "
-                              "'%s: %s/%s'" % (prop_id, e.tag, e.text))
-                    prop.remove(e)
+                              "'%s: %s/%s'" % (prop_id, elem.tag, elem.text))
+                    prop.remove(elem)
 
     def _handle_value(self, value, log_id):
         """
