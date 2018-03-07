@@ -375,6 +375,16 @@ class BaseProperty(base.baseobject, Property):
     def __getitem__(self, key):
         return self._value[key]
 
+    def __setitem__(self, key, item):
+        if int(key) < 0 or int(key) > self.__len__():
+            raise IndexError("odml.Property.__setitem__: key %i invalid for array of length %i"
+                             % (int(key), self.__len__()))
+        try:
+            val = dtypes.get(item, self.dtype)
+            self._value[int(key)] = val
+        except Exception:
+            raise ValueError("odml.Property.__setitem__:  passed value cannot be converted to data type \'%s\'!" % self._dtype)
+
     def extend(self, obj):
         if isinstance(obj, BaseProperty):
             if (obj.unit != self.unit):
