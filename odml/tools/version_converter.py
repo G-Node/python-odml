@@ -30,16 +30,31 @@ class VersionConverter(object):
         self.filename = filename
         self.conversion_log = []
 
-    def convert(self):
+    def _parse_xml(self):
         """
-        This method returns the content of the provided file object converted
-        to odML version 1.1 as a string object which is directly consumable
-        by the odml.tools.ODMLReader.
+        _parse_xml checks whether the provided file object can be parsed,
+        fixes known mismatching elements and returns the parsed lxml tree.
+        :return: ElementTree
         """
-        old_tree = self._parse_xml()
+        if isinstance(self.filename, io.StringIO):
+            doc = self.filename.getvalue()
+        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
+            with open(self.filename, 'r+') as file:
+                doc = file.read()
+        else:
+            msg = "Cannot parse provided file object '%s'." % self.filename
+            raise Exception(msg)
 
-        tree = self._convert(old_tree)
-        return ET.tounicode(tree, pretty_print=True) if tree else ""
+        # Fix known mismatching elements
+        for elem, val in self._error_strings.items():
+            if elem in doc:
+                doc = doc.replace(elem, val)
+
+        # Make pretty print available by resetting format
+        parser = ET.XMLParser(remove_blank_text=True)
+        tree = ET.ElementTree(ET.fromstring(doc, parser))
+
+        return tree
 
     def _convert(self, tree):
         """
@@ -214,32 +229,6 @@ class VersionConverter(object):
                     self._log("[Info] Omitted non-Value attribute '%s: %s/%s'"
                               % (log_id, val_elem.tag, val_elem.text))
 
-    def _parse_xml(self):
-        """
-        _parse_xml checks whether the provided file object can be parsed,
-        fixes known mismatching elements and returns the parsed lxml tree.
-        :return: ElementTree
-        """
-        if isinstance(self.filename, io.StringIO):
-            doc = self.filename.getvalue()
-        elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
-            with open(self.filename, 'r+') as file:
-                doc = file.read()
-        else:
-            msg = "Cannot parse provided file object '%s'." % self.filename
-            raise Exception(msg)
-
-        # Fix known mismatching elements
-        for elem, val in self._error_strings.items():
-            if elem in doc:
-                doc = doc.replace(elem, val)
-
-        # Make pretty print available by resetting format
-        parser = ET.XMLParser(remove_blank_text=True)
-        tree = ET.ElementTree(ET.fromstring(doc, parser))
-
-        return tree
-
     @classmethod
     def _replace_same_name_entities(cls, tree):
         """
@@ -286,6 +275,17 @@ class VersionConverter(object):
 
     def __unicode__(self):
         tree = self._convert()
+        return ET.tounicode(tree, pretty_print=True) if tree else ""
+
+    def convert(self):
+        """
+        This method returns the content of the provided file object converted
+        to odML version 1.1 as a string object which is directly consumable
+        by the odml.tools.ODMLReader.
+        """
+        old_tree = self._parse_xml()
+
+        tree = self._convert(old_tree)
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def write_to_file(self, filename):
