@@ -285,13 +285,39 @@ class BaseProperty(base.baseobject, Property):
         obj.value = self._value
         return obj
 
-    def merge(self, property):
+    def merge(self, other):
         """
-        Merges the values in 'property' into self, if possible.
+        Merges the values in 'other' into self, if possible.
         """
-        self.append(list(property.value))
+        assert(isinstance(other, (BaseProperty)))
+        if self.unit is None and other.unit is not None:
+            self.unit = other.unit
+        if other.unit != self.unit:
+            raise ValueError("odml.Property.merge: src and dest units (%s, %s) do not match!"
+                             % (other.unit, self.unit))
 
-    def unmerge(self, property):
+        if self.definition is None and other.definition is not None:
+            self.definition = other.definition
+        if self.definition is not None and other.definition is not None:
+            self_def = ''.join(map(str.strip, self.definition.split())).lower()
+            other_def = ''.join(map(str.strip, other.definition.split())).lower()
+            if self_def != other_def:
+                raise ValueError("odml.Property.merge: src and dest definitions do not match!")
+
+        if self.uncertainty is not None and other.uncertainty is not None:
+            raise ValueError("odml.Property.merge: src and dest uncertainty both set and do not match!")
+        if self.uncertainty is None and other.uncertainty is not None:
+            self.uncertainty = other.uncertainty
+
+        if self.reference is not None and other.reference is not None:
+            self_ref = ''.join(map(str.strip(), self.reference.lower().split()))
+            other_ref = ''.join(map(str.strip(), other.reference.lower().split()))
+            if self_ref != other_ref:
+                raise ValueError("odml.Property.merge: src and dest references do not match!")
+        to_add = [v for v in other.value if v not in self._value]
+        self.append(to_add)
+
+    def unmerge(self, other):
         """
         Stub that doesn't do anything for this class
         """
