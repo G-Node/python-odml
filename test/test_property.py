@@ -27,6 +27,21 @@ class TestProperty(unittest.TestCase):
         p.append(p2)
         self.assertEqual(len(p.value), 6)
 
+        p.value = None
+        self.assertEqual(len(p.value), 0)
+
+        p.value = [1, 2, 3]
+        p.value = ""
+        self.assertEqual(len(p.value), 0)
+
+        p.value = [1, 2, 3]
+        p.value = []
+        self.assertEqual(len(p.value), 0)
+
+        p.value = [1, 2, 3]
+        p.value = ()
+        self.assertEqual(len(p.value), 0)
+
     def test_bool_conversion(self):
 
         # Success tests
