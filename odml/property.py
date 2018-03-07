@@ -190,7 +190,8 @@ class BaseProperty(base.baseobject, Property):
     @value.setter
     def value(self, new_value):
         # Make sure boolean value 'False' gets through as well...
-        if new_value is None or new_value == "":
+        if new_value is None or (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
+            self._value = []
             return
 
         new_value = self._convert_value_input(new_value)
