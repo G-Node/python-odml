@@ -56,6 +56,28 @@ class VersionConverter(object):
 
         return tree
 
+    @staticmethod
+    def _parse_dict_values(parent_element, value_list):
+        """
+        _parse_dict_values parses a list containing python dictionaries of v1.0 odML
+        style values into lxml.Element XML equivalents and appends the parsed
+        Values to the provided lxml.Element parent.
+        :param parent_element: lxml.Element to which parsed values will be appended.
+        :param value_list: list of python dictionaries containing valid v1.0 odML Values.
+        """
+        for value in value_list:
+            val = ET.Element("value")
+            for element in value:
+                if element:
+                    if element == 'value':
+                        val.text = str(value[element])
+                    else:
+                        elem = ET.Element(element)
+                        elem.text = str(value[element])
+                        val.append(elem)
+
+            parent_element.append(val)
+
     def _convert(self, tree):
         """
         Converts an lxml.ElementTree containing a v1.0 odML document to odML v1.1.
