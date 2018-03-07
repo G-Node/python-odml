@@ -326,7 +326,10 @@ class BaseProperty(base.baseobject, Property):
 
     def append(self, obj):
         if isinstance(obj, BaseProperty):
-            self.merge(obj)
+            if (obj.unit != self.unit):
+                raise ValueError("odml.Property.append: src and dest units (%s, %s) do not match!"
+                                 % (obj.unit, self.unit))
+            self.append(list(obj.value))
             return
         if self._value == []:
             self.value = obj
