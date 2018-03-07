@@ -54,8 +54,25 @@ class TestProperty(unittest.TestCase):
         p.value.append(5)
         self.assertEqual(len(p.value), 0)
 
-    def test_bool_conversion(self):
+    def test_get_set_value(self):
+        values = [1, 2, 3, 4, 5]
+        p = Property("property", value=values)
 
+        self.assertEqual(len(p), 5)
+        for s, d in zip(values, p.value):
+            self.assertEqual(s, d)
+
+        count = 0
+        for v in p:
+            count += 1
+        self.assertEqual(count, len(values))
+
+        p[0] = 10
+        self.assertEqual(p[0], 10)
+        with self.assertRaises(ValueError):
+            p[1] = 'stringval'
+
+    def test_bool_conversion(self):
         # Success tests
         p = Property(name='received', value=[1, 0, 1, 0, 1])
         assert(p.dtype == 'int')
