@@ -57,6 +57,30 @@ class VersionConverter(object):
         return tree
 
     @classmethod
+    def _parse_dict_document(cls, parsed_doc):
+        """
+        _parse_dict_document parses a python dictionary containing a valid
+        v1.0 odML document into an lxml.ElementTree XML equivalent and returns
+        the resulting lxml ElementTree.
+        :param parsed_doc: python dictionary containing a valid v1.0 odML document.
+        :return: lxml ElementTree
+        """
+        root = ET.Element("odML")
+
+        parsed_doc = parsed_doc['Document']
+
+        for elem in parsed_doc:
+            if elem == 'sections':
+                cls._parse_dict_sections(root, parsed_doc['sections'])
+            elif elem:
+                curr_element = ET.Element(elem)
+                curr_element.text = parsed_doc[elem]
+                root.append(curr_element)
+
+        print(ET.tounicode(root, pretty_print=True))
+        return ET.ElementTree(root)
+
+    @classmethod
     def _parse_dict_sections(cls, parent_element, section_list):
         """
         _parse_dict_sections parses a list containing python dictionaries of v1.0 odML
