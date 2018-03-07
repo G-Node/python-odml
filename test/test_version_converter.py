@@ -90,7 +90,7 @@ class TestVersionConverter(unittest.TestCase):
 
     def test_convert_odml_file(self):
         with self.assertRaises(Exception) as exc:
-            VC("/not_valid_path").convert_odml_file()
+            VC("/not_valid_path")._convert()
         self.assertIn("Cannot parse provided file", str(exc.exception))
 
         root = ET.fromstring(self.doc)
@@ -106,7 +106,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("type"), None)
 
         file = io.StringIO(unicode(self.doc))
-        tree = VC(file).convert_odml_file()
+        tree = VC(file)._convert()
         root = tree.getroot()
         prop = root.find("section").find("property")
         val_elems = []
@@ -172,7 +172,7 @@ class TestVersionConverter(unittest.TestCase):
         """ % local_old_url
 
         file = io.StringIO(unicode(doc))
-        conv_doc = VC(file).convert_odml_file()
+        conv_doc = VC(file)._convert()
         root = conv_doc.getroot()
         # Test export of Document tags, repository is excluded
         self.assertEqual(len(root.findall("author")), 1)
@@ -187,13 +187,13 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test absence of non-importable repository
         file = io.StringIO(unicode(invalid_repo_doc))
-        conv_doc = VC(file).convert_odml_file()
+        conv_doc = VC(file)._convert()
         root = conv_doc.getroot()
         self.assertEqual(len(root.findall("repository")), 0)
 
         # Test absence of old repository
         file = io.StringIO(unicode(old_repo_doc))
-        conv_doc = VC(file).convert_odml_file()
+        conv_doc = VC(file)._convert()
         root = conv_doc.getroot()
         self.assertEqual(len(root.findall("repository")), 0)
 
@@ -256,7 +256,7 @@ class TestVersionConverter(unittest.TestCase):
         """ % (local_url, local_url, local_old_url)
 
         file = io.StringIO(unicode(doc))
-        conv_doc = VC(file).convert_odml_file()
+        conv_doc = VC(file)._convert()
         root = conv_doc.getroot()
 
         sec = root.findall("section")
@@ -328,7 +328,7 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         file = io.StringIO(unicode(doc))
-        conv_doc = VC(file).convert_odml_file()
+        conv_doc = VC(file)._convert()
         root = conv_doc.getroot()
         sec = root.findall("section")
 
@@ -430,7 +430,7 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         file = io.StringIO(unicode(doc))
-        conv_doc = VC(file).convert_odml_file()
+        conv_doc = VC(file)._convert()
         root = conv_doc.getroot()
         sec = root.find("section")
         self.assertEqual(len(sec), 7)

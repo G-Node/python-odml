@@ -36,10 +36,10 @@ class VersionConverter(object):
         to odML version 1.1 as a string object which is directly consumable
         by the odml.tools.ODMLReader.
         """
-        tree = self.convert_odml_file()
+        tree = self._convert()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
-    def convert_odml_file(self):
+    def _convert(self):
         """
         Converts a given file to the odml version 1.1.
         Unites multiple value objects and brings value attributes out of the <value> tag.
@@ -47,7 +47,7 @@ class VersionConverter(object):
         # Reset status messages
         self.conversion_log = []
 
-        tree = self._parse_document()
+        tree = self._parse_xml()
         tree = self._replace_same_name_entities(tree)
         root = tree.getroot()
         root.set("version", FORMAT_VERSION)
@@ -211,9 +211,9 @@ class VersionConverter(object):
                     self._log("[Info] Omitted non-Value attribute '%s: %s/%s'"
                               % (log_id, val_elem.tag, val_elem.text))
 
-    def _parse_document(self):
+    def _parse_xml(self):
         """
-        _parse_document checks whether the provided file object can be parsed,
+        _parse_xml checks whether the provided file object can be parsed,
         fixes known mismatching elements and returns the parsed lxml tree.
         :return: ElementTree
         """
@@ -278,11 +278,11 @@ class VersionConverter(object):
         print(msg)
 
     def __str__(self):
-        tree = self.convert_odml_file()
+        tree = self._convert()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def __unicode__(self):
-        tree = self.convert_odml_file()
+        tree = self._convert()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def write_to_file(self, filename):
