@@ -57,6 +57,30 @@ class VersionConverter(object):
         return tree
 
     @classmethod
+    def _parse_dict_sections(cls, parent_element, section_list):
+        """
+        _parse_dict_sections parses a list containing python dictionaries of v1.0 odML
+        style sections into lxml.Element XML equivalents and appends the parsed Sections
+        to the provided lxml.Element parent.
+        :param parent_element: lxml.Element to which parsed sections will be appended.
+        :param section_list: list of python dictionaries containing valid v1.0 odML
+                             Sections.
+        """
+        for section in section_list:
+            sec = ET.Element("section")
+            for element in section:
+                if element == 'properties':
+                    cls._parse_dict_properties(sec, section['properties'])
+                elif element == 'sections':
+                    cls._parse_dict_sections(sec, section['sections'])
+                elif element:
+                    elem = ET.Element(element)
+                    elem.text = section[element]
+                    sec.append(elem)
+
+            parent_element.append(sec)
+
+    @classmethod
     def _parse_dict_properties(cls, parent_element, props_list):
         """
         _parse_dict_properties parses a list containing python dictionaries of v1.0 odML
