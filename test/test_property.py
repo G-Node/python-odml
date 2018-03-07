@@ -144,7 +144,52 @@ class TestProperty(unittest.TestCase):
         Property("P", id="id")
         self.assertNotEqual(p.id, "id")
 
+    def test_merge(self):
+        p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
+                         reference="portal.g-node.org", uncertainty=0.0)
+        p_src = Property("p2", value=[2, 4, 6], unit="Hz", definition="FREUDE schoener GOETTERfunken")
+
+        test_p = p_dst.clone()
+        test_p.merge(p_src)
+        self.assertEqual(len(test_p.value), 5)
+
+        p_inv_unit = p_src.clone()
+        p_inv_unit.unit = 's'
+
+        p_inv_def = p_src.clone()
+        p_inv_def.definition = "Freunde schoender Goetterfunken"
+
+        p_inv_uncert = p_src.clone()
+        p_inv_uncert.uncertainty = 10.0
+
+        p_inv_ref = p_src.clone()
+        p_inv_ref.reference = "test"
+
+        test_p = p_dst.clone()
+        self.assertRaises(ValueError, test_p.merge, p_inv_unit)
+        self.assertRaises(ValueError, test_p.merge, p_inv_def)
+        self.assertRaises(ValueError, test_p.merge, p_inv_uncert)
+        self.assertRaises(ValueError, test_p.merge, p_inv_ref)
+
+        test_p.reference = None
+        test_p.merge(p_src)
+        self.assertEqual(test_p.reference, p_src.reference)
+
+        test_p.unit = ""
+        test_p.merge(p_src)
+        self.assertEqual(test_p.unit, p_src.unit)
+
+        test_p.uncertainty = None
+        test_p.merge(p_src)
+        self.assertEqual(test_p.uncertainty, p_src.uncertainty)
+
+        test_p.definition = ""
+        test_p.merge(p_src)
+        self.assertEqual(test_p.definition, p_src.definition)
+
+
 if __name__ == "__main__":
     print("TestProperty")
     tp = TestProperty()
     tp.test_value()
+    tp.test_merge()
