@@ -150,7 +150,7 @@ class BaseProperty(base.baseobject, Property):
 
     @property
     def value(self):
-        return tuple(self._value)
+        return self._value.copy()
 
     def value_str(self, index=0):
         """
