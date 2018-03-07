@@ -383,13 +383,20 @@ class VersionConverter(object):
         tree = self._convert()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
-    def convert(self):
+    def convert(self, backend="XML"):
         """
         This method returns the content of the provided file object converted
         to odML version 1.1 as a string object which is directly consumable
         by the odml.tools.ODMLReader.
         """
-        old_tree = self._parse_xml()
+        if backend.upper() == "JSON":
+            old_tree = self._parse_json()
+        elif backend.upper() == "YAML":
+            old_tree = self._parse_yaml()
+        elif backend.upper() == "XML":
+            old_tree = self._parse_xml()
+        else:
+            raise Exception("Unknown backend, only XML, JSON and YAML are supported.")
 
         tree = self._convert(old_tree)
         return ET.tounicode(tree, pretty_print=True) if tree else ""
