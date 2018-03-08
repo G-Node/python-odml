@@ -187,19 +187,21 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(root.findall("property")), 0)
         self.assertEqual(len(root.findall("value")), 0)
 
-        # Test absence of non-importable repository
+        # Test warning message on non-importable repository
         file = io.StringIO(unicode(invalid_repo_doc))
         vc = VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
-        self.assertEqual(len(root.findall("repository")), 0)
+        self.assertEqual(root.findall("repository")[0].text, "Unresolvable")
+        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
 
-        # Test absence of old repository
+        # Test warning message on old repository
         file = io.StringIO(unicode(old_repo_doc))
         vc = VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
-        self.assertEqual(len(root.findall("repository")), 0)
+        self.assertEqual(root.findall("repository")[0].text, local_old_url)
+        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
 
     def test_convert_odml_file_section(self):
         """Test proper conversion of the odml.Section entity from
@@ -249,7 +251,6 @@ class TestVersionConverter(unittest.TestCase):
                     <invalid>Invalid tag</invalid>
                     <value>Invalid Value tag</value>
                     <mapping>Unsupported mapping tag</mapping>
-                    <repository>Unsupported section repository</repository>
                   </section>
                 
                   <section>
@@ -295,9 +296,8 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(sec[1]), 1)
         self.assertEqual(len(sec[1].findall("name")), 1)
 
-        # Test absence of v1.0 repository tag
-        self.assertEqual(len(sec[2]), 1)
-        self.assertEqual(len(sec[2].findall("name")), 1)
+        # Test presence of v1.0 repository tag
+        self.assertEqual(sec[2].find("repository").text, local_old_url)
 
     def test_convert_odml_file_property(self):
         """Test proper conversion of the odml.Property entity from

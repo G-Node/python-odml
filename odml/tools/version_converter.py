@@ -231,10 +231,8 @@ class VersionConverter(object):
                 self._log(msg)
                 return
 
-        # Remove a repo element if no v1.1 compatible repository url can be provided.
-        parent = element.getparent()
-        parent.remove(element)
-        self._log("[Warning] Excluded v1.0 repository '%s'." % content)
+        # Print a warning, if no v1.1 compatible repository url can be provided.
+        self._log("[Warning] Repository file '%s' is not odML v1.1 compatible." % content)
 
     def _handle_properties(self, root):
         """
