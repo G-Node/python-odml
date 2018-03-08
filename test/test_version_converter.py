@@ -252,13 +252,8 @@ class TestVersionConverter(unittest.TestCase):
                     <value>Invalid Value tag</value>
                     <mapping>Unsupported mapping tag</mapping>
                   </section>
-                
-                  <section>
-                    <name>Unsupported Section repo test</name>
-                    <repository>%s</repository>
-                  </section>
                 </odML>
-        """ % (local_url, local_url, local_old_url)
+        """ % (local_url, local_url)
 
         file = io.StringIO(unicode(doc))
         vc = VC(file)
@@ -266,7 +261,7 @@ class TestVersionConverter(unittest.TestCase):
         root = conv_doc.getroot()
 
         sec = root.findall("section")
-        self.assertEqual(len(sec), 3)
+        self.assertEqual(len(sec), 2)
 
         # Test valid section tags.
         self.assertEqual(len(sec[0]), 10)
@@ -296,8 +291,38 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(sec[1]), 1)
         self.assertEqual(len(sec[1].findall("name")), 1)
 
-        # Test presence of v1.0 repository tag
-        self.assertEqual(sec[2].find("repository").text, local_old_url)
+        # Test presence of v1.0 repository tag and warning log entry
+        doc = """
+                <odML version="1">
+                  <section>
+                    <name>Unsupported Section include test</name>
+                    <repository>%s</repository>
+                  </section>
+                </odML>""" % local_old_url
+
+        file = io.StringIO(unicode(doc))
+        vc = VC(file)
+        conv_doc = vc._convert(vc._parse_xml())
+        sec = conv_doc.getroot().findall("section")
+        self.assertEqual(sec[0].find("repository").text, local_old_url)
+        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
+
+        # Test presence of v1.0 include tag and warning log entry
+        doc = """
+                <odML version="1">
+                  <section>
+                    <name>Unsupported Section include test</name>
+                    <include>%s</include>
+                  </section>
+                </odML>""" % local_old_url
+
+        file = io.StringIO(unicode(doc))
+        vc = VC(file)
+        conv_doc = vc._convert(vc._parse_xml())
+        sec = conv_doc.getroot().findall("section")
+
+        self.assertEqual(sec[0].find("include").text, local_old_url)
+        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
 
     def test_convert_odml_file_property(self):
         """Test proper conversion of the odml.Property entity from

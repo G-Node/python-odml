@@ -191,6 +191,8 @@ class VersionConverter(object):
 
                 if e.tag == "repository":
                     self._handle_repository(e)
+                elif e.tag == "include":
+                    self._handle_include(e)
 
         # Exclude unsupported Document attributes, ignore comments, handle repositories.
         for e in root:
@@ -204,6 +206,37 @@ class VersionConverter(object):
                 self._handle_repository(e)
 
         return tree
+
+    def _handle_include(self, element):
+        """
+        _handle_include checks whether a provided include element is
+        v1.1 compatible and logs a warning message otherwise.
+        :param element: lxml element containing the provided include link.
+        """
+        content = element.text
+        cache = {}
+        term_handler = Terminologies(cache)
+        term = term_handler.load(element.text)
+
+        # If the include url can be loaded and parsed, everything is fine.
+        if term is not None:
+            return
+
+        # If the include url is a v1.0 odml-terminology one,
+        # check whether a v1.1 is available and use it instead.
+        if os.path.join(REPOSITORY_BASE, "v1.0") in element.text:
+            element.text = element.text.replace('v1.0', 'v1.1')
+            term = term_handler.load(element.text)
+
+            if term is not None:
+                msg = "[Info] Replaced Section.include url '%s' with '%s'." \
+                      % (content, element.text)
+                self._log(msg)
+                return
+
+        # Log a warning, if no v1.1 compatible url can be provided.
+        self._log("[Warning] Section include file '%s' "
+                  "is not odML v1.1 compatible." % content)
 
     def _handle_repository(self, element):
         """
