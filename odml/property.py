@@ -150,7 +150,35 @@ class BaseProperty(base.baseobject, Property):
 
     @property
     def value(self):
-        return self._value.copy()
+        """
+        Returns the value(s) stored in this property. Method always returns a list that
+        is a copy (!) of the stored value. Changing this list will NOT change the property.
+        For manipulation of the stored values use the append, extend, and direct access methods
+        (using brackets).
+
+        For example:
+        >> p = odml.Property("prop", value=[1, 2, 3])
+        >> print(p.value)
+        [1, 2, 3]
+        >> p.value.append(4)
+        >> print(p.value)
+        [1, 2, 3]
+
+        Individual values can be accessed and manipulated like this:
+        >>> print(p[0])
+        [1]
+        >> p[0] = 4
+        >> print(p[0])
+        [4]
+
+        The values can be iterated e.g. with a loop:
+        >> for v in p.value:
+              print(v)
+        4
+        2
+        3
+        """
+        return list(self._value)
 
     def value_str(self, index=0):
         """
@@ -164,6 +192,8 @@ class BaseProperty(base.baseobject, Property):
             Method ensures that the passed value(s) can be cast to the
             same dtype, i.e. that associated with this property or the
             inferred dtype of the first entry of the values list.
+
+        :param values an iterable that contains the values
         """
         for v in values:
             try:
@@ -189,6 +219,14 @@ class BaseProperty(base.baseobject, Property):
 
     @value.setter
     def value(self, new_value):
+        """
+
+        Set the value of the property discarding any previous information.
+        Method will try to convert the passed value to the dtype of
+        the property and raise an ValueError, if not possible
+
+        :param new_value a single value or list of values.
+        """
         # Make sure boolean value 'False' gets through as well...
         if new_value is None or (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
             self._value = []
@@ -299,7 +337,13 @@ class BaseProperty(base.baseobject, Property):
 
     def merge(self, other):
         """
-        Merges the property 'other' into self, if possible.
+
+        Merges the property 'other' into self, if possible. Information
+        will be synchronized. Method will raise an ValueError when the
+        information in this property and the passed property are in
+        conflict.
+
+        :param other a Property
         """
         assert(isinstance(other, (BaseProperty)))
 
@@ -386,6 +430,13 @@ class BaseProperty(base.baseobject, Property):
             raise ValueError("odml.Property.__setitem__:  passed value cannot be converted to data type \'%s\'!" % self._dtype)
 
     def extend(self, obj):
+        """
+        Extend the list of values stored in this property by the passed values. Method will 
+        raise an ValueError, if values cannot be converted to the current dtype. One can also pass
+        another Property to append all values stored in that one. In this case units must match!
+
+        :param obj single value, list of values or Property
+        """
         if isinstance(obj, BaseProperty):
             if (obj.unit != self.unit):
                 raise ValueError("odml.Property.append: src and dest units (%s, %s) do not match!"
@@ -404,6 +455,12 @@ class BaseProperty(base.baseobject, Property):
         self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
 
     def append(self, obj):
+        """
+        Append a single value to the list of stored values. Method will raise an ValueError if 
+        the passed value cannot be converted to the current dtype.
+
+        :param obj the additional value.
+        """
         if isinstance(obj, (list)):
             raise ValueError("odml.property.append: Use extend to add a list of values!")
         if self.__len__() == 0:
