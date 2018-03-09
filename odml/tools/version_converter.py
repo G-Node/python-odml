@@ -224,7 +224,7 @@ class VersionConverter(object):
 
         # If the include url is a v1.0 odml-terminology one,
         # check whether a v1.1 is available and use it instead.
-        if os.path.join(REPOSITORY_BASE, "v1.0") in element.text:
+        if '/'.join([REPOSITORY_BASE, "v1.0"]) in element.text:
             element.text = element.text.replace('v1.0', 'v1.1')
             term = term_handler.load(element.text)
 
@@ -254,7 +254,7 @@ class VersionConverter(object):
 
         # If the repository url is a v1.0 odml-terminology one,
         # check whether a v1.1 is available and use it instead.
-        if os.path.join(REPOSITORY_BASE, "v1.0") in element.text:
+        if '/'.join([REPOSITORY_BASE, "v1.0"]) in element.text:
             element.text = element.text.replace('v1.0', 'v1.1')
             term = term_handler.load(element.text)
 
