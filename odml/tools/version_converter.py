@@ -407,11 +407,11 @@ class VersionConverter(object):
         print(msg)
 
     def __str__(self):
-        tree = self._convert()
+        tree = self.convert()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def __unicode__(self):
-        tree = self._convert()
+        tree = self.convert()
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
     def convert(self, backend="XML"):
@@ -432,16 +432,16 @@ class VersionConverter(object):
         tree = self._convert(old_tree)
         return ET.tounicode(tree, pretty_print=True) if tree else ""
 
-    def write_to_file(self, filename):
+    def write_to_file(self, filename, backend="XML"):
         """
         This method converts the content of the provided converter file object
         to odML version 1.1 and writes the results to `filename`.
         :param filename: Output file.
+        :param backend: Format of the source file, default is XML.
         """
+        data = self.convert(backend)
         if sys.version_info < (3,):
-            data = unicode(self).encode('utf-8')
-        else:
-            data = str(self)
+            data = data.encode('utf-8')
 
         ext = [".xml", ".odml"]
         if not filename.endswith(tuple(ext)):
