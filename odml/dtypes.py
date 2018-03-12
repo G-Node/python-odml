@@ -116,7 +116,7 @@ def set(value, dtype=None):
 
 def int_get(string):
     if not string:
-        return 0
+        return default_values("int")
     try:
         return int(string)
     except ValueError:
@@ -126,7 +126,7 @@ def int_get(string):
 
 def float_get(string):
     if not string:
-        return 0.0
+        return default_values("float")
     return float(string)
 
 
