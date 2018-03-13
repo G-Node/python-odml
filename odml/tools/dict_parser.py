@@ -83,7 +83,13 @@ class DictWriter:
                     if isinstance(tag, tuple):
                         prop_dict[attr] = list(tag)
                     elif (tag == []) or tag:  # Even if 'value' is empty, allow '[]'
-                        prop_dict[attr] = tag
+                        # Custom odML tuples require special handling
+                        # for save loading from file.
+                        if attr == "value" and prop.dtype and \
+                                prop.dtype.endswith("-tuple") and len(prop.value) > 0:
+                            prop_dict["value"] = "(%s)" % ";".join(prop.value[0])
+                        else:
+                            prop_dict[attr] = tag
 
             props_seq.append(prop_dict)
 
