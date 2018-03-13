@@ -184,17 +184,13 @@ class DictReader:
 
         for _property in props_list:
             prop_attrs = {}
-            values = []
 
             for i in _property:
                 attr = self.is_valid_attribute(i, odmlfmt.Property)
-                if attr == 'value':
-                    values = _property['value']
                 if attr:
                     prop_attrs[attr] = _property[attr]
 
             prop = odmlfmt.Property.create(**prop_attrs)
-            prop.value = values
             odml_props.append(prop)
 
         return odml_props
