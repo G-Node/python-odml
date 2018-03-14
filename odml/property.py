@@ -395,7 +395,7 @@ class BaseProperty(base.baseobject, Property):
             self.unit = other.unit
 
         to_add = [v for v in other.value if v not in self._value]
-        self.extend(to_add)
+        self.extend(to_add, strict=strict)
 
     def unmerge(self, other):
         """
