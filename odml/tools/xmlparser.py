@@ -227,6 +227,12 @@ class XMLReader(object):
         """
         Parse an odml node based on the format description *fmt*
         and instantiate the corresponding object.
+        :param root: lxml.etree node containing an odML object or object tree.
+        :param fmt: odML class corresponding to the content of the root node.
+        :param insert_children: Bool value. When True, child elements of the root node
+                                will be parsed to their odML equivalents and appended to
+                                the odML document. When False, child elements of the
+                                root node will be ignored.
         """
         arguments = {}
         extra_args = {}
