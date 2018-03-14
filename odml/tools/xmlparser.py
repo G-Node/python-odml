@@ -5,11 +5,11 @@ Parses odML files. Can be invoked standalone:
     python -m odml.tools.xmlparser file.odml
 """
 import csv
+import sys
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
-import sys
 
 try:
     from StringIO import StringIO
@@ -118,10 +118,9 @@ class XMLWriter:
         else:
             data = str(self)
 
-        f = open(filename, "w")
-        f.write(self.header)
-        f.write(data)
-        f.close()
+        with open(filename, "w") as file:
+            file.write(self.header)
+            file.write(data)
 
 
 def load(filename):
@@ -260,8 +259,6 @@ class XMLReader(object):
                 else:
                     tag = fmt.map(node.tag)
                     if tag in arguments:
-                        # TODO make this an error, however first figure out a
-                        # way to let <odML version=><version/> pass
                         self.warn("Element <%s> is given multiple times in "
                                   "<%s> tag" % (node.tag, root.tag), node)
 
@@ -277,13 +274,11 @@ class XMLReader(object):
                            % (node.tag, root.tag), node)
 
         if sys.version_info > (3,):
-            self.check_mandatory_arguments(dict(list(arguments.items()) +
-                                           list(extra_args.items())),
-                                           fmt, root.tag, root)
+            check_args = dict(list(arguments.items()) + list(extra_args.items()))
         else:
-            self.check_mandatory_arguments(dict(arguments.items() +
-                                           extra_args.items()),
-                                           fmt, root.tag, root)
+            check_args = dict(arguments.items() + extra_args.items())
+
+        self.check_mandatory_arguments(check_args, fmt, root.tag, root)
 
         # Instantiate the current odML object with the parsed attributes.
         obj = fmt.create(**arguments)
@@ -291,6 +286,7 @@ class XMLReader(object):
         if insert_children:
             for child in children:
                 obj.append(child)
+
         return obj
 
     def parse_odML(self, root, fmt):
