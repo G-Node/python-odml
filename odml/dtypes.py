@@ -65,9 +65,9 @@ def infer_dtype(value):
         if dtype == 'string' and '\n' in value:
             dtype = 'text'
         return dtype
-    else:
-        # If unable to infer a dtype of given value, return defalt as *string*
-        return 'string'
+
+    # If unable to infer a dtype of given value, return default as *string*
+    return 'string'
 
 
 def valid_type(dtype):
@@ -149,10 +149,9 @@ def time_get(string):
     if not string:
         return default_values("time")
     if isinstance(string, datetime.time):
-        return datetime.datetime.strptime(string.strftime('%H:%M:%S'),
-                                          '%H:%M:%S').time()
-    else:
-        return datetime.datetime.strptime(string, '%H:%M:%S').time()
+        return datetime.datetime.strptime(string.strftime('%H:%M:%S'), '%H:%M:%S').time()
+
+    return datetime.datetime.strptime(string, '%H:%M:%S').time()
 
 
 def time_set(value):
@@ -160,6 +159,7 @@ def time_set(value):
         return default_values("time")
     if isinstance(value, datetime.time):
         return value.strftime("%H:%M:%S")
+
     return value.isoformat()
 
 
@@ -167,10 +167,9 @@ def date_get(string):
     if not string:
         return default_values("date")
     if isinstance(string, datetime.date):
-        return datetime.datetime.strptime(string.isoformat(),
-                                          '%Y-%m-%d').date()
-    else:
-        return datetime.datetime.strptime(string, '%Y-%m-%d').date()
+        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d').date()
+
+    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
 
 date_set = time_set
@@ -182,8 +181,7 @@ def datetime_get(string):
     if isinstance(string, datetime.datetime):
         return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'),
                                           '%Y-%m-%d %H:%M:%S')
-    else:
-        return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+    return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
 
 
 def datetime_set(value):
@@ -191,8 +189,8 @@ def datetime_set(value):
         return default_values("datetime")
     if isinstance(value, datetime.datetime):
         return value.strftime('%Y-%m-%d %H:%M:%S')
-    else:
-        return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+
+    return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
 
 
 def boolean_get(string):
