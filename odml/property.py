@@ -212,9 +212,17 @@ class BaseProperty(base.baseobject, Property):
         """
         if isinstance(new_value, str):
             if new_value[0] == "[" and new_value[-1] == "]":
-                new_value = new_value[1:-1].split(",")
-        if not isinstance(new_value, list):
+                new_value = list(map(str.strip, new_value[1:-1].split(",")))
+            else:
+                new_value = [new_value]
+        elif isinstance(new_value, dict):
+            new_value = [str(new_value)]
+        elif hasattr(new_value, '__iter__') or hasattr(new_value, '__next__'):
+            new_value = list(new_value)
+        elif not isinstance(new_value, list):
             new_value = [new_value]
+        else:
+            raise ValueError("odml.Property._convert_value_input: unsupported data type for values: %s" % type(new_value))
         return new_value
 
     @value.setter

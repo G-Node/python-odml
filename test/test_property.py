@@ -54,6 +54,16 @@ class TestProperty(unittest.TestCase):
         p.value.append(5)
         self.assertEqual(len(p.value), 0)
 
+        p5 = Property("test", value="a string")
+        p5.append("Freude")
+        self.assertEqual(len(p5), 2)
+        self.assertRaises(ValueError, p5.append, "[a, b, c]")
+        p5.extend("[a, b, c]")
+        self.assertEqual(len(p5), 5)
+
+        p6 = Property("test", {"name": "Marie", "name":"Johanna"})
+        self.assertEqual(len(p6), 1)
+
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
         p = Property("property", value=values)
