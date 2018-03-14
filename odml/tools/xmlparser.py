@@ -231,10 +231,6 @@ class XMLReader(object):
         arguments = {}
         extra_args = {}
         children = []
-        text = []
-
-        if root.text:
-            text.append(root.text.strip())
 
         for k, v in root.attrib.iteritems():
             k = k.lower()
@@ -273,8 +269,6 @@ class XMLReader(object):
             else:
                 self.error("Invalid element <%s> in odML document section <%s>"
                            % (node.tag, root.tag), node)
-            if node.tail:
-                text.append(node.tail.strip())
 
         if sys.version_info > (3,):
             self.check_mandatory_arguments(dict(list(arguments.items()) +
