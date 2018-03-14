@@ -229,6 +229,12 @@ class TestProperty(unittest.TestCase):
         test_p.merge(p_src)
         self.assertEqual(test_p.definition, p_src.definition)
 
+        double_p = Property("adouble", value=3.14)
+        int_p = Property("aint", value=3)
+        self.assertRaises(ValueError, double_p.merge, int_p)
+
+        int_p.merge(double_p, strict=False)
+        self.assertEqual(len(int_p), 2)
 
 if __name__ == "__main__":
     print("TestProperty")
