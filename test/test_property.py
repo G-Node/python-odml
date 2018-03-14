@@ -327,6 +327,17 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'string')
         assert(p.value == ['7', '20', '1 Dog', 'Seven'])
 
+    def test_name(self):
+        # Test id is used when name is not provided
+        p = Property()
+        self.assertIsNotNone(p.name)
+        self.assertEqual(p.name, p.id)
+
+        # Test name is properly set on init
+        name = "rumpelstilzchen"
+        p = Property(name)
+        self.assertEqual(p.name, name)
+
     def test_parent(self):
         p = Property("property_section", parent=Section("S"))
         self.assertIsInstance(p.parent, BaseSection)
