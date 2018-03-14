@@ -109,7 +109,7 @@ def set(value, dtype=None):
         if isinstance(value, str):
             return str_set(value)
     else:
-        if type(value) in (str, unicode):
+        if isinstance(value, (str, unicode)):
             return str_set(value)
     return self.get(dtype + "_set", str_set)(value)
 
@@ -148,7 +148,7 @@ string_set = str_get
 def time_get(string):
     if not string:
         return default_values("time")
-    if type(string) is datetime.time:
+    if isinstance(string, datetime.time):
         return datetime.datetime.strptime(string.strftime('%H:%M:%S'),
                                           '%H:%M:%S').time()
     else:
@@ -158,7 +158,7 @@ def time_get(string):
 def time_set(value):
     if not value:
         return default_values("time")
-    if type(value) is datetime.time:
+    if isinstance(value, datetime.time):
         return value.strftime("%H:%M:%S")
     return value.isoformat()
 
@@ -166,7 +166,7 @@ def time_set(value):
 def date_get(string):
     if not string:
         return default_values("date")
-    if type(string) is datetime.date:
+    if isinstance(string, datetime.date):
         return datetime.datetime.strptime(string.isoformat(),
                                           '%Y-%m-%d').date()
     else:
@@ -179,7 +179,7 @@ date_set = time_set
 def datetime_get(string):
     if not string:
         return default_values("datetime")
-    if type(string) is datetime.datetime:
+    if isinstance(string, datetime.datetime):
         return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'),
                                           '%Y-%m-%d %H:%M:%S')
     else:
@@ -189,7 +189,7 @@ def datetime_get(string):
 def datetime_set(value):
     if not value:
         return default_values("datetime")
-    if type(value) is datetime.datetime:
+    if isinstance(value, datetime.datetime):
         return value.strftime('%Y-%m-%d %H:%M:%S')
     else:
         return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
@@ -198,7 +198,7 @@ def datetime_set(value):
 def boolean_get(string):
     if not string:
         return default_values("boolean")
-    if type(string) in (unicode, str):
+    if isinstance(string, (unicode, str)):
         string = string.lower()
     truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False
     if string in truth:
