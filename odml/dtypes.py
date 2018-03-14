@@ -172,7 +172,13 @@ def date_get(string):
     return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
 
-date_set = time_set
+def date_set(value):
+    if not value:
+        return default_values("date")
+    if isinstance(value, datetime.date):
+        return value.strftime('%Y-%m-%d')
+
+    return value.isoformat()
 
 
 def datetime_get(string):
