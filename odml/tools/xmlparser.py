@@ -223,10 +223,10 @@ class XMLReader(object):
             return None  # won't be able to parse this one
         return getattr(self, "parse_" + node.tag)(node, self.tags[node.tag])
 
-    def parse_tag(self, root, fmt, insert_children=True, create=None):
+    def parse_tag(self, root, fmt, insert_children=True):
         """
         Parse an odml node based on the format description *fmt*
-        and a function *create* to instantiate a corresponding object
+        and instantiate the corresponding object.
         """
         arguments = {}
         extra_args = {}
@@ -284,10 +284,9 @@ class XMLReader(object):
             self.check_mandatory_arguments(dict(arguments.items() +
                                            extra_args.items()),
                                            fmt, root.tag, root)
-        if create is None:
-            obj = fmt.create()
-        else:
-            obj = create(args=arguments, text=''.join(text), children=children)
+
+        # Instantiate the current odML object with the parsed attributes.
+        obj = fmt.create(**arguments)
 
         for k, v in arguments.items():
             if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
@@ -312,12 +311,10 @@ class XMLReader(object):
         return doc
 
     def parse_section(self, root, fmt):
-        return self.parse_tag(root, fmt,
-                              create=lambda args, **kargs: fmt.create(**args))
+        return self.parse_tag(root, fmt)
 
     def parse_property(self, root, fmt):
-        create = lambda children, args, **kargs: fmt.create(**args)
-        return self.parse_tag(root, fmt, insert_children=False, create=create)
+        return self.parse_tag(root, fmt, insert_children=False)
 
 
 if __name__ == '__main__':
