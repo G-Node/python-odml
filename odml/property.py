@@ -461,14 +461,11 @@ class BaseProperty(base.baseobject, Property):
 
         :param obj the additional value.
         """
-        if isinstance(obj, (list)):
+        new_value = self._convert_value_input(obj)
+        if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
-        if self.__len__() == 0:
-            self.value = obj
-        else:
-            new_value = self._convert_value_input(obj)
-            if not self._validate_values(new_value):
-                raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
-                                 "data type \'%s\'!" % self._dtype)
-            self._value.append(dtypes.get(new_value[0], self.dtype))
+        if not self._validate_values(new_value):
+            raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
+                             "data type \'%s\'!" % self._dtype)
+        self._value.append(dtypes.get(new_value[0], self.dtype))
 
