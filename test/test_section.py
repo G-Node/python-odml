@@ -39,6 +39,21 @@ class TestSection(unittest.TestCase):
         sec.definition = ""
         self.assertIsNone(sec.definition)
 
+    def test_name(self):
+        # Test id is used when name is not provided
+        s = Section()
+        self.assertIsNotNone(s.name)
+        self.assertEqual(s.name, s.id)
+
+        # Test name is properly set on init
+        name = "rumpelstilzchen"
+        s = Section(name)
+        self.assertEqual(s.name, name)
+
+        name = "rumpelstilzchen"
+        s = Section(name=name)
+        self.assertEqual(s.name, name)
+
     def test_parent(self):
         s = Section("Section")
         self.assertIsNone(s.parent)

@@ -25,7 +25,7 @@ class BaseSection(base.Sectionable):
 
     _format = format.Section
 
-    def __init__(self, name, type=None, parent=None,
+    def __init__(self, name=None, type=None, parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, id=None):
 
@@ -41,6 +41,10 @@ class BaseSection(base.Sectionable):
         except ValueError as e:
             print(e)
             self._id = str(uuid.uuid4())
+
+        # Use id if no name was provided.
+        if not name:
+            name = self._id
 
         self._parent = None
         self._name = name
