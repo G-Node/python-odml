@@ -288,19 +288,6 @@ class XMLReader(object):
         # Instantiate the current odML object with the parsed attributes.
         obj = fmt.create(**arguments)
 
-        for k, v in arguments.items():
-            if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
-                try:
-                    if k == 'id' and v is not None:
-                        obj._id = v
-                    else:
-                        setattr(obj, k, v)
-                except Exception as e:
-                    self.warn("cannot set '%s' property on <%s>: %s" %
-                              (k, root.tag, repr(e)), root)
-                    if not self.ignore_errors:
-                        raise e
-
         if insert_children:
             for child in children:
                 obj.append(child)
