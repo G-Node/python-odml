@@ -343,17 +343,20 @@ class BaseProperty(base.baseobject, Property):
         obj.value = self._value
         return obj
 
-    def merge(self, other):
-        """
-
-        Merges the property 'other' into self, if possible. Information
+    def merge(self, other, strict=True):
+        """Merges the property 'other' into self, if possible. Information
         will be synchronized. Method will raise an ValueError when the
         information in this property and the passed property are in
         conflict.
 
         :param other a Property
+        :param strict Bool value to indicate whether types should be
+        implicitly converted even when information may be lost. Default is True, i.e. no conversion, and error will be raised if types do not match.
+
         """
         assert(isinstance(other, (BaseProperty)))
+        if strict and self.dtype != other.dtype:
+            raise ValueError("odml.Property.merge: src and dest dtypes do not match!")
 
         if self.unit is not None and other.unit is not None and self.unit != other.unit:
             raise ValueError("odml.Property.merge: src and dest units (%s, %s) do not match!"
@@ -437,13 +440,14 @@ class BaseProperty(base.baseobject, Property):
         except Exception:
             raise ValueError("odml.Property.__setitem__:  passed value cannot be converted to data type \'%s\'!" % self._dtype)
 
-    def extend(self, obj):
+    def extend(self, obj, strict=True):
         """
         Extend the list of values stored in this property by the passed values. Method will 
         raise an ValueError, if values cannot be converted to the current dtype. One can also pass
         another Property to append all values stored in that one. In this case units must match!
 
         :param obj single value, list of values or Property
+        :param strict a Bool that controls whether dtypes must match. Default is True.
         """
         if isinstance(obj, BaseProperty):
             if (obj.unit != self.unit):
@@ -457,21 +461,28 @@ class BaseProperty(base.baseobject, Property):
             return
 
         new_value = self._convert_value_input(obj)
+        if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
+            raise ValueError("odml.Property.extend: passed value data type does not match dtype!");
+
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
                              "data type \'%s\'!" % self._dtype)
         self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
 
-    def append(self, obj):
+    def append(self, obj, strict=True):
         """
         Append a single value to the list of stored values. Method will raise an ValueError if 
         the passed value cannot be converted to the current dtype.
 
         :param obj the additional value.
+        :param strict a Bool that controls whether dtypes must match. Default is True.
         """
         new_value = self._convert_value_input(obj)
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
+        if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
+            raise ValueError("odml.Property.extend: passed value data type does not match dtype!");
+
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
                              "data type \'%s\'!" % self._dtype)

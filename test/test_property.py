@@ -53,6 +53,14 @@ class TestProperty(unittest.TestCase):
 
         p.value.append(5)
         self.assertEqual(len(p.value), 0)
+        self.assertRaises(ValueError, p.append, 5.5)
+
+        p.append(5.5, strict=False)
+        self.assertEqual(len(p), 1)
+
+        self.assertRaises(ValueError, p.extend, [3.14, 6.28])
+        p.extend([3.14, 6.28], strict=False)
+        self.assertEqual(len(p), 3)
 
         p5 = Property("test", value="a string")
         p5.append("Freude")
