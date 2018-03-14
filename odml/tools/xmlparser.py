@@ -312,20 +312,8 @@ class XMLReader(object):
         return doc
 
     def parse_section(self, root, fmt):
-        name = root.get("name")  # property name= overrides
-        if name is None:  # the element
-            name_node = root.find("name")
-            if name_node is not None:
-                name = name_node.text
-                root.remove(name_node)
-                # delete the name_node so its value won't
-                # be used to overwrite the already set name-attribute
-
-        if name is None:
-            self.error("Missing name element in <section>", root)
-
         return self.parse_tag(root, fmt,
-                              create=lambda **kargs: fmt.create(name))
+                              create=lambda args, **kargs: fmt.create(**args))
 
     def parse_property(self, root, fmt):
         create = lambda children, args, **kargs: fmt.create(**args)
