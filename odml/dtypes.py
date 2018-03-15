@@ -158,13 +158,7 @@ def time_get(string):
     return datetime.datetime.strptime(string, FORMAT_TIME).time()
 
 
-def time_set(value):
-    if not value:
-        return default_values("time")
-    if isinstance(value, datetime.time):
-        return value.strftime(FORMAT_TIME)
-
-    return value.isoformat()
+time_set = time_get
 
 
 def date_get(string):
@@ -176,13 +170,7 @@ def date_get(string):
     return datetime.datetime.strptime(string, FORMAT_DATE).date()
 
 
-def date_set(value):
-    if not value:
-        return default_values("date")
-    if isinstance(value, datetime.date):
-        return value.strftime(FORMAT_DATE)
-
-    return value.isoformat()
+date_set = date_get
 
 
 def datetime_get(string):
@@ -194,13 +182,7 @@ def datetime_get(string):
     return datetime.datetime.strptime(string, FORMAT_DATETIME)
 
 
-def datetime_set(value):
-    if not value:
-        return default_values("datetime")
-    if isinstance(value, datetime.datetime):
-        return value.strftime(FORMAT_DATETIME)
-
-    return datetime.datetime.strptime(value, FORMAT_DATETIME)
+datetime_set = datetime_get
 
 
 def boolean_get(string):
