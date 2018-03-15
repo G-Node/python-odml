@@ -12,6 +12,10 @@ try:
 except NameError:
     unicode = str
 
+FORMAT_DATE = "%Y-%m-%d"
+FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"
+FORMAT_TIME = "%H:%M:%S"
+
 
 class DType(str, Enum):
     string = 'string'
@@ -44,11 +48,11 @@ def default_values(dtype):
         return default_dtype_value[dtype]
 
     if dtype == 'datetime':
-        return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.now().strftime(FORMAT_DATETIME)
     if dtype == 'date':
-        return datetime.datetime.now().strftime('%Y-%m-%d')
+        return datetime.datetime.now().strftime(FORMAT_DATE)
     if dtype == 'time':
-        return datetime.datetime.now().strftime('%H:%M:%S')
+        return datetime.datetime.now().strftime(FORMAT_TIME)
 
     return ''  # Maybe return None ?
 
@@ -149,16 +153,16 @@ def time_get(string):
     if not string:
         return default_values("time")
     if isinstance(string, datetime.time):
-        return datetime.datetime.strptime(string.strftime('%H:%M:%S'), '%H:%M:%S').time()
+        return datetime.datetime.strptime(string.strftime(FORMAT_TIME), FORMAT_TIME).time()
 
-    return datetime.datetime.strptime(string, '%H:%M:%S').time()
+    return datetime.datetime.strptime(string, FORMAT_TIME).time()
 
 
 def time_set(value):
     if not value:
         return default_values("time")
     if isinstance(value, datetime.time):
-        return value.strftime("%H:%M:%S")
+        return value.strftime(FORMAT_TIME)
 
     return value.isoformat()
 
@@ -167,16 +171,16 @@ def date_get(string):
     if not string:
         return default_values("date")
     if isinstance(string, datetime.date):
-        return datetime.datetime.strptime(string.isoformat(), '%Y-%m-%d').date()
+        return datetime.datetime.strptime(string.isoformat(), FORMAT_DATE).date()
 
-    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
+    return datetime.datetime.strptime(string, FORMAT_DATE).date()
 
 
 def date_set(value):
     if not value:
         return default_values("date")
     if isinstance(value, datetime.date):
-        return value.strftime('%Y-%m-%d')
+        return value.strftime(FORMAT_DATE)
 
     return value.isoformat()
 
@@ -185,18 +189,18 @@ def datetime_get(string):
     if not string:
         return default_values("datetime")
     if isinstance(string, datetime.datetime):
-        return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'),
-                                          '%Y-%m-%d %H:%M:%S')
-    return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.strptime(string.strftime(FORMAT_DATETIME),
+                                          FORMAT_DATETIME)
+    return datetime.datetime.strptime(string, FORMAT_DATETIME)
 
 
 def datetime_set(value):
     if not value:
         return default_values("datetime")
     if isinstance(value, datetime.datetime):
-        return value.strftime('%Y-%m-%d %H:%M:%S')
+        return value.strftime(FORMAT_DATETIME)
 
-    return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+    return datetime.datetime.strptime(value, FORMAT_DATETIME)
 
 
 def boolean_get(string):
