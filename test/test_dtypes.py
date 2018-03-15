@@ -11,6 +11,9 @@ class TestTypes(unittest.TestCase):
         pass
 
     def test_date(self):
+        self.assertIsInstance(typ.date_get(None), datetime.date)
+        self.assertIsInstance(typ.date_get(""), datetime.date)
+
         re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])$"
         self.assertRegexpMatches(typ.date_get(None).strftime(typ.FORMAT_DATE), re)
         self.assertRegexpMatches(typ.date_get("").strftime(typ.FORMAT_DATE), re)
@@ -18,8 +21,12 @@ class TestTypes(unittest.TestCase):
         date = datetime.date(2011, 12, 1)
         date_string = '2011-12-01'
         self.assertEqual(date, typ.date_get(date_string))
+        self.assertEqual(date, typ.date_get(date))
 
     def test_time(self):
+        self.assertIsInstance(typ.time_get(None), datetime.time)
+        self.assertIsInstance(typ.time_get(""), datetime.time)
+
         re = "^[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
         self.assertRegexpMatches(typ.time_get(None).strftime(typ.FORMAT_TIME), re)
         self.assertRegexpMatches(typ.time_get("").strftime(typ.FORMAT_TIME), re)
@@ -27,8 +34,12 @@ class TestTypes(unittest.TestCase):
         time = datetime.time(12, 34, 56)
         time_string = '12:34:56'
         self.assertEqual(time, typ.time_get(time_string))
+        self.assertEqual(time, typ.time_get(time))
 
     def test_datetime(self):
+        self.assertIsInstance(typ.datetime_get(None), datetime.datetime)
+        self.assertIsInstance(typ.datetime_get(""), datetime.datetime)
+
         re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) " \
              "[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
         self.assertRegexpMatches(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), re)
@@ -37,6 +48,7 @@ class TestTypes(unittest.TestCase):
         date = datetime.datetime(2011, 12, 1, 12, 34, 56)
         date_string = '2011-12-01 12:34:56'
         self.assertEqual(date, typ.datetime_get(date_string))
+        self.assertEqual(date, typ.datetime_get(date))
 
     def test_int(self):
         self.assertEqual(typ.default_values("int"), typ.int_get(None))
