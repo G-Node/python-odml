@@ -17,12 +17,13 @@ class TestProperty(unittest.TestCase):
 
         p.append(10)
         self.assertEqual(len(p), 2)
-        self.assertRaises(ValueError, p.append, [1,2,3])
+        self.assertRaises(ValueError, p.append, [1, 2, 3])
 
         p.extend([20, 30, '40'])
         self.assertEqual(len(p), 5)
         with self.assertRaises(ValueError):
             p.append('invalid')
+        with self.assertRaises(ValueError):
             p.extend(('5', 6, 7))
 
         p2 = Property("property 2", 3)
