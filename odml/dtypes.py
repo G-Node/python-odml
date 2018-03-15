@@ -48,11 +48,11 @@ def default_values(dtype):
         return default_dtype_value[dtype]
 
     if dtype == 'datetime':
-        return datetime.datetime.now().strftime(FORMAT_DATETIME)
+        return datetime.datetime.now().replace(microsecond=0)
     if dtype == 'date':
-        return datetime.datetime.now().strftime(FORMAT_DATE)
+        return datetime.datetime.now().date()
     if dtype == 'time':
-        return datetime.datetime.now().strftime(FORMAT_TIME)
+        return datetime.datetime.now().replace(microsecond=0).time()
 
     return ''  # Maybe return None ?
 

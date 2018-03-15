@@ -12,8 +12,8 @@ class TestTypes(unittest.TestCase):
 
     def test_date(self):
         re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])$"
-        self.assertRegexpMatches(typ.date_get(None), re)
-        self.assertRegexpMatches(typ.date_get(""), re)
+        self.assertRegexpMatches(typ.date_get(None).strftime(typ.FORMAT_DATE), re)
+        self.assertRegexpMatches(typ.date_get("").strftime(typ.FORMAT_DATE), re)
 
         date = datetime.date(2011, 12, 1)
         date_string = '2011-12-01'
@@ -21,8 +21,8 @@ class TestTypes(unittest.TestCase):
 
     def test_time(self):
         re = "^[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assertRegexpMatches(typ.time_get(None), re)
-        self.assertRegexpMatches(typ.time_get(""), re)
+        self.assertRegexpMatches(typ.time_get(None).strftime(typ.FORMAT_TIME), re)
+        self.assertRegexpMatches(typ.time_get("").strftime(typ.FORMAT_TIME), re)
 
         time = datetime.time(12, 34, 56)
         time_string = '12:34:56'
@@ -31,8 +31,8 @@ class TestTypes(unittest.TestCase):
     def test_datetime(self):
         re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) " \
              "[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assertRegexpMatches(typ.datetime_get(None), re)
-        self.assertRegexpMatches(typ.datetime_get(""), re)
+        self.assertRegexpMatches(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), re)
+        self.assertRegexpMatches(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), re)
 
         date = datetime.datetime(2011, 12, 1, 12, 34, 56)
         date_string = '2011-12-01 12:34:56'
