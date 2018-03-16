@@ -1,8 +1,8 @@
+import datetime
 import unittest
 
 import odml.dtypes as typ
 import odml
-import datetime
 
 
 class TestTypes(unittest.TestCase):
@@ -22,6 +22,13 @@ class TestTypes(unittest.TestCase):
         date_string = '2011-12-01'
         self.assertEqual(date, typ.date_get(date_string))
         self.assertEqual(date, typ.date_get(date))
+
+        with self.assertRaises(TypeError):
+            _ = typ.date_get([])
+        with self.assertRaises(TypeError):
+            _ = typ.date_get({})
+        with self.assertRaises(TypeError):
+            _ = typ.date_get(False)
 
         # Test fail on datetime.datetime
         with self.assertRaises(ValueError):
@@ -47,6 +54,13 @@ class TestTypes(unittest.TestCase):
         time_string = '12:34:56'
         self.assertEqual(time, typ.time_get(time_string))
         self.assertEqual(time, typ.time_get(time))
+
+        with self.assertRaises(TypeError):
+            _ = typ.time_get([])
+        with self.assertRaises(TypeError):
+            _ = typ.time_get({})
+        with self.assertRaises(TypeError):
+            _ = typ.time_get(False)
 
         # Test fail on datetime.datetime
         with self.assertRaises(TypeError):
@@ -74,6 +88,13 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(date, typ.datetime_get(date_string))
         self.assertEqual(date, typ.datetime_get(date))
 
+        with self.assertRaises(TypeError):
+            _ = typ.datetime_get([])
+        with self.assertRaises(TypeError):
+            _ = typ.datetime_get({})
+        with self.assertRaises(TypeError):
+            _ = typ.datetime_get(False)
+
         # Test fail on datetime.time
         with self.assertRaises(TypeError):
             _ = typ.datetime_get(datetime.datetime.now().time())
@@ -97,6 +118,13 @@ class TestTypes(unittest.TestCase):
         p = odml.Property("test", value="123.45", dtype="int")
         self.assertEqual(p.value[0], 123)
 
+        with self.assertRaises(TypeError):
+            _ = typ.int_get([])
+        with self.assertRaises(TypeError):
+            _ = typ.int_get({})
+        with self.assertRaises(ValueError):
+            _ = typ.int_get("fail")
+
     def test_float(self):
         self.assertEqual(typ.default_values("float"), typ.float_get(None))
         self.assertEqual(typ.default_values("float"), typ.float_get(""))
@@ -114,6 +142,12 @@ class TestTypes(unittest.TestCase):
     def test_str(self):
         self.assertEqual(typ.default_values("string"), typ.str_get(None))
         self.assertEqual(typ.default_values("string"), typ.str_get(""))
+        self.assertEqual(typ.default_values("string"), typ.str_get([]))
+        self.assertEqual(typ.default_values("string"), typ.str_get({}))
+
+        # Make sure boolean values are properly converted to string.
+        self.assertEqual(typ.str_get(False), 'False')
+        self.assertEqual(typ.str_get(True), 'True')
 
         s = odml.Property(name='Name', value='Sherin')
         self.assertEqual(s.value[0], 'Sherin')
@@ -126,6 +160,8 @@ class TestTypes(unittest.TestCase):
     def test_bool(self):
         self.assertEqual(typ.default_values("boolean"), typ.boolean_get(None))
         self.assertEqual(typ.default_values("boolean"), typ.boolean_get(""))
+        self.assertEqual(typ.default_values("boolean"), typ.boolean_get([]))
+        self.assertEqual(typ.default_values("boolean"), typ.boolean_get({}))
 
         true_values = [True, "TRUE", "true", "T", "t", "1", 1]
         for val in true_values:
