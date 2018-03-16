@@ -23,6 +23,18 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(date, typ.date_get(date_string))
         self.assertEqual(date, typ.date_get(date))
 
+        # Test fail on datetime.datetime
+        with self.assertRaises(ValueError):
+            _ = typ.date_get(datetime.datetime.now())
+
+        # Test fail on datetime.time
+        with self.assertRaises(TypeError):
+            _ = typ.date_get(datetime.datetime.now().time())
+
+        # Test fail on invalid string format
+        with self.assertRaises(ValueError):
+            _ = typ.date_get("11.11.1111")
+
     def test_time(self):
         self.assertIsInstance(typ.time_get(None), datetime.time)
         self.assertIsInstance(typ.time_get(""), datetime.time)
@@ -35,6 +47,18 @@ class TestTypes(unittest.TestCase):
         time_string = '12:34:56'
         self.assertEqual(time, typ.time_get(time_string))
         self.assertEqual(time, typ.time_get(time))
+
+        # Test fail on datetime.datetime
+        with self.assertRaises(TypeError):
+            _ = typ.time_get(datetime.datetime.now())
+
+        # Test fail on datetime.date
+        with self.assertRaises(TypeError):
+            _ = typ.time_get(datetime.datetime.now().date())
+
+        # Test fail on invalid string format
+        with self.assertRaises(ValueError):
+            _ = typ.time_get("11-11-11")
 
     def test_datetime(self):
         self.assertIsInstance(typ.datetime_get(None), datetime.datetime)
@@ -49,6 +73,18 @@ class TestTypes(unittest.TestCase):
         date_string = '2011-12-01 12:34:56'
         self.assertEqual(date, typ.datetime_get(date_string))
         self.assertEqual(date, typ.datetime_get(date))
+
+        # Test fail on datetime.time
+        with self.assertRaises(TypeError):
+            _ = typ.datetime_get(datetime.datetime.now().time())
+
+        # Test fail on datetime.date
+        with self.assertRaises(TypeError):
+            _ = typ.datetime_get(datetime.datetime.now().date())
+
+        # Test fail on invalid string format
+        with self.assertRaises(ValueError):
+            _ = typ.datetime_get("11.11.1111 12:12:12")
 
     def test_int(self):
         self.assertEqual(typ.default_values("int"), typ.int_get(None))
