@@ -97,6 +97,20 @@ class TestTypes(unittest.TestCase):
         p = odml.Property("test", value="123.45", dtype="int")
         self.assertEqual(p.value[0], 123)
 
+    def test_float(self):
+        self.assertEqual(typ.default_values("float"), typ.float_get(None))
+        self.assertEqual(typ.default_values("float"), typ.float_get(""))
+
+        self.assertEqual(typ.float_get(123.45), 123.45)
+        self.assertIsInstance(typ.float_get(1), float)
+
+        with self.assertRaises(TypeError):
+            _ = typ.float_get([])
+        with self.assertRaises(TypeError):
+            _ = typ.float_get({})
+        with self.assertRaises(ValueError):
+            _ = typ.float_get("fail")
+
     def test_str(self):
         self.assertEqual(typ.default_values("string"), typ.str_get(None))
         self.assertEqual(typ.default_values("string"), typ.str_get(""))
