@@ -119,8 +119,9 @@ def set(value, dtype=None):
 
 
 def int_get(string):
-    if not string:
+    if string is None or string == "":
         return default_values("int")
+
     try:
         return int(string)
     except ValueError:
@@ -129,16 +130,20 @@ def int_get(string):
 
 
 def float_get(string):
-    if not string:
+    if string is None or string == "":
         return default_values("float")
+
     return float(string)
 
 
 def str_get(string):
-    if not string:
+    # Do not stringify empty list or dict but make sure boolean False gets through.
+    if string in [None, "", [], {}]:
         return default_values("string")
+
     if sys.version_info < (3, 0):
         return unicode(string)
+
     return str(string)
 
 
@@ -150,8 +155,9 @@ string_set = str_get
 
 
 def time_get(string):
-    if not string:
+    if string is None or string == "":
         return default_values("time")
+
     if isinstance(string, dt.time):
         return dt.datetime.strptime(string.strftime(FORMAT_TIME), FORMAT_TIME).time()
 
@@ -162,8 +168,9 @@ time_set = time_get
 
 
 def date_get(string):
-    if not string:
+    if string is None or string == "":
         return default_values("date")
+
     if isinstance(string, dt.date):
         return dt.datetime.strptime(string.isoformat(), FORMAT_DATE).date()
 
@@ -174,8 +181,9 @@ date_set = date_get
 
 
 def datetime_get(string):
-    if not string:
+    if string is None or string == "":
         return default_values("datetime")
+
     if isinstance(string, dt.datetime):
         return dt.datetime.strptime(string.strftime(FORMAT_DATETIME), FORMAT_DATETIME)
 
@@ -186,16 +194,20 @@ datetime_set = datetime_get
 
 
 def boolean_get(string):
-    if not string:
+    if string in [None, "", [], {}]:
         return default_values("boolean")
+
     if isinstance(string, (unicode, str)):
         string = string.lower()
+
     truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False
     if string in truth:
         return True
+
     false = ["false", "0", False, "f"]
     if string in false:
         return False
+
     # disallow any values that cannot be interpreted as boolean.
     raise ValueError
 
