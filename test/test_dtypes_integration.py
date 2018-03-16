@@ -83,7 +83,54 @@ class TestTypesIntegration(unittest.TestCase):
         self.assertEqual(ydoc.sections[0].properties[1].value[2], time)
 
     def test_date(self):
-        pass
+        date_string = '2018-08-31'
+        date = dt.date(2018, 8, 31)
+        val_in = date_string
+        vals_in = [None, "", date_string, date]
+        parent_sec = self.doc.sections[0]
+        _ = odml.Property(name="date test single", dtype="date",
+                          value=val_in, parent=parent_sec)
+        _ = odml.Property(name="date test", dtype="date",
+                          value=vals_in, parent=parent_sec)
+
+        # Test correct json save and load.
+        odml.save(self.doc, self.json_file, "JSON")
+        jdoc = odml.load(self.json_file, "JSON")
+
+        self.assertEqual(self.doc, jdoc)
+        self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.date)
+        self.assertIsInstance(jdoc.sections[0].properties[0].value[0], dt.date)
+        self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.date)
+        for val in jdoc.sections[0].properties[1].value:
+            self.assertIsInstance(val, dt.date)
+        self.assertEqual(jdoc.sections[0].properties[1].value[2], date)
+        self.assertEqual(jdoc.sections[0].properties[1].value[3], date)
+
+        # Test correct xml save and load.
+        odml.save(self.doc, self.xml_file)
+        xdoc = odml.load(self.xml_file)
+
+        self.assertEqual(self.doc, xdoc)
+        self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.date)
+        self.assertIsInstance(xdoc.sections[0].properties[0].value[0], dt.date)
+        self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.date)
+        for val in xdoc.sections[0].properties[1].value:
+            self.assertIsInstance(val, dt.date)
+        self.assertEqual(xdoc.sections[0].properties[1].value[2], date)
+        self.assertEqual(xdoc.sections[0].properties[1].value[2], date)
+
+        # Test correct yaml save and load.
+        odml.save(self.doc, self.yaml_file, "YAML")
+        ydoc = odml.load(self.yaml_file, "YAML")
+
+        self.assertEqual(self.doc, ydoc)
+        self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.date)
+        self.assertIsInstance(ydoc.sections[0].properties[0].value[0], dt.date)
+        self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.date)
+        for val in ydoc.sections[0].properties[1].value:
+            self.assertIsInstance(val, dt.date)
+        self.assertEqual(ydoc.sections[0].properties[1].value[2], date)
+        self.assertEqual(ydoc.sections[0].properties[1].value[2], date)
 
     def test_datetime(self):
         pass
