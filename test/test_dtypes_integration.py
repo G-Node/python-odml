@@ -29,8 +29,7 @@ class TestTypesIntegration(unittest.TestCase):
 
     def tearDown(self):
         if os.path.exists(self.tmp_dir):
-            #shutil.rmtree(self.tmp_dir)
-            pass
+            shutil.rmtree(self.tmp_dir)
 
     def test_time(self):
         pass
@@ -72,7 +71,35 @@ class TestTypesIntegration(unittest.TestCase):
         self.assertEqual(ydoc.sections[0].properties[0].value, val_odml)
 
     def test_float(self):
-        pass
+        val_in = [1, 2.2, 3.3, "4"]
+        val_odml = [1.0, 2.2, 3.3, 4.0]
+        parent_sec = self.doc.sections[0]
+        _ = odml.Property(name="float test", dtype="float",
+                          value=val_in, parent=parent_sec)
+
+        # Test correct json save and load.
+        odml.save(self.doc, self.json_file, "JSON")
+        jdoc = odml.load(self.json_file, "JSON")
+
+        self.assertEqual(self.doc, jdoc)
+        self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.float)
+        self.assertEqual(jdoc.sections[0].properties[0].value, val_odml)
+
+        # Test correct xml save and load.
+        odml.save(self.doc, self.xml_file)
+        xdoc = odml.load(self.xml_file)
+
+        self.assertEqual(self.doc, xdoc)
+        self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.float)
+        self.assertEqual(xdoc.sections[0].properties[0].value, val_odml)
+
+        # Test correct yaml save and load.
+        odml.save(self.doc, self.yaml_file, "YAML")
+        ydoc = odml.load(self.yaml_file, "YAML")
+
+        self.assertEqual(self.doc, ydoc)
+        self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.float)
+        self.assertEqual(ydoc.sections[0].properties[0].value, val_odml)
 
     def test_str(self):
         pass
