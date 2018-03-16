@@ -2,7 +2,6 @@ import datetime
 import unittest
 
 import odml.dtypes as typ
-import odml
 
 
 class TestTypes(unittest.TestCase):
@@ -111,12 +110,12 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(typ.default_values("int"), typ.int_get(None))
         self.assertEqual(typ.default_values("int"), typ.int_get(""))
 
-        p = odml.Property("test", value="123456789012345678901", dtype="int")
-        self.assertEqual(p.value[0], 123456789012345678901)
-        p = odml.Property("test", value="-123456789012345678901", dtype="int")
-        self.assertEqual(p.value[0], -123456789012345678901)
-        p = odml.Property("test", value="123.45", dtype="int")
-        self.assertEqual(p.value[0], 123)
+        self.assertIsInstance(typ.int_get(11), int)
+        self.assertIsInstance(typ.int_get(1.1), int)
+        self.assertIsInstance(typ.int_get("11"), int)
+        self.assertEqual(typ.int_get("123456789012345678901"), 123456789012345678901)
+        self.assertEqual(typ.int_get("-123456789012345678901"), -123456789012345678901)
+        self.assertEqual(typ.int_get("123.45"), 123)
 
         with self.assertRaises(TypeError):
             _ = typ.int_get([])
@@ -129,8 +128,9 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(typ.default_values("float"), typ.float_get(None))
         self.assertEqual(typ.default_values("float"), typ.float_get(""))
 
-        self.assertEqual(typ.float_get(123.45), 123.45)
         self.assertIsInstance(typ.float_get(1), float)
+        self.assertIsInstance(typ.float_get("1.1"), float)
+        self.assertEqual(typ.float_get(123.45), 123.45)
 
         with self.assertRaises(TypeError):
             _ = typ.float_get([])
@@ -148,14 +148,6 @@ class TestTypes(unittest.TestCase):
         # Make sure boolean values are properly converted to string.
         self.assertEqual(typ.str_get(False), 'False')
         self.assertEqual(typ.str_get(True), 'True')
-
-        s = odml.Property(name='Name', value='Sherin')
-        self.assertEqual(s.value[0], 'Sherin')
-        self.assertEqual(s.dtype, 'string')
-
-        s.value = 'Jerin'
-        self.assertEqual(s.value[0], 'Jerin')
-        self.assertEqual(s.dtype, 'string')
 
     def test_bool(self):
         self.assertEqual(typ.default_values("boolean"), typ.boolean_get(None))
@@ -179,18 +171,17 @@ class TestTypes(unittest.TestCase):
             typ.boolean_get(2.1)
 
     def test_tuple(self):
-        # Success test
-        t = odml.Property(name="Location", value='(39.12; 67.19)', dtype='2-tuple')
-        tuple_value = t.value[0]  # As the formed tuple is a list of list
-        self.assertEqual(tuple_value[0], '39.12')
-        self.assertEqual(tuple_value[1], '67.19')
+        self.assertIs(typ.tuple_get(""), None)
+        self.assertIs(typ.tuple_get(None), None)
 
-        # Failure test. More tuple values then specified.
-        with self.assertRaises(ValueError):
-            t = odml.Property(name="Public-Key", value='(5689; 1254; 687)',
-                              dtype='2-tuple')
+        self.assertEqual(typ.tuple_get("(39.12; 67.19)"), ["39.12", "67.19"])
+
+        # Test fail on missing parenthesis.
+        with self.assertRaises(AssertionError):
+            _ = typ.tuple_get("fail")
+        # Test fail on mismatching element count and count number.
+        with self.assertRaises(AssertionError):
+            _ = typ.tuple_get("(1; 2; 3)", 2)
 
     def test_dtype_none(self):
-        t = odml.Property(name="Record", value={'name': 'Marie'})
-        self.assertEqual(t.dtype, 'string')
-        self.assertEqual(t.value[0], "{'name': 'Marie'}")
+        self.assertEqual(typ.get({'name': 'Marie'}), "{'name': 'Marie'}")
