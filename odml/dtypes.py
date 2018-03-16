@@ -1,5 +1,5 @@
 import sys
-import datetime
+import datetime as dt
 from enum import Enum
 self = sys.modules[__name__].__dict__
 
@@ -48,11 +48,11 @@ def default_values(dtype):
         return default_dtype_value[dtype]
 
     if dtype == 'datetime':
-        return datetime.datetime.now().replace(microsecond=0)
+        return dt.datetime.now().replace(microsecond=0)
     if dtype == 'date':
-        return datetime.datetime.now().date()
+        return dt.datetime.now().date()
     if dtype == 'time':
-        return datetime.datetime.now().replace(microsecond=0).time()
+        return dt.datetime.now().replace(microsecond=0).time()
 
     return ''  # Maybe return None ?
 
@@ -152,10 +152,10 @@ string_set = str_get
 def time_get(string):
     if not string:
         return default_values("time")
-    if isinstance(string, datetime.time):
-        return datetime.datetime.strptime(string.strftime(FORMAT_TIME), FORMAT_TIME).time()
+    if isinstance(string, dt.time):
+        return dt.datetime.strptime(string.strftime(FORMAT_TIME), FORMAT_TIME).time()
 
-    return datetime.datetime.strptime(string, FORMAT_TIME).time()
+    return dt.datetime.strptime(string, FORMAT_TIME).time()
 
 
 time_set = time_get
@@ -164,10 +164,10 @@ time_set = time_get
 def date_get(string):
     if not string:
         return default_values("date")
-    if isinstance(string, datetime.date):
-        return datetime.datetime.strptime(string.isoformat(), FORMAT_DATE).date()
+    if isinstance(string, dt.date):
+        return dt.datetime.strptime(string.isoformat(), FORMAT_DATE).date()
 
-    return datetime.datetime.strptime(string, FORMAT_DATE).date()
+    return dt.datetime.strptime(string, FORMAT_DATE).date()
 
 
 date_set = date_get
@@ -176,10 +176,10 @@ date_set = date_get
 def datetime_get(string):
     if not string:
         return default_values("datetime")
-    if isinstance(string, datetime.datetime):
-        return datetime.datetime.strptime(string.strftime(FORMAT_DATETIME),
-                                          FORMAT_DATETIME)
-    return datetime.datetime.strptime(string, FORMAT_DATETIME)
+    if isinstance(string, dt.datetime):
+        return dt.datetime.strptime(string.strftime(FORMAT_DATETIME), FORMAT_DATETIME)
+
+    return dt.datetime.strptime(string, FORMAT_DATETIME)
 
 
 datetime_set = datetime_get
