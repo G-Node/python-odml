@@ -324,4 +324,35 @@ class TestTypesIntegration(unittest.TestCase):
         self.assertEqual(ydoc.sections[0].properties[1].value, vals_odml)
 
     def test_tuple(self):
-        pass
+        val_type = "3-tuple"
+        val_in = "(1; 1; 1)"
+        val_odml = ["1", "1", "1"]
+
+        parent_sec = self.doc.sections[0]
+        _ = odml.Property(name="tuple test single", dtype=val_type,
+                          value=val_in, parent=parent_sec)
+
+        # Test correct json save and load.
+        odml.save(self.doc, self.json_file, "JSON")
+        jdoc = odml.load(self.json_file, "JSON")
+
+        self.assertEqual(self.doc, jdoc)
+        self.assertEqual(jdoc.sections[0].properties[0].dtype, val_type)
+        self.assertEqual(jdoc.sections[0].properties[0].value, [val_odml])
+
+        # Test correct xml save and load.
+        odml.save(self.doc, self.xml_file)
+        xdoc = odml.load(self.xml_file)
+
+        self.assertEqual(self.doc, xdoc)
+        self.assertEqual(xdoc.sections[0].properties[0].dtype, val_type)
+        self.assertEqual(xdoc.sections[0].properties[0].value, [val_odml])
+
+        # Test correct yaml save and load.
+        odml.save(self.doc, self.yaml_file, "YAML")
+        ydoc = odml.load(self.yaml_file, "YAML")
+
+        self.assertEqual(self.doc, ydoc)
+        self.assertEqual(ydoc.sections[0].properties[0].dtype, val_type)
+        self.assertEqual(ydoc.sections[0].properties[0].value, [val_odml])
+
