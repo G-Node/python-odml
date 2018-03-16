@@ -142,7 +142,44 @@ class TestTypesIntegration(unittest.TestCase):
         self.assertEqual(ydoc.sections[0].properties[1].value, vals_odml)
 
     def test_bool(self):
-        pass
+        val_in = True
+        vals_in = [None, "", [], {}, False, True, "TRUE"]
+        vals_odml = [False, False, False, False, False, True, True]
+        parent_sec = self.doc.sections[0]
+        _ = odml.Property(name="bool test single", dtype="boolean",
+                          value=val_in, parent=parent_sec)
+        _ = odml.Property(name="bool test", dtype="boolean",
+                          value=vals_in, parent=parent_sec)
+
+        # Test correct json save and load.
+        odml.save(self.doc, self.json_file, "JSON")
+        jdoc = odml.load(self.json_file, "JSON")
+
+        self.assertEqual(self.doc, jdoc)
+        self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.boolean)
+        self.assertEqual(jdoc.sections[0].properties[0].value, [val_in])
+        self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.boolean)
+        self.assertEqual(jdoc.sections[0].properties[1].value, vals_odml)
+
+        # Test correct xml save and load.
+        odml.save(self.doc, self.xml_file)
+        xdoc = odml.load(self.xml_file)
+
+        self.assertEqual(self.doc, xdoc)
+        self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.boolean)
+        self.assertEqual(xdoc.sections[0].properties[0].value, [val_in])
+        self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.boolean)
+        self.assertEqual(xdoc.sections[0].properties[1].value, vals_odml)
+
+        # Test correct yaml save and load.
+        odml.save(self.doc, self.yaml_file, "YAML")
+        ydoc = odml.load(self.yaml_file, "YAML")
+
+        self.assertEqual(self.doc, ydoc)
+        self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.boolean)
+        self.assertEqual(ydoc.sections[0].properties[0].value, [val_in])
+        self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.boolean)
+        self.assertEqual(ydoc.sections[0].properties[1].value, vals_odml)
 
     def test_tuple(self):
         pass
