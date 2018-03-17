@@ -5,6 +5,7 @@ A generic odML parsing module.
 Parses odML files and documents.
 """
 
+import datetime
 import json
 import yaml
 
@@ -67,9 +68,19 @@ class ODMLWriter:
             if self.parser == 'YAML':
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
-                string_doc = json.dumps(odml_output, indent=4)
+                string_doc = json.dumps(odml_output, indent=4,
+                                        cls=JSONDateTimeSerializer)
 
         return string_doc
+
+
+# Required to serialize datetime values with JSON.
+class JSONDateTimeSerializer(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, (datetime.datetime, datetime.date, datetime.time)):
+            return str(o)
+
+        return json.JSONEncoder.default(self, o)
 
 
 class ODMLReader:

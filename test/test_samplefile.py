@@ -197,7 +197,7 @@ class AttributeTest(unittest.TestCase):
     def test_conversion_int_to_float(self):
         p = odml.Property("test", "1", dtype="int")
         self.assertEqual(p.dtype, "int")
-        self.assertEqual(type(p.value[0]), int)
+        self.assertIsInstance(p.value[0], int)
         p.dtype = "float"  # change dtype
         self.assertEqual(p.dtype, "float")
         self.assertEqual(p.value[0], 1.0)

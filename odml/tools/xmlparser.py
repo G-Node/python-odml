@@ -83,7 +83,11 @@ class XMLWriter:
             if val is None:
                 continue
             if isinstance(fmt, format.Property.__class__) and k == "value":
-                ele = E(k, to_csv(val))
+                # Custom odML tuples require special handling for save loading from file.
+                if e.dtype and e.dtype.endswith("-tuple") and len(val) > 0:
+                    ele = E(k, "(%s)" % ";".join(val[0]))
+                else:
+                    ele = E(k, to_csv(val))
                 cur.append(ele)
             else:
                 if isinstance(val, list):

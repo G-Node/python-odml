@@ -83,7 +83,13 @@ class DictWriter:
                     if isinstance(tag, tuple):
                         prop_dict[attr] = list(tag)
                     elif (tag == []) or tag:  # Even if 'value' is empty, allow '[]'
-                        prop_dict[attr] = tag
+                        # Custom odML tuples require special handling
+                        # for save loading from file.
+                        if attr == "value" and prop.dtype and \
+                                prop.dtype.endswith("-tuple") and len(prop.value) > 0:
+                            prop_dict["value"] = "(%s)" % ";".join(prop.value[0])
+                        else:
+                            prop_dict[attr] = tag
 
             props_seq.append(prop_dict)
 
@@ -178,17 +184,13 @@ class DictReader:
 
         for _property in props_list:
             prop_attrs = {}
-            values = []
 
             for i in _property:
                 attr = self.is_valid_attribute(i, odmlfmt.Property)
-                if attr == 'value':
-                    values = _property['value']
                 if attr:
                     prop_attrs[attr] = _property[attr]
 
             prop = odmlfmt.Property.create(**prop_attrs)
-            prop.value = values
             odml_props.append(prop)
 
         return odml_props

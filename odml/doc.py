@@ -34,9 +34,12 @@ class BaseDocument(base.sectionable, Document):
             print(e)
             self._id = str(uuid.uuid4())
         self._author = author
-        self._date = date  # date must be a datetime
         self._version = version
         self._repository = repository
+
+        # Make sure date is properly parsed into a datetime object
+        self._date = None
+        self.date = date
 
     @property
     def id(self):

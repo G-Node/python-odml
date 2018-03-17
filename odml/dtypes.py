@@ -1,5 +1,5 @@
 import sys
-import datetime
+import datetime as dt
 from enum import Enum
 self = sys.modules[__name__].__dict__
 
@@ -11,6 +11,10 @@ try:
     unicode = unicode
 except NameError:
     unicode = str
+
+FORMAT_DATE = "%Y-%m-%d"
+FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"
+FORMAT_TIME = "%H:%M:%S"
 
 
 class DType(str, Enum):
@@ -44,11 +48,11 @@ def default_values(dtype):
         return default_dtype_value[dtype]
 
     if dtype == 'datetime':
-        return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return dt.datetime.now().replace(microsecond=0)
     if dtype == 'date':
-        return datetime.datetime.now().strftime('%Y-%m-%d')
+        return dt.datetime.now().date()
     if dtype == 'time':
-        return datetime.datetime.now().strftime('%H:%M:%S')
+        return dt.datetime.now().replace(microsecond=0).time()
 
     return ''  # Maybe return None ?
 
@@ -65,9 +69,9 @@ def infer_dtype(value):
         if dtype == 'string' and '\n' in value:
             dtype = 'text'
         return dtype
-    else:
-        # If unable to infer a dtype of given value, return defalt as *string*
-        return 'string'
+
+    # If unable to infer a dtype of given value, return default as *string*
+    return 'string'
 
 
 def valid_type(dtype):
@@ -109,14 +113,15 @@ def set(value, dtype=None):
         if isinstance(value, str):
             return str_set(value)
     else:
-        if type(value) in (str, unicode):
+        if isinstance(value, (str, unicode)):
             return str_set(value)
     return self.get(dtype + "_set", str_set)(value)
 
 
 def int_get(string):
-    if not string:
-        return 0
+    if string is None or string == "":
+        return default_values("int")
+
     try:
         return int(string)
     except ValueError:
@@ -125,14 +130,20 @@ def int_get(string):
 
 
 def float_get(string):
-    if not string:
-        return 0.0
+    if string is None or string == "":
+        return default_values("float")
+
     return float(string)
 
 
 def str_get(string):
+    # Do not stringify empty list or dict but make sure boolean False gets through.
+    if string in [None, "", [], {}]:
+        return default_values("string")
+
     if sys.version_info < (3, 0):
         return unicode(string)
+
     return str(string)
 
 
@@ -144,70 +155,64 @@ string_set = str_get
 
 
 def time_get(string):
-    if not string:
-        return None
-    if type(string) is datetime.time:
-        return datetime.datetime.strptime(string.strftime('%H:%M:%S'),
-                                          '%H:%M:%S').time()
-    else:
-        return datetime.datetime.strptime(string, '%H:%M:%S').time()
+    if string is None or string == "":
+        return default_values("time")
+
+    if isinstance(string, dt.time):
+        return dt.datetime.strptime(string.strftime(FORMAT_TIME), FORMAT_TIME).time()
+
+    return dt.datetime.strptime(string, FORMAT_TIME).time()
 
 
-def time_set(value):
-    if not value:
-        return None
-    if type(value) is datetime.time:
-        return value.strftime("%H:%M:%S")
-    return value.isoformat()
+time_set = time_get
 
 
 def date_get(string):
-    if not string:
-        return None
-    if type(string) is datetime.date:
-        return datetime.datetime.strptime(string.isoformat(),
-                                          '%Y-%m-%d').date()
-    else:
-        return datetime.datetime.strptime(string, '%Y-%m-%d').date()
+    if string is None or string == "":
+        return default_values("date")
+
+    if isinstance(string, dt.date):
+        return dt.datetime.strptime(string.isoformat(), FORMAT_DATE).date()
+
+    return dt.datetime.strptime(string, FORMAT_DATE).date()
 
 
-date_set = time_set
+date_set = date_get
 
 
 def datetime_get(string):
-    if not string:
-        return None
-    if type(string) is datetime.datetime:
-        return datetime.datetime.strptime(string.strftime('%Y-%m-%d %H:%M:%S'),
-                                          '%Y-%m-%d %H:%M:%S')
-    else:
-        return datetime.datetime.strptime(string, '%Y-%m-%d %H:%M:%S')
+    if string is None or string == "":
+        return default_values("datetime")
+
+    if isinstance(string, dt.datetime):
+        return dt.datetime.strptime(string.strftime(FORMAT_DATETIME), FORMAT_DATETIME)
+
+    return dt.datetime.strptime(string, FORMAT_DATETIME)
 
 
-def datetime_set(value):
-    if not value:
-        return None
-    if type(value) is datetime.datetime:
-        return value.strftime('%Y-%m-%d %H:%M:%S')
-    else:
-        return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+datetime_set = datetime_get
 
 
 def boolean_get(string):
-    if string is None:
-        return None
-    if type(string) in (unicode, str):
+    if string in [None, "", [], {}]:
+        return default_values("boolean")
+
+    if isinstance(string, (unicode, str)):
         string = string.lower()
+
     truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False
     if string in truth:
         return True
+
     false = ["false", "0", False, "f"]
     if string in false:
         return False
+
     # disallow any values that cannot be interpreted as boolean.
     raise ValueError
 
 # Alias boolean_set to boolean_get. Both perform same function.
+
 
 boolean_set = boolean_get
 bool_get = boolean_get
