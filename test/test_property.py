@@ -202,7 +202,7 @@ class TestProperty(unittest.TestCase):
         p = Property("P", id="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(p.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        Property("P", id="id")
+        p = Property("P", id="id")
         self.assertNotEqual(p.id, "id")
 
     def test_merge(self):
