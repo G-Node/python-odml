@@ -205,6 +205,10 @@ class TestProperty(unittest.TestCase):
         p = Property("P", id="id")
         self.assertNotEqual(p.id, "id")
 
+        # Make sure id cannot be reset programmatically.
+        with self.assertRaises(AttributeError):
+            p.id = "someId"
+
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
                          reference="portal.g-node.org", uncertainty=0.0)
