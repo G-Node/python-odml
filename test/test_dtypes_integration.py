@@ -47,7 +47,6 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.time)
         self.assertIsInstance(jdoc.sections[0].properties[0].value[0], dt.time)
         self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.time)
@@ -55,12 +54,12 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.time)
         self.assertEqual(jdoc.sections[0].properties[1].value[2], time)
         self.assertEqual(jdoc.sections[0].properties[1].value[3], time)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.time)
         self.assertIsInstance(xdoc.sections[0].properties[0].value[0], dt.time)
         self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.time)
@@ -68,12 +67,12 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.time)
         self.assertEqual(xdoc.sections[0].properties[1].value[2], time)
         self.assertEqual(xdoc.sections[0].properties[1].value[2], time)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.time)
         self.assertIsInstance(ydoc.sections[0].properties[0].value[0], dt.time)
         self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.time)
@@ -81,6 +80,7 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.time)
         self.assertEqual(ydoc.sections[0].properties[1].value[2], time)
         self.assertEqual(ydoc.sections[0].properties[1].value[2], time)
+        self.assertEqual(self.doc, ydoc)
 
     def test_date(self):
         date_string = '2018-08-31'
@@ -97,7 +97,6 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.date)
         self.assertIsInstance(jdoc.sections[0].properties[0].value[0], dt.date)
         self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.date)
@@ -105,12 +104,12 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.date)
         self.assertEqual(jdoc.sections[0].properties[1].value[2], date)
         self.assertEqual(jdoc.sections[0].properties[1].value[3], date)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.date)
         self.assertIsInstance(xdoc.sections[0].properties[0].value[0], dt.date)
         self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.date)
@@ -118,12 +117,12 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.date)
         self.assertEqual(xdoc.sections[0].properties[1].value[2], date)
         self.assertEqual(xdoc.sections[0].properties[1].value[2], date)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.date)
         self.assertIsInstance(ydoc.sections[0].properties[0].value[0], dt.date)
         self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.date)
@@ -131,6 +130,7 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.date)
         self.assertEqual(ydoc.sections[0].properties[1].value[2], date)
         self.assertEqual(ydoc.sections[0].properties[1].value[2], date)
+        self.assertEqual(self.doc, ydoc)
 
     def test_datetime(self):
         datetime_string = '2018-08-31 12:59:59'
@@ -147,7 +147,6 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.datetime)
         self.assertIsInstance(jdoc.sections[0].properties[0].value[0], dt.datetime)
         self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.datetime)
@@ -155,12 +154,12 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.datetime)
         self.assertEqual(jdoc.sections[0].properties[1].value[2], date_time)
         self.assertEqual(jdoc.sections[0].properties[1].value[3], date_time)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.datetime)
         self.assertIsInstance(xdoc.sections[0].properties[0].value[0], dt.datetime)
         self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.datetime)
@@ -168,12 +167,12 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.datetime)
         self.assertEqual(xdoc.sections[0].properties[1].value[2], date_time)
         self.assertEqual(xdoc.sections[0].properties[1].value[2], date_time)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.datetime)
         self.assertIsInstance(ydoc.sections[0].properties[0].value[0], dt.datetime)
         self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.datetime)
@@ -181,6 +180,7 @@ class TestTypesIntegration(unittest.TestCase):
             self.assertIsInstance(val, dt.datetime)
         self.assertEqual(ydoc.sections[0].properties[1].value[2], date_time)
         self.assertEqual(ydoc.sections[0].properties[1].value[2], date_time)
+        self.assertEqual(self.doc, ydoc)
 
     def test_int(self):
         val_in = [1, 2, 3, "4"]
@@ -192,25 +192,25 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.int)
         self.assertEqual(jdoc.sections[0].properties[0].value, val_odml)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.int)
         self.assertEqual(xdoc.sections[0].properties[0].value, val_odml)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.int)
         self.assertEqual(ydoc.sections[0].properties[0].value, val_odml)
+        self.assertEqual(self.doc, ydoc)
 
     def test_float(self):
         val_in = [1, 2.2, 3.3, "4"]
@@ -223,25 +223,25 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.float)
         self.assertEqual(jdoc.sections[0].properties[0].value, val_odml)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.float)
         self.assertEqual(xdoc.sections[0].properties[0].value, val_odml)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.float)
         self.assertEqual(ydoc.sections[0].properties[0].value, val_odml)
+        self.assertEqual(self.doc, ydoc)
 
     def test_str(self):
         val_in = "single value"
@@ -257,31 +257,31 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.string)
         self.assertEqual(jdoc.sections[0].properties[0].value, [val_in])
         self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.string)
         self.assertEqual(jdoc.sections[0].properties[1].value, vals_odml)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.string)
         self.assertEqual(xdoc.sections[0].properties[0].value, [val_in])
         self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.string)
         self.assertEqual(xdoc.sections[0].properties[1].value, vals_odml)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.string)
         self.assertEqual(ydoc.sections[0].properties[0].value, [val_in])
         self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.string)
         self.assertEqual(ydoc.sections[0].properties[1].value, vals_odml)
+        self.assertEqual(self.doc, ydoc)
 
     def test_bool(self):
         val_in = True
@@ -297,31 +297,31 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, odml.dtypes.DType.boolean)
         self.assertEqual(jdoc.sections[0].properties[0].value, [val_in])
         self.assertEqual(jdoc.sections[0].properties[1].dtype, odml.dtypes.DType.boolean)
         self.assertEqual(jdoc.sections[0].properties[1].value, vals_odml)
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, odml.dtypes.DType.boolean)
         self.assertEqual(xdoc.sections[0].properties[0].value, [val_in])
         self.assertEqual(xdoc.sections[0].properties[1].dtype, odml.dtypes.DType.boolean)
         self.assertEqual(xdoc.sections[0].properties[1].value, vals_odml)
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, odml.dtypes.DType.boolean)
         self.assertEqual(ydoc.sections[0].properties[0].value, [val_in])
         self.assertEqual(ydoc.sections[0].properties[1].dtype, odml.dtypes.DType.boolean)
         self.assertEqual(ydoc.sections[0].properties[1].value, vals_odml)
+        self.assertEqual(self.doc, ydoc)
 
     def test_tuple(self):
         val_type = "3-tuple"
@@ -336,23 +336,22 @@ class TestTypesIntegration(unittest.TestCase):
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(self.doc, jdoc)
         self.assertEqual(jdoc.sections[0].properties[0].dtype, val_type)
         self.assertEqual(jdoc.sections[0].properties[0].value, [val_odml])
+        self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(self.doc, xdoc)
         self.assertEqual(xdoc.sections[0].properties[0].dtype, val_type)
         self.assertEqual(xdoc.sections[0].properties[0].value, [val_odml])
+        self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(self.doc, ydoc)
         self.assertEqual(ydoc.sections[0].properties[0].dtype, val_type)
         self.assertEqual(ydoc.sections[0].properties[0].value, [val_odml])
-
+        self.assertEqual(self.doc, ydoc)
