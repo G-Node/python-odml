@@ -69,3 +69,42 @@ class TestSection(unittest.TestCase):
         # Make sure id cannot be reset programmatically.
         with self.assertRaises(AttributeError):
             s.id = "someId"
+
+    def test_clone(self):
+        # Check parent removal in clone.
+        psec = Section(name="parent")
+        sec = Section(name="original", parent=psec)
+        clone_sec = sec.clone()
+        self.assertEqual(sec.parent, psec)
+        self.assertIsNone(clone_sec.parent)
+
+        # Check new id in clone.
+        sec = Section(name="original")
+        clone_sec = sec.clone()
+        self.assertEqual(sec, clone_sec)
+        self.assertNotEqual(sec.id, clone_sec.id)
+
+        # Check child Sections and Properties are cloned and have new ids.
+        Section(name="sec_one", parent=sec)
+        Section(name="sec_two", parent=sec)
+        Property(name="prop_one", parent=sec)
+        Property(name="prop_two", parent=sec)
+
+        clone_sec = sec.clone()
+
+        # Check sections
+        self.assertListEqual(sec.sections, clone_sec.sections)
+        self.assertEqual(sec.sections["sec_one"], clone_sec.sections["sec_one"])
+        self.assertNotEqual(sec.sections["sec_one"].id, clone_sec.sections["sec_one"].id)
+
+        # Check properties
+        self.assertListEqual(sec.properties, clone_sec.properties)
+        self.assertEqual(sec.properties["prop_one"], clone_sec.properties["prop_one"])
+        self.assertNotEqual(sec.properties["prop_one"].id,
+                            clone_sec.properties["prop_one"].id)
+
+        # Check child Sections and Properties are not cloned.
+        clone_sec = sec.clone(children=False)
+
+        self.assertListEqual(clone_sec.sections, [])
+        self.assertListEqual(clone_sec.properties, [])
