@@ -199,6 +199,9 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p.value_origin, None)
 
     def test_set_id(self):
+        p = Property(name="P")
+        self.assertIsNotNone(p.id)
+
         p = Property("P", id="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(p.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
