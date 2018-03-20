@@ -339,7 +339,7 @@ class BaseProperty(base.baseobject, Property):
         to another document
         """
         obj = super(BaseProperty, self).clone()
-        obj._section = None
+        obj._parent = None
         obj.value = self._value
         return obj
 
