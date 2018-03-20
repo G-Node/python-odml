@@ -412,9 +412,10 @@ class BaseProperty(base.baseobject, Property):
         Return the merged object (i.e. if the section is linked to another one,
         return the corresponding property of the linked section) or None
         """
-        if self._parent._merged is None:
+        if self.parent is None or self.parent._merged is None:
             return None
-        return self._parent._merged.contains(self)
+
+        return self.parent._merged.contains(self)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
