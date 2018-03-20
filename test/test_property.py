@@ -187,8 +187,17 @@ class TestProperty(unittest.TestCase):
     def test_dtype(self):
         pass
 
-    def test_path(self):
-        pass
+    def test_get_path(self):
+        doc = Document()
+        sec = Section(name="parent", parent=doc)
+
+        # Check root path for a detached Property.
+        prop = Property(name="prop")
+        self.assertEqual("/", prop.get_path())
+
+        # Check absolute path of Property in a Document.
+        prop.parent = sec
+        self.assertEqual("/%s:%s" % (sec.name, prop.name), prop.get_path())
 
     def test_value_origin(self):
         p = Property("P")
