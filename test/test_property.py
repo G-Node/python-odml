@@ -285,6 +285,33 @@ class TestProperty(unittest.TestCase):
         self.assertIsNotNone(prop.parent)
         self.assertIsNone(clone_prop.parent)
 
+    def test_get_merged_equivalent(self):
+        sec = Section(name="parent")
+        mersec = Section(name="merged_section")
+        merprop_other = Property(name="other_prop", value="other")
+        merprop = Property(name="prop", value=[1, 2, 3])
+
+        # Check None on unset parent.
+        prop = Property(name="prop")
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check None on parent without merged Section.
+        prop.parent = sec
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check None on parent with merged Section but no attached Property.
+        sec.merge(mersec)
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check None on parent with merged Section and unequal Property.
+        merprop_other.parent = mersec
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check receiving merged equivalent Property.
+        merprop.parent = mersec
+        self.assertIsNotNone(prop.get_merged_equivalent())
+        self.assertEqual(prop.get_merged_equivalent(), merprop)
+
 
 if __name__ == "__main__":
     print("TestProperty")
