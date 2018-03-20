@@ -48,3 +48,26 @@ class TestPropertyIntegration(unittest.TestCase):
         ydoc = odml.load(self.yaml_file, "YAML")
 
         return jdoc, xdoc, ydoc
+
+    def test_id(self):
+        # Test correct save and load of generated id.
+        prop_name = "empty_id"
+        prop = odml.Property(name=prop_name, parent=self.doc.sections[0])
+
+        jdoc, xdoc, ydoc = self.save_load()
+
+        self.assertEqual(jdoc.sections[0].properties[prop_name].id, prop.id)
+        self.assertEqual(xdoc.sections[0].properties[prop_name].id, prop.id)
+        self.assertEqual(ydoc.sections[0].properties[prop_name].id, prop.id)
+
+        # Test correct save and load of assigned id.
+        prop_name = "assigned_id"
+        assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        _ = odml.Property(name=prop_name, id=assigned_id,
+                          parent=self.doc.sections[0])
+
+        jdoc, xdoc, ydoc = self.save_load()
+
+        self.assertEqual(jdoc.sections[0].properties[prop_name].id, assigned_id)
+        self.assertEqual(xdoc.sections[0].properties[prop_name].id, assigned_id)
+        self.assertEqual(ydoc.sections[0].properties[prop_name].id, assigned_id)
