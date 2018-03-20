@@ -307,6 +307,7 @@ class BaseSection(base.sectionable, Section):
         to another document
         """
         obj = super(BaseSection, self).clone(children)
+        obj._id = str(uuid.uuid4())
 
         obj._props = base.SmartList()
         if children:
