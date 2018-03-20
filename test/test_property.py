@@ -262,10 +262,12 @@ class TestProperty(unittest.TestCase):
     def test_clone(self):
         sec = Section(name="parent")
 
+        # Check different id.
         prop = Property(name="original")
         clone_prop = prop.clone()
-        self.assertEqual(prop.parent, clone_prop.parent)
+        self.assertNotEqual(prop.id, clone_prop.id)
 
+        # Check parent removal in clone.
         prop.parent = sec
         clone_prop = prop.clone()
         self.assertIsNotNone(prop.parent)

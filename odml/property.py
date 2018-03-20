@@ -335,12 +335,13 @@ class BaseProperty(base.baseobject, Property):
 
     def clone(self):
         """
-        Clone this object to copy it independently
-        to another document
+        Clone this object to copy it independently to another document.
         """
         obj = super(BaseProperty, self).clone()
         obj._parent = None
         obj.value = self._value
+        obj._id = str(uuid.uuid4())
+
         return obj
 
     def merge(self, other, strict=True):
