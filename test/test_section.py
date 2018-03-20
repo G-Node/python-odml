@@ -57,8 +57,15 @@ class TestSection(unittest.TestCase):
         pass
 
     def test_set_id(self):
+        s = Section(name="S")
+        self.assertIsNotNone(s.id)
+
         s = Section("S", id="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(s.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        Section("S", id="id")
+        s = Section("S", id="id")
         self.assertNotEqual(s.id, "id")
+
+        # Make sure id cannot be reset programmatically.
+        with self.assertRaises(AttributeError):
+            s.id = "someId"
