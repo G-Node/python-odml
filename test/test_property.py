@@ -259,6 +259,19 @@ class TestProperty(unittest.TestCase):
         int_p.merge(double_p, strict=False)
         self.assertEqual(len(int_p), 2)
 
+    def test_clone(self):
+        sec = Section(name="parent")
+
+        prop = Property(name="original")
+        clone_prop = prop.clone()
+        self.assertEqual(prop.parent, clone_prop.parent)
+
+        prop.parent = sec
+        clone_prop = prop.clone()
+        self.assertIsNotNone(prop.parent)
+        self.assertIsNone(clone_prop.parent)
+
+
 if __name__ == "__main__":
     print("TestProperty")
     tp = TestProperty()
