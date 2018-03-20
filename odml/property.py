@@ -329,8 +329,11 @@ class BaseProperty(base.baseobject, Property):
 
     def get_path(self):
         """
-        Return the absolute path to this object
+        Return the absolute path to this object.
         """
+        if not self.parent:
+            return "/"
+
         return self.parent.get_path() + ":" + self.name
 
     def clone(self):
