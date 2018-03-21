@@ -75,6 +75,18 @@ class BaseProperty(base.baseobject, Property):
     def id(self):
         return self._id
 
+    def new_id(self, id=None):
+        """
+        new_id sets the id of the current object to a RFC 4122 compliant UUID.
+        If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
+        If no id was provided, a new UUID is generated and assigned.
+        :param id: UUID string as specified in RFC 4122.
+        """
+        if id is not None:
+            self._id = str(uuid.UUID(id))
+        else:
+            self._id = str(uuid.uuid4())
+
     @property
     def name(self):
         return self._name
