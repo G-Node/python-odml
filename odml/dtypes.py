@@ -76,14 +76,19 @@ def infer_dtype(value):
 
 def valid_type(dtype):
     """
-    Checks if *dtype* is a valid type
+    Checks if *dtype* is a valid odML value data type.
     """
+    if dtype is None:
+        return True
+
+    if not isinstance(dtype, str):
+        return False
+
     dtype = dtype.lower()
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
+
     if hasattr(DType, dtype):
-        return True
-    if dtype is None:
         return True
 
     return False
