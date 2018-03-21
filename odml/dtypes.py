@@ -84,7 +84,7 @@ def valid_type(dtype):
     if dtype is None:
         return True
 
-    if not isinstance(dtype, str):
+    if not isinstance(dtype, str) and not isinstance(dtype, unicode):
         return False
 
     dtype = dtype.lower()
