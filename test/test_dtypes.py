@@ -9,6 +9,28 @@ class TestTypes(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_valid_type(self):
+        # Test None
+        self.assertTrue(typ.valid_type(None))
+
+        # Test that all DTypes classify as valid dtypes.
+        for curr_type in typ.DType:
+            self.assertTrue(typ.valid_type(curr_type), "Invalid DType %s" % curr_type)
+
+        # Test that provided shorthand dtypes return as valid dtypes.
+        for curr_shorthand in typ._dtype_map.keys():
+            self.assertTrue(typ.valid_type(curr_shorthand),
+                            "Invalid dtype shorthand %s" % curr_shorthand)
+
+        # Test valid tuple dtype
+        self.assertTrue(typ.valid_type("2-tuple"))
+        self.assertTrue(typ.valid_type("293939-tuple"))
+
+        # Test invalid dtypes
+        self.assertFalse(typ.valid_type(1))
+        self.assertFalse(typ.valid_type("unsupported"))
+        self.assertFalse(typ.valid_type("x-tuple"))
+
     def test_date(self):
         self.assertIsInstance(typ.date_get(None), datetime.date)
         self.assertIsInstance(typ.date_get(""), datetime.date)
