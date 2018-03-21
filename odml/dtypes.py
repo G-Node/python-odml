@@ -1,6 +1,9 @@
-import sys
 import datetime as dt
+import re
+import sys
+
 from enum import Enum
+
 self = sys.modules[__name__].__dict__
 
 """
@@ -89,6 +92,11 @@ def valid_type(dtype):
         dtype = _dtype_map[dtype]
 
     if hasattr(DType, dtype):
+        return True
+
+    # Check odML tuple dtype.
+    rexp = re.compile("^[0-9]*[1-9]-tuple$")
+    if len(rexp.findall(dtype)) == 1:
         return True
 
     return False
