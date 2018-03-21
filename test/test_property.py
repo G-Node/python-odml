@@ -207,7 +207,7 @@ class TestProperty(unittest.TestCase):
         p.value_origin = ""
         self.assertEqual(p.value_origin, None)
 
-    def test_set_id(self):
+    def test_id(self):
         p = Property(name="P")
         self.assertIsNotNone(p.id)
 
@@ -220,6 +220,24 @@ class TestProperty(unittest.TestCase):
         # Make sure id cannot be reset programmatically.
         with self.assertRaises(AttributeError):
             p.id = "someId"
+
+    def test_new_id(self):
+        prop = Property(name="prop")
+        old_id = prop.id
+
+        # Test assign new generated id.
+        prop.new_id()
+        self.assertNotEqual(old_id, prop.id)
+
+        # Test assign new custom id.
+        old_id = prop.id
+        prop.new_id("79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertNotEqual(old_id, prop.id)
+        self.assertEqual("79b613eb-a256-46bf-84f6-207df465b8f7", prop.id)
+
+        # Test invalid custom id exception.
+        with self.assertRaises(ValueError):
+            prop.new_id("crash and burn")
 
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
