@@ -187,8 +187,17 @@ class TestProperty(unittest.TestCase):
     def test_dtype(self):
         pass
 
-    def test_path(self):
-        pass
+    def test_get_path(self):
+        doc = Document()
+        sec = Section(name="parent", parent=doc)
+
+        # Check root path for a detached Property.
+        prop = Property(name="prop")
+        self.assertEqual("/", prop.get_path())
+
+        # Check absolute path of Property in a Document.
+        prop.parent = sec
+        self.assertEqual("/%s:%s" % (sec.name, prop.name), prop.get_path())
 
     def test_value_origin(self):
         p = Property("P")
@@ -199,11 +208,18 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p.value_origin, None)
 
     def test_set_id(self):
+        p = Property(name="P")
+        self.assertIsNotNone(p.id)
+
         p = Property("P", id="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(p.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        Property("P", id="id")
+        p = Property("P", id="id")
         self.assertNotEqual(p.id, "id")
+
+        # Make sure id cannot be reset programmatically.
+        with self.assertRaises(AttributeError):
+            p.id = "someId"
 
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
@@ -254,6 +270,48 @@ class TestProperty(unittest.TestCase):
 
         int_p.merge(double_p, strict=False)
         self.assertEqual(len(int_p), 2)
+
+    def test_clone(self):
+        sec = Section(name="parent")
+
+        # Check different id.
+        prop = Property(name="original")
+        clone_prop = prop.clone()
+        self.assertNotEqual(prop.id, clone_prop.id)
+
+        # Check parent removal in clone.
+        prop.parent = sec
+        clone_prop = prop.clone()
+        self.assertIsNotNone(prop.parent)
+        self.assertIsNone(clone_prop.parent)
+
+    def test_get_merged_equivalent(self):
+        sec = Section(name="parent")
+        mersec = Section(name="merged_section")
+        merprop_other = Property(name="other_prop", value="other")
+        merprop = Property(name="prop", value=[1, 2, 3])
+
+        # Check None on unset parent.
+        prop = Property(name="prop")
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check None on parent without merged Section.
+        prop.parent = sec
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check None on parent with merged Section but no attached Property.
+        sec.merge(mersec)
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check None on parent with merged Section and unequal Property.
+        merprop_other.parent = mersec
+        self.assertIsNone(prop.get_merged_equivalent())
+
+        # Check receiving merged equivalent Property.
+        merprop.parent = mersec
+        self.assertIsNotNone(prop.get_merged_equivalent())
+        self.assertEqual(prop.get_merged_equivalent(), merprop)
+
 
 if __name__ == "__main__":
     print("TestProperty")

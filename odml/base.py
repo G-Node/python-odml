@@ -35,7 +35,9 @@ class baseobject(_baseobj):
 
     def __eq__(self, obj):
         """
-        Do a deep comparison of this object and its odml properties
+        Do a deep comparison of this object and its odml properties.
+        The 'id' attribute of an object is excluded, since it is
+        unique within a document.
         """
         # cannot compare totally different stuff
         if not isinstance(obj, _baseobj):
@@ -45,7 +47,9 @@ class baseobject(_baseobj):
             return False
 
         for key in self._format:
-            if getattr(self, key) != getattr(obj, key):
+            if key == "id":
+                continue
+            elif getattr(self, key) != getattr(obj, key):
                 return False
 
         return True

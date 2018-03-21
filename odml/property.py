@@ -329,18 +329,22 @@ class BaseProperty(base.baseobject, Property):
 
     def get_path(self):
         """
-        Return the absolute path to this object
+        Return the absolute path to this object.
         """
+        if not self.parent:
+            return "/"
+
         return self.parent.get_path() + ":" + self.name
 
     def clone(self):
         """
-        Clone this object to copy it independently
-        to another document
+        Clone this object to copy it independently to another document.
         """
         obj = super(BaseProperty, self).clone()
-        obj._section = None
+        obj._parent = None
         obj.value = self._value
+        obj._id = str(uuid.uuid4())
+
         return obj
 
     def merge(self, other, strict=True):
@@ -408,9 +412,10 @@ class BaseProperty(base.baseobject, Property):
         Return the merged object (i.e. if the section is linked to another one,
         return the corresponding property of the linked section) or None
         """
-        if self._parent._merged is None:
+        if self.parent is None or self.parent._merged is None:
             return None
-        return self._parent._merged.contains(self)
+
+        return self.parent._merged.contains(self)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
