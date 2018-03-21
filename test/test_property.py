@@ -185,7 +185,34 @@ class TestProperty(unittest.TestCase):
             Property("property_doc", parent=Document())
 
     def test_dtype(self):
-        pass
+        prop = Property(name="prop")
+
+        # Test assignment of all supported dtypes.
+        for curr_type in DType:
+            prop.dtype = curr_type
+            self.assertEqual(prop.dtype, curr_type)
+
+        # Test assignment of dtype alias.
+        prop.dtype = "bool"
+        self.assertEqual(prop.dtype, "bool")
+        prop.dtype = "str"
+        self.assertEqual(prop.dtype, "str")
+
+        # Test assignment of tuple.
+        prop.dtype = "2-tuple"
+        self.assertEqual(prop.dtype, "2-tuple")
+
+        # Test set None
+        prop.dtype = None
+        self.assertIsNone(prop.dtype)
+
+        # Test assignment fails.
+        with self.assertRaises(AttributeError):
+            prop.dtype = 1
+        with self.assertRaises(AttributeError):
+            prop.dtype = "crash and burn"
+        with self.assertRaises(AttributeError):
+            prop.dtype = "x-tuple"
 
     def test_get_path(self):
         doc = Document()
