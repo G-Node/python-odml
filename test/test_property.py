@@ -70,7 +70,7 @@ class TestProperty(unittest.TestCase):
         p5.extend("[a, b, c]")
         self.assertEqual(len(p5), 5)
 
-        p6 = Property("test", {"name": "Marie", "name":"Johanna"})
+        p6 = Property("test", {"name": "Marie", "name": "Johanna"})
         self.assertEqual(len(p6), 1)
 
         # Test tuple dtype value.
@@ -82,14 +82,6 @@ class TestProperty(unittest.TestCase):
         # Test invalid tuple length
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
-
-        # Test missing tuple length.
-        with self.assertRaises(ValueError):
-            _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='-tuple')
-
-        # Test invalid tuple format.
-        with self.assertRaises(ValueError):
-            _ = Property(name="Public-Key", value='5689; 1254; 687', dtype='3-tuple')
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]

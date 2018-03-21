@@ -58,8 +58,6 @@ class BaseProperty(base.baseobject, Property):
             print(e)
             self._id = str(uuid.uuid4())
         self._name = name
-        self._parent = None
-        self._value = []
         self._value_origin = value_origin
         self._unit = unit
         self._uncertainty = uncertainty
@@ -67,8 +65,17 @@ class BaseProperty(base.baseobject, Property):
         self._definition = definition
         self._dependency = dependency
         self._dependency_value = dependency_value
-        self._dtype = dtype
+
+        self._dtype = None
+        if dtypes.valid_type(dtype):
+            self._dtype = dtype
+        else:
+            print("Warning: Unknown dtype '%s'." % dtype)
+
+        self._value = []
         self.value = value
+
+        self._parent = None
         self.parent = parent
 
     @property
