@@ -72,17 +72,6 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p.value[0], 100)
         self.assertEqual(type(p.value), list)
 
-        p.append(10)
-        self.assertEqual(len(p), 2)
-        self.assertRaises(ValueError, p.append, [1, 2, 3])
-
-        with self.assertRaises(ValueError):
-            p.append('invalid')
-
-        p2 = Property("property 2", 3)
-        self.assertRaises(ValueError, p.append, p2)
-        self.assertEqual(len(p), 2)
-
         p.value = None
         self.assertEqual(len(p), 0)
 
@@ -98,23 +87,8 @@ class TestProperty(unittest.TestCase):
         p.value = ()
         self.assertEqual(len(p), 0)
 
-        p3 = Property("test", value=2, unit="Hz")
-        p4 = Property("test", value=5.5, unit="s")
-
-        with self.assertRaises(ValueError):
-            p3.append(p4)
-
         p.value.append(5)
         self.assertEqual(len(p.value), 0)
-        self.assertRaises(ValueError, p.append, 5.5)
-
-        p.append(5.5, strict=False)
-        self.assertEqual(len(p), 1)
-
-        p5 = Property("test", value="a string")
-        p5.append("Freude")
-        self.assertEqual(len(p5), 2)
-        self.assertRaises(ValueError, p5.append, "[a, b, c]")
 
         p6 = Property("test", {"name": "Marie", "name": "Johanna"})
         self.assertEqual(len(p6), 1)
@@ -128,6 +102,86 @@ class TestProperty(unittest.TestCase):
         # Test invalid tuple length
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
+
+    def test_value_append(self):
+        # Test append w/o Property value or dtype
+        prop = Property(name="append")
+        prop.append(1)
+        self.assertEqual(prop.dtype, DType.int)
+        self.assertEqual(prop.value, [1])
+
+        # Test append with Property dtype.
+        prop = Property(name="append", dtype="int")
+        prop.append(3)
+        self.assertEqual(prop.value, [3])
+
+        # Test append with Property value
+        prop = Property(name="append", value=[1, 2])
+        prop.append(3)
+        self.assertEqual(prop.value, [1, 2, 3])
+
+        # Test append with Property list value
+        prop = Property(name="append", value=[1, 2])
+        prop.append([3])
+        self.assertEqual(prop.value, [1, 2, 3])
+
+        # Test append of empty values, make sure 0 and False are properly handled
+        prop = Property(name="append")
+        prop.append(None)
+        prop.append("")
+        prop.append([])
+        prop.append({})
+        self.assertEqual(prop.value, [])
+
+        prop.append(0)
+        self.assertEqual(prop.value, [0])
+
+        prop.value = None
+        prop.dtype = None
+        prop.append(False)
+        self.assertEqual(prop.value, [False])
+
+        prop = Property(name="append", value=[1, 2])
+        prop.append(None)
+        prop.append("")
+        prop.append([])
+        prop.append({})
+        self.assertEqual(prop.value, [1, 2])
+
+        prop.append(0)
+        self.assertEqual(prop.value, [1, 2, 0])
+
+        # Test fail append with multiple values
+        prop = Property(name="append", value=[1, 2, 3])
+        with self.assertRaises(ValueError):
+            prop.append([4, 5])
+        self.assertEqual(prop.value, [1, 2, 3])
+
+        # Test fail append with mismatching dtype
+        prop = Property(name="append", value=[1, 2], dtype="int")
+        with self.assertRaises(ValueError):
+            prop.append([3.14])
+        with self.assertRaises(ValueError):
+            prop.append([True])
+        with self.assertRaises(ValueError):
+            prop.append(["5.927"])
+        self.assertEqual(prop.value, [1, 2])
+
+        # Test strict flag
+        prop.append(3.14, strict=False)
+        prop.append(True, strict=False)
+        prop.append("5.927", strict=False)
+        self.assertEqual(prop.value, [1, 2, 3, 1, 5])
+
+        # Make sure non-convertible values still raise an error
+        with self.assertRaises(ValueError):
+            prop.append("invalid")
+        self.assertEqual(prop.value, [1, 2, 3, 1, 5])
+
+        p5 = Property("test", value="a string")
+        p5.append("Freude")
+        self.assertEqual(len(p5), 2)
+        self.assertRaises(ValueError, p5.append, "[a, b, c]")
 
     def test_value_extend(self):
         prop = Property(name="extend")
