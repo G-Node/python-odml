@@ -505,6 +505,10 @@ class BaseProperty(base.baseobject, Property):
         :param obj the additional value.
         :param strict a Bool that controls whether dtypes must match. Default is True.
         """
+        if not self.value:
+            self.value = obj
+            return
+
         new_value = self._convert_value_input(obj)
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
@@ -516,5 +520,6 @@ class BaseProperty(base.baseobject, Property):
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted "
                              "to data type \'%s\'!" % self._dtype)
+
         self._value.append(dtypes.get(new_value[0], self.dtype))
 
