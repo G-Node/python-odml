@@ -106,6 +106,7 @@ class TestPropertyIntegration(unittest.TestCase):
         self.assertEqual(jprop.unit, p_unit)
         self.assertEqual(jprop.uncertainty, p_uncertainty)
         self.assertEqual(jprop.reference, p_ref)
+        self.assertEqual(jprop.definition, p_def)
         self.assertEqual(jprop.dependency, p_dep)
         self.assertEqual(jprop.dependency_value, p_dep_val)
 
@@ -116,6 +117,7 @@ class TestPropertyIntegration(unittest.TestCase):
         self.assertEqual(xprop.unit, p_unit)
         self.assertEqual(xprop.uncertainty, p_uncertainty)
         self.assertEqual(xprop.reference, p_ref)
+        self.assertEqual(xprop.definition, p_def)
         self.assertEqual(xprop.dependency, p_dep)
         self.assertEqual(xprop.dependency_value, p_dep_val)
 
@@ -126,5 +128,6 @@ class TestPropertyIntegration(unittest.TestCase):
         self.assertEqual(yprop.unit, p_unit)
         self.assertEqual(yprop.uncertainty, p_uncertainty)
         self.assertEqual(yprop.reference, p_ref)
+        self.assertEqual(yprop.definition, p_def)
         self.assertEqual(yprop.dependency, p_dep)
         self.assertEqual(yprop.dependency_value, p_dep_val)
