@@ -497,8 +497,8 @@ class BaseProperty(base.baseobject, Property):
 
     def append(self, obj, strict=True):
         """
-        Append a single value to the list of stored values. Method will raise an ValueError if 
-        the passed value cannot be converted to the current dtype.
+        Append a single value to the list of stored values. Method will raise
+        a ValueError if the passed value cannot be converted to the current dtype.
 
         :param obj the additional value.
         :param strict a Bool that controls whether dtypes must match. Default is True.
@@ -506,11 +506,13 @@ class BaseProperty(base.baseobject, Property):
         new_value = self._convert_value_input(obj)
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
+
         if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
-            raise ValueError("odml.Property.extend: passed value data type does not match dtype!");
+            raise ValueError("odml.Property.append: "
+                             "passed value data type does not match dtype!")
 
         if not self._validate_values(new_value):
-            raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
-                             "data type \'%s\'!" % self._dtype)
+            raise ValueError("odml.Property.append: passed value(s) cannot be converted "
+                             "to data type \'%s\'!" % self._dtype)
         self._value.append(dtypes.get(new_value[0], self.dtype))
 
