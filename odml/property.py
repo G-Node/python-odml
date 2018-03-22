@@ -505,6 +505,11 @@ class BaseProperty(base.baseobject, Property):
         :param obj the additional value.
         :param strict a Bool that controls whether dtypes must match. Default is True.
         """
+        # Ignore empty values before nasty stuff happens, but make sure
+        # 0 and False get through.
+        if obj in [None, "", [], {}]:
+            return
+
         if not self.value:
             self.value = obj
             return
