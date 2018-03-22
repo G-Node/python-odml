@@ -285,6 +285,8 @@ class BaseProperty(base.baseobject, Property):
 
     @uncertainty.setter
     def uncertainty(self, new_value):
+        if new_value == "":
+            new_value = None
         self._uncertainty = new_value
 
     @property
