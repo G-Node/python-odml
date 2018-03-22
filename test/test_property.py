@@ -10,6 +10,63 @@ class TestProperty(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_simple_attributes(self):
+        p_name = "propertyName"
+        p_origin = "from over there"
+        p_unit = "pears"
+        p_uncertainty = "+-12"
+        p_ref = "4 8 15 16 23"
+        p_def = "an odml test property"
+        p_dep = "yes"
+        p_dep_val = "42"
+
+        prop = Property(name=p_name, value_origin=p_origin, unit=p_unit,
+                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                        dependency=p_dep, dependency_value=p_dep_val)
+
+        self.assertEqual(prop.name, p_name)
+        self.assertEqual(prop.value_origin, p_origin)
+        self.assertEqual(prop.unit, p_unit)
+        self.assertEqual(prop.uncertainty, p_uncertainty)
+        self.assertEqual(prop.reference, p_ref)
+        self.assertEqual(prop.definition, p_def)
+        self.assertEqual(prop.dependency, p_dep)
+        self.assertEqual(prop.dependency_value, p_dep_val)
+
+        # Test setting attributes
+        prop.name = "%s_edit" % p_name
+        self.assertEqual(prop.name, "%s_edit" % p_name)
+        prop.value_origin = "%s_edit" % p_origin
+        self.assertEqual(prop.value_origin, "%s_edit" % p_origin)
+        prop.unit = "%s_edit" % p_unit
+        self.assertEqual(prop.unit, "%s_edit" % p_unit)
+        prop.uncertainty = "%s_edit" % p_uncertainty
+        self.assertEqual(prop.uncertainty, "%s_edit" % p_uncertainty)
+        prop.reference = "%s_edit" % p_ref
+        self.assertEqual(prop.reference, "%s_edit" % p_ref)
+        prop.definition = "%s_edit" % p_def
+        self.assertEqual(prop.definition, "%s_edit" % p_def)
+        prop.dependency = "%s_edit" % p_dep
+        self.assertEqual(prop.dependency, "%s_edit" % p_dep)
+        prop.dependency_value = "%s_edit" % p_dep_val
+        self.assertEqual(prop.dependency_value, "%s_edit" % p_dep_val)
+
+        # Test setting attributes to None when '' is passed.
+        prop.value_origin = ""
+        self.assertIsNone(prop.value_origin)
+        prop.unit = ""
+        self.assertIsNone(prop.unit)
+        prop.uncertainty = ""
+        self.assertIsNone(prop.uncertainty)
+        prop.reference = ""
+        self.assertIsNone(prop.reference)
+        prop.definition = ""
+        self.assertIsNone(prop.definition)
+        prop.dependency = ""
+        self.assertIsNone(prop.dependency)
+        prop.dependency_value = ""
+        self.assertIsNone(prop.dependency_value)
+
     def test_value(self):
         p = Property("property", 100)
         self.assertEqual(p.value[0], 100)
@@ -150,9 +207,6 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'string')
         assert(p.value == ['7', '20', '1 Dog', 'Seven'])
 
-    def test_name(self):
-        pass
-
     def test_parent(self):
         p = Property("property_section", parent=Section("S"))
         self.assertIsInstance(p.parent, BaseSection)
@@ -217,14 +271,6 @@ class TestProperty(unittest.TestCase):
         # Check absolute path of Property in a Document.
         prop.parent = sec
         self.assertEqual("/%s:%s" % (sec.name, prop.name), prop.get_path())
-
-    def test_value_origin(self):
-        p = Property("P")
-        self.assertEqual(p.value_origin, None)
-        p = Property("P", value_origin="V")
-        self.assertEqual(p.value_origin, "V")
-        p.value_origin = ""
-        self.assertEqual(p.value_origin, None)
 
     def test_id(self):
         p = Property(name="P")
