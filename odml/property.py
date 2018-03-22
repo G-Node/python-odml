@@ -466,17 +466,18 @@ class BaseProperty(base.baseobject, Property):
 
     def extend(self, obj, strict=True):
         """
-        Extend the list of values stored in this property by the passed values. Method will 
-        raise an ValueError, if values cannot be converted to the current dtype. One can also pass
-        another Property to append all values stored in that one. In this case units must match!
+        Extend the list of values stored in this property by the passed values. Method
+        will raise an ValueError, if values cannot be converted to the current dtype.
+        One can also pass another Property to append all values stored in that one.
+        In this case units must match!
 
         :param obj single value, list of values or Property
         :param strict a Bool that controls whether dtypes must match. Default is True.
         """
         if isinstance(obj, BaseProperty):
-            if (obj.unit != self.unit):
-                raise ValueError("odml.Property.append: src and dest units (%s, %s) do not match!"
-                                 % (obj.unit, self.unit))
+            if obj.unit != self.unit:
+                raise ValueError("odml.Property.extend: src and dest units (%s, %s) "
+                                 "do not match!" % (obj.unit, self.unit))
             self.extend(obj.value)
             return
 
@@ -486,11 +487,12 @@ class BaseProperty(base.baseobject, Property):
 
         new_value = self._convert_value_input(obj)
         if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
-            raise ValueError("odml.Property.extend: passed value data type does not match dtype!");
+            raise ValueError("odml.Property.extend: "
+                             "passed value data type does not match dtype!")
 
         if not self._validate_values(new_value):
-            raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
-                             "data type \'%s\'!" % self._dtype)
+            raise ValueError("odml.Property.extend: passed value(s) cannot be converted "
+                             "to data type \'%s\'!" % self._dtype)
         self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
 
     def append(self, obj, strict=True):
