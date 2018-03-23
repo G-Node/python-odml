@@ -70,7 +70,7 @@ class TestProperty(unittest.TestCase):
     def test_value(self):
         p = Property("property", 100)
         self.assertEqual(p.value[0], 100)
-        self.assertEqual(type(p.value), list)
+        self.assertIsInstance(p.value, list)
 
         p.value = None
         self.assertEqual(len(p), 0)
@@ -90,8 +90,8 @@ class TestProperty(unittest.TestCase):
         p.value.append(5)
         self.assertEqual(len(p.value), 0)
 
-        p6 = Property("test", {"name": "Marie", "name": "Johanna"})
-        self.assertEqual(len(p6), 1)
+        p2 = Property("test", {"name": "Marie", "name": "Johanna"})
+        self.assertEqual(len(p2), 1)
 
         # Test tuple dtype value.
         t = Property(name="Location", value='(39.12; 67.19)', dtype='2-tuple')
@@ -379,6 +379,12 @@ class TestProperty(unittest.TestCase):
             prop.dtype = "crash and burn"
         with self.assertRaises(AttributeError):
             prop.dtype = "x-tuple"
+
+        # Test not setting None when a property contains values.
+        prop.value = [1, 2, 3]
+        self.assertIsNotNone(prop.dtype)
+        prop.dtype = None
+        self.assertIsNotNone(prop.dtype)
 
     def test_get_path(self):
         doc = Document()
