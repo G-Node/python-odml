@@ -54,7 +54,24 @@ class TestSection(unittest.TestCase):
         pass
 
     def test_path(self):
-        pass
+        sec = Section(name="center")
+        self.assertEqual(sec.get_path(), "/")
+
+        subsec = Section(name="leaf", parent=sec)
+        self.assertEqual(subsec.get_path(), "/leaf")
+
+        doc = Document()
+        sec.parent = doc
+        self.assertEqual(sec.get_path(), "/center")
+        self.assertEqual(subsec.get_path(), "/center/leaf")
+
+        top = Section(name="top", parent=doc)
+        sec.parent = top
+        self.assertEqual(sec.get_path(), "/top/center")
+        self.assertEqual(subsec.get_path(), "/top/center/leaf")
+
+        subsec.parent = None
+        self.assertEqual(subsec.get_path(), "/")
 
     def test_id(self):
         s = Section(name="S")
