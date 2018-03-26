@@ -95,7 +95,7 @@ def valid_type(dtype):
         return True
 
     # Check odML tuple dtype.
-    rexp = re.compile("^[0-9]*[1-9]-tuple$")
+    rexp = re.compile("^[1-9][0-9]*-tuple$")
     if len(rexp.findall(dtype)) == 1:
         return True
 
