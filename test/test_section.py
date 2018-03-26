@@ -126,3 +126,34 @@ class TestSection(unittest.TestCase):
 
         self.assertListEqual(clone_sec.sections, [])
         self.assertListEqual(clone_sec.properties, [])
+
+    def test_reorder(self):
+        # Test reorder of document sections
+        doc = Document()
+        sec_one = Section(name="sec_one", parent=doc)
+        sec_two = Section(name="sec_two", parent=doc)
+        sec_three = Section(name="sec_three", parent=doc)
+
+        self.assertEqual(doc.sections[0].name, sec_one.name)
+        self.assertEqual(doc.sections[2].name, sec_three.name)
+        sec_three.reorder(0)
+
+        self.assertEqual(doc.sections[0].name, sec_three.name)
+        self.assertEqual(doc.sections[2].name, sec_two.name)
+
+        # Test reorder of document sections
+        sec = Section(name="main")
+        sec_one = Section(name="sec_one", parent=sec)
+        sec_two = Section(name="sec_two", parent=sec)
+        sec_three = Section(name="sec_three", parent=sec)
+
+        self.assertEqual(sec.sections[0].name, sec_one.name)
+        self.assertEqual(sec.sections[2].name, sec_three.name)
+        sec_three.reorder(0)
+
+        self.assertEqual(sec.sections[0].name, sec_three.name)
+        self.assertEqual(sec.sections[2].name, sec_two.name)
+
+        # Test Exception on unconnected section
+        with self.assertRaises(ValueError):
+            sec.reorder(0)
