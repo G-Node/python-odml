@@ -1,4 +1,5 @@
 # -*- coding: utf-8
+import collections
 import uuid
 
 from . import base
@@ -273,6 +274,25 @@ class BaseSection(base.sectionable, Section):
         """
         for obj in obj_tuple:
             self.__append(obj)
+
+    def extend(self, obj_list):
+        """
+        Method adds Sections and Properties to the respective child-lists
+        of the current section.
+
+        :param obj_list: Iterable containing Section and Property entries.
+        """
+        if not isinstance(obj_list, collections.Iterable):
+            raise TypeError("'%s' object is not iterable" % type(obj_list).__name__)
+
+        # Make sure only Sections and Properties will be added.
+        for obj in obj_list:
+            if not isinstance(obj, Section) and not isinstance(obj, Property):
+                raise ValueError("odml.Section.extend: "
+                                 "Can only extend sections and properties.")
+
+        for obj in obj_list:
+            self.append(obj)
 
     def insert(self, position, obj):
         """
