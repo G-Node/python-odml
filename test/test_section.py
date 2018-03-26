@@ -188,3 +188,34 @@ class TestSection(unittest.TestCase):
         # Test Exception on unconnected section
         with self.assertRaises(ValueError):
             sec.reorder(0)
+
+    def test_extend(self):
+        sec = Section(name="sec")
+        self.assertListEqual(sec.sections, [])
+        self.assertListEqual(sec.properties, [])
+
+        # Test extend with Section list
+        sec.extend([Section(name="subsec1"), Section(name="subsec2")])
+        self.assertEqual(len(sec), 2)
+        self.assertEqual(len(sec.sections), 2)
+        self.assertEqual(sec.sections[0].name, "subsec1")
+
+        # Test extend with Property list
+        sec.extend((Property(name="prop1"), Property(name="prop2")))
+        self.assertEqual(len(sec), 4)
+        self.assertEqual(len(sec.properties), 2)
+        self.assertEqual(sec.properties[0].name, "prop1")
+
+        # Test extend with mixed list
+        sec.extend([Section(name="subsec3"), Property(name="prop3")])
+        self.assertEqual(len(sec), 6)
+        self.assertEqual(len(sec.sections), 3)
+        self.assertEqual(len(sec.properties), 3)
+
+        # Test fail on non iterable
+        with self.assertRaises(TypeError):
+            sec.extend(1)
+
+        # Test fail on non Section/Property list entry
+        with self.assertRaises(ValueError):
+            sec.extend([Property(name="prop4"), 5])
