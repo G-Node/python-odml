@@ -278,18 +278,26 @@ class BaseSection(base.sectionable, Section):
     def extend(self, obj_list):
         """
         Method adds Sections and Properties to the respective child-lists
-        of the current section.
+        of the current Section.
 
         :param obj_list: Iterable containing Section and Property entries.
         """
         if not isinstance(obj_list, collections.Iterable):
             raise TypeError("'%s' object is not iterable" % type(obj_list).__name__)
 
-        # Make sure only Sections and Properties will be added.
+        # Make sure only Sections and Properties with unique names will be added.
         for obj in obj_list:
             if not isinstance(obj, Section) and not isinstance(obj, Property):
                 raise ValueError("odml.Section.extend: "
                                  "Can only extend sections and properties.")
+
+            elif isinstance(obj, Section) and obj.name in self.sections:
+                raise KeyError("odml.Section.extend: "
+                               "Section with name '%s' already exists." % obj.name)
+
+            elif isinstance(obj, Property) and obj.name in self.properties:
+                raise KeyError("odml.Section.extend: "
+                               "Property with name '%s' already exists." % obj.name)
 
         for obj in obj_list:
             self.append(obj)
