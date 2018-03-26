@@ -10,12 +10,6 @@ class TestSection(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_value(self):
-        pass
-
-    def test_name(self):
-        pass
-
     def test_parent(self):
         s = Section("Section")
         self.assertIsNone(s.parent)
@@ -49,9 +43,6 @@ class TestSection(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             Section("section_property", parent=Property("P"))
-
-    def test_dtype(self):
-        pass
 
     def test_path(self):
         sec = Section(name="center")
