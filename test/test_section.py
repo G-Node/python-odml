@@ -10,6 +10,29 @@ class TestSection(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_simple_attributes(self):
+        sec_name = "sec name"
+        sec_type = "sec type"
+        sec_def = "an odml test section"
+        sec_ref = "from over there"
+
+        sec = Section(name=sec_name, type=sec_type, definition=sec_def, reference=sec_ref)
+
+        self.assertEqual(sec.name, sec_name)
+        self.assertEqual(sec.type, sec_type)
+        self.assertEqual(sec.definition, sec_def)
+        self.assertEqual(sec.reference, sec_ref)
+
+        # Test setting attributes
+        sec.name = "%s_edit" % sec_name
+        self.assertEqual(sec.name, "%s_edit" % sec_name)
+        sec.type = "%s_edit" % sec_type
+        self.assertEqual(sec.type, "%s_edit" % sec_type)
+        sec.definition = "%s_edit" % sec_def
+        self.assertEqual(sec.definition, "%s_edit" % sec_def)
+        sec.reference = "%s_edit" % sec_ref
+        self.assertEqual(sec.reference, "%s_edit" % sec_ref)
+
     def test_parent(self):
         s = Section("Section")
         self.assertIsNone(s.parent)
