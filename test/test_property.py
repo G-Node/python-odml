@@ -70,7 +70,7 @@ class TestProperty(unittest.TestCase):
         p5.extend("[a, b, c]")
         self.assertEqual(len(p5), 5)
 
-        p6 = Property("test", {"name": "Marie", "name":"Johanna"})
+        p6 = Property("test", {"name": "Marie", "name": "Johanna"})
         self.assertEqual(len(p6), 1)
 
         # Test tuple dtype value.
@@ -82,14 +82,6 @@ class TestProperty(unittest.TestCase):
         # Test invalid tuple length
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
-
-        # Test missing tuple length.
-        with self.assertRaises(ValueError):
-            _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='-tuple')
-
-        # Test invalid tuple format.
-        with self.assertRaises(ValueError):
-            _ = Property(name="Public-Key", value='5689; 1254; 687', dtype='3-tuple')
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
@@ -185,7 +177,34 @@ class TestProperty(unittest.TestCase):
             Property("property_doc", parent=Document())
 
     def test_dtype(self):
-        pass
+        prop = Property(name="prop")
+
+        # Test assignment of all supported dtypes.
+        for curr_type in DType:
+            prop.dtype = curr_type
+            self.assertEqual(prop.dtype, curr_type)
+
+        # Test assignment of dtype alias.
+        prop.dtype = "bool"
+        self.assertEqual(prop.dtype, "bool")
+        prop.dtype = "str"
+        self.assertEqual(prop.dtype, "str")
+
+        # Test assignment of tuple.
+        prop.dtype = "2-tuple"
+        self.assertEqual(prop.dtype, "2-tuple")
+
+        # Test set None
+        prop.dtype = None
+        self.assertIsNone(prop.dtype)
+
+        # Test assignment fails.
+        with self.assertRaises(AttributeError):
+            prop.dtype = 1
+        with self.assertRaises(AttributeError):
+            prop.dtype = "crash and burn"
+        with self.assertRaises(AttributeError):
+            prop.dtype = "x-tuple"
 
     def test_get_path(self):
         doc = Document()
@@ -207,7 +226,7 @@ class TestProperty(unittest.TestCase):
         p.value_origin = ""
         self.assertEqual(p.value_origin, None)
 
-    def test_set_id(self):
+    def test_id(self):
         p = Property(name="P")
         self.assertIsNotNone(p.id)
 
@@ -220,6 +239,24 @@ class TestProperty(unittest.TestCase):
         # Make sure id cannot be reset programmatically.
         with self.assertRaises(AttributeError):
             p.id = "someId"
+
+    def test_new_id(self):
+        prop = Property(name="prop")
+        old_id = prop.id
+
+        # Test assign new generated id.
+        prop.new_id()
+        self.assertNotEqual(old_id, prop.id)
+
+        # Test assign new custom id.
+        old_id = prop.id
+        prop.new_id("79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertNotEqual(old_id, prop.id)
+        self.assertEqual("79b613eb-a256-46bf-84f6-207df465b8f7", prop.id)
+
+        # Test invalid custom id exception.
+        with self.assertRaises(ValueError):
+            prop.new_id("crash and burn")
 
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",

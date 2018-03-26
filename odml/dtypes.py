@@ -1,6 +1,9 @@
-import sys
 import datetime as dt
+import re
+import sys
+
 from enum import Enum
+
 self = sys.modules[__name__].__dict__
 
 """
@@ -76,14 +79,24 @@ def infer_dtype(value):
 
 def valid_type(dtype):
     """
-    Checks if *dtype* is a valid type
+    Checks if *dtype* is a valid odML value data type.
     """
+    if dtype is None:
+        return True
+
+    if not isinstance(dtype, str) and not isinstance(dtype, unicode):
+        return False
+
     dtype = dtype.lower()
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
+
     if hasattr(DType, dtype):
         return True
-    if dtype is None:
+
+    # Check odML tuple dtype.
+    rexp = re.compile("^[1-9][0-9]*-tuple$")
+    if len(rexp.findall(dtype)) == 1:
         return True
 
     return False

@@ -56,7 +56,7 @@ class TestSection(unittest.TestCase):
     def test_path(self):
         pass
 
-    def test_set_id(self):
+    def test_id(self):
         s = Section(name="S")
         self.assertIsNotNone(s.id)
 
@@ -69,6 +69,24 @@ class TestSection(unittest.TestCase):
         # Make sure id cannot be reset programmatically.
         with self.assertRaises(AttributeError):
             s.id = "someId"
+
+    def test_new_id(self):
+        sec = Section(name="sec")
+        old_id = sec.id
+
+        # Test assign new generated id.
+        sec.new_id()
+        self.assertNotEqual(old_id, sec.id)
+
+        # Test assign new custom id.
+        old_id = sec.id
+        sec.new_id("79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertNotEqual(old_id, sec.id)
+        self.assertEqual("79b613eb-a256-46bf-84f6-207df465b8f7", sec.id)
+
+        # Test invalid custom id exception.
+        with self.assertRaises(ValueError):
+            sec.new_id("crash and burn")
 
     def test_clone(self):
         # Check parent removal in clone.
