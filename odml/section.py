@@ -415,3 +415,25 @@ class BaseSection(base.sectionable, Section):
         Returns True if either a *link* or an *include* attribute is specified
         """
         return self._link is not None or self._include is not None
+
+    def _reorder(self, childlist, new_index):
+        l = childlist
+        old_index = l.index(self)
+
+        # 2 cases: insert after old_index / insert before
+        if new_index > old_index:
+            new_index += 1
+        l.insert(new_index, self)
+        if new_index < old_index:
+            del l[old_index + 1]
+        else:
+            del l[old_index]
+        return old_index
+
+    def reorder(self, new_index):
+        """
+        Move this object in its parent child-list to the position *new_index*
+
+        Returns the old index at which the object was found
+        """
+        return self._reorder(self.parent.sections, new_index)
