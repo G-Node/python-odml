@@ -432,8 +432,12 @@ class BaseSection(base.sectionable, Section):
 
     def reorder(self, new_index):
         """
-        Move this object in its parent child-list to the position *new_index*
+        Move this object in its parent child-list to the position *new_index*.
 
-        Returns the old index at which the object was found
+        :return: The old index at which the object was found.
         """
+        if not self.parent:
+            raise ValueError("odml.Section.reorder: "
+                             "Section has no parent, cannot reorder in parent list.")
+
         return self._reorder(self.parent.sections, new_index)
