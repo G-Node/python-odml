@@ -189,6 +189,43 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             sec.reorder(0)
 
+    def test_append(self):
+        main = Section(name="main")
+        self.assertListEqual(main.sections, [])
+        self.assertListEqual(main.properties, [])
+
+        # Test append Section
+        sec = Section(name="sec1")
+        main.append(sec)
+        self.assertEqual(len(main.sections), 1)
+        self.assertEqual(sec.parent, main)
+
+        # Test fail on Section list append
+        with self.assertRaises(ValueError):
+            main.append([Section(name="sec2"), Section(name="sec3")])
+
+        # Test append Property
+        prop = Property(name="prop")
+        main.append(prop)
+        self.assertEqual(len(main.properties), 1)
+        self.assertEqual(prop.parent, main)
+
+        # Test fail on Property list append
+        with self.assertRaises(ValueError):
+            main.append([Property(name="prop2"), Property(name="prop3")])
+
+        # Test fail on unsupported value
+        with self.assertRaises(ValueError):
+            main.append(Document())
+        with self.assertRaises(ValueError):
+            main.append("Section")
+
+        # Test fail on same name entities
+        with self.assertRaises(KeyError):
+            main.append(Section(name="sec1"))
+        with self.assertRaises(KeyError):
+            main.append(Property(name="prop"))
+
     def test_extend(self):
         sec = Section(name="sec")
         self.assertListEqual(sec.sections, [])
