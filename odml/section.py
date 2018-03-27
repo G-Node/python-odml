@@ -259,9 +259,12 @@ class BaseSection(base.sectionable, Section):
         """
         return self._merged
 
-    def __append(self, obj):
+    def append(self, obj):
         """
-        Append a Section or Property
+        Method adds single Sections and Properties to the respective child-lists
+        of the current Section.
+
+        :param obj: Section or Property object.
         """
         if isinstance(obj, Section):
             self._sections.append(obj)
@@ -269,15 +272,12 @@ class BaseSection(base.sectionable, Section):
         elif isinstance(obj, Property):
             self._props.append(obj)
             obj._parent = self
+        elif isinstance(obj, collections.Iterable) and not isinstance(obj, str):
+            raise ValueError("odml.Section.append: "
+                             "Use extend to add a list of Sections or Properties.")
         else:
-            raise ValueError("Can only append sections and properties")
-
-    def append(self, *obj_tuple):
-        """
-        Append Sections or Properties
-        """
-        for obj in obj_tuple:
-            self.__append(obj)
+            raise ValueError("odml.Section.append: "
+                             "Can only append Sections or Properties.")
 
     def extend(self, obj_list):
         """
