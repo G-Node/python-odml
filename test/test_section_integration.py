@@ -69,3 +69,44 @@ class TestSectionIntegration(unittest.TestCase):
         self.assertEqual(jdoc.sections[sec_name].id, assigned_id)
         self.assertEqual(xdoc.sections[sec_name].id, assigned_id)
         self.assertEqual(ydoc.sections[sec_name].id, assigned_id)
+
+    def test_simple_attributes(self):
+        """
+        This test checks correct writing and loading of 'simple'
+        Section format attributes meaning all attributes that
+        do not require any special handling when they are set.
+        """
+        s_name = "section"
+        s_type = "mellow"
+        s_repo = "unresolvable"
+        s_ref = "4 8 15 16 23 42"
+        s_def = "undefined"
+
+        _ = odml.Section(name=s_name, type=s_type, repository=s_repo,
+                         reference=s_ref, definition=s_def, parent=self.doc)
+
+        jdoc, xdoc, ydoc = self.save_load()
+
+        # Test correct JSON save and load.
+        jsec = jdoc.sections[s_name]
+        self.assertEqual(jsec.name, s_name)
+        self.assertEqual(jsec.type, s_type)
+        self.assertEqual(jsec.repository, s_repo)
+        self.assertEqual(jsec.reference, s_ref)
+        self.assertEqual(jsec.definition, s_def)
+
+        # Test correct XML save and load.
+        xsec = xdoc.sections[s_name]
+        self.assertEqual(xsec.name, s_name)
+        self.assertEqual(xsec.type, s_type)
+        self.assertEqual(xsec.repository, s_repo)
+        self.assertEqual(xsec.reference, s_ref)
+        self.assertEqual(xsec.definition, s_def)
+
+        # Test correct YAML save and load.
+        ysec = ydoc.sections[s_name]
+        self.assertEqual(ysec.name, s_name)
+        self.assertEqual(ysec.type, s_type)
+        self.assertEqual(ysec.repository, s_repo)
+        self.assertEqual(ysec.reference, s_ref)
+        self.assertEqual(ysec.definition, s_def)
