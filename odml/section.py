@@ -382,9 +382,14 @@ class BaseSection(base.sectionable, Section):
         """
         if isinstance(obj, Section):
             return super(BaseSection, self).contains(obj)
-        for i in self._props:
-            if obj.name == i.name:
-                return i
+
+        elif isinstance(obj, Property):
+            for i in self._props:
+                if obj.name == i.name:
+                    return i
+        else:
+            raise ValueError("odml.Section.contains:"
+                             "Section or Property object expected.")
 
     def merge(self, section=None):
         """
