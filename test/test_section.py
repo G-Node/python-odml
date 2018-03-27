@@ -336,3 +336,34 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             sec.insert(0, prop)
         self.assertEqual(len(sec), 6)
+
+    def test_contains(self):
+        sec = Section(name="root")
+
+        subsec = Section(name="subsec", type="test")
+        prop = Property(name="prop")
+
+        # Test not contains on empty child-lists.
+        self.assertIsNone(sec.contains(subsec))
+        self.assertIsNone(sec.contains(prop))
+
+        # Test contains of Section and Property
+        subsec.parent = sec
+        simisec = Section(name="subsec", type="test")
+        self.assertEqual(sec.contains(simisec).name, subsec.name)
+
+        prop.parent = sec
+        simiprop = Property(name="prop")
+        self.assertEqual(sec.contains(simiprop).name, prop.name)
+
+        # Test not contains on mismatching Section name/type and Property name
+        self.assertIsNone(sec.contains(Section(name="subsec", type="typetest")))
+        self.assertIsNone(sec.contains(Section(name="typesec", type="test")))
+        self.assertIsNone(sec.contains(Property(name="prop_two")))
+
+        # Test fail on non-Section/Property objects
+        with self.assertRaises(ValueError):
+            sec.contains(Document())
+
+        with self.assertRaises(ValueError):
+            sec.contains("some info")
