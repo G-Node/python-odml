@@ -399,13 +399,19 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("odml.Section.contains:"
                              "Section or Property object expected.")
 
-    def merge(self, section=None):
+    def merge(self, section=None, strict=True):
         """
-        Merges this section with another *section*
+        Merges this section with another *section*.
         See also: :py:attr:`odml.section.BaseSection.link`
         If section is none, sets the link/include attribute (if _link or
         _include are set), causing the section to be automatically merged
         to the referenced section.
+
+        :param section: an odML Section. If section is None, *link* or *include*
+                        will be resolved instead.
+        :param strict: Bool value to indicate whether the attributes of affected
+                       child Properties except their ids and values have to be identical
+                       to be merged. Default is True.
         """
         if section is None:
             # for the high level interface
@@ -418,7 +424,7 @@ class BaseSection(base.sectionable, Section):
         for obj in section:
             mine = self.contains(obj)
             if mine is not None:
-                mine.merge(obj)
+                mine.merge(obj, strict)
             else:
                 mine = obj.clone()
                 mine._merged = obj
