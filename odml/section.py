@@ -32,6 +32,11 @@ class BaseSection(base.sectionable, Section):
     def __init__(self, name, type=None, parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, id=None):
+
+        # Sets _sections Smartlist and _repository to None, so run first.
+        super(BaseSection, self).__init__()
+        self._props = base.SmartList()
+
         try:
             if id is not None:
                 self._id = str(uuid.UUID(id))
@@ -41,17 +46,16 @@ class BaseSection(base.sectionable, Section):
             print(e)
             self._id = str(uuid.uuid4())
 
-        self._parent = None
         self._name = name
-        self._props = base.SmartList()
         self._definition = definition
         self._reference = reference
         self._repository = repository
         self._link = link
         self._include = include
-        super(BaseSection, self).__init__()
+
         # this may fire a change event, so have the section setup then
         self.type = type
+        self._parent = None
         self.parent = parent
 
     def __repr__(self):
