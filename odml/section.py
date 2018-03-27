@@ -316,13 +316,12 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("Can only insert sections and properties")
 
     def remove(self, obj):
-        # TODO make sure this is not compare based
         if isinstance(obj, Section):
             self._sections.remove(obj)
             obj._parent = None
         elif isinstance(obj, Property):
             self._props.remove(obj)
-            obj._section = None
+            obj._parent = None
         else:
             raise ValueError("Can only remove sections and properties")
 
