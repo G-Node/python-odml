@@ -188,3 +188,9 @@ class TestSectionIntegration(unittest.TestCase):
         ysec_lvl_2 = ysec_lvl_1[sec_lvl_21.name]
         self.assertEqual(len(ysec_lvl_2.sections), 4)
         self.assertEqual(len(ysec_lvl_2.properties), 4)
+
+    def test_link(self):
+        pass
+
+    def test_include(self):
+        pass

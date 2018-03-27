@@ -367,3 +367,18 @@ class TestSection(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             sec.contains("some info")
+
+    def test_link(self):
+        pass
+
+    def test_include(self):
+        pass
+
+    def test_repository(self):
+        pass
+
+    def test_merge(self):
+        pass
+
+    def test_unmerge(self):
+        pass
