@@ -307,9 +307,17 @@ class BaseSection(base.sectionable, Section):
         Insert a Section or Property at the respective position
         """
         if isinstance(obj, Section):
+            if obj.name in self.sections:
+                raise ValueError("odml.Section.insert: "
+                                 "Section with name '%s' already exists." % obj.name)
+
             self._sections.insert(position, obj)
             obj._parent = self
         elif isinstance(obj, Property):
+            if obj.name in self.properties:
+                raise ValueError("odml.Section.insert: "
+                                 "Property with name '%s' already exists." % obj.name)
+
             self._props.insert(position, obj)
             obj._parent = self
         else:
