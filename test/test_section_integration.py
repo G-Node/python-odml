@@ -28,3 +28,22 @@ class TestSectionIntegration(unittest.TestCase):
     def tearDown(self):
         if os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
+
+    def save_load(self):
+        """
+        Helper method to save and load the current state of the document
+        with all supported parsers.
+        :return: jdoc ... document loaded from JSON file
+                 xdoc ... document loaded from XML file
+                 ydoc ... document loaded from YAML file
+        """
+        odml.save(self.doc, self.json_file, "JSON")
+        jdoc = odml.load(self.json_file, "JSON")
+
+        odml.save(self.doc, self.xml_file)
+        xdoc = odml.load(self.xml_file)
+
+        odml.save(self.doc, self.yaml_file, "YAML")
+        ydoc = odml.load(self.yaml_file, "YAML")
+
+        return jdoc, xdoc, ydoc
