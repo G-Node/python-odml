@@ -304,7 +304,12 @@ class BaseSection(base.sectionable, Section):
 
     def insert(self, position, obj):
         """
-        Insert a Section or Property at the respective position
+        Insert a Section or a Property at the respective child-list position.
+        A ValueError will be raised, if a Section or a Property with the same
+        name already exists in the respective child-list.
+
+        :param position: index at which the object should be inserted.
+        :param obj: Section or Property object.
         """
         if isinstance(obj, Section):
             if obj.name in self.sections:
