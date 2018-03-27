@@ -311,7 +311,7 @@ class BaseSection(base.sectionable, Section):
             obj._parent = self
         elif isinstance(obj, Property):
             self._props.insert(position, obj)
-            obj._section = self
+            obj._parent = self
         else:
             raise ValueError("Can only insert sections and properties")
 
