@@ -378,7 +378,11 @@ class BaseSection(base.sectionable, Section):
 
     def contains(self, obj):
         """
-        Finds a property or section with the same name&type properties or None
+        If the child-lists of the current Section contain a Section with
+        the same *name* and *type* or a Property with the same *name* as
+        the provided object, the found Section or Property is returned.
+
+        :param obj: Section or Property object.
         """
         if isinstance(obj, Section):
             return super(BaseSection, self).contains(obj)
