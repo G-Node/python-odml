@@ -299,3 +299,40 @@ class TestSection(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             sec.remove("prop_two")
+
+    def test_insert(self):
+        sec = Section(name="root")
+
+        _ = Section(name="subsec_one", parent=sec)
+        _ = Section(name="subsec_two", parent=sec)
+        subsec = Section(name="subsec_three")
+
+        self.assertNotEqual(sec.sections[1].name, subsec.name)
+        sec.insert(1, subsec)
+        self.assertEqual(len(sec.sections), 3)
+        self.assertEqual(sec.sections[1].name, subsec.name)
+        self.assertEqual(subsec.parent.name, sec.name)
+
+        _ = Property(name="prop_one", parent=sec)
+        _ = Property(name="prop_two", parent=sec)
+        prop = Property(name="prop_three")
+
+        self.assertNotEqual(sec.properties[1].name, prop.name)
+        sec.insert(1, prop)
+        self.assertEqual(len(sec.properties), 3)
+        self.assertEqual(sec.properties[1].name, prop.name)
+        self.assertEqual(prop.parent.name, sec.name)
+
+        # Test invalid object
+        with self.assertRaises(ValueError):
+            sec.insert(1, Document())
+        with self.assertRaises(ValueError):
+            sec.insert(1, "some info")
+        self.assertEqual(len(sec), 6)
+
+        # Test same name entries
+        with self.assertRaises(ValueError):
+            sec.insert(0, subsec)
+        with self.assertRaises(ValueError):
+            sec.insert(0, prop)
+        self.assertEqual(len(sec), 6)
