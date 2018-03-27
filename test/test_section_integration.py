@@ -110,3 +110,81 @@ class TestSectionIntegration(unittest.TestCase):
         self.assertEqual(ysec.repository, s_repo)
         self.assertEqual(ysec.reference, s_ref)
         self.assertEqual(ysec.definition, s_def)
+
+    def test_children(self):
+        """
+        This test checks correct writing and loading of Section and Property
+        children of a Section.
+        """
+        root = odml.Section(name="root", parent=self.doc)
+
+        # Lvl 1 child Sections
+        sec_lvl_11 = odml.Section(name="sec_11", parent=root)
+        _ = odml.Section(name="sec_12", parent=root)
+
+        # Lvl 1 child Properties
+        _ = odml.Property(name="prop_11", parent=root)
+        _ = odml.Property(name="prop_12", parent=root)
+
+        # Lvl 2 child Sections
+        sec_lvl_21 = odml.Section(name="sec_21", parent=sec_lvl_11)
+        _ = odml.Section(name="sec_22", parent=sec_lvl_11)
+        _ = odml.Section(name="sec_23", parent=sec_lvl_11)
+
+        # Lvl 2 child Properties
+        _ = odml.Property(name="prop_21", parent=sec_lvl_11)
+        _ = odml.Property(name="prop_22", parent=sec_lvl_11)
+        _ = odml.Property(name="prop_23", parent=sec_lvl_11)
+
+        # Lvl 3 child Sections
+        _ = odml.Section(name="sec_31", parent=sec_lvl_21)
+        _ = odml.Section(name="sec_32", parent=sec_lvl_21)
+        _ = odml.Section(name="sec_33", parent=sec_lvl_21)
+        _ = odml.Section(name="sec_34", parent=sec_lvl_21)
+
+        # Lvl 3 child Properties
+        _ = odml.Property(name="prop_31", parent=sec_lvl_21)
+        _ = odml.Property(name="prop_32", parent=sec_lvl_21)
+        _ = odml.Property(name="prop_33", parent=sec_lvl_21)
+        _ = odml.Property(name="prop_34", parent=sec_lvl_21)
+
+        jdoc, xdoc, ydoc = self.save_load()
+
+        # Test correct JSON save and load.
+        jsec = jdoc.sections[root.name]
+        self.assertEqual(len(jsec.sections), 2)
+        self.assertEqual(len(jsec.properties), 2)
+
+        jsec_lvl_1 = jsec[sec_lvl_11.name]
+        self.assertEqual(len(jsec_lvl_1.sections), 3)
+        self.assertEqual(len(jsec_lvl_1.properties), 3)
+
+        jsec_lvl_2 = jsec_lvl_1[sec_lvl_21.name]
+        self.assertEqual(len(jsec_lvl_2.sections), 4)
+        self.assertEqual(len(jsec_lvl_2.properties), 4)
+
+        # Test correct XML save and load.
+        xsec = xdoc.sections[root.name]
+        self.assertEqual(len(xsec.sections), 2)
+        self.assertEqual(len(xsec.properties), 2)
+
+        xsec_lvl_1 = xsec[sec_lvl_11.name]
+        self.assertEqual(len(xsec_lvl_1.sections), 3)
+        self.assertEqual(len(xsec_lvl_1.properties), 3)
+
+        xsec_lvl_2 = xsec_lvl_1[sec_lvl_21.name]
+        self.assertEqual(len(xsec_lvl_2.sections), 4)
+        self.assertEqual(len(xsec_lvl_2.properties), 4)
+
+        # Test correct YAML save and load.
+        ysec = ydoc.sections[root.name]
+        self.assertEqual(len(ysec.sections), 2)
+        self.assertEqual(len(ysec.properties), 2)
+
+        ysec_lvl_1 = ysec[sec_lvl_11.name]
+        self.assertEqual(len(ysec_lvl_1.sections), 3)
+        self.assertEqual(len(ysec_lvl_1.properties), 3)
+
+        ysec_lvl_2 = ysec_lvl_1[sec_lvl_21.name]
+        self.assertEqual(len(ysec_lvl_2.sections), 4)
+        self.assertEqual(len(ysec_lvl_2.properties), 4)
