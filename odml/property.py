@@ -22,9 +22,9 @@ class BaseProperty(base.baseobject, Property):
                  dependency=None, dependency_value=None, dtype=None,
                  value_origin=None, id=None):
         """
-        Create a new Property with a single value. The method will try to infer
-        the value's dtype from the type of the value if not explicitly stated.
-        Example for a property with
+        Create a new Property. If a value without an explicitly stated dtype
+        has been provided, the method will try to infer the value's dtype.
+        Example:
         >>> p = Property("property1", "a string")
         >>> p.dtype
         >>> str
@@ -34,21 +34,25 @@ class BaseProperty(base.baseobject, Property):
         >>> p = Property("prop", [2, 3, 4])
         >>> p.dtype
         >>> int
-        :param name: The name of the property
-        :param value: Some data value, this may be a list of homogeneous values
+        :param name: The name of the property.
+        :param value: Some data value, it can be a single value or
+                      a list of homogeneous values.
         :param unit: The unit of the stored data.
-        :param uncertainty: the uncertainty (e.g. the standard deviation)
+        :param uncertainty: The uncertainty (e.g. the standard deviation)
                             associated with a measure value.
         :param reference: A reference (e.g. an URL) to an external definition
                           of the value.
         :param definition: The definition of the property.
         :param dependency: Another property this property depends on.
         :param dependency_value: Dependency on a certain value.
-        :param dtype: the data type of the values stored in the property,
-                     if dtype is not given, the type is deduced from the values
+        :param dtype: The data type of the values stored in the property,
+                      if dtype is not given, the type is deduced from the values.
+                      Check odml.DType for supported data types.
         :param value_origin: Reference where the value originated from e.g. a file name.
+        :param id: UUID string as specified in RFC 4122. If no id is provided,
+                   an id will be generated and assigned. An id has to be unique
+                   within an odML Document.
         """
-        # TODO validate arguments
         try:
             if id is not None:
                 self._id = str(uuid.UUID(id))
@@ -84,7 +88,7 @@ class BaseProperty(base.baseobject, Property):
 
     def new_id(self, id=None):
         """
-        new_id sets the id of the current object to a RFC 4122 compliant UUID.
+        new_id sets the id of the current object to an RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
         :param id: UUID string as specified in RFC 4122.
@@ -108,7 +112,7 @@ class BaseProperty(base.baseobject, Property):
     @property
     def dtype(self):
         """
-        The data type of the value
+        The data type of the value. Check odml.DType for supported data types.
         """
         return self._dtype
 
@@ -116,11 +120,9 @@ class BaseProperty(base.baseobject, Property):
     def dtype(self, new_type):
         """
         If the data type of a property value is changed, it is tried
-        to convert the value to the new type.
-        If this doesn't work, the change is refused.
-
-        This behaviour can be overridden by directly accessing the *_dtype*
-        attribute and adjusting the *data* attribute manually.
+        to convert existing values to the new type. If this doesn't work,
+        the change is refused. The dtype can always be changed, if
+        a Property does not contain values.
         """
         # check if this is a valid type
         if not dtypes.valid_type(new_type):
@@ -139,7 +141,7 @@ class BaseProperty(base.baseobject, Property):
     @property
     def parent(self):
         """
-        The section containing this property
+        The section containing this property.
         """
         return self._parent
 
@@ -170,29 +172,30 @@ class BaseProperty(base.baseobject, Property):
     @property
     def value(self):
         """
-        Returns the value(s) stored in this property. Method always returns a list that
-        is a copy (!) of the stored value. Changing this list will NOT change the property.
-        For manipulation of the stored values use the append, extend, and direct access methods
-        (using brackets).
+        Returns the value(s) stored in this property. Method always returns a list
+        that is a copy (!) of the stored value. Changing this list will NOT change
+        the property.
+        For manipulation of the stored values use the append, extend, and direct
+        access methods (using brackets).
 
         For example:
-        >> p = odml.Property("prop", value=[1, 2, 3])
-        >> print(p.value)
+        >>> p = odml.Property("prop", value=[1, 2, 3])
+        >>> print(p.value)
         [1, 2, 3]
-        >> p.value.append(4)
-        >> print(p.value)
+        >>> p.value.append(4)
+        >>> print(p.value)
         [1, 2, 3]
 
         Individual values can be accessed and manipulated like this:
         >>> print(p[0])
         [1]
-        >> p[0] = 4
-        >> print(p[0])
+        >>> p[0] = 4
+        >>> print(p[0])
         [4]
 
         The values can be iterated e.g. with a loop:
-        >> for v in p.value:
-              print(v)
+        >>> for v in p.value:
+        >>>   print(v)
         4
         2
         3
@@ -201,18 +204,18 @@ class BaseProperty(base.baseobject, Property):
 
     def value_str(self, index=0):
         """
-        Used to access typed data of the value as a string.
-        Use data to access the raw type, i.e.:
+        Used to access typed data of the value at a specific
+        index position as a string.
         """
         return dtypes.set(self._value[index], self._dtype)
 
     def _validate_values(self, values):
         """
-            Method ensures that the passed value(s) can be cast to the
-            same dtype, i.e. that associated with this property or the
-            inferred dtype of the first entry of the values list.
+        Method ensures that the passed value(s) can be cast to the
+        same dtype, i.e. that are associated with this property or the
+        inferred dtype of the first entry of the values list.
 
-        :param values an iterable that contains the values
+        :param values: an iterable that contains the values.
         """
         for v in values:
             try:
@@ -227,7 +230,7 @@ class BaseProperty(base.baseobject, Property):
         If new_value is a string, it will convert it to a list of
         strings if the new_value contains embracing brackets.
 
-        returns list of new_value
+        :return: list of new_value
         """
         if isinstance(new_value, str):
             if new_value[0] == "[" and new_value[-1] == "]":
@@ -241,21 +244,22 @@ class BaseProperty(base.baseobject, Property):
         elif not isinstance(new_value, list):
             new_value = [new_value]
         else:
-            raise ValueError("odml.Property._convert_value_input: unsupported data type for values: %s" % type(new_value))
+            raise ValueError("odml.Property._convert_value_input: "
+                             "unsupported data type for values: %s" % type(new_value))
         return new_value
 
     @value.setter
     def value(self, new_value):
         """
-
         Set the value of the property discarding any previous information.
         Method will try to convert the passed value to the dtype of
-        the property and raise an ValueError, if not possible
+        the property and raise an ValueError if not possible.
 
-        :param new_value a single value or list of values.
+        :param new_value: a single value or list of values.
         """
         # Make sure boolean value 'False' gets through as well...
-        if new_value is None or (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
+        if new_value is None or \
+                (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
             self._value = []
             return
 
@@ -285,6 +289,8 @@ class BaseProperty(base.baseobject, Property):
 
     @uncertainty.setter
     def uncertainty(self, new_value):
+        if new_value == "":
+            new_value = None
         self._uncertainty = new_value
 
     @property
@@ -339,9 +345,9 @@ class BaseProperty(base.baseobject, Property):
 
     def remove(self, value):
         """
-        Remove a value from this property and unset its parent.
-        Raises a TypeError if this would cause the property not to hold any
-        value at all. This can be circumvented by using the *_values* property.
+        Remove a value from this property. Only the first encountered
+        occurrence of the passed in value is removed from the properties
+        list of values.
         """
         if value in self._value:
             self._value.remove(value)
@@ -358,6 +364,7 @@ class BaseProperty(base.baseobject, Property):
     def clone(self):
         """
         Clone this object to copy it independently to another document.
+        The id of the cloned object will be set to a different uuid.
         """
         obj = super(BaseProperty, self).clone()
         obj._parent = None
@@ -367,23 +374,23 @@ class BaseProperty(base.baseobject, Property):
         return obj
 
     def merge(self, other, strict=True):
-        """Merges the property 'other' into self, if possible. Information
-        will be synchronized. Method will raise an ValueError when the
+        """
+        Merges the property 'other' into self, if possible. Information
+        will be synchronized. Method will raise a ValueError when the
         information in this property and the passed property are in
         conflict.
 
-        :param other a Property
-        :param strict Bool value to indicate whether types should be
-        implicitly converted even when information may be lost. Default is True, i.e. no conversion, and error will be raised if types do not match.
-
+        :param other: an odML Property.
+        :param strict: Bool value to indicate whether types should be implicitly converted
+               even when information may be lost. Default is True, i.e. no conversion,
+               and a ValueError will be raised if types do not match.
         """
-        assert(isinstance(other, (BaseProperty)))
+        assert(isinstance(other, BaseProperty))
         if strict and self.dtype != other.dtype:
             raise ValueError("odml.Property.merge: src and dest dtypes do not match!")
 
         if self.unit is not None and other.unit is not None and self.unit != other.unit:
-            raise ValueError("odml.Property.merge: src and dest units (%s, %s) do not match!"
-                             % (other.unit, self.unit))
+            raise ValueError("odml.Property.merge: src and dest units (%s, %s) do not match!" % (other.unit, self.unit))
 
         if self.definition is not None and other.definition is not None:
             self_def = ''.join(map(str.strip, self.definition.split())).lower()
@@ -422,14 +429,14 @@ class BaseProperty(base.baseobject, Property):
 
     def unmerge(self, other):
         """
-        Stub that doesn't do anything for this class
+        Stub that doesn't do anything for this class.
         """
         pass
 
     def get_merged_equivalent(self):
         """
-        Return the merged object (i.e. if the section is linked to another one,
-        return the corresponding property of the linked section) or None
+        Return the merged object (i.e. if the parent section is linked to another one,
+        return the corresponding property of the linked section) or None.
         """
         if self.parent is None or self.parent._merged is None:
             return None
@@ -466,17 +473,18 @@ class BaseProperty(base.baseobject, Property):
 
     def extend(self, obj, strict=True):
         """
-        Extend the list of values stored in this property by the passed values. Method will 
-        raise an ValueError, if values cannot be converted to the current dtype. One can also pass
-        another Property to append all values stored in that one. In this case units must match!
+        Extend the list of values stored in this property by the passed values. Method
+        will raise a ValueError, if values cannot be converted to the current dtype.
+        One can also pass another Property to append all values stored in that one.
+        In this case units must match!
 
-        :param obj single value, list of values or Property
-        :param strict a Bool that controls whether dtypes must match. Default is True.
+        :param obj: single value, list of values or a Property.
+        :param strict: a Bool that controls whether dtypes must match. Default is True.
         """
         if isinstance(obj, BaseProperty):
-            if (obj.unit != self.unit):
-                raise ValueError("odml.Property.append: src and dest units (%s, %s) do not match!"
-                                 % (obj.unit, self.unit))
+            if obj.unit != self.unit:
+                raise ValueError("odml.Property.extend: src and dest units (%s, %s) "
+                                 "do not match!" % (obj.unit, self.unit))
             self.extend(obj.value)
             return
 
@@ -486,29 +494,41 @@ class BaseProperty(base.baseobject, Property):
 
         new_value = self._convert_value_input(obj)
         if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
-            raise ValueError("odml.Property.extend: passed value data type does not match dtype!");
+            raise ValueError("odml.Property.extend: "
+                             "passed value data type does not match dtype!")
 
         if not self._validate_values(new_value):
-            raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
-                             "data type \'%s\'!" % self._dtype)
+            raise ValueError("odml.Property.extend: passed value(s) cannot be converted "
+                             "to data type \'%s\'!" % self._dtype)
         self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
 
     def append(self, obj, strict=True):
         """
-        Append a single value to the list of stored values. Method will raise an ValueError if 
-        the passed value cannot be converted to the current dtype.
+        Append a single value to the list of stored values. Method will raise
+        a ValueError if the passed value cannot be converted to the current dtype.
 
-        :param obj the additional value.
-        :param strict a Bool that controls whether dtypes must match. Default is True.
+        :param obj: the additional value.
+        :param strict: a Bool that controls whether dtypes must match. Default is True.
         """
+        # Ignore empty values before nasty stuff happens, but make sure
+        # 0 and False get through.
+        if obj in [None, "", [], {}]:
+            return
+
+        if not self.value:
+            self.value = obj
+            return
+
         new_value = self._convert_value_input(obj)
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
+
         if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
-            raise ValueError("odml.Property.extend: passed value data type does not match dtype!");
+            raise ValueError("odml.Property.append: "
+                             "passed value data type does not match dtype!")
 
         if not self._validate_values(new_value):
-            raise ValueError("odml.Property.append: passed value(s) cannot be converted to "
-                             "data type \'%s\'!" % self._dtype)
-        self._value.append(dtypes.get(new_value[0], self.dtype))
+            raise ValueError("odml.Property.append: passed value(s) cannot be converted "
+                             "to data type \'%s\'!" % self._dtype)
 
+        self._value.append(dtypes.get(new_value[0], self.dtype))

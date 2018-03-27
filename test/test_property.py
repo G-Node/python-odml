@@ -10,26 +10,67 @@ class TestProperty(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_simple_attributes(self):
+        p_name = "propertyName"
+        p_origin = "from over there"
+        p_unit = "pears"
+        p_uncertainty = "+-12"
+        p_ref = "4 8 15 16 23"
+        p_def = "an odml test property"
+        p_dep = "yes"
+        p_dep_val = "42"
+
+        prop = Property(name=p_name, value_origin=p_origin, unit=p_unit,
+                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                        dependency=p_dep, dependency_value=p_dep_val)
+
+        self.assertEqual(prop.name, p_name)
+        self.assertEqual(prop.value_origin, p_origin)
+        self.assertEqual(prop.unit, p_unit)
+        self.assertEqual(prop.uncertainty, p_uncertainty)
+        self.assertEqual(prop.reference, p_ref)
+        self.assertEqual(prop.definition, p_def)
+        self.assertEqual(prop.dependency, p_dep)
+        self.assertEqual(prop.dependency_value, p_dep_val)
+
+        # Test setting attributes
+        prop.name = "%s_edit" % p_name
+        self.assertEqual(prop.name, "%s_edit" % p_name)
+        prop.value_origin = "%s_edit" % p_origin
+        self.assertEqual(prop.value_origin, "%s_edit" % p_origin)
+        prop.unit = "%s_edit" % p_unit
+        self.assertEqual(prop.unit, "%s_edit" % p_unit)
+        prop.uncertainty = "%s_edit" % p_uncertainty
+        self.assertEqual(prop.uncertainty, "%s_edit" % p_uncertainty)
+        prop.reference = "%s_edit" % p_ref
+        self.assertEqual(prop.reference, "%s_edit" % p_ref)
+        prop.definition = "%s_edit" % p_def
+        self.assertEqual(prop.definition, "%s_edit" % p_def)
+        prop.dependency = "%s_edit" % p_dep
+        self.assertEqual(prop.dependency, "%s_edit" % p_dep)
+        prop.dependency_value = "%s_edit" % p_dep_val
+        self.assertEqual(prop.dependency_value, "%s_edit" % p_dep_val)
+
+        # Test setting attributes to None when '' is passed.
+        prop.value_origin = ""
+        self.assertIsNone(prop.value_origin)
+        prop.unit = ""
+        self.assertIsNone(prop.unit)
+        prop.uncertainty = ""
+        self.assertIsNone(prop.uncertainty)
+        prop.reference = ""
+        self.assertIsNone(prop.reference)
+        prop.definition = ""
+        self.assertIsNone(prop.definition)
+        prop.dependency = ""
+        self.assertIsNone(prop.dependency)
+        prop.dependency_value = ""
+        self.assertIsNone(prop.dependency_value)
+
     def test_value(self):
         p = Property("property", 100)
         self.assertEqual(p.value[0], 100)
-        self.assertEqual(type(p.value), list)
-
-        p.append(10)
-        self.assertEqual(len(p), 2)
-        self.assertRaises(ValueError, p.append, [1, 2, 3])
-
-        p.extend([20, 30, '40'])
-        self.assertEqual(len(p), 5)
-        with self.assertRaises(ValueError):
-            p.append('invalid')
-        with self.assertRaises(ValueError):
-            p.extend(('5', 6, 7))
-
-        p2 = Property("property 2", 3)
-        self.assertRaises(ValueError, p.append, p2)
-        p.extend(p2)
-        self.assertEqual(len(p), 6)
+        self.assertIsInstance(p.value, list)
 
         p.value = None
         self.assertEqual(len(p), 0)
@@ -46,32 +87,11 @@ class TestProperty(unittest.TestCase):
         p.value = ()
         self.assertEqual(len(p), 0)
 
-        p3 = Property("test", value=2, unit="Hz")
-        p4 = Property("test", value=5.5, unit="s")
-
-        with self.assertRaises(ValueError):
-            p3.append(p4)
-
         p.value.append(5)
         self.assertEqual(len(p.value), 0)
-        self.assertRaises(ValueError, p.append, 5.5)
 
-        p.append(5.5, strict=False)
-        self.assertEqual(len(p), 1)
-
-        self.assertRaises(ValueError, p.extend, [3.14, 6.28])
-        p.extend([3.14, 6.28], strict=False)
-        self.assertEqual(len(p), 3)
-
-        p5 = Property("test", value="a string")
-        p5.append("Freude")
-        self.assertEqual(len(p5), 2)
-        self.assertRaises(ValueError, p5.append, "[a, b, c]")
-        p5.extend("[a, b, c]")
-        self.assertEqual(len(p5), 5)
-
-        p6 = Property("test", {"name": "Marie", "name": "Johanna"})
-        self.assertEqual(len(p6), 1)
+        p2 = Property("test", {"name": "Marie", "name": "Johanna"})
+        self.assertEqual(len(p2), 1)
 
         # Test tuple dtype value.
         t = Property(name="Location", value='(39.12; 67.19)', dtype='2-tuple')
@@ -82,6 +102,163 @@ class TestProperty(unittest.TestCase):
         # Test invalid tuple length
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
+
+    def test_value_append(self):
+        # Test append w/o Property value or dtype
+        prop = Property(name="append")
+        prop.append(1)
+        self.assertEqual(prop.dtype, DType.int)
+        self.assertEqual(prop.value, [1])
+
+        # Test append with Property dtype.
+        prop = Property(name="append", dtype="int")
+        prop.append(3)
+        self.assertEqual(prop.value, [3])
+
+        # Test append with Property value
+        prop = Property(name="append", value=[1, 2])
+        prop.append(3)
+        self.assertEqual(prop.value, [1, 2, 3])
+
+        # Test append with Property list value
+        prop = Property(name="append", value=[1, 2])
+        prop.append([3])
+        self.assertEqual(prop.value, [1, 2, 3])
+
+        # Test append of empty values, make sure 0 and False are properly handled
+        prop = Property(name="append")
+        prop.append(None)
+        prop.append("")
+        prop.append([])
+        prop.append({})
+        self.assertEqual(prop.value, [])
+
+        prop.append(0)
+        self.assertEqual(prop.value, [0])
+
+        prop.value = None
+        prop.dtype = None
+        prop.append(False)
+        self.assertEqual(prop.value, [False])
+
+        prop = Property(name="append", value=[1, 2])
+        prop.append(None)
+        prop.append("")
+        prop.append([])
+        prop.append({})
+        self.assertEqual(prop.value, [1, 2])
+
+        prop.append(0)
+        self.assertEqual(prop.value, [1, 2, 0])
+
+        # Test fail append with multiple values
+        prop = Property(name="append", value=[1, 2, 3])
+        with self.assertRaises(ValueError):
+            prop.append([4, 5])
+        self.assertEqual(prop.value, [1, 2, 3])
+
+        # Test fail append with mismatching dtype
+        prop = Property(name="append", value=[1, 2], dtype="int")
+        with self.assertRaises(ValueError):
+            prop.append([3.14])
+        with self.assertRaises(ValueError):
+            prop.append([True])
+        with self.assertRaises(ValueError):
+            prop.append(["5.927"])
+        self.assertEqual(prop.value, [1, 2])
+
+        # Test strict flag
+        prop.append(3.14, strict=False)
+        prop.append(True, strict=False)
+        prop.append("5.927", strict=False)
+        self.assertEqual(prop.value, [1, 2, 3, 1, 5])
+
+        # Make sure non-convertible values still raise an error
+        with self.assertRaises(ValueError):
+            prop.append("invalid")
+        self.assertEqual(prop.value, [1, 2, 3, 1, 5])
+
+        p5 = Property("test", value="a string")
+        p5.append("Freude")
+        self.assertEqual(len(p5), 2)
+        self.assertRaises(ValueError, p5.append, "[a, b, c]")
+
+    def test_value_extend(self):
+        prop = Property(name="extend")
+
+        # Test extend w/o Property value or dtype.
+        val = [1, 2, 3]
+        prop.extend(val)
+        self.assertEqual(prop.dtype, DType.int)
+        self.assertEqual(prop.value, val)
+
+        # Extend with single value.
+        prop.extend(4)
+        self.assertEqual(prop.value, [1, 2, 3, 4])
+
+        # Extend with list value.
+        prop.extend([5, 6])
+        self.assertEqual(prop.value, [1, 2, 3, 4, 5, 6])
+
+        # Test extend w/o Property value
+        prop = Property(name="extend", dtype="float")
+        prop.extend([1.0, 2.0, 3.0])
+        self.assertEqual(prop.value, [1.0, 2.0, 3.0])
+
+        # Test extend with Property value
+        prop = Property(name="extend", value=10)
+        prop.extend([20, 30, '40'])
+        self.assertEqual(prop.value, [10, 20, 30, 40])
+
+        # Test extend fail with mismatching dtype
+        with self.assertRaises(ValueError):
+            prop.extend(['5', 6, 7])
+        with self.assertRaises(ValueError):
+            prop.extend([5, 6, 'a'])
+
+        # Test extend via Property
+        prop = Property(name="extend", value=["a", "b"])
+        ext_prop = Property(name="value extend", value="c")
+        prop.extend(ext_prop)
+        self.assertEqual(prop.value, ["a", "b", "c"])
+
+        ext_prop.value = ["d", "e"]
+        prop.extend(ext_prop)
+        self.assertEqual(prop.value, ["a", "b", "c", "d", "e"])
+
+        ext_prop = Property(name="value extend", value=[1, 2 ,3])
+        with self.assertRaises(ValueError):
+            prop.extend(ext_prop)
+        self.assertEqual(prop.value, ["a", "b", "c", "d", "e"])
+
+        # Test extend via Property unit check
+        prop = Property(name="extend", value=[1, 2], unit="mV")
+        ext_prop = Property(name="extend", value=[3, 4], unit="mV")
+        prop.extend(ext_prop)
+        self.assertEqual(prop.value, [1, 2, 3, 4])
+
+        ext_prop.unit = "kV"
+        with self.assertRaises(ValueError):
+            prop.extend(ext_prop)
+        self.assertEqual(prop.value, [1, 2, 3, 4])
+
+        ext_prop.unit = ""
+        with self.assertRaises(ValueError):
+            prop.extend(ext_prop)
+        self.assertEqual(prop.value, [1, 2, 3, 4])
+
+        # Test strict flag
+        prop = Property(name="extend", value=[1, 2], dtype="int")
+        with self.assertRaises(ValueError):
+            prop.extend([3.14, True, "5.927"])
+        self.assertEqual(prop.value, [1, 2])
+
+        prop.extend([3.14, True, "5.927"], strict=False)
+        self.assertEqual(prop.value, [1, 2, 3, 1, 5])
+
+        # Make sure non-convertible values still raise an error
+        with self.assertRaises(ValueError):
+            prop.extend([6, "some text"])
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
@@ -150,9 +327,6 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'string')
         assert(p.value == ['7', '20', '1 Dog', 'Seven'])
 
-    def test_name(self):
-        pass
-
     def test_parent(self):
         p = Property("property_section", parent=Section("S"))
         self.assertIsInstance(p.parent, BaseSection)
@@ -206,6 +380,12 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(AttributeError):
             prop.dtype = "x-tuple"
 
+        # Test not setting None when a property contains values.
+        prop.value = [1, 2, 3]
+        self.assertIsNotNone(prop.dtype)
+        prop.dtype = None
+        self.assertIsNotNone(prop.dtype)
+
     def test_get_path(self):
         doc = Document()
         sec = Section(name="parent", parent=doc)
@@ -217,14 +397,6 @@ class TestProperty(unittest.TestCase):
         # Check absolute path of Property in a Document.
         prop.parent = sec
         self.assertEqual("/%s:%s" % (sec.name, prop.name), prop.get_path())
-
-    def test_value_origin(self):
-        p = Property("P")
-        self.assertEqual(p.value_origin, None)
-        p = Property("P", value_origin="V")
-        self.assertEqual(p.value_origin, "V")
-        p.value_origin = ""
-        self.assertEqual(p.value_origin, None)
 
     def test_id(self):
         p = Property(name="P")
