@@ -316,6 +316,14 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("Can only insert sections and properties")
 
     def remove(self, obj):
+        """
+        Remove a Section or a Property from the respective child-lists of the current
+        Section and sets the parent attribute of the handed in object to None.
+        Raises a ValueError if the object is not a Section or a Property or if
+        the object is not contained in the child-lists.
+
+        :param obj: Section or Property object.
+        """
         if isinstance(obj, Section):
             self._sections.remove(obj)
             obj._parent = None
