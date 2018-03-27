@@ -47,3 +47,25 @@ class TestSectionIntegration(unittest.TestCase):
         ydoc = odml.load(self.yaml_file, "YAML")
 
         return jdoc, xdoc, ydoc
+
+    def test_id(self):
+        # Test correct save and load of generated id.
+        sec_name = "empty_id"
+        sec = odml.Section(name=sec_name, parent=self.doc)
+
+        jdoc, xdoc, ydoc = self.save_load()
+
+        self.assertEqual(jdoc.sections[sec_name].id, sec.id)
+        self.assertEqual(xdoc.sections[sec_name].id, sec.id)
+        self.assertEqual(ydoc.sections[sec_name].id, sec.id)
+
+        # Test correct save and load of assigned id.
+        sec_name = "assigned_id"
+        assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        _ = odml.Section(name=sec_name, id=assigned_id, parent=self.doc)
+
+        jdoc, xdoc, ydoc = self.save_load()
+
+        self.assertEqual(jdoc.sections[sec_name].id, assigned_id)
+        self.assertEqual(xdoc.sections[sec_name].id, assigned_id)
+        self.assertEqual(ydoc.sections[sec_name].id, assigned_id)
