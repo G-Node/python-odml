@@ -200,9 +200,12 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(main.sections), 1)
         self.assertEqual(sec.parent, main)
 
-        # Test fail on Section list append
+        # Test fail on Section list or tuple append
         with self.assertRaises(ValueError):
             main.append([Section(name="sec2"), Section(name="sec3")])
+        with self.assertRaises(ValueError):
+            main.append((Section(name="sec2"), Section(name="sec3")))
+        self.assertEqual(len(main.sections), 1)
 
         # Test append Property
         prop = Property(name="prop")
@@ -210,9 +213,12 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(main.properties), 1)
         self.assertEqual(prop.parent, main)
 
-        # Test fail on Property list append
+        # Test fail on Property list or tuple append
         with self.assertRaises(ValueError):
             main.append([Property(name="prop2"), Property(name="prop3")])
+        with self.assertRaises(ValueError):
+            main.append((Property(name="prop2"), Property(name="prop3")))
+        self.assertEqual(len(main.properties), 1)
 
         # Test fail on unsupported value
         with self.assertRaises(ValueError):
@@ -223,8 +229,11 @@ class TestSection(unittest.TestCase):
         # Test fail on same name entities
         with self.assertRaises(KeyError):
             main.append(Section(name="sec1"))
+        self.assertEqual(len(main.sections), 1)
+
         with self.assertRaises(KeyError):
             main.append(Property(name="prop"))
+        self.assertEqual(len(main.properties), 1)
 
     def test_extend(self):
         sec = Section(name="main")
