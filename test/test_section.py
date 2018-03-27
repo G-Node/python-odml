@@ -265,3 +265,37 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(KeyError):
             sec.extend([Section(name="new"), Section(name="sec3")])
         self.assertEqual(len(sec.sections), 3)
+
+    def test_remove(self):
+        sec = Section(name="remsec")
+
+        ssec_one = Section(name="subsec_one", parent=sec)
+        ssec_two = Section(name="subsec_two", parent=sec)
+        self.assertEqual(len(sec.sections), 2)
+        self.assertIsNotNone(ssec_one.parent)
+
+        sec.remove(ssec_one)
+        self.assertEqual(len(sec.sections), 1)
+        self.assertEqual(sec.sections[0].name, ssec_two.name)
+        self.assertIsNone(ssec_one.parent)
+
+        with self.assertRaises(ValueError):
+            sec.remove(ssec_one)
+        self.assertEqual(len(sec.sections), 1)
+
+        prop_one = Property(name="prop_one", parent=sec)
+        prop_two = Property(name="prop_two", parent=sec)
+        self.assertEqual(len(sec.properties), 2)
+        self.assertIsNotNone(prop_one.parent)
+
+        sec.remove(prop_one)
+        self.assertEqual(len(sec.properties), 1)
+        self.assertEqual(sec.properties[0].name, prop_two.name)
+        self.assertIsNone(prop_one.parent)
+
+        with self.assertRaises(ValueError):
+            sec.remove(prop_one)
+        self.assertEqual(len(sec.properties), 1)
+
+        with self.assertRaises(ValueError):
+            sec.remove("prop_two")
