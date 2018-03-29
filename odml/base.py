@@ -108,6 +108,13 @@ class SafeList(list):
 
 class SmartList(SafeList):
 
+    def __init__(self, content_type):
+        """
+        Only values of the instance *content_type* can be added to the SmartList.
+        """
+        self._content_type = content_type
+        super(SafeList, self).__init__()
+
     def __getitem__(self, key):
         """
         Provides element index also by searching for an element with a given
@@ -147,9 +154,9 @@ class SmartList(SafeList):
 
 @allow_inherit_docstring
 class sectionable(baseobject):
-
     def __init__(self):
-        self._sections = SmartList()
+        from odml.section import Section
+        self._sections = SmartList(Section)
         self._repository = None
 
     @property
@@ -518,9 +525,10 @@ class sectionable(baseobject):
         Clone this object recursively allowing to copy it independently
         to another document
         """
+        from odml.section import Section
         obj = super(sectionable, self).clone(children)
         obj._parent = None
-        obj._sections = SmartList()
+        obj._sections = SmartList(Section)
         if children:
             for s in self._sections:
                 obj.append(s.clone())

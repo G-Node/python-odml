@@ -35,7 +35,7 @@ class BaseSection(base.sectionable, Section):
 
         # Sets _sections Smartlist and _repository to None, so run first.
         super(BaseSection, self).__init__()
-        self._props = base.SmartList()
+        self._props = base.SmartList(Property)
 
         try:
             if id is not None:
@@ -373,7 +373,7 @@ class BaseSection(base.sectionable, Section):
         obj = super(BaseSection, self).clone(children)
         obj._id = str(uuid.uuid4())
 
-        obj._props = base.SmartList()
+        obj._props = base.SmartList(Property)
         if children:
             for p in self._props:
                 obj.append(p.clone())
