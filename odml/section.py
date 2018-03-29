@@ -1,4 +1,5 @@
 # -*- coding: utf-8
+import collections
 import uuid
 
 from . import base
@@ -31,6 +32,11 @@ class BaseSection(base.sectionable, Section):
     def __init__(self, name, type=None, parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, id=None):
+
+        # Sets _sections Smartlist and _repository to None, so run first.
+        super(BaseSection, self).__init__()
+        self._props = base.SmartList()
+
         try:
             if id is not None:
                 self._id = str(uuid.UUID(id))
@@ -40,17 +46,16 @@ class BaseSection(base.sectionable, Section):
             print(e)
             self._id = str(uuid.uuid4())
 
-        self._parent = None
         self._name = name
-        self._props = base.SmartList()
         self._definition = definition
         self._reference = reference
         self._repository = repository
         self._link = link
         self._include = include
-        super(BaseSection, self).__init__()
+
         # this may fire a change event, so have the section setup then
         self.type = type
+        self._parent = None
         self.parent = parent
 
     def __repr__(self):
@@ -254,9 +259,12 @@ class BaseSection(base.sectionable, Section):
         """
         return self._merged
 
-    def __append(self, obj):
+    def append(self, obj):
         """
-        Append a Section or Property
+        Method adds single Sections and Properties to the respective child-lists
+        of the current Section.
+
+        :param obj: Section or Property object.
         """
         if isinstance(obj, Section):
             self._sections.append(obj)
@@ -264,37 +272,81 @@ class BaseSection(base.sectionable, Section):
         elif isinstance(obj, Property):
             self._props.append(obj)
             obj._parent = self
+        elif isinstance(obj, collections.Iterable) and not isinstance(obj, str):
+            raise ValueError("odml.Section.append: "
+                             "Use extend to add a list of Sections or Properties.")
         else:
-            raise ValueError("Can only append sections and properties")
+            raise ValueError("odml.Section.append: "
+                             "Can only append Sections or Properties.")
 
-    def append(self, *obj_tuple):
+    def extend(self, obj_list):
         """
-        Append Sections or Properties
+        Method adds Sections and Properties to the respective child-lists
+        of the current Section.
+
+        :param obj_list: Iterable containing Section and Property entries.
         """
-        for obj in obj_tuple:
-            self.__append(obj)
+        if not isinstance(obj_list, collections.Iterable):
+            raise TypeError("'%s' object is not iterable" % type(obj_list).__name__)
+
+        # Make sure only Sections and Properties with unique names will be added.
+        for obj in obj_list:
+            if not isinstance(obj, Section) and not isinstance(obj, Property):
+                raise ValueError("odml.Section.extend: "
+                                 "Can only extend sections and properties.")
+
+            elif isinstance(obj, Section) and obj.name in self.sections:
+                raise KeyError("odml.Section.extend: "
+                               "Section with name '%s' already exists." % obj.name)
+
+            elif isinstance(obj, Property) and obj.name in self.properties:
+                raise KeyError("odml.Section.extend: "
+                               "Property with name '%s' already exists." % obj.name)
+
+        for obj in obj_list:
+            self.append(obj)
 
     def insert(self, position, obj):
         """
-        Insert a Section or Property at the respective position
+        Insert a Section or a Property at the respective child-list position.
+        A ValueError will be raised, if a Section or a Property with the same
+        name already exists in the respective child-list.
+
+        :param position: index at which the object should be inserted.
+        :param obj: Section or Property object.
         """
         if isinstance(obj, Section):
+            if obj.name in self.sections:
+                raise ValueError("odml.Section.insert: "
+                                 "Section with name '%s' already exists." % obj.name)
+
             self._sections.insert(position, obj)
             obj._parent = self
         elif isinstance(obj, Property):
+            if obj.name in self.properties:
+                raise ValueError("odml.Section.insert: "
+                                 "Property with name '%s' already exists." % obj.name)
+
             self._props.insert(position, obj)
-            obj._section = self
+            obj._parent = self
         else:
             raise ValueError("Can only insert sections and properties")
 
     def remove(self, obj):
-        # TODO make sure this is not compare based
+        """
+        Remove a Section or a Property from the respective child-lists of the current
+        Section and sets the parent attribute of the handed in object to None.
+        Raises a ValueError if the object is not a Section or a Property or if
+        the object is not contained in the child-lists.
+
+        :param obj: Section or Property object.
+        """
         if isinstance(obj, Section):
             self._sections.remove(obj)
             obj._parent = None
         elif isinstance(obj, Property):
             self._props.remove(obj)
-            obj._section = None
+            obj._parent = None
         else:
             raise ValueError("Can only remove sections and properties")
 
@@ -330,21 +382,36 @@ class BaseSection(base.sectionable, Section):
 
     def contains(self, obj):
         """
-        Finds a property or section with the same name&type properties or None
+        If the child-lists of the current Section contain a Section with
+        the same *name* and *type* or a Property with the same *name* as
+        the provided object, the found Section or Property is returned.
+
+        :param obj: Section or Property object.
         """
         if isinstance(obj, Section):
             return super(BaseSection, self).contains(obj)
-        for i in self._props:
-            if obj.name == i.name:
-                return i
 
-    def merge(self, section=None):
+        elif isinstance(obj, Property):
+            for i in self._props:
+                if obj.name == i.name:
+                    return i
+        else:
+            raise ValueError("odml.Section.contains:"
+                             "Section or Property object expected.")
+
+    def merge(self, section=None, strict=True):
         """
-        Merges this section with another *section*
+        Merges this section with another *section*.
         See also: :py:attr:`odml.section.BaseSection.link`
         If section is none, sets the link/include attribute (if _link or
         _include are set), causing the section to be automatically merged
         to the referenced section.
+
+        :param section: an odML Section. If section is None, *link* or *include*
+                        will be resolved instead.
+        :param strict: Bool value to indicate whether the attributes of affected
+                       child Properties except their ids and values have to be identical
+                       to be merged. Default is True.
         """
         if section is None:
             # for the high level interface
@@ -357,7 +424,7 @@ class BaseSection(base.sectionable, Section):
         for obj in section:
             mine = self.contains(obj)
             if mine is not None:
-                mine.merge(obj)
+                mine.merge(obj, strict)
             else:
                 mine = obj.clone()
                 mine._merged = obj
@@ -415,3 +482,29 @@ class BaseSection(base.sectionable, Section):
         Returns True if either a *link* or an *include* attribute is specified
         """
         return self._link is not None or self._include is not None
+
+    def _reorder(self, childlist, new_index):
+        l = childlist
+        old_index = l.index(self)
+
+        # 2 cases: insert after old_index / insert before
+        if new_index > old_index:
+            new_index += 1
+        l.insert(new_index, self)
+        if new_index < old_index:
+            del l[old_index + 1]
+        else:
+            del l[old_index]
+        return old_index
+
+    def reorder(self, new_index):
+        """
+        Move this object in its parent child-list to the position *new_index*.
+
+        :return: The old index at which the object was found.
+        """
+        if not self.parent:
+            raise ValueError("odml.Section.reorder: "
+                             "Section has no parent, cannot reorder in parent list.")
+
+        return self._reorder(self.parent.sections, new_index)
