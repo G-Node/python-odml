@@ -130,6 +130,29 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             sec.sections[0] = "subsec"
 
+        # Test set properties
+        prop = Property(name="prop", parent=sec)
+        newprop = Property(name="newprop")
+
+        self.assertEqual(prop.parent, sec)
+        self.assertEqual(sec.properties[0], prop)
+        self.assertEqual(len(sec.properties), 1)
+        self.assertIsNone(newprop.parent)
+
+        sec.properties[0] = newprop
+        self.assertEqual(newprop.parent, sec)
+        self.assertEqual(sec.properties[0], newprop)
+        self.assertEqual(len(sec.properties), 1)
+        self.assertIsNone(prop.parent)
+
+        # Test set property fails
+        with self.assertRaises(ValueError):
+            sec.properties[0] = Document()
+        with self.assertRaises(ValueError):
+            sec.properties[0] = newsec
+        with self.assertRaises(ValueError):
+            sec.properties[0] = "prop"
+
     def test_id(self):
         s = Section(name="S")
         self.assertIsNotNone(s.id)
