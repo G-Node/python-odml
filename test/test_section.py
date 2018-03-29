@@ -87,6 +87,49 @@ class TestSection(unittest.TestCase):
         subsec.parent = None
         self.assertEqual(subsec.get_path(), "/")
 
+    def test_children(self):
+        sec = Section(name="sec")
+
+        # Test set sections
+        subsec = Section(name="subsec", parent=sec)
+        newsec = Section(name="newsec")
+
+        self.assertEqual(subsec.parent, sec)
+        self.assertEqual(sec.sections[0], subsec)
+        self.assertEqual(len(sec.sections), 1)
+        self.assertIsNone(newsec.parent)
+
+        sec.sections[0] = newsec
+        self.assertEqual(newsec.parent, sec)
+        self.assertEqual(sec.sections[0], newsec)
+        self.assertEqual(len(sec.sections), 1)
+        self.assertIsNone(subsec.parent)
+
+        # Test parent cleanup
+        root = Section(name="root")
+        sec.parent = root
+        subsec.parent = newsec
+
+        self.assertEqual(len(newsec.sections), 1)
+        self.assertEqual(newsec.sections[0], subsec)
+        self.assertEqual(subsec.parent, newsec)
+        self.assertEqual(len(root.sections), 1)
+        self.assertEqual(root.sections[0], sec)
+
+        subsec.parent = root
+        self.assertEqual(len(newsec.sections), 0)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(root.sections[1], subsec)
+
+        # Test set section fails
+        with self.assertRaises(ValueError):
+            sec.sections[0] = Document()
+        with self.assertRaises(ValueError):
+            sec.sections[0] = Property("fail")
+        with self.assertRaises(ValueError):
+            sec.sections[0] = "subsec"
+
     def test_id(self):
         s = Section(name="S")
         self.assertIsNotNone(s.id)
