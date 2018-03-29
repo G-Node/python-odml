@@ -113,7 +113,7 @@ class SmartList(SafeList):
         Only values of the instance *content_type* can be added to the SmartList.
         """
         self._content_type = content_type
-        super(SafeList, self).__init__()
+        super(SmartList, self).__init__()
 
     def __getitem__(self, key):
         """
