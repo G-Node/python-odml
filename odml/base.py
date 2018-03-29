@@ -132,6 +132,30 @@ class SmartList(SafeList):
         # and fail eventually
         raise KeyError(key)
 
+    def __setitem__(self, key, value):
+        """
+        Replaces item at list[*key*] with *value*.
+        :param key: index position
+        :param value: object that replaces item at *key* position.
+                      value has to be of the same content type as the list.
+                      In this context usually a Section or a Property.
+        """
+        if not isinstance(value, self._content_type):
+            raise ValueError("List only supports elements of type '%s'" %
+                             self._content_type)
+
+        # If required remove new object from its old parents child-list
+        if hasattr(value, "_parent") and (value._parent and value in value._parent):
+            value._parent.remove(value)
+
+        # If required move parent reference from replaced to new object
+        # and set parent reference on replaced object None.
+        if hasattr(self[key], "_parent"):
+            value._parent = self[key]._parent
+            self[key]._parent = None
+
+        super(SmartList, self).__setitem__(key, value)
+
     def __contains__(self, key):
         for obj in self:
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
