@@ -138,16 +138,14 @@ class SmartList(SafeList):
                 return True
 
     def append(self, *obj_tuple):
-        from odml.section import BaseSection
-        from odml.doc import BaseDocument
         for obj in obj_tuple:
             if obj.name in self:
                 raise KeyError(
                     "Object with the same name already exists! " + str(obj))
 
-            if (not isinstance(obj, BaseSection)) & \
-               isinstance(self, BaseDocument):
-                raise KeyError("Object " + str(obj) + " is not a Section.")
+            if not isinstance(obj, self._content_type):
+                raise ValueError("List only supports elements of type '%s'" %
+                                 self._content_type)
 
             super(SmartList, self).append(obj)
 
