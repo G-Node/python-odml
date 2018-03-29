@@ -84,29 +84,7 @@ class baseobject(_baseobj):
         return id(self)
 
 
-class SafeList(list):
-
-    def index(self, obj):
-        """
-        Find obj in list
-
-        Be sure to use "is" based comparison (instead of __eq__)
-        """
-        for i, e in enumerate(self):
-            if e is obj:
-                return i
-        raise ValueError("remove: %s not in list" % repr(obj))
-
-    def remove(self, obj):
-        """
-        Remove an element from this list.
-
-        Be sure to use "is" based comparison (instead of __eq__)
-        """
-        del self[self.index(obj)]
-
-
-class SmartList(SafeList):
+class SmartList(list):
 
     def __init__(self, content_type):
         """
@@ -160,6 +138,25 @@ class SmartList(SafeList):
         for obj in self:
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
+
+    def index(self, obj):
+        """
+        Find obj in list
+
+        Be sure to use "is" based comparison (instead of __eq__)
+        """
+        for i, e in enumerate(self):
+            if e is obj:
+                return i
+        raise ValueError("remove: %s not in list" % repr(obj))
+
+    def remove(self, obj):
+        """
+        Remove an element from this list.
+
+        Be sure to use "is" based comparison (instead of __eq__)
+        """
+        del self[self.index(obj)]
 
     def append(self, *obj_tuple):
         for obj in obj_tuple:
