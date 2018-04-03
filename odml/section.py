@@ -266,7 +266,7 @@ class BaseSection(base.sectionable, Section):
 
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             self._sections.append(obj)
             obj._parent = self
         elif isinstance(obj, BaseProperty):
@@ -291,11 +291,11 @@ class BaseSection(base.sectionable, Section):
 
         # Make sure only Sections and Properties with unique names will be added.
         for obj in obj_list:
-            if not isinstance(obj, Section) and not isinstance(obj, BaseProperty):
+            if not isinstance(obj, BaseSection) and not isinstance(obj, BaseProperty):
                 raise ValueError("odml.Section.extend: "
                                  "Can only extend sections and properties.")
 
-            elif isinstance(obj, Section) and obj.name in self.sections:
+            elif isinstance(obj, BaseSection) and obj.name in self.sections:
                 raise KeyError("odml.Section.extend: "
                                "Section with name '%s' already exists." % obj.name)
 
@@ -315,7 +315,7 @@ class BaseSection(base.sectionable, Section):
         :param position: index at which the object should be inserted.
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             if obj.name in self.sections:
                 raise ValueError("odml.Section.insert: "
                                  "Section with name '%s' already exists." % obj.name)
@@ -341,7 +341,7 @@ class BaseSection(base.sectionable, Section):
 
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             self._sections.remove(obj)
             obj._parent = None
         elif isinstance(obj, BaseProperty):
@@ -388,7 +388,7 @@ class BaseSection(base.sectionable, Section):
 
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             return super(BaseSection, self).contains(obj)
 
         elif isinstance(obj, BaseProperty):
