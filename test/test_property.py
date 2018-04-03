@@ -432,7 +432,7 @@ class TestProperty(unittest.TestCase):
 
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
-                         reference="portal.g-node.org", uncertainty=0.0)
+                         reference="portal.g-node.org", uncertainty=0.0, value_origin="file")
         p_src = Property("p2", value=[2, 4, 6], unit="Hz", definition="FREUDE schoener GOETTERfunken")
 
         test_p = p_dst.clone()
@@ -451,11 +451,15 @@ class TestProperty(unittest.TestCase):
         p_inv_ref = p_src.clone()
         p_inv_ref.reference = "test"
 
+        p_inv_origin = p_src.clone()
+        p_inv_origin.value_origin = "other file"
+
         test_p = p_dst.clone()
         self.assertRaises(ValueError, test_p.merge, p_inv_unit)
         self.assertRaises(ValueError, test_p.merge, p_inv_def)
         self.assertRaises(ValueError, test_p.merge, p_inv_uncert)
         self.assertRaises(ValueError, test_p.merge, p_inv_ref)
+        self.assertRaises(ValueError, test_p.merge, p_inv_origin)
 
         test_p.reference = None
         test_p.merge(p_src)
@@ -472,6 +476,10 @@ class TestProperty(unittest.TestCase):
         test_p.definition = ""
         test_p.merge(p_src)
         self.assertEqual(test_p.definition, p_src.definition)
+
+        test_p.value_origin = ""
+        test_p.merge(p_src)
+        self.assertEqual(test_p.value_origin, p_src.value_origin)
 
         double_p = Property("adouble", value=3.14)
         int_p = Property("aint", value=3)
