@@ -382,8 +382,18 @@ class BaseProperty(base.baseobject, Property):
         :param source: an odML Property.
         :param strict: If strict is True the dtypes of self and other must be identical.
         """
+        if not isinstance(source, BaseProperty):
+            raise ValueError("odml.Property.merge: odML Property required.")
+
         if strict and self.dtype != source.dtype:
             raise ValueError("odml.Property.merge: src and dest dtypes do not match!")
+        else:
+            # Catch unmerge-able values also at this point to avoid
+            # failing Section tree merges which cannot easily be rolled back.
+            new_value = self._convert_value_input(source.value)
+            if not self._validate_values(new_value):
+                raise ValueError("odml.Property.merge: passed value(s) cannot "
+                                 "be converted to data type '%s'!" % self._dtype)
 
         if self.unit is not None and source.unit is not None and self.unit != source.unit:
             raise ValueError("odml.Property.merge: "
