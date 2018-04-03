@@ -441,6 +441,24 @@ class TestProperty(unittest.TestCase):
             destination.merge_check(source, True)
         destination.merge_check(source, False)
 
+        # Test value check
+        source = Property(name="source", value=[1, 2, 3])
+        destination = Property(name="destination", value=[4, 5, 6])
+        destination.merge_check(source, True)
+
+        # Test value convertable
+        source = Property(name="source", value=["7", "8"])
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        destination.merge_check(source, False)
+
+        # Test value not convertable
+        source = Property(name="source", value=["nine", "ten"])
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
         # Test unit check
         source = Property(name="source", unit="Hz")
         destination = Property(name="destination", unit="Hz")
