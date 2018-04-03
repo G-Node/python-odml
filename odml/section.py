@@ -7,7 +7,7 @@ from . import format
 from . import terminology
 from .doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
-from .property import Property
+from .property import BaseProperty
 # it MUST however not be used to create any Property objects
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
@@ -35,7 +35,7 @@ class BaseSection(base.sectionable, Section):
 
         # Sets _sections Smartlist and _repository to None, so run first.
         super(BaseSection, self).__init__()
-        self._props = base.SmartList(Property)
+        self._props = base.SmartList(BaseProperty)
 
         try:
             if id is not None:
@@ -269,7 +269,7 @@ class BaseSection(base.sectionable, Section):
         if isinstance(obj, Section):
             self._sections.append(obj)
             obj._parent = self
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             self._props.append(obj)
             obj._parent = self
         elif isinstance(obj, collections.Iterable) and not isinstance(obj, str):
@@ -291,7 +291,7 @@ class BaseSection(base.sectionable, Section):
 
         # Make sure only Sections and Properties with unique names will be added.
         for obj in obj_list:
-            if not isinstance(obj, Section) and not isinstance(obj, Property):
+            if not isinstance(obj, Section) and not isinstance(obj, BaseProperty):
                 raise ValueError("odml.Section.extend: "
                                  "Can only extend sections and properties.")
 
@@ -299,7 +299,7 @@ class BaseSection(base.sectionable, Section):
                 raise KeyError("odml.Section.extend: "
                                "Section with name '%s' already exists." % obj.name)
 
-            elif isinstance(obj, Property) and obj.name in self.properties:
+            elif isinstance(obj, BaseProperty) and obj.name in self.properties:
                 raise KeyError("odml.Section.extend: "
                                "Property with name '%s' already exists." % obj.name)
 
@@ -322,7 +322,7 @@ class BaseSection(base.sectionable, Section):
 
             self._sections.insert(position, obj)
             obj._parent = self
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             if obj.name in self.properties:
                 raise ValueError("odml.Section.insert: "
                                  "Property with name '%s' already exists." % obj.name)
@@ -344,7 +344,7 @@ class BaseSection(base.sectionable, Section):
         if isinstance(obj, Section):
             self._sections.remove(obj)
             obj._parent = None
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             self._props.remove(obj)
             obj._parent = None
         else:
@@ -373,7 +373,7 @@ class BaseSection(base.sectionable, Section):
         obj = super(BaseSection, self).clone(children)
         obj._id = str(uuid.uuid4())
 
-        obj._props = base.SmartList(Property)
+        obj._props = base.SmartList(BaseProperty)
         if children:
             for p in self._props:
                 obj.append(p.clone())
@@ -391,7 +391,7 @@ class BaseSection(base.sectionable, Section):
         if isinstance(obj, Section):
             return super(BaseSection, self).contains(obj)
 
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             for i in self._props:
                 if obj.name == i.name:
                     return i
