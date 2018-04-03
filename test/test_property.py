@@ -430,6 +430,73 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             prop.new_id("crash and burn")
 
+    def test_merge_check(self):
+        # Test dtype check
+        source = Property(name="source", dtype="string")
+        destination = Property(name="destination", dtype="string")
+
+        destination.merge_check(source, True)
+        source.dtype = "int"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        destination.merge_check(source, False)
+
+        # Test unit check
+        source = Property(name="source", unit="Hz")
+        destination = Property(name="destination", unit="Hz")
+
+        destination.merge_check(source, True)
+        source.unit = "s"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
+        # Test uncertainty check
+        source = Property(name="source", uncertainty=0.0)
+        destination = Property(name="destination", uncertainty=0.0)
+
+        destination.merge_check(source, True)
+        source.uncertainty = 10.0
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
+        # Test definition check
+        source = Property(name="source", definition="Freude\t schoener\nGoetterfunken\n")
+        destination = Property(name="destination",
+                               definition="FREUDE schoener GOETTERfunken")
+
+        destination.merge_check(source, True)
+        source.definition = "Freunde schoender Goetterfunken"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
+        # Test reference check
+        source = Property(name="source", reference="portal.g-node.org")
+        destination = Property(name="destination", reference="portal.g-node.org")
+
+        destination.merge_check(source, True)
+        source.reference = "portal.g-node.org/odml/terminologies/v1.1"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
+        # Test value origin check
+        source = Property(name="source", value_origin="file")
+        destination = Property(name="destination", value_origin="file")
+
+        destination.merge_check(source, True)
+        source.value_origin = "other file"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
                          reference="portal.g-node.org", uncertainty=0.0, value_origin="file")
