@@ -398,7 +398,8 @@ class BaseProperty(base.baseobject, Property):
             if self_def != other_def:
                 raise ValueError("odml.Property.merge: src and dest definitions do not match!")
 
-        if self.uncertainty is not None and other.uncertainty is not None:
+        if (self.uncertainty is not None and other.uncertainty is not None and
+                self.uncertainty != other.uncertainty):
             raise ValueError("odml.Property.merge: src and dest uncertainty both set and do not match!")
 
         if self.reference is not None and other.reference is not None:
