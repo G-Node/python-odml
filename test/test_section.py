@@ -33,6 +33,12 @@ class TestSection(unittest.TestCase):
         sec.reference = "%s_edit" % sec_ref
         self.assertEqual(sec.reference, "%s_edit" % sec_ref)
 
+        # Test setting attributes to None when '' is passed.
+        sec.reference = ""
+        self.assertIsNone(sec.reference)
+        sec.definition = ""
+        self.assertIsNone(sec.definition)
+
     def test_parent(self):
         s = Section("Section")
         self.assertIsNone(s.parent)

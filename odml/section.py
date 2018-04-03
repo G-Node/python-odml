@@ -173,8 +173,10 @@ class BaseSection(base.sectionable, Section):
             return None
 
     @definition.setter
-    def definition(self, val):
-        self._definition = val
+    def definition(self, new_value):
+        if new_value == "":
+            new_value = None
+        self._definition = new_value
 
     @definition.deleter
     def definition(self):
@@ -186,6 +188,8 @@ class BaseSection(base.sectionable, Section):
 
     @reference.setter
     def reference(self, new_value):
+        if new_value == "":
+            new_value = None
         self._reference = new_value
 
     # API (public)
