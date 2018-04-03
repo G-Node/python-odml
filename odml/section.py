@@ -403,6 +403,37 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("odml.Section.contains:"
                              "Section or Property object expected.")
 
+    def merge_check(self, source_section, strict):
+        """
+        Recursively checks whether a source Section and all its children can be merged
+        with self and all its children as destination and raises a ValueError if any of
+        the Section attributes definition and reference differ in source and destination.
+
+        :param source_section: an odML Section.
+        :param strict: If strict is True, the dtypes of same named Properties on the same
+                       tree level in source and destination have to be identical to pass
+                       the check.
+        """
+        if self.definition is not None and source_section.definition is not None:
+            self_def = ''.join(map(str.strip, self.definition.split())).lower()
+            other_def = ''.join(map(str.strip, source_section.definition.split())).lower()
+            if self_def != other_def:
+                raise ValueError(
+                    "odml.Section.merge: src and dest definitions do not match!")
+
+        if self.reference is not None and source_section.reference is not None:
+            self_ref = ''.join(map(str.strip, self.reference.lower().split()))
+            other_ref = ''.join(map(str.strip, source_section.reference.lower().split()))
+            if self_ref != other_ref:
+                raise ValueError(
+                    "odml.Section.merge: src and dest references are in conflict!")
+
+        # Check all the way down the rabbit hole / Section tree.
+        for obj in source_section:
+            mine = self.contains(obj)
+            if mine is not None:
+                mine.merge_check(obj, strict)
+
     def merge(self, section=None, strict=True):
         """
         Merges this section with another *section*.
