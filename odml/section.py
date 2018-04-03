@@ -456,6 +456,16 @@ class BaseSection(base.sectionable, Section):
                 self.include = self._include
             return
 
+        # Check all the way down the tree if the destination source and
+        # its children can be merged with self and its children since
+        # there is no rollback in case of a downstream merge error.
+        self.merge_check(section, strict)
+
+        if self.definition is None and section.definition is not None:
+            self.definition = section.definition
+        if self.reference is None and section.reference is not None:
+            self.reference = section.reference
+
         for obj in section:
             mine = self.contains(obj)
             if mine is not None:
