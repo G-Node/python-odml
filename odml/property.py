@@ -438,7 +438,9 @@ class BaseProperty(base.baseobject, Property):
                even when information may be lost. Default is True, i.e. no conversion,
                and a ValueError will be raised if types do not match.
         """
-        assert(isinstance(other, BaseProperty))
+        if not isinstance(other, BaseProperty):
+            raise TypeError("odml.Property.merge: odml Property required.")
+
         self.merge_check(other, strict)
 
         if self.value_origin is None and other.value_origin is not None:
