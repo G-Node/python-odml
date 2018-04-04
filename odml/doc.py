@@ -92,7 +92,11 @@ class BaseDocument(base.sectionable, Document):
 
     @date.setter
     def date(self, new_value):
-        self._date = dtypes.get(new_value, "date")
+        if not new_value:
+            new_value = None
+        else:
+            new_value = dtypes.date_set(new_value)
+        self._date = new_value
 
     @property
     def parent(self):
