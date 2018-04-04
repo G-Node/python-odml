@@ -376,29 +376,41 @@ class BaseProperty(base.baseobject, Property):
     def merge_check(self, source, strict=True):
         """
         Checks whether a source Property can be merged with self as destination and
-        raises a ValueError if any of the attributes definition, uncertainty, reference
-        or value_origin and potentially dtype differ in source and destination.
+        raises a ValueError if the values of source and destination are not compatible.
+        With parameter *strict=True* a ValueError is also raised, if any of the
+        attributes unit, definition, uncertainty, reference or value_origin and dtype
+        differ in source and destination.
 
         :param source: an odML Property.
-        :param strict: If strict is True the dtypes of self and other must be identical.
+        :param strict: If True, the attributes dtype, unit, uncertainty, definition,
+                       reference and value_origin of source and destination
+                       must be identical.
         """
         if not isinstance(source, BaseProperty):
             raise ValueError("odml.Property.merge: odML Property required.")
 
-        if strict and self.dtype != source.dtype:
+        # Catch unmerge-able values at this point to avoid
+        # failing Section tree merges which cannot easily be rolled back.
+        new_value = self._convert_value_input(source.value)
+        if not self._validate_values(new_value):
+            raise ValueError("odml.Property.merge: passed value(s) cannot "
+                             "be converted to data type '%s'!" % self._dtype)
+        if not strict:
+            return
+
+        if (self.dtype is not None and source.dtype is not None and
+                self.dtype != source.dtype):
             raise ValueError("odml.Property.merge: src and dest dtypes do not match!")
-        else:
-            # Catch unmerge-able values also at this point to avoid
-            # failing Section tree merges which cannot easily be rolled back.
-            new_value = self._convert_value_input(source.value)
-            if not self._validate_values(new_value):
-                raise ValueError("odml.Property.merge: passed value(s) cannot "
-                                 "be converted to data type '%s'!" % self._dtype)
 
         if self.unit is not None and source.unit is not None and self.unit != source.unit:
             raise ValueError("odml.Property.merge: "
                              "src and dest units (%s, %s) do not match!" %
                              (source.unit, self.unit))
+
+        if (self.uncertainty is not None and source.uncertainty is not None and
+                self.uncertainty != source.uncertainty):
+            raise ValueError("odml.Property.merge: "
+                             "src and dest uncertainty both set and do not match!")
 
         if self.definition is not None and source.definition is not None:
             self_def = ''.join(map(str.strip, self.definition.split())).lower()
@@ -406,11 +418,6 @@ class BaseProperty(base.baseobject, Property):
             if self_def != other_def:
                 raise ValueError("odml.Property.merge: "
                                  "src and dest definitions do not match!")
-
-        if (self.uncertainty is not None and source.uncertainty is not None and
-                self.uncertainty != source.uncertainty):
-            raise ValueError("odml.Property.merge: "
-                             "src and dest uncertainty both set and do not match!")
 
         if self.reference is not None and source.reference is not None:
             self_ref = ''.join(map(str.strip, self.reference.lower().split()))
