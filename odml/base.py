@@ -95,8 +95,7 @@ class SmartList(list):
 
     def __getitem__(self, key):
         """
-        Provides element index also by searching for an element with a given
-        name
+        Provides element index also by searching for an element with a given name.
         """
         # Try normal list index first (for integers)
         if isinstance(key, int):
@@ -142,8 +141,6 @@ class SmartList(list):
     def index(self, obj):
         """
         Find obj in list
-
-        Be sure to use "is" based comparison (instead of __eq__)
         """
         for i, e in enumerate(self):
             if e is obj:
@@ -153,8 +150,6 @@ class SmartList(list):
     def remove(self, obj):
         """
         Remove an element from this list.
-
-        Be sure to use "is" based comparison (instead of __eq__)
         """
         del self[self.index(obj)]
 
