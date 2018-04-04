@@ -9,6 +9,24 @@ class TestSection(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_simple_attributes(self):
+        author = "HPL"
+        version = "4.8.15"
+        doc = Document(author=author, version=version)
+
+        self.assertEqual(doc.author, author)
+        self.assertEqual(doc.version, version)
+
+        doc.author = ""
+        doc.version = ""
+        self.assertIsNone(doc.author)
+        self.assertIsNone(doc.version)
+
+        doc.author = author
+        doc.version = version
+        self.assertEqual(doc.author, author)
+        self.assertEqual(doc.version, version)
+
     def test_id(self):
         doc = Document()
         self.assertIsNotNone(doc.id)
