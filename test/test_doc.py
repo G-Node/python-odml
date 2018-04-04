@@ -1,6 +1,8 @@
+import datetime
 import unittest
 
 from odml import Document
+from odml.dtypes import FORMAT_DATE
 
 
 class TestSection(unittest.TestCase):
@@ -38,3 +40,31 @@ class TestSection(unittest.TestCase):
         # Test invalid custom id exception.
         with self.assertRaises(ValueError):
             doc.new_id("crash and burn")
+
+    def test_date(self):
+        datestring = "2000-01-02"
+        doc = Document(date=datestring)
+
+        self.assertIsInstance(doc.date, datetime.date)
+        self.assertEqual(doc.date,
+                         datetime.datetime.strptime(datestring, FORMAT_DATE).date())
+
+        doc.date = None
+        self.assertIsNone(doc.date)
+
+        doc.date = datestring
+        self.assertIsInstance(doc.date, datetime.date)
+        self.assertEqual(doc.date,
+                         datetime.datetime.strptime(datestring, FORMAT_DATE).date())
+
+        doc.date = []
+        self.assertIsNone(doc.date)
+        doc.date = {}
+        self.assertIsNone(doc.date)
+        doc.date = ()
+        self.assertIsNone(doc.date)
+        doc.date = ""
+        self.assertIsNone(doc.date)
+
+        with self.assertRaises(ValueError):
+            doc.date = "some format"
