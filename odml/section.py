@@ -403,7 +403,7 @@ class BaseSection(base.sectionable, Section):
             raise ValueError("odml.Section.contains:"
                              "Section or Property object expected.")
 
-    def merge_check(self, source_section, strict):
+    def merge_check(self, source_section, strict=True):
         """
         Recursively checks whether a source Section and all its children can be merged
         with self and all its children as destination and raises a ValueError if any of

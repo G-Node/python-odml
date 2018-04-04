@@ -373,7 +373,7 @@ class BaseProperty(base.baseobject, Property):
 
         return obj
 
-    def merge_check(self, source, strict):
+    def merge_check(self, source, strict=True):
         """
         Checks whether a source Property can be merged with self as destination and
         raises a ValueError if any of the attributes definition, uncertainty, reference
