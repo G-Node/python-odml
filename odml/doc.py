@@ -88,7 +88,7 @@ class BaseDocument(base.sectionable, Document):
         """
         The date the document was created.
         """
-        return dtypes.set(self._date, "date")
+        return self._date
 
     @date.setter
     def date(self, new_value):
