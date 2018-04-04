@@ -435,15 +435,16 @@ class BaseProperty(base.baseobject, Property):
 
     def merge(self, other, strict=True):
         """
-        Merges the property 'other' into self, if possible. Information
-        will be synchronized. Method will raise a ValueError when the
-        information in this property and the passed property are in
-        conflict.
+        Merges the Property 'other' into self, if possible. Information
+        will be synchronized. By default the method will raise a ValueError when the
+        information in this property and the passed property are in conflict.
 
         :param other: an odML Property.
         :param strict: Bool value to indicate whether types should be implicitly converted
                even when information may be lost. Default is True, i.e. no conversion,
-               and a ValueError will be raised if types do not match.
+               and a ValueError will be raised if types or other attributes do not match.
+               If a conflict arises with strict=False, the attribute value of self will
+               be kept, while the attribute value of other will be lost.
         """
         if not isinstance(other, BaseProperty):
             raise TypeError("odml.Property.merge: odml Property required.")
