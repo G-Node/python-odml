@@ -410,18 +410,18 @@ class BaseSection(base.sectionable, Section):
         the Section attributes definition and reference differ in source and destination.
 
         :param source_section: an odML Section.
-        :param strict: If strict is True, the dtypes of same named Properties on the same
-                       tree level in source and destination have to be identical to pass
-                       the check.
+        :param strict: If True, definition and reference attributes of any merged Sections
+                       as well as most attributes of merged Properties on the same
+                       tree level in source and destination have to be identical.
         """
-        if self.definition is not None and source_section.definition is not None:
+        if strict and self.definition is not None and source_section.definition is not None:
             self_def = ''.join(map(str.strip, self.definition.split())).lower()
             other_def = ''.join(map(str.strip, source_section.definition.split())).lower()
             if self_def != other_def:
                 raise ValueError(
                     "odml.Section.merge: src and dest definitions do not match!")
 
-        if self.reference is not None and source_section.reference is not None:
+        if strict and self.reference is not None and source_section.reference is not None:
             self_ref = ''.join(map(str.strip, self.reference.lower().split()))
             other_ref = ''.join(map(str.strip, source_section.reference.lower().split()))
             if self_ref != other_ref:
