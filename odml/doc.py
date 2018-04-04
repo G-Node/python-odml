@@ -69,6 +69,8 @@ class BaseDocument(base.sectionable, Document):
 
     @author.setter
     def author(self, new_value):
+        if new_value == "":
+            new_value = None
         self._author = new_value
 
     @property
@@ -81,6 +83,8 @@ class BaseDocument(base.sectionable, Document):
 
     @version.setter
     def version(self, new_value):
+        if new_value == "":
+            new_value = None
         self._version = new_value
 
     @property
