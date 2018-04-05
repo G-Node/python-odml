@@ -430,9 +430,96 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             prop.new_id("crash and burn")
 
+    def test_merge_check(self):
+        # Test dtype check
+        source = Property(name="source", dtype="string")
+        destination = Property(name="destination", dtype="string")
+
+        destination.merge_check(source)
+        source.dtype = "int"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
+        # Test value check
+        source = Property(name="source", value=[1, 2, 3])
+        destination = Property(name="destination", value=[4, 5, 6])
+        destination.merge_check(source)
+
+        # Test value convertable
+        source = Property(name="source", value=["7", "8"])
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
+        # Test value not convertable
+        source = Property(name="source", value=["nine", "ten"])
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, False)
+
+        # Test unit check
+        source = Property(name="source", unit="Hz")
+        destination = Property(name="destination", unit="Hz")
+
+        destination.merge_check(source)
+        source.unit = "s"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
+        # Test uncertainty check
+        source = Property(name="source", uncertainty=0.0)
+        destination = Property(name="destination", uncertainty=0.0)
+
+        destination.merge_check(source)
+        source.uncertainty = 10.0
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
+        # Test definition check
+        source = Property(name="source", definition="Freude\t schoener\nGoetterfunken\n")
+        destination = Property(name="destination",
+                               definition="FREUDE schoener GOETTERfunken")
+
+        destination.merge_check(source)
+        source.definition = "Freunde schoender Goetterfunken"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
+        # Test reference check
+        source = Property(name="source", reference="portal.g-node.org")
+        destination = Property(name="destination", reference="portal.g-node.org")
+
+        destination.merge_check(source)
+        source.reference = "portal.g-node.org/odml/terminologies/v1.1"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
+        # Test value origin check
+        source = Property(name="source", value_origin="file")
+        destination = Property(name="destination", value_origin="file")
+
+        destination.merge_check(source)
+        source.value_origin = "other file"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source)
+
+        destination.merge_check(source, False)
+
     def test_merge(self):
         p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
-                         reference="portal.g-node.org", uncertainty=0.0)
+                         reference="portal.g-node.org", uncertainty=0.0, value_origin="file")
         p_src = Property("p2", value=[2, 4, 6], unit="Hz", definition="FREUDE schoener GOETTERfunken")
 
         test_p = p_dst.clone()
@@ -451,11 +538,15 @@ class TestProperty(unittest.TestCase):
         p_inv_ref = p_src.clone()
         p_inv_ref.reference = "test"
 
+        p_inv_origin = p_src.clone()
+        p_inv_origin.value_origin = "other file"
+
         test_p = p_dst.clone()
         self.assertRaises(ValueError, test_p.merge, p_inv_unit)
         self.assertRaises(ValueError, test_p.merge, p_inv_def)
         self.assertRaises(ValueError, test_p.merge, p_inv_uncert)
         self.assertRaises(ValueError, test_p.merge, p_inv_ref)
+        self.assertRaises(ValueError, test_p.merge, p_inv_origin)
 
         test_p.reference = None
         test_p.merge(p_src)
@@ -472,6 +563,10 @@ class TestProperty(unittest.TestCase):
         test_p.definition = ""
         test_p.merge(p_src)
         self.assertEqual(test_p.definition, p_src.definition)
+
+        test_p.value_origin = ""
+        test_p.merge(p_src)
+        self.assertEqual(test_p.value_origin, p_src.value_origin)
 
         double_p = Property("adouble", value=3.14)
         int_p = Property("aint", value=3)

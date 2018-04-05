@@ -33,6 +33,12 @@ class TestSection(unittest.TestCase):
         sec.reference = "%s_edit" % sec_ref
         self.assertEqual(sec.reference, "%s_edit" % sec_ref)
 
+        # Test setting attributes to None when '' is passed.
+        sec.reference = ""
+        self.assertIsNone(sec.reference)
+        sec.definition = ""
+        self.assertIsNone(sec.definition)
+
     def test_parent(self):
         s = Section("Section")
         self.assertIsNone(s.parent)
@@ -86,6 +92,72 @@ class TestSection(unittest.TestCase):
 
         subsec.parent = None
         self.assertEqual(subsec.get_path(), "/")
+
+    def test_children(self):
+        sec = Section(name="sec")
+
+        # Test set sections
+        subsec = Section(name="subsec", parent=sec)
+        newsec = Section(name="newsec")
+
+        self.assertEqual(subsec.parent, sec)
+        self.assertEqual(sec.sections[0], subsec)
+        self.assertEqual(len(sec.sections), 1)
+        self.assertIsNone(newsec.parent)
+
+        sec.sections[0] = newsec
+        self.assertEqual(newsec.parent, sec)
+        self.assertEqual(sec.sections[0], newsec)
+        self.assertEqual(len(sec.sections), 1)
+        self.assertIsNone(subsec.parent)
+
+        # Test parent cleanup
+        root = Section(name="root")
+        sec.parent = root
+        subsec.parent = newsec
+
+        self.assertEqual(len(newsec.sections), 1)
+        self.assertEqual(newsec.sections[0], subsec)
+        self.assertEqual(subsec.parent, newsec)
+        self.assertEqual(len(root.sections), 1)
+        self.assertEqual(root.sections[0], sec)
+
+        subsec.parent = root
+        self.assertEqual(len(newsec.sections), 0)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(root.sections[1], subsec)
+
+        # Test set section fails
+        with self.assertRaises(ValueError):
+            sec.sections[0] = Document()
+        with self.assertRaises(ValueError):
+            sec.sections[0] = Property("fail")
+        with self.assertRaises(ValueError):
+            sec.sections[0] = "subsec"
+
+        # Test set properties
+        prop = Property(name="prop", parent=sec)
+        newprop = Property(name="newprop")
+
+        self.assertEqual(prop.parent, sec)
+        self.assertEqual(sec.properties[0], prop)
+        self.assertEqual(len(sec.properties), 1)
+        self.assertIsNone(newprop.parent)
+
+        sec.properties[0] = newprop
+        self.assertEqual(newprop.parent, sec)
+        self.assertEqual(sec.properties[0], newprop)
+        self.assertEqual(len(sec.properties), 1)
+        self.assertIsNone(prop.parent)
+
+        # Test set property fails
+        with self.assertRaises(ValueError):
+            sec.properties[0] = Document()
+        with self.assertRaises(ValueError):
+            sec.properties[0] = newsec
+        with self.assertRaises(ValueError):
+            sec.properties[0] = "prop"
 
     def test_id(self):
         s = Section(name="S")
@@ -377,6 +449,252 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             sec.contains("some info")
 
+    def test_merge_check(self):
+        # -- Root level Section checks
+
+        # Test empty Section check
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        destination.merge_check(source, True)
+
+        # Test definition check
+        source = Section(name="source", definition="def")
+        destination = Section(name="destination", definition="def")
+
+        destination.merge_check(source, True)
+        source.definition = "other def"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # Test reference check
+        source = Section(name="source", reference="ref")
+        destination = Section(name="destination", reference="ref")
+
+        destination.merge_check(source, True)
+        source.reference = "other ref"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # -- First child level Section checks
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_sec_one = Section(name="lvl", type="one",
+                            reference="ref", definition="def", parent=source)
+        s_sec_two = Section(name="unrelated", type="one",
+                            reference="one", definition="one", parent=source)
+
+        d_sec_one = Section(name="lvl", type="one",
+                            reference="ref", definition="def", parent=destination)
+        d_sec_two = Section(name="unrelated", type="two",
+                            reference="two", definition="two", parent=destination)
+
+        # Test Section child level definition check
+        destination.merge_check(source, True)
+        s_sec_one.definition = "other def"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # Test Section child level reference check
+        s_sec_one.definition = "def"
+        s_sec_one.reference = "other ref"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # -- Second child level Section checks
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_sec_one = Section(name="lvl", type="one",
+                            reference="ref", definition="def", parent=source)
+        s_subsec_one = Section(name="lvl", type="two",
+                               reference="ref2", definition="def2", parent=s_sec_one)
+        s_sec_two = Section(name="unrelated", type="one",
+                            reference="one", definition="one", parent=source)
+        s_subsec_two = Section(name="lvl", type="two",
+                               reference="none1", definition="none1", parent=s_sec_two)
+
+        d_sec_one = Section(name="lvl", type="one",
+                            reference="ref", definition="def", parent=destination)
+        d_subsec_one = Section(name="lvl", type="two",
+                               reference="ref2", definition="def2", parent=d_sec_one)
+        d_sec_two = Section(name="unrelated", type="two",
+                            reference="two", definition="two", parent=destination)
+        d_subsec_two = Section(name="lvl", type="two",
+                               reference="none2", definition="none2", parent=d_sec_two)
+
+        # Test Section 2nd child level definition check
+        # Check no definition/reference ValueError between s_subsec_two and d_subsec_one
+        # since their parents will not be merged.
+        destination.merge_check(source, True)
+
+        # Raise a definition ValueError between s_subsec_one and d_subsec_one
+        # since their parents will be merged.
+        s_subsec_one.definition = "other def"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # Test Section 2nd child level reference check
+        s_subsec_one.definition = "def2"
+
+        # Raise a reference ValueError between s_subsec_one and d_subsec_one
+        # since their parents will be merged.
+        s_subsec_one.reference = "other ref"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # -- Root level Property checks
+        # All Property checks will only test unit failure in the Section merge context.
+        # Other failures are covered by the specific Property merge check tests.
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_prop = Property(name="prop", parent=source)
+        d_prop = Property(name="prop", parent=destination)
+
+        destination.merge_check(source, True)
+        s_prop.unit = "Hz"
+        d_prop.unit = "s"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # -- First child level Property checks
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_prop_one = Property(name="lvl one", unit="Hz", parent=source)
+        s_prop_two = Property(name="unrelated one", unit="one", parent=source)
+
+        d_prop_one = Property(name="lvl one", unit="Hz", parent=destination)
+        d_prop_two = Property(name="unrelated two", unit="two", parent=destination)
+
+        # Test Property child level check
+        destination.merge_check(source, True)
+
+        # Test raise ValueError between s_prop_one and d_prop_one
+        s_prop_one.unit = "other unit"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+        # -- Second child level Property checks
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_sec_one = Section(name="lvl", type="one", parent=source)
+        s_subprop_one = Property(name="lvl one", unit="Hz", parent=s_sec_one)
+
+        s_sec_two = Section(name="unrelated", type="one", parent=source)
+        s_subprop_two = Property(name="unrelated one", unit="one", parent=s_sec_two)
+
+        d_sec_one = Section(name="lvl", type="one", parent=destination)
+        d_subprop_one = Property(name="lvl one", unit="Hz", parent=d_sec_one)
+
+        d_sec_two = Section(name="unrelated", type="two", parent=destination)
+        d_subprop_two = Property(name="unrelated one", unit="two", parent=d_sec_two)
+
+        # Test Property 2nd child level definition check
+        # Check no unit ValueError between s_subprop_two and d_subprop_one
+        # since their parents will not be merged.
+        destination.merge_check(source, True)
+
+        # Raise a unit ValueError between s_subprop_one and d_subprop_one
+        # since their parents will be merged.
+        s_subprop_one.unit = "other unit"
+        with self.assertRaises(ValueError):
+            destination.merge_check(source, True)
+
+    def test_merge(self):
+        # -- Root level Section merge tests
+        source = Section(name="source", definition="def", reference="ref")
+        destination = Section(name="destination")
+
+        destination.merge(source)
+        self.assertEqual(destination.definition, source.definition)
+        self.assertEqual(destination.reference, source.reference)
+
+        # -- First child level Section merge tests
+        s_sec_one = Section(name="lvl", type="one", definition="def", parent=source)
+        s_sec_two = Section(name="other", type="one", parent=source)
+        d_sec_one = Section(name="lvl", type="one", parent=destination)
+
+        self.assertEqual(len(destination), 1)
+        self.assertIsNone(destination.sections["lvl"].definition)
+        self.assertIsNone(destination.sections["lvl"].reference)
+
+        destination.merge(source)
+        self.assertEqual(len(destination), 2)
+        self.assertEqual(destination.sections["lvl"].definition, s_sec_one.definition)
+        self.assertEqual(destination.sections["lvl"].reference, s_sec_one.reference)
+        self.assertEqual(destination.sections["other"], s_sec_two)
+
+        # -- Root level Property merge tests
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_prop_one = Property(name="prop_one", unit="Hz", parent=source)
+        s_prop_two = Property(name="prop_two", parent=source)
+        d_prop_one = Property(name="prop_one", parent=destination)
+
+        self.assertEqual(len(destination.properties), 1)
+        self.assertIsNone(destination.properties["prop_one"].unit)
+
+        destination.merge(source)
+        self.assertEqual(len(destination.properties), 2)
+        self.assertEqual(destination.properties["prop_one"].unit, s_prop_one.unit)
+        self.assertEqual(destination.properties["prop_two"], s_prop_two)
+
+        # -- First child level Property merge tests
+        source = Section(name="source")
+        destination = Section(name="destination")
+
+        s_sec_one = Section(name="lvl", type="one", definition="def", parent=source)
+        s_prop_one = Property(name="prop_one", unit="Hz", parent=s_sec_one)
+        s_prop_two = Property(name="prop_two", parent=s_sec_one)
+
+        d_sec_one = Section(name="lvl", type="one", parent=destination)
+        d_prop_one = Property(name="prop_one", parent=d_sec_one)
+
+        self.assertEqual(len(destination.properties), 0)
+        self.assertEqual(len(destination.sections["lvl"].properties), 1)
+        self.assertIsNone(destination.sections["lvl"].properties["prop_one"].unit)
+
+        destination.merge(source)
+        self.assertEqual(len(destination.properties), 0)
+        self.assertEqual(len(destination.sections["lvl"].properties), 2)
+        self.assertEqual(destination.sections["lvl"].properties["prop_one"].unit,
+                         s_prop_one.unit)
+        self.assertEqual(destination.sections["lvl"].properties["prop_two"],
+                         s_prop_two)
+
+        # -- Test nothing merged on second child level ValueError
+        source = Section(name="source", definition="def", reference="ref")
+        destination = Section(name="destination")
+
+        s_sec_one = Section(name="lvl", type="one", definition="def", parent=source)
+        s_sec_two = Section(name="other", type="one", parent=source)
+        d_sec_one = Section(name="lvl", type="one", parent=destination)
+
+        s_subprop_one = Property(name="prop", value=[1, 2, 3], parent=s_sec_one)
+        d_subprop_one = Property(name="prop", value=["four", "five"], parent=d_sec_one)
+
+        self.assertEqual(len(destination.sections), 1)
+        self.assertEqual(len(destination.sections["lvl"].properties), 1)
+        self.assertIsNone(destination.definition)
+        self.assertIsNone(destination.sections["lvl"].definition)
+        self.assertEqual(destination.sections["lvl"].properties[0].value,
+                         d_subprop_one.value)
+
+        with self.assertRaises(ValueError):
+            destination.merge(source)
+
+        self.assertEqual(len(destination.sections), 1)
+        self.assertEqual(len(destination.sections["lvl"].properties), 1)
+        self.assertIsNone(destination.definition)
+        self.assertIsNone(destination.sections["lvl"].definition)
+        self.assertEqual(destination.sections["lvl"].properties[0].value,
+                         d_subprop_one.value)
+
     def test_link(self):
         pass
 
@@ -384,9 +702,6 @@ class TestSection(unittest.TestCase):
         pass
 
     def test_repository(self):
-        pass
-
-    def test_merge(self):
         pass
 
     def test_unmerge(self):

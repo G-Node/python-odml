@@ -373,45 +373,83 @@ class BaseProperty(base.baseobject, Property):
 
         return obj
 
+    def merge_check(self, source, strict=True):
+        """
+        Checks whether a source Property can be merged with self as destination and
+        raises a ValueError if the values of source and destination are not compatible.
+        With parameter *strict=True* a ValueError is also raised, if any of the
+        attributes unit, definition, uncertainty, reference or value_origin and dtype
+        differ in source and destination.
+
+        :param source: an odML Property.
+        :param strict: If True, the attributes dtype, unit, uncertainty, definition,
+                       reference and value_origin of source and destination
+                       must be identical.
+        """
+        if not isinstance(source, BaseProperty):
+            raise ValueError("odml.Property.merge: odML Property required.")
+
+        # Catch unmerge-able values at this point to avoid
+        # failing Section tree merges which cannot easily be rolled back.
+        new_value = self._convert_value_input(source.value)
+        if not self._validate_values(new_value):
+            raise ValueError("odml.Property.merge: passed value(s) cannot "
+                             "be converted to data type '%s'!" % self._dtype)
+        if not strict:
+            return
+
+        if (self.dtype is not None and source.dtype is not None and
+                self.dtype != source.dtype):
+            raise ValueError("odml.Property.merge: src and dest dtypes do not match!")
+
+        if self.unit is not None and source.unit is not None and self.unit != source.unit:
+            raise ValueError("odml.Property.merge: "
+                             "src and dest units (%s, %s) do not match!" %
+                             (source.unit, self.unit))
+
+        if (self.uncertainty is not None and source.uncertainty is not None and
+                self.uncertainty != source.uncertainty):
+            raise ValueError("odml.Property.merge: "
+                             "src and dest uncertainty both set and do not match!")
+
+        if self.definition is not None and source.definition is not None:
+            self_def = ''.join(map(str.strip, self.definition.split())).lower()
+            other_def = ''.join(map(str.strip, source.definition.split())).lower()
+            if self_def != other_def:
+                raise ValueError("odml.Property.merge: "
+                                 "src and dest definitions do not match!")
+
+        if self.reference is not None and source.reference is not None:
+            self_ref = ''.join(map(str.strip, self.reference.lower().split()))
+            other_ref = ''.join(map(str.strip, source.reference.lower().split()))
+            if self_ref != other_ref:
+                raise ValueError("odml.Property.merge: "
+                                 "src and dest references are in conflict!")
+
+        if self.value_origin is not None and source.value_origin is not None:
+            self_ori = ''.join(map(str.strip, self.value_origin.lower().split()))
+            other_ori = ''.join(map(str.strip, source.value_origin.lower().split()))
+            if self_ori != other_ori:
+                raise ValueError("odml.Property.merge: "
+                                 "src and dest value_origin are in conflict!")
+
     def merge(self, other, strict=True):
         """
-        Merges the property 'other' into self, if possible. Information
-        will be synchronized. Method will raise a ValueError when the
-        information in this property and the passed property are in
-        conflict.
+        Merges the Property 'other' into self, if possible. Information
+        will be synchronized. By default the method will raise a ValueError when the
+        information in this property and the passed property are in conflict.
 
         :param other: an odML Property.
         :param strict: Bool value to indicate whether types should be implicitly converted
                even when information may be lost. Default is True, i.e. no conversion,
-               and a ValueError will be raised if types do not match.
+               and a ValueError will be raised if types or other attributes do not match.
+               If a conflict arises with strict=False, the attribute value of self will
+               be kept, while the attribute value of other will be lost.
         """
-        assert(isinstance(other, BaseProperty))
-        if strict and self.dtype != other.dtype:
-            raise ValueError("odml.Property.merge: src and dest dtypes do not match!")
+        if not isinstance(other, BaseProperty):
+            raise TypeError("odml.Property.merge: odml Property required.")
 
-        if self.unit is not None and other.unit is not None and self.unit != other.unit:
-            raise ValueError("odml.Property.merge: src and dest units (%s, %s) do not match!" % (other.unit, self.unit))
-
-        if self.definition is not None and other.definition is not None:
-            self_def = ''.join(map(str.strip, self.definition.split())).lower()
-            other_def = ''.join(map(str.strip, other.definition.split())).lower()
-            if self_def != other_def:
-                raise ValueError("odml.Property.merge: src and dest definitions do not match!")
-
-        if self.uncertainty is not None and other.uncertainty is not None:
-            raise ValueError("odml.Property.merge: src and dest uncertainty both set and do not match!")
-
-        if self.reference is not None and other.reference is not None:
-            self_ref = ''.join(map(str.strip, self.reference.lower().split()))
-            other_ref = ''.join(map(str.strip, other.reference.lower().split()))
-            if self_ref != other_ref:
-                raise ValueError("odml.Property.merge: src and dest references are in conflict!")
-
-        if self.value_origin is not None and other.value_origin is not None:
-            self_ori = ''.join(map(str.strip, self.value_origin.lower().split()))
-            other_ori = ''.join(map(str.strip, other.value_origin.lower().split()))
-            if self_ori != other_ori:
-                raise ValueError("odml.Property.merge: src and dest value_origin are in conflict!")
+        self.merge_check(other, strict)
 
         if self.value_origin is None and other.value_origin is not None:
             self.value_origin = other.value_origin

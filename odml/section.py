@@ -7,7 +7,7 @@ from . import format
 from . import terminology
 from .doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
-from .property import Property
+from .property import BaseProperty
 # it MUST however not be used to create any Property objects
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
@@ -35,7 +35,7 @@ class BaseSection(base.sectionable, Section):
 
         # Sets _sections Smartlist and _repository to None, so run first.
         super(BaseSection, self).__init__()
-        self._props = base.SmartList()
+        self._props = base.SmartList(BaseProperty)
 
         try:
             if id is not None:
@@ -173,8 +173,10 @@ class BaseSection(base.sectionable, Section):
             return None
 
     @definition.setter
-    def definition(self, val):
-        self._definition = val
+    def definition(self, new_value):
+        if new_value == "":
+            new_value = None
+        self._definition = new_value
 
     @definition.deleter
     def definition(self):
@@ -186,6 +188,8 @@ class BaseSection(base.sectionable, Section):
 
     @reference.setter
     def reference(self, new_value):
+        if new_value == "":
+            new_value = None
         self._reference = new_value
 
     # API (public)
@@ -266,10 +270,10 @@ class BaseSection(base.sectionable, Section):
 
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             self._sections.append(obj)
             obj._parent = self
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             self._props.append(obj)
             obj._parent = self
         elif isinstance(obj, collections.Iterable) and not isinstance(obj, str):
@@ -291,15 +295,15 @@ class BaseSection(base.sectionable, Section):
 
         # Make sure only Sections and Properties with unique names will be added.
         for obj in obj_list:
-            if not isinstance(obj, Section) and not isinstance(obj, Property):
+            if not isinstance(obj, BaseSection) and not isinstance(obj, BaseProperty):
                 raise ValueError("odml.Section.extend: "
                                  "Can only extend sections and properties.")
 
-            elif isinstance(obj, Section) and obj.name in self.sections:
+            elif isinstance(obj, BaseSection) and obj.name in self.sections:
                 raise KeyError("odml.Section.extend: "
                                "Section with name '%s' already exists." % obj.name)
 
-            elif isinstance(obj, Property) and obj.name in self.properties:
+            elif isinstance(obj, BaseProperty) and obj.name in self.properties:
                 raise KeyError("odml.Section.extend: "
                                "Property with name '%s' already exists." % obj.name)
 
@@ -315,14 +319,14 @@ class BaseSection(base.sectionable, Section):
         :param position: index at which the object should be inserted.
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             if obj.name in self.sections:
                 raise ValueError("odml.Section.insert: "
                                  "Section with name '%s' already exists." % obj.name)
 
             self._sections.insert(position, obj)
             obj._parent = self
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             if obj.name in self.properties:
                 raise ValueError("odml.Section.insert: "
                                  "Property with name '%s' already exists." % obj.name)
@@ -341,10 +345,10 @@ class BaseSection(base.sectionable, Section):
 
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             self._sections.remove(obj)
             obj._parent = None
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             self._props.remove(obj)
             obj._parent = None
         else:
@@ -373,7 +377,7 @@ class BaseSection(base.sectionable, Section):
         obj = super(BaseSection, self).clone(children)
         obj._id = str(uuid.uuid4())
 
-        obj._props = base.SmartList()
+        obj._props = base.SmartList(BaseProperty)
         if children:
             for p in self._props:
                 obj.append(p.clone())
@@ -388,16 +392,47 @@ class BaseSection(base.sectionable, Section):
 
         :param obj: Section or Property object.
         """
-        if isinstance(obj, Section):
+        if isinstance(obj, BaseSection):
             return super(BaseSection, self).contains(obj)
 
-        elif isinstance(obj, Property):
+        elif isinstance(obj, BaseProperty):
             for i in self._props:
                 if obj.name == i.name:
                     return i
         else:
             raise ValueError("odml.Section.contains:"
                              "Section or Property object expected.")
+
+    def merge_check(self, source_section, strict=True):
+        """
+        Recursively checks whether a source Section and all its children can be merged
+        with self and all its children as destination and raises a ValueError if any of
+        the Section attributes definition and reference differ in source and destination.
+
+        :param source_section: an odML Section.
+        :param strict: If True, definition and reference attributes of any merged Sections
+                       as well as most attributes of merged Properties on the same
+                       tree level in source and destination have to be identical.
+        """
+        if strict and self.definition is not None and source_section.definition is not None:
+            self_def = ''.join(map(str.strip, self.definition.split())).lower()
+            other_def = ''.join(map(str.strip, source_section.definition.split())).lower()
+            if self_def != other_def:
+                raise ValueError(
+                    "odml.Section.merge: src and dest definitions do not match!")
+
+        if strict and self.reference is not None and source_section.reference is not None:
+            self_ref = ''.join(map(str.strip, self.reference.lower().split()))
+            other_ref = ''.join(map(str.strip, source_section.reference.lower().split()))
+            if self_ref != other_ref:
+                raise ValueError(
+                    "odml.Section.merge: src and dest references are in conflict!")
+
+        # Check all the way down the rabbit hole / Section tree.
+        for obj in source_section:
+            mine = self.contains(obj)
+            if mine is not None:
+                mine.merge_check(obj, strict)
 
     def merge(self, section=None, strict=True):
         """
@@ -420,6 +455,16 @@ class BaseSection(base.sectionable, Section):
             elif self._include is not None:
                 self.include = self._include
             return
+
+        # Check all the way down the tree if the destination source and
+        # its children can be merged with self and its children since
+        # there is no rollback in case of a downstream merge error.
+        self.merge_check(section, strict)
+
+        if self.definition is None and section.definition is not None:
+            self.definition = section.definition
+        if self.reference is None and section.reference is not None:
+            self.reference = section.reference
 
         for obj in section:
             mine = self.contains(obj)

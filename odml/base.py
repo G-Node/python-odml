@@ -84,34 +84,18 @@ class baseobject(_baseobj):
         return id(self)
 
 
-class SafeList(list):
+class SmartList(list):
 
-    def index(self, obj):
+    def __init__(self, content_type):
         """
-        Find obj in list
-
-        Be sure to use "is" based comparison (instead of __eq__)
+        Only values of the instance *content_type* can be added to the SmartList.
         """
-        for i, e in enumerate(self):
-            if e is obj:
-                return i
-        raise ValueError("remove: %s not in list" % repr(obj))
-
-    def remove(self, obj):
-        """
-        Remove an element from this list.
-
-        Be sure to use "is" based comparison (instead of __eq__)
-        """
-        del self[self.index(obj)]
-
-
-class SmartList(SafeList):
+        self._content_type = content_type
+        super(SmartList, self).__init__()
 
     def __getitem__(self, key):
         """
-        Provides element index also by searching for an element with a given
-        name
+        Provides element index also by searching for an element with a given name.
         """
         # Try normal list index first (for integers)
         if isinstance(key, int):
@@ -125,31 +109,68 @@ class SmartList(SafeList):
         # and fail eventually
         raise KeyError(key)
 
+    def __setitem__(self, key, value):
+        """
+        Replaces item at list[*key*] with *value*.
+        :param key: index position
+        :param value: object that replaces item at *key* position.
+                      value has to be of the same content type as the list.
+                      In this context usually a Section or a Property.
+        """
+        if not isinstance(value, self._content_type):
+            raise ValueError("List only supports elements of type '%s'" %
+                             self._content_type)
+
+        # If required remove new object from its old parents child-list
+        if hasattr(value, "_parent") and (value._parent and value in value._parent):
+            value._parent.remove(value)
+
+        # If required move parent reference from replaced to new object
+        # and set parent reference on replaced object None.
+        if hasattr(self[key], "_parent"):
+            value._parent = self[key]._parent
+            self[key]._parent = None
+
+        super(SmartList, self).__setitem__(key, value)
+
     def __contains__(self, key):
         for obj in self:
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
 
+    def index(self, obj):
+        """
+        Find obj in list
+        """
+        for i, e in enumerate(self):
+            if e is obj:
+                return i
+        raise ValueError("remove: %s not in list" % repr(obj))
+
+    def remove(self, obj):
+        """
+        Remove an element from this list.
+        """
+        del self[self.index(obj)]
+
     def append(self, *obj_tuple):
-        from odml.section import BaseSection
-        from odml.doc import BaseDocument
         for obj in obj_tuple:
             if obj.name in self:
                 raise KeyError(
                     "Object with the same name already exists! " + str(obj))
 
-            if (not isinstance(obj, BaseSection)) & \
-               isinstance(self, BaseDocument):
-                raise KeyError("Object " + str(obj) + " is not a Section.")
+            if not isinstance(obj, self._content_type):
+                raise ValueError("List only supports elements of type '%s'" %
+                                 self._content_type)
 
             super(SmartList, self).append(obj)
 
 
 @allow_inherit_docstring
 class sectionable(baseobject):
-
     def __init__(self):
-        self._sections = SmartList()
+        from odml.section import Section
+        self._sections = SmartList(Section)
         self._repository = None
 
     @property
@@ -518,9 +539,10 @@ class sectionable(baseobject):
         Clone this object recursively allowing to copy it independently
         to another document
         """
+        from odml.section import Section
         obj = super(sectionable, self).clone(children)
         obj._parent = None
-        obj._sections = SmartList()
+        obj._sections = SmartList(Section)
         if children:
             for s in self._sections:
                 obj.append(s.clone())
