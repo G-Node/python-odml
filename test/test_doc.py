@@ -1,7 +1,9 @@
 import datetime
+import os
 import unittest
 
 from odml import Document
+from odml.doc import BaseDocument
 from odml.dtypes import FORMAT_DATE
 
 
@@ -86,3 +88,19 @@ class TestSection(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             doc.date = "some format"
+
+    def test_get_terminology_equivalent(self):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        repo_file = os.path.join(dir_path, "resources",
+                                           "local_repository_file_v1.1.xml")
+        local_url = "file://%s" % repo_file
+
+        doc = Document(repository=local_url)
+
+        teq = doc.get_terminology_equivalent()
+        self.assertIsInstance(teq, BaseDocument)
+        self.assertEqual(len(teq), 1)
+        self.assertEqual(teq.sections[0].name, "Repository test")
+
+        doc.repository = None
+        self.assertIsNone(doc.get_terminology_equivalent())
