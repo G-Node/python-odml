@@ -46,6 +46,7 @@ class BaseSection(base.sectionable, Section):
             print(e)
             self._id = str(uuid.uuid4())
 
+        self._parent = None
         self._name = name
         self._definition = definition
         self._reference = reference
@@ -55,7 +56,6 @@ class BaseSection(base.sectionable, Section):
 
         # this may fire a change event, so have the section setup then
         self.type = type
-        self._parent = None
         self.parent = parent
 
     def __repr__(self):
