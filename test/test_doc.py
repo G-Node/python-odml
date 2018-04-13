@@ -2,7 +2,7 @@ import datetime
 import os
 import unittest
 
-from odml import Document
+from odml import Document, Section, Property
 from odml.doc import BaseDocument
 from odml.dtypes import FORMAT_DATE
 
@@ -104,3 +104,32 @@ class TestSection(unittest.TestCase):
 
         doc.repository = None
         self.assertIsNone(doc.get_terminology_equivalent())
+
+    def test_insert(self):
+        doc = Document()
+
+        sec_one = Section(name="sec_one", parent=doc)
+        sec_two = Section(name="sec_two", parent=doc)
+        subsec = Section(name="sec_three")
+
+        self.assertNotEqual(doc.sections[1].name, subsec.name)
+        doc.insert(1, subsec)
+        self.assertEqual(len(doc.sections), 3)
+        self.assertEqual(doc.sections[1].name, subsec.name)
+        self.assertEqual(doc.sections[0].name, sec_one.name)
+        self.assertEqual(doc.sections[2].name, sec_two.name)
+        self.assertEqual(subsec.parent, doc)
+
+        # Test invalid object
+        with self.assertRaises(ValueError):
+            doc.insert(1, Document())
+        with self.assertRaises(ValueError):
+            doc.insert(1, Property(name="prop_one"))
+        with self.assertRaises(ValueError):
+            doc.insert(1, "some info")
+        self.assertEqual(len(doc), 3)
+
+        # Test same name entries
+        with self.assertRaises(ValueError):
+            doc.insert(0, subsec)
+        self.assertEqual(len(doc), 3)
