@@ -55,8 +55,22 @@ class BaseSection(base.Sectionable):
         self.parent = parent
 
     def __repr__(self):
-        return "<Section %s[%s] (%d)>" % (self._name, self.type,
-                                          len(self._sections))
+        return "<Section %s[%s] (%d)>" % (self._name, self.type, len(self._sections))
+
+    def __iter__(self):
+        """
+        Iterate over each section and property contained in this section
+        """
+        for section in self._sections:
+            yield section
+        for prop in self._props:
+            yield prop
+
+    def __len__(self):
+        """
+        Number of children (sections AND properties)
+        """
+        return len(self._sections) + len(self._props)
 
     @property
     def id(self):
@@ -349,21 +363,6 @@ class BaseSection(base.Sectionable):
             obj._parent = None
         else:
             raise ValueError("Can only remove sections and properties")
-
-    def __iter__(self):
-        """
-        Iterate over each section and property contained in this section
-        """
-        for section in self._sections:
-            yield section
-        for prop in self._props:
-            yield prop
-
-    def __len__(self):
-        """
-        Number of children (sections AND properties)
-        """
-        return len(self._sections) + len(self._props)
 
     def clone(self, children=True):
         """
