@@ -192,14 +192,21 @@ class sectionable(baseobject):
 
     def insert(self, position, section):
         """
-        Adds the section to the section-list and makes this document the
-        section’s parent.
+        Insert a Section at the child-list position. A ValueError will be raised,
+        if a Section with the same name already exists in the child-list.
 
-        Currently just appends the section and does not insert at the
-        specified *position*
+        :param position: index at which the object should be inserted.
+        :param section: odML Section object.
         """
-        self._sections.append(section)
-        section._parent = self
+        from odml.section import BaseSection
+        if isinstance(section, BaseSection):
+            if section.name in self._sections:
+                raise ValueError("Section with name '%s' already exists." % section.name)
+
+            self._sections.insert(position, section)
+            section._parent = self
+        else:
+            raise ValueError("Can only insert objects of type Section.")
 
     def append(self, *vsection_tuple):
         """
