@@ -105,6 +105,35 @@ class TestSection(unittest.TestCase):
         doc.repository = None
         self.assertIsNone(doc.get_terminology_equivalent())
 
+    def test_extend(self):
+        doc = Document()
+        self.assertListEqual(doc.sections, [])
+
+        # Test extend with Section list
+        doc.extend([Section(name="sec_one"), Section(name="sec_two")])
+        self.assertEqual(len(doc), 2)
+        self.assertEqual(len(doc.sections), 2)
+        self.assertEqual(doc.sections[0].name, "sec_one")
+
+        # Test fail on non iterable
+        with self.assertRaises(TypeError):
+            doc.extend(1)
+        self.assertEqual(len(doc.sections), 2)
+
+        # Test fail on non Section entry
+        with self.assertRaises(ValueError):
+            doc.extend([Document()])
+        with self.assertRaises(ValueError):
+            doc.extend([Property(name="prop")])
+        with self.assertRaises(ValueError):
+            doc.extend([5])
+        self.assertEqual(len(doc.sections), 2)
+
+        # Test fail on same name entities
+        with self.assertRaises(KeyError):
+            doc.extend([Section(name="sec_three"), Section(name="sec_one")])
+        self.assertEqual(len(doc.sections), 2)
+
     def test_insert(self):
         doc = Document()
 
