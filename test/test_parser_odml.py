@@ -150,3 +150,25 @@ class TestOdmlParser(unittest.TestCase):
 
         # Test empty return on broken json document
         self.assertIsNone(self.json_reader.from_string("{"))
+
+    def test_yaml_string(self):
+        author = "HPL"
+        date = "1890-08-20"
+        sec_name = "section name"
+        sec_type = "section type"
+        yaml_doc = """
+                odml-version: '1.1'
+                Document:
+                    author: %s
+                    date: %s
+                    sections:
+                    - name: %s
+                      type: %s
+                """ % (author, date, sec_name, sec_type)
+
+        ydoc = self.yaml_reader.from_string(yaml_doc)
+
+        self.assertEqual(ydoc.author, author)
+        self.assertEqual(str(ydoc.date), date)
+        self.assertEqual(len(ydoc.sections), 1)
+        self.assertEqual(ydoc.sections[0].name, sec_name)
