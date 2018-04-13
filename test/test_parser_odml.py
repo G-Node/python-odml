@@ -3,7 +3,7 @@ import os
 from odml.tools import odmlparser
 
 
-class TestParser(unittest.TestCase):
+class TestOdmlParser(unittest.TestCase):
 
     def setUp(self):
         self.basepath = 'doc/example_odMLs/'
