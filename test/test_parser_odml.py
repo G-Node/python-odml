@@ -93,3 +93,7 @@ class TestOdmlParser(unittest.TestCase):
         self.assertEqual(rdf_doc[0].date, self.odml_doc.date)
         self.assertIn(self.odml_doc.sections[0].name, rdf_doc[0].sections)
         self.assertIn(self.odml_doc.sections[1].name, rdf_doc[0].sections)
+
+        # Check error on missing document format
+        with self.assertRaises(ValueError):
+            self.rdf_reader.from_file(self.rdf_file)
