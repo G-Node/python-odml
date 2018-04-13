@@ -9,7 +9,8 @@ from odml.tools.parser_utils import ParserException
 class TestJSONParser(unittest.TestCase):
 
     def setUp(self):
-        self.basepath = 'test/resources/'
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.basepath = os.path.join(dir_path, "resources")
 
         self.json_reader = dict_parser.DictReader()
 
