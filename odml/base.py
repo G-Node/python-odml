@@ -2,11 +2,11 @@
 """
 Collects common base functionality
 """
-
+import collections
 import posixpath
 
 from . import terminology
-from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from .tools.doc_inherit import allow_inherit_docstring
 
 
 class _baseobj(object):
@@ -169,8 +169,8 @@ class SmartList(list):
 @allow_inherit_docstring
 class sectionable(baseobject):
     def __init__(self):
-        from odml.section import Section
-        self._sections = SmartList(Section)
+        from odml.section import BaseSection
+        self._sections = SmartList(BaseSection)
         self._repository = None
 
     @property
@@ -178,11 +178,11 @@ class sectionable(baseobject):
         """
         Returns the parent-most node (if its a document instance) or None
         """
+        from odml.doc import BaseDocument
         p = self
         while p.parent:
             p = p.parent
-        import odml.doc as doc
-        if isinstance(p, doc.Document):
+        if isinstance(p, BaseDocument):
             return p
 
     @property
@@ -192,29 +192,57 @@ class sectionable(baseobject):
 
     def insert(self, position, section):
         """
-        Adds the section to the section-list and makes this document the
-        section’s parent.
+        Insert a Section at the child-list position. A ValueError will be raised,
+        if a Section with the same name already exists in the child-list.
 
-        Currently just appends the section and does not insert at the
-        specified *position*
-        """
-        self._sections.append(section)
-        section._parent = self
-
-    def append(self, *vsection_tuple):
-        """
-        Adds the section to the section-list and makes this document the
-        section’s parent.
+        :param position: index at which the object should be inserted.
+        :param section: odML Section object.
         """
         from odml.section import BaseSection
-        from odml.doc import BaseDocument
-        for vsection in vsection_tuple:
-            if (not isinstance(vsection, BaseSection)) & \
-               isinstance(self, BaseDocument):
-                raise KeyError("Object " + str(vsection) +
-                               " is not a Section.")
-            self._sections.append(vsection)
-            vsection._parent = self
+        if isinstance(section, BaseSection):
+            if section.name in self._sections:
+                raise ValueError("Section with name '%s' already exists." % section.name)
+
+            self._sections.insert(position, section)
+            section._parent = self
+        else:
+            raise ValueError("Can only insert objects of type Section.")
+
+    def append(self, section):
+        """
+        Method appends a single Section to the section child-lists of the current Object.
+
+        :param section: odML Section object.
+        """
+        from odml.section import BaseSection
+        if isinstance(section, BaseSection):
+            self._sections.append(section)
+            section._parent = self
+        elif isinstance(section, collections.Iterable) and not isinstance(section, str):
+            raise ValueError("Use extend to add a list of Sections.")
+        else:
+            raise ValueError("Can only append objects of type Section.")
+
+    def extend(self, sec_list):
+        """
+        Method adds Sections to the section child-list of the current object.
+
+        :param sec_list: Iterable containing odML Section entries.
+        """
+        from odml.section import BaseSection
+        if not isinstance(sec_list, collections.Iterable):
+            raise TypeError("'%s' object is not iterable" % type(sec_list).__name__)
+
+        # Make sure only Sections with unique names will be added.
+        for sec in sec_list:
+            if not isinstance(sec, BaseSection):
+                raise ValueError("Can only extend objects of type Section.")
+
+            elif isinstance(sec, BaseSection) and sec.name in self._sections:
+                raise KeyError("Section with name '%s' already exists." % sec.name)
+
+        for sec in sec_list:
+            self.append(sec)
 
     def remove(self, section):
         """ Removes the specified child-section """
@@ -254,7 +282,7 @@ class sectionable(baseobject):
         if self == self.document and ((max_depth is None) or (max_depth > 0)):
             for sec in self.sections:
                 stack.append((sec, 1))  # (<section>, <level in a tree>)
-        elif not self == self.document:
+        elif self != self.document:
             stack.append((self, 0))  # (<section>, <level in a tree>)
 
         while len(stack) > 0:
@@ -319,12 +347,11 @@ class sectionable(baseobject):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
-    # FIXME type arguments renamed to dtype?
-    def _matches(self, obj, key=None, type=None, include_subtype=False):
+    def _matches(self, obj, key=None, otype=None, include_subtype=False):
         """
         Find out
         * if the *key* matches obj.name (if key is not None)
-        * or if *type* matches obj.type (if type is not None)
+        * or if *otype* matches obj.type (if type is not None)
         * if type does not match exactly, test for subtype.
         (e.g.stimulus/white_noise)
         comparisons are case-insensitive, however both key and type
@@ -333,18 +360,16 @@ class sectionable(baseobject):
         name_match = (key is None or (
             key is not None and hasattr(obj, "name") and obj.name == key))
 
-        exact_type_match = (type is None or (type is not None and
-                                             hasattr(obj, "type") and
-                                             obj.type.lower() == type))
+        exact_type_match = (otype is None or (otype is not None and
+                                              hasattr(obj, "type") and
+                                              obj.type.lower() == otype))
 
         if not include_subtype:
             return name_match and exact_type_match
 
-        subtype_match = type is None or (type is not None and
-                                         hasattr(obj, "type") and
-                                         type in obj.type
-                                         .lower().split('/')[:-1])
-        # TODO : Break the above line more elegantly
+        subtype_match = (otype is None or
+                         (otype is not None and hasattr(obj, "type") and
+                          otype in obj.type.lower().split('/')[:-1]))
 
         return name_match and (exact_type_match or subtype_match)
 
@@ -539,10 +564,10 @@ class sectionable(baseobject):
         Clone this object recursively allowing to copy it independently
         to another document
         """
-        from odml.section import Section
+        from odml.section import BaseSection
         obj = super(sectionable, self).clone(children)
         obj._parent = None
-        obj._sections = SmartList(Section)
+        obj._sections = SmartList(BaseSection)
         if children:
             for s in self._sections:
                 obj.append(s.clone())

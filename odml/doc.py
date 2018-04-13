@@ -15,7 +15,7 @@ class Document(base._baseobj):
 @allow_inherit_docstring
 class BaseDocument(base.sectionable, Document):
     """
-    A represenation of an odML document in memory.
+    A representation of an odML document in memory.
     Its odml attributes are: *author*, *date*, *version* and *repository*.
     A Document behaves very much like a section, except that it cannot hold
     properties.
@@ -69,6 +69,8 @@ class BaseDocument(base.sectionable, Document):
 
     @author.setter
     def author(self, new_value):
+        if new_value == "":
+            new_value = None
         self._author = new_value
 
     @property
@@ -81,6 +83,8 @@ class BaseDocument(base.sectionable, Document):
 
     @version.setter
     def version(self, new_value):
+        if new_value == "":
+            new_value = None
         self._version = new_value
 
     @property
@@ -88,11 +92,15 @@ class BaseDocument(base.sectionable, Document):
         """
         The date the document was created.
         """
-        return dtypes.set(self._date, "date")
+        return self._date
 
     @date.setter
     def date(self, new_value):
-        self._date = dtypes.get(new_value, "date")
+        if not new_value:
+            new_value = None
+        else:
+            new_value = dtypes.date_set(new_value)
+        self._date = new_value
 
     @property
     def parent(self):
