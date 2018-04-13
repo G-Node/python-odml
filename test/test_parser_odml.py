@@ -15,10 +15,10 @@ class TestOdmlParser(unittest.TestCase):
 
     def setUp(self):
         # Set up test environment
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.basefile = os.path.join(dir_path, "resources", "example.odml")
 
-        self.basepath = 'doc/example_odMLs/'
-        self.basefile = 'doc/example_odMLs/THGTTG.odml'
+        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
 
         self.json_file = os.path.join(self.tmp_dir, "test.json")
         self.xml_file = os.path.join(self.tmp_dir, "test.xml")
@@ -38,28 +38,10 @@ class TestOdmlParser(unittest.TestCase):
         if os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
-    def test_xml(self):
-        self.xml_writer.write_file(self.odml_doc, self.xml_file)
-        xml_doc = self.xml_reader.from_file(self.xml_file)
-
-        self.assertEqual(xml_doc, self.odml_doc)
-
-    def test_yaml(self):
-        self.yaml_writer.write_file(self.odml_doc, self.yaml_file)
-        yaml_doc = self.yaml_reader.from_file(self.yaml_file)
-
-        self.assertEqual(yaml_doc, self.odml_doc)
-
-    def test_json(self):
-        self.json_writer.write_file(self.odml_doc, self.json_file)
-        json_doc = self.json_reader.from_file(self.json_file)
-
-        self.assertEqual(json_doc, self.odml_doc)
-
     def test_json_yaml_xml(self):
         self.json_writer.write_file(self.odml_doc, self.json_file)
         json_doc = self.json_reader.from_file(self.json_file)
-        
+
         self.yaml_writer.write_file(json_doc, self.yaml_file)
         yaml_doc = self.yaml_reader.from_file(self.yaml_file)
 
@@ -69,7 +51,7 @@ class TestOdmlParser(unittest.TestCase):
         self.assertEqual(json_doc, self.odml_doc)
         self.assertEqual(json_doc, yaml_doc)
         self.assertEqual(json_doc, xml_doc)
-        
+
         self.assertEqual(yaml_doc, self.odml_doc)
         self.assertEqual(yaml_doc, xml_doc)
         self.assertEqual(yaml_doc, json_doc)
