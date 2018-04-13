@@ -8,12 +8,8 @@ from . import terminology
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
-class Document(base._baseobj):
-    pass
-
-
 @allow_inherit_docstring
-class BaseDocument(base.sectionable, Document):
+class BaseDocument(base.sectionable):
     """
     A representation of an odML document in memory.
     Its odml attributes are: *author*, *date*, *version* and *repository*.
