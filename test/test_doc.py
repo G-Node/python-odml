@@ -1,6 +1,10 @@
 import datetime
 import os
 import unittest
+try:
+    from urllib.request import pathname2url
+except ImportError:
+    from urllib import pathname2url
 
 from odml import Document, Section, Property
 from odml.doc import BaseDocument
@@ -93,7 +97,7 @@ class TestSection(unittest.TestCase):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         repo_file = os.path.join(dir_path, "resources",
                                            "local_repository_file_v1.1.xml")
-        local_url = "file://%s" % repo_file
+        local_url = "file://%s" % pathname2url(repo_file)
 
         doc = Document(repository=local_url)
 
