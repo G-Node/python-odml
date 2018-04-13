@@ -79,6 +79,23 @@ class BaseProperty(base.BaseObject):
 
         self.parent = parent
 
+    def __len__(self):
+        return len(self._value)
+
+    def __getitem__(self, key):
+        return self._value[key]
+
+    def __setitem__(self, key, item):
+        if int(key) < 0 or int(key) > self.__len__():
+            raise IndexError("odml.Property.__setitem__: key %i invalid for "
+                             "array of length %i" % (int(key), self.__len__()))
+        try:
+            val = dtypes.get(item, self.dtype)
+            self._value[int(key)] = val
+        except Exception:
+            raise ValueError("odml.Property.__setitem__:  passed value cannot be "
+                             "converted to data type \'%s\'!" % self._dtype)
+
     @property
     def id(self):
         return self._id
@@ -489,22 +506,6 @@ class BaseProperty(base.BaseObject):
             return sec.properties[self.name]
         except KeyError:
             return None
-
-    def __len__(self):
-        return len(self._value)
-
-    def __getitem__(self, key):
-        return self._value[key]
-
-    def __setitem__(self, key, item):
-        if int(key) < 0 or int(key) > self.__len__():
-            raise IndexError("odml.Property.__setitem__: key %i invalid for array of length %i"
-                             % (int(key), self.__len__()))
-        try:
-            val = dtypes.get(item, self.dtype)
-            self._value[int(key)] = val
-        except Exception:
-            raise ValueError("odml.Property.__setitem__:  passed value cannot be converted to data type \'%s\'!" % self._dtype)
 
     def extend(self, obj, strict=True):
         """
