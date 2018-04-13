@@ -2,7 +2,7 @@
 """
 Collects common base functionality
 """
-
+import collections
 import posixpath
 
 from . import terminology
@@ -222,6 +222,27 @@ class sectionable(baseobject):
                                " is not a Section.")
             self._sections.append(vsection)
             vsection._parent = self
+
+    def extend(self, sec_list):
+        """
+        Method adds Sections to the section child-list of the current object.
+
+        :param sec_list: Iterable containing odML Section entries.
+        """
+        from odml.section import BaseSection
+        if not isinstance(sec_list, collections.Iterable):
+            raise TypeError("'%s' object is not iterable" % type(sec_list).__name__)
+
+        # Make sure only Sections with unique names will be added.
+        for sec in sec_list:
+            if not isinstance(sec, BaseSection):
+                raise ValueError("Can only extend object of type Section.")
+
+            elif isinstance(sec, BaseSection) and sec.name in self._sections:
+                raise KeyError("Section with name '%s' already exists." % sec.name)
+
+        for sec in sec_list:
+            self.append(sec)
 
     def remove(self, section):
         """ Removes the specified child-section """
