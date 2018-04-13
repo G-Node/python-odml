@@ -9,11 +9,7 @@ from . import terminology
 from .tools.doc_inherit import allow_inherit_docstring
 
 
-class _baseobj(object):
-    pass
-
-
-class baseobject(_baseobj):
+class baseobject(object):
     _format = None
 
     def format(self):
@@ -40,9 +36,6 @@ class baseobject(_baseobj):
         unique within a document.
         """
         # cannot compare totally different stuff
-        if not isinstance(obj, _baseobj):
-            return False
-
         if not isinstance(self, obj.__class__):
             return False
 
