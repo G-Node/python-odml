@@ -1,17 +1,28 @@
-import unittest
+"""
+This file tests proper saving and loading of odML Documents
+with all supported odML parsers via the tools.odmlparser classes.
+"""
+
 import os
+import shutil
+import tempfile
+import unittest
+
 from odml.tools import odmlparser
 
 
 class TestOdmlParser(unittest.TestCase):
 
     def setUp(self):
+        # Set up test environment
+        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+
         self.basepath = 'doc/example_odMLs/'
         self.basefile = 'doc/example_odMLs/THGTTG.odml'
 
-        self.xml_file = 'doc/example_odMLs/THGTTG_xml.odml'
-        self.yaml_file = 'doc/example_odMLs/THGTTG_yaml.odml'
-        self.json_file = 'doc/example_odMLs/THGTTG_json.odml'
+        self.json_file = os.path.join(self.tmp_dir, "test.json")
+        self.xml_file = os.path.join(self.tmp_dir, "test.xml")
+        self.yaml_file = os.path.join(self.tmp_dir, "test.yaml")
 
         self.xml_reader = odmlparser.ODMLReader(parser='XML')
         self.yaml_reader = odmlparser.ODMLReader(parser='YAML')
@@ -24,14 +35,8 @@ class TestOdmlParser(unittest.TestCase):
         self.odml_doc = self.xml_reader.from_file(self.basefile)
 
     def tearDown(self):
-        if os.path.exists(self.xml_file):
-            os.remove(self.xml_file)
-
-        if os.path.exists(self.yaml_file):    
-            os.remove(self.yaml_file)
-
-        if os.path.exists(self.json_file):
-            os.remove(self.json_file)
+        if os.path.exists(self.tmp_dir):
+            shutil.rmtree(self.tmp_dir)
 
     def test_xml(self):
         self.xml_writer.write_file(self.odml_doc, self.xml_file)
