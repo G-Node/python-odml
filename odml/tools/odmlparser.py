@@ -14,7 +14,7 @@ from .dict_parser import DictWriter, DictReader
 from ..info import FORMAT_VERSION
 from .parser_utils import ParserException
 from .parser_utils import SUPPORTED_PARSERS
-from .rdf_converter import RDFReader
+from .rdf_converter import RDFReader, RDFWriter
 from ..validation import Validation
 
 
@@ -33,10 +33,6 @@ class ODMLWriter:
 
         if parser not in SUPPORTED_PARSERS:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
-
-        if parser == 'RDF':
-            msg = "The odML writer for RDF is currently not supported"
-            raise NotImplementedError(msg)
 
         self.parser = parser
 
@@ -59,6 +55,9 @@ class ODMLWriter:
 
         if self.parser == 'XML':
             string_doc = str(xmlparser.XMLWriter(odml_document))
+        elif self.parser == "RDF":
+            # Use turtle as default output format for now.
+            string_doc = RDFWriter(odml_document).get_rdf_str("turtle")
         else:
             self.parsed_doc = DictWriter().to_dict(odml_document)
 
