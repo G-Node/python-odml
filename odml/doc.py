@@ -15,7 +15,7 @@ class Document(base._baseobj):
 @allow_inherit_docstring
 class BaseDocument(base.sectionable, Document):
     """
-    A represenation of an odML document in memory.
+    A representation of an odML document in memory.
     Its odml attributes are: *author*, *date*, *version* and *repository*.
     A Document behaves very much like a section, except that it cannot hold
     properties.
