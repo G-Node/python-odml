@@ -169,8 +169,8 @@ class SmartList(list):
 @allow_inherit_docstring
 class sectionable(baseobject):
     def __init__(self):
-        from odml.section import Section
-        self._sections = SmartList(Section)
+        from odml.section import BaseSection
+        self._sections = SmartList(BaseSection)
         self._repository = None
 
     @property
@@ -178,11 +178,11 @@ class sectionable(baseobject):
         """
         Returns the parent-most node (if its a document instance) or None
         """
+        from odml.doc import BaseDocument
         p = self
         while p.parent:
             p = p.parent
-        import odml.doc as doc
-        if isinstance(p, doc.Document):
+        if isinstance(p, BaseDocument):
             return p
 
     @property
@@ -567,10 +567,10 @@ class sectionable(baseobject):
         Clone this object recursively allowing to copy it independently
         to another document
         """
-        from odml.section import Section
+        from odml.section import BaseSection
         obj = super(sectionable, self).clone(children)
         obj._parent = None
-        obj._sections = SmartList(Section)
+        obj._sections = SmartList(BaseSection)
         if children:
             for s in self._sections:
                 obj.append(s.clone())
