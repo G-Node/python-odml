@@ -6,7 +6,7 @@ import collections
 import posixpath
 
 from . import terminology
-from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from .tools.doc_inherit import allow_inherit_docstring
 
 
 class _baseobj(object):
@@ -282,7 +282,7 @@ class sectionable(baseobject):
         if self == self.document and ((max_depth is None) or (max_depth > 0)):
             for sec in self.sections:
                 stack.append((sec, 1))  # (<section>, <level in a tree>)
-        elif not self == self.document:
+        elif self != self.document:
             stack.append((self, 0))  # (<section>, <level in a tree>)
 
         while len(stack) > 0:
@@ -347,12 +347,11 @@ class sectionable(baseobject):
             if obj.name == i.name and obj.type == i.type:
                 return i
 
-    # FIXME type arguments renamed to dtype?
-    def _matches(self, obj, key=None, type=None, include_subtype=False):
+    def _matches(self, obj, key=None, otype=None, include_subtype=False):
         """
         Find out
         * if the *key* matches obj.name (if key is not None)
-        * or if *type* matches obj.type (if type is not None)
+        * or if *otype* matches obj.type (if type is not None)
         * if type does not match exactly, test for subtype.
         (e.g.stimulus/white_noise)
         comparisons are case-insensitive, however both key and type
@@ -361,18 +360,16 @@ class sectionable(baseobject):
         name_match = (key is None or (
             key is not None and hasattr(obj, "name") and obj.name == key))
 
-        exact_type_match = (type is None or (type is not None and
-                                             hasattr(obj, "type") and
-                                             obj.type.lower() == type))
+        exact_type_match = (otype is None or (otype is not None and
+                                              hasattr(obj, "type") and
+                                              obj.type.lower() == otype))
 
         if not include_subtype:
             return name_match and exact_type_match
 
-        subtype_match = type is None or (type is not None and
-                                         hasattr(obj, "type") and
-                                         type in obj.type
-                                         .lower().split('/')[:-1])
-        # TODO : Break the above line more elegantly
+        subtype_match = (otype is None or
+                         (otype is not None and hasattr(obj, "type") and
+                          otype in obj.type.lower().split('/')[:-1]))
 
         return name_match and (exact_type_match or subtype_match)
 
