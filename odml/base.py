@@ -12,22 +12,11 @@ from .tools.doc_inherit import allow_inherit_docstring
 class BaseObject(object):
     _format = None
 
-    def format(self):
-        return self._format
-
-    @property
-    def document(self):
-        """ Returns the Document object in which this object is contained """
-        if self.parent is None:
-            return None
-        return self.parent.document
-
-    def get_terminology_equivalent(self):
+    def __hash__(self):
         """
-        Returns the equivalent object in an terminology (should there be one
-        defined) or None
+        Allow all odML objects to be hash-able.
         """
-        return None
+        return id(self)
 
     def __eq__(self, obj):
         """
@@ -53,6 +42,23 @@ class BaseObject(object):
         """
         return not self == obj
 
+    def format(self):
+        return self._format
+
+    @property
+    def document(self):
+        """ Returns the Document object in which this object is contained """
+        if self.parent is None:
+            return None
+        return self.parent.document
+
+    def get_terminology_equivalent(self):
+        """
+        Returns the equivalent object in an terminology (should there be one
+        defined) or None
+        """
+        return None
+
     def clean(self):
         """
         Stub that doesn't do anything for this class
@@ -69,12 +75,6 @@ class BaseObject(object):
         import copy
         obj = copy.copy(self)
         return obj
-
-    def __hash__(self):
-        """
-        Allow all odML objects to be hash-able.
-        """
-        return id(self)
 
 
 class SmartList(list):
@@ -166,6 +166,15 @@ class Sectionable(BaseObject):
         self._sections = SmartList(BaseSection)
         self._repository = None
 
+    def __getitem__(self, key):
+        return self._sections[key]
+
+    def __len__(self):
+        return len(self._sections)
+
+    def __iter__(self):
+        return self._sections.__iter__()
+
     @property
     def document(self):
         """
@@ -241,15 +250,6 @@ class Sectionable(BaseObject):
         """ Removes the specified child-section """
         self._sections.remove(section)
         section._parent = None
-
-    def __getitem__(self, key):
-        return self._sections[key]
-
-    def __len__(self):
-        return len(self._sections)
-
-    def __iter__(self):
-        return self._sections.__iter__()
 
     def itersections(self, recursive=True, yield_self=False,
                      filter_func=lambda x: True, max_depth=None):
