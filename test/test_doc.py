@@ -105,6 +105,36 @@ class TestSection(unittest.TestCase):
         doc.repository = None
         self.assertIsNone(doc.get_terminology_equivalent())
 
+    def test_append(self):
+        doc = Document()
+        self.assertListEqual(doc.sections, [])
+
+        # Test append Section
+        sec = Section(name="sec_one")
+        doc.append(sec)
+        self.assertEqual(len(doc.sections), 1)
+        self.assertEqual(sec.parent, doc)
+
+        # Test fail on Section list or tuple append
+        with self.assertRaises(ValueError):
+            doc.append([Section(name="sec_two"), Section(name="sec_three")])
+        with self.assertRaises(ValueError):
+            doc.append((Section(name="sec_two"), Section(name="sec_three")))
+        self.assertEqual(len(doc.sections), 1)
+
+        # Test fail on unsupported value
+        with self.assertRaises(ValueError):
+            doc.append(Document())
+        with self.assertRaises(ValueError):
+            doc.append("Section")
+        with self.assertRaises(ValueError):
+            doc.append(Property(name="prop"))
+
+        # Test fail on same name entities
+        with self.assertRaises(KeyError):
+            doc.append(Section(name="sec_one"))
+        self.assertEqual(len(doc.sections), 1)
+
     def test_extend(self):
         doc = Document()
         self.assertListEqual(doc.sections, [])
