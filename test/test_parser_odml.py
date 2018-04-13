@@ -121,3 +121,32 @@ class TestOdmlParser(unittest.TestCase):
         self.assertEqual(str(xml_doc.date), date)
         self.assertEqual(len(xml_doc.sections), 1)
         self.assertEqual(xml_doc.sections[0].name, sec_name)
+
+    def test_json_string(self):
+        author = "HPL"
+        date = "1890-08-20"
+        sec_name = "section name"
+        sec_type = "section type"
+        doc = """
+                {
+                    "odml-version": "1.1",
+                    "Document": {
+                        "author": "%s",
+                        "date": "%s",
+                        "sections": [{
+                            "name": "%s",
+                            "type": "%s"
+                        }]
+                    }
+                }
+                """ % (author, date, sec_name, sec_type)
+
+        json_doc = self.json_reader.from_string(doc)
+
+        self.assertEqual(json_doc.author, author)
+        self.assertEqual(str(json_doc.date), date)
+        self.assertEqual(len(json_doc.sections), 1)
+        self.assertEqual(json_doc.sections[0].name, sec_name)
+
+        # Test empty return on broken json document
+        self.assertIsNone(self.json_reader.from_string("{"))
