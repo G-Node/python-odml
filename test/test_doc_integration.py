@@ -47,3 +47,20 @@ class TestDocumentIntegration(unittest.TestCase):
         ydoc = odml.load(self.yaml_file, "YAML")
 
         return jdoc, xdoc, ydoc
+
+    def test_id(self):
+        # Test correct save and load of generated id.
+        jdoc, xdoc, ydoc = self.save_load()
+
+        self.assertEqual(jdoc.id, self.doc.id)
+        self.assertEqual(xdoc.id, self.doc.id)
+        self.assertEqual(ydoc.id, self.doc.id)
+
+        # Test correct save and load of assigned id.
+        assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        self.doc = odml.Document(id=assigned_id)
+        jdoc, xdoc, ydoc = self.save_load()
+
+        self.assertEqual(jdoc.id, assigned_id)
+        self.assertEqual(xdoc.id, assigned_id)
+        self.assertEqual(ydoc.id, assigned_id)
