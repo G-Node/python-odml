@@ -37,6 +37,10 @@ class BaseDocument(base.Sectionable):
         self._date = None
         self.date = date
 
+    def __repr__(self):
+        return "<Doc %s by %s (%d sections)>" % (self._version, self._author,
+                                                 len(self._sections))
+
     @property
     def id(self):
         """
@@ -102,11 +106,6 @@ class BaseDocument(base.Sectionable):
     def parent(self):
         """ The parent of a document is always None. """
         return None
-
-    def __repr__(self):
-        return "<Doc %s by %s (%d sections)>" % (self._version,
-                                                 self._author,
-                                                 len(self._sections))
 
     def finalize(self):
         """
