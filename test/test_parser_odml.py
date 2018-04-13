@@ -97,3 +97,27 @@ class TestOdmlParser(unittest.TestCase):
         # Check error on missing document format
         with self.assertRaises(ValueError):
             self.rdf_reader.from_file(self.rdf_file)
+
+    def test_xml_string(self):
+        # Read from string
+        author = "HPL"
+        date = "1890-08-20"
+        sec_name = "section name"
+        sec_type = "section type"
+        doc = """
+                 <odML version="1.1">
+                    <author>%s</author>
+                    <date>%s</date>
+                    <section>
+                        <name>%s</name>
+                        <type>%s</type>
+                    </section>
+                 </odML>
+               """ % (author, date, sec_name, sec_type)
+
+        xml_doc = self.xml_reader.from_string(doc)
+
+        self.assertEqual(xml_doc.author, author)
+        self.assertEqual(str(xml_doc.date), date)
+        self.assertEqual(len(xml_doc.sections), 1)
+        self.assertEqual(xml_doc.sections[0].name, sec_name)
