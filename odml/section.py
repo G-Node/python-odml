@@ -12,12 +12,8 @@ from .property import BaseProperty
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
-class Section(base._baseobj):
-    pass
-
-
 @allow_inherit_docstring
-class BaseSection(base.sectionable, Section):
+class BaseSection(base.sectionable):
     """ An odML Section """
     type = None
     # id = None
