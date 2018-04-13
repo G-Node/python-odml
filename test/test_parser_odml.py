@@ -172,3 +172,37 @@ class TestOdmlParser(unittest.TestCase):
         self.assertEqual(str(ydoc.date), date)
         self.assertEqual(len(ydoc.sections), 1)
         self.assertEqual(ydoc.sections[0].name, sec_name)
+
+    def test_rdf_string(self):
+        author = "HPL"
+        date = "1890-08-20"
+        sec_name = "section name"
+        sec_type = "section type"
+        rdf_doc = u"""
+        @prefix odml: <https://g-node.org/projects/odml-rdf#> .
+        @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix xml: <http://www.w3.org/XML/1998/namespace> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+        
+        odml:Hub odml:hasDocument <https://g-node.org/projects/odml-rdf#1c9ca24a-1d2c-40b6-a096-5a48efbd77d0> .
+        
+        <https://g-node.org/projects/odml-rdf#1c9ca24a-1d2c-40b6-a096-5a48efbd77d0> a odml:Document ;
+            odml:hasAuthor "%s" ;
+            odml:hasDate "%s"^^xsd:date ;
+            odml:hasSection <https://g-node.org/projects/odml-rdf#2abc6711-34e1-4102-8e3a-297fa4a3d19a> .
+        
+        <https://g-node.org/projects/odml-rdf#2abc6711-34e1-4102-8e3a-297fa4a3d19a> a odml:Section ;
+            odml:hasName "%s" ;
+            odml:hasType "%s" .
+        """ % (author, date, sec_name, sec_type)
+
+        rdoc = self.rdf_reader.from_string(rdf_doc, "turtle")
+
+        self.assertEqual(rdoc[0].author, author)
+        self.assertEqual(str(rdoc[0].date), date)
+        self.assertEqual(len(rdoc[0].sections), 1)
+        self.assertEqual(rdoc[0].sections[0].name, sec_name)
+
+        with self.assertRaises(ValueError):
+            self.rdf_reader.from_string(rdf_doc)

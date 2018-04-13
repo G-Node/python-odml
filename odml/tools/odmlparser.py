@@ -166,7 +166,7 @@ class ODMLReader:
 
         elif self.parser == 'RDF':
             if not doc_format:
-                raise KeyError("Format of the rdf file was not specified")
+                raise ValueError("Format of the rdf file was not specified")
 
             self.doc = RDFReader().from_string(string, doc_format)
             return self.doc
