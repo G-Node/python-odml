@@ -8,12 +8,8 @@ from . import format as frmt
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
-class Property(base._baseobj):
-    pass
-
-
 @allow_inherit_docstring
-class BaseProperty(base.baseobject, Property):
+class BaseProperty(base.baseobject):
     """An odML Property"""
     _format = frmt.Property
 
