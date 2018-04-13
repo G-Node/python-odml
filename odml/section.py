@@ -13,7 +13,7 @@ from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 @allow_inherit_docstring
-class BaseSection(base.sectionable):
+class BaseSection(base.Sectionable):
     """ An odML Section """
     type = None
     # id = None
@@ -239,9 +239,9 @@ class BaseSection(base.sectionable):
             return self.parent.get_repository()
         return super(BaseSection, self).repository
 
-    @base.sectionable.repository.setter
+    @base.Sectionable.repository.setter
     def repository(self, url):
-        base.sectionable.repository.fset(self, url)
+        base.Sectionable.repository.fset(self, url)
 
     @inherit_docstring
     def get_terminology_equivalent(self):

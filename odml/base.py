@@ -160,7 +160,7 @@ class SmartList(list):
 
 
 @allow_inherit_docstring
-class sectionable(BaseObject):
+class Sectionable(BaseObject):
     def __init__(self):
         from odml.section import BaseSection
         self._sections = SmartList(BaseSection)
@@ -558,7 +558,7 @@ class sectionable(BaseObject):
         to another document
         """
         from odml.section import BaseSection
-        obj = super(sectionable, self).clone(children)
+        obj = super(Sectionable, self).clone(children)
         obj._parent = None
         obj._sections = SmartList(BaseSection)
         if children:
