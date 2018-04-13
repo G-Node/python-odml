@@ -64,3 +64,30 @@ class TestDocumentIntegration(unittest.TestCase):
         self.assertEqual(jdoc.id, assigned_id)
         self.assertEqual(xdoc.id, assigned_id)
         self.assertEqual(ydoc.id, assigned_id)
+
+    def test_simple_attributes(self):
+        author = "HPL"
+        version = "ver64"
+        date = "1890-08-20"
+        repository = "invalid"
+
+        self.doc = odml.Document(author, date, version, repository)
+        jdoc, xdoc, ydoc = self.save_load()
+
+        # Test correct JSON save and load.
+        self.assertEqual(jdoc.author, author)
+        self.assertEqual(jdoc.version, version)
+        self.assertEqual(str(jdoc.date), date)
+        self.assertEqual(jdoc.repository, repository)
+
+        # Test correct XML save and load.
+        self.assertEqual(xdoc.author, author)
+        self.assertEqual(xdoc.version, version)
+        self.assertEqual(str(xdoc.date), date)
+        self.assertEqual(xdoc.repository, repository)
+
+        # Test correct YAML save and load.
+        self.assertEqual(ydoc.author, author)
+        self.assertEqual(ydoc.version, version)
+        self.assertEqual(str(ydoc.date), date)
+        self.assertEqual(ydoc.repository, repository)
