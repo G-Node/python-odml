@@ -208,20 +208,20 @@ class sectionable(baseobject):
         else:
             raise ValueError("Can only insert objects of type Section.")
 
-    def append(self, *vsection_tuple):
+    def append(self, section):
         """
-        Adds the section to the section-list and makes this document the
-        section’s parent.
+        Method appends a single Section to the section child-lists of the current Object.
+
+        :param section: odML Section object.
         """
         from odml.section import BaseSection
-        from odml.doc import BaseDocument
-        for vsection in vsection_tuple:
-            if (not isinstance(vsection, BaseSection)) & \
-               isinstance(self, BaseDocument):
-                raise KeyError("Object " + str(vsection) +
-                               " is not a Section.")
-            self._sections.append(vsection)
-            vsection._parent = self
+        if isinstance(section, BaseSection):
+            self._sections.append(section)
+            section._parent = self
+        elif isinstance(section, collections.Iterable) and not isinstance(section, str):
+            raise ValueError("Use extend to add a list of Sections.")
+        else:
+            raise ValueError("Can only append objects of type Section.")
 
     def extend(self, sec_list):
         """
@@ -236,7 +236,7 @@ class sectionable(baseobject):
         # Make sure only Sections with unique names will be added.
         for sec in sec_list:
             if not isinstance(sec, BaseSection):
-                raise ValueError("Can only extend object of type Section.")
+                raise ValueError("Can only extend objects of type Section.")
 
             elif isinstance(sec, BaseSection) and sec.name in self._sections:
                 raise KeyError("Section with name '%s' already exists." % sec.name)
