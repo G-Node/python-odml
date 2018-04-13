@@ -9,7 +9,7 @@ from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
 @allow_inherit_docstring
-class BaseProperty(base.baseobject):
+class BaseProperty(base.BaseObject):
     """An odML Property"""
     _format = frmt.Property
 

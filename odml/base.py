@@ -9,7 +9,7 @@ from . import terminology
 from .tools.doc_inherit import allow_inherit_docstring
 
 
-class baseobject(object):
+class BaseObject(object):
     _format = None
 
     def format(self):
@@ -160,7 +160,7 @@ class SmartList(list):
 
 
 @allow_inherit_docstring
-class sectionable(baseobject):
+class sectionable(BaseObject):
     def __init__(self):
         from odml.section import BaseSection
         self._sections = SmartList(BaseSection)
