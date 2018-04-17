@@ -3,7 +3,7 @@
 <img src="./images/odMLLogo.png" alt="odml" style="width: 150px;"/>
 
 odML (open metadata Markup Language) is an [data model](./data_model.md) for storing
-arbitrary metadata. Teh underlying datamodel offers a way to store
+arbitrary metadata. The underlying data model offers a way to store
 metadata in a structured human- and machine-readable way.  Well
 organized metadata management is a key component to guarantee
 reproducibility of experiments and to track provenance of performed
@@ -25,6 +25,14 @@ the  [RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
 - Editor for odml files [odml-ui](https://github.com/g-node/odml-ui "odml-ui - editor for odml metadata files")
 - Converter for odml files to form or spreadsheets [odmlTables](https://github.com/INM-6/python-odmltables).
 
+## Terminologies
+
+*odml* does not enforce standardization, but welcomes it. We assembled
+definitions of terms that can be used to provide metadata,
+i.e. [odml-terminologies](https://github.com/G-Node/odml-terminologies). An odml-file
+can be based on such a terminology. In that case one does not need to
+provide definitions since they are part of the linked terminology.
+
 * * *
 
 ## Getting started
@@ -40,7 +48,7 @@ pip install odml
 ### Tutorial and examples
 
 - We have assembled a set of
- [tutorials](http://github.com/G-Node/python-odml/doc/tutorial.rst "Python Tutorial").
+ [tutorials](http://github.com/G-Node/python-odml/blob/master/doc/tutorial.rst "Python Tutorial").
 
 ## Support
 
