@@ -1,5 +1,7 @@
-![odml_logo](./images/odMLLogo.png "odml")
+# odml
 
+<img src="./images/odMLLogo.png" alt="odml" style="width: 150px;"/>
+<!-- ![odml_logo](./images/odMLLogo.png "odml") -->
 
 odML (open metadata Markup Language) is an [data model](./data_model.md) for storing
 arbitrary metadata. Teh underlying datamodel offers a way to store
@@ -26,9 +28,9 @@ the  [RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
 
 * * *
 
-# Getting started
+## Getting started
 
-## Installation
+### Installation
 
 *python-odml* is most conveniently installed via pip.
 
@@ -36,12 +38,12 @@ the  [RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
 pip install odml
 ```
 
-## Tutorial and examples
+### Tutorial and examples
 
 - We have assembled a set of
  [tutorials](http://github.com/G-Node/python-odml/doc/tutorial.rst "Python Tutorial").
 
-# Support
+## Support
 
 If you experience problems using *odml* feel free to join our IRC channel
 [#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>. If you find a
@@ -49,7 +51,7 @@ bug please report it using
 the [project issue tracker](https://github.com/G-Node/python-odml/issues "pyhton-odml issue tracker").
 
 
-# License
+## License
 
 This project is open source published under an MIT license-like see [license file](https://github.com/G-Node/python-odml/blob/master/LICENSE) for details.
 
