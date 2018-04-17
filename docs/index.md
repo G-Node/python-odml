@@ -1,7 +1,7 @@
 ![odml_logo](./images/odMLLogo.png "odml")
 
 
-odML (open metadata Markup Language) is an data model for storing
+odML (open metadata Markup Language) is an [data model](./data_model.md) for storing
 arbitrary metadata. Teh underlying datamodel offers a way to store
 metadata in a structured human- and machine-readable way.  Well
 organized metadata management is a key component to guarantee
@@ -33,15 +33,15 @@ the  [RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
 *python-odml* is most conveniently installed via pip.
 
 ```
-	pip install odml
+pip install odml
 ```
 
 ## Tutorial and examples
 
 - We have assembled a set of
- [tutorials](http://g-node.github.io/python-odml/doc/tutorial.hrst "Python Tutorial").
+ [tutorials](http://github.com/G-Node/python-odml/doc/tutorial.rst "Python Tutorial").
 
-# Getting support
+# Support
 
 If you experience problems using *odml* feel free to join our IRC channel
 [#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>. If you find a
@@ -64,22 +64,22 @@ If you use *odml*, it would be much appreciated if you would cite it in publicat
 
 ### Referenced By
 
-Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169)
-Brochier et al (2018) [doi:10.1038/sdata.2018.55](https://doi.org/10.1038/sdata.2018.55)
-Moucek et al (2017) [doi:10.1038/sdata.2016.121](https://doi.org/10.1038/sdata.2016.121)
-Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024)
-Bigdely-Shamlo et al (2016) [doi:10.3389/fninf.2016.00007](https://doi.org/10.3389/fninf.2016.00007)
-Rübel et al (2016) [doi:10.3389/fninf.2016.00048](https://doi.org/10.3389/fninf.2016.00048)
-Wiener et al (2016) [doi:10.1016/j.neuron.2016.10.037](https://doi.org/10.1016/j.neuron.2016.10.037)
-Zehl et al (2016) [doi:10.3389/fninf.2016.00026](https://doi.org/10.3389/fninf.2016.00026)
-Jayapandian et al (2015) [doi:10.3389/fninf.2015.00004](https://doi.org/10.3389/fninf.2015.00004)
-Jezek et al (2015) [doi:10.3389/fninf.2015.00003](https://doi.org/10.3389/fninf.2015.00003)
-Kocaturk et al (2015) [doi:10.3389/fnbot.2015.00008](https://doi.org/10.3389/fnbot.2015.00008)
-Maccione et al (2015) [doi:10.1016/j.brainresbull.2015.07.008](https://doi.org/10.1016/j.brainresbull.2015.07.008)
-Vanek et al (2015) [doi:10.1109/Informatics.2015.7377849](https://doi.org/10.1109/Informatics.2015.7377849)
-Garcia et al (2014) [doi:10.3389/fninf.2014.00010](https://doi.org/10.3389/fninf.2014.00010)
-Moucek et al (2014) [doi:10.3389/fninf.2014.00020](https://doi.org/10.3389/fninf.2014.00020)
-Sobolev et al (2014) [doi:10.3389/fninf.2014.00015](https://doi.org/10.3389/fninf.2014.00015)
-Cockfield et al (2013) [doi:10.3389/fninf.2013.00020](https://doi.org/10.3389/fninf.2013.00020)
-Papez et al (2013) [doi:10.1109/BIBM.2013.6732554](https://doi.org/10.1109/BIBM.2013.6732554)
-Bakker et al (2012) [doi:10.3389/fninf.2012.00030](https://doi.org/10.3389/fninf.2012.00030)
+- Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169)
+- Brochier et al (2018) [doi:10.1038/sdata.2018.55](https://doi.org/10.1038/sdata.2018.55)
+- Moucek et al (2017) [doi:10.1038/sdata.2016.121](https://doi.org/10.1038/sdata.2016.121)
+- Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024)
+- Bigdely-Shamlo et al (2016) [doi:10.3389/fninf.2016.00007](https://doi.org/10.3389/fninf.2016.00007)
+- Rübel et al (2016) [doi:10.3389/fninf.2016.00048](https://doi.org/10.3389/fninf.2016.00048)
+- Wiener et al (2016) [doi:10.1016/j.neuron.2016.10.037](https://doi.org/10.1016/j.neuron.2016.10.037)
+- Zehl et al (2016) [doi:10.3389/fninf.2016.00026](https://doi.org/10.3389/fninf.2016.00026)
+- Jayapandian et al (2015) [doi:10.3389/fninf.2015.00004](https://doi.org/10.3389/fninf.2015.00004)
+- Jezek et al (2015) [doi:10.3389/fninf.2015.00003](https://doi.org/10.3389/fninf.2015.00003)
+- Kocaturk et al (2015) [doi:10.3389/fnbot.2015.00008](https://doi.org/10.3389/fnbot.2015.00008)
+- Maccione et al (2015) [doi:10.1016/j.brainresbull.2015.07.008](https://doi.org/10.1016/j.brainresbull.2015.07.008)
+- Vanek et al (2015) [doi:10.1109/Informatics.2015.7377849](https://doi.org/10.1109/Informatics.2015.7377849)
+- Garcia et al (2014) [doi:10.3389/fninf.2014.00010](https://doi.org/10.3389/fninf.2014.00010)
+- Moucek et al (2014) [doi:10.3389/fninf.2014.00020](https://doi.org/10.3389/fninf.2014.00020)
+- Sobolev et al (2014) [doi:10.3389/fninf.2014.00015](https://doi.org/10.3389/fninf.2014.00015)
+- Cockfield et al (2013) [doi:10.3389/fninf.2013.00020](https://doi.org/10.3389/fninf.2013.00020)
+- Papez et al (2013) [doi:10.1109/BIBM.2013.6732554](https://doi.org/10.1109/BIBM.2013.6732554)
+- Bakker et al (2012) [doi:10.3389/fninf.2012.00030](https://doi.org/10.3389/fninf.2012.00030)
