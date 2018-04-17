@@ -1,7 +1,6 @@
 # odml
 
 <img src="./images/odMLLogo.png" alt="odml" style="width: 150px;"/>
-<!-- ![odml_logo](./images/odMLLogo.png "odml") -->
 
 odML (open metadata Markup Language) is an [data model](./data_model.md) for storing
 arbitrary metadata. Teh underlying datamodel offers a way to store
