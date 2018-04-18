@@ -1,13 +1,13 @@
-# odml
+# odML
 
 <img src="./images/odMLLogo.png" alt="odml" style="width: 150px;"/>
 
-odML (open metadata Markup Language) is an [data model](./data_model.md) for storing
-arbitrary metadata. The underlying data model offers a way to store
-metadata in a structured human- and machine-readable way.  Well
-organized metadata management is a key component to guarantee
-reproducibility of experiments and to track provenance of performed
-analyses.
+odML (open metadata Markup Language) is a file format for storing
+arbitrary metadata. The underlying [data model](./data_model.md)
+offers a way to store metadata in a structured human- and
+machine-readable way.  Well organized metadata management is a key
+component to guarantee reproducibility of experiments and to track
+provenance of performed analyses.
 
 
 *python-odml* is the python library for reading and writing odml metadata files. It is a registered research resource with
@@ -22,16 +22,16 @@ the  [RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
 
 ## Viewer/Editor
 
-- Editor for odml files [odml-ui](https://github.com/g-node/odml-ui "odml-ui - editor for odml metadata files")
-- Converter for odml files to form or spreadsheets [odmlTables](https://github.com/INM-6/python-odmltables).
+- [odml-ui](https://github.com/g-node/odml-ui "odml-ui - editor for odml metadata files"): Graphical editor
+- [odmlTables](https://github.com/INM-6/python-odmltables) Spreadsheet interface (by INM-6 FZ JÛlich) for odml files.
 
 ## Terminologies
-
-*odml* does not enforce standardization, but welcomes it. We assembled
-definitions of terms that can be used to provide metadata,
-i.e. [odml-terminologies](https://github.com/G-Node/odml-terminologies). An odml-file
-can be based on such a terminology. In that case one does not need to
-provide definitions since they are part of the linked terminology.
+*odML* facilitates and encourages standardization by
+providing
+[terminologies](https://github.com/G-Node/odml-terminologies). An
+odml-file can be based on such a terminology. In that case one does
+not need to provide definitions since they are part of the linked
+terminology.
 
 * * *
 
@@ -68,7 +68,7 @@ This project is open source published under an MIT license-like see [license fil
 
 If you use *odml*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_001376 and/or the reference:
 
-*Grewe J., Wachtler T., and Benda J. (2011). A bottom-up approach to data annotation in neurophysiology. Front. Neuroinform. 5:16*
+*Grewe J., Wachtler T., and Benda J. (2011). A bottom-up approach to data annotation in neurophysiology. Front. Neuroinform. 5:16, [doi:10.3389/fninf.2011.00016](https://doi.org/10.3389/fninf.2011.00016)*
 
 
 ### Referenced By
