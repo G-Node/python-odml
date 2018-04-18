@@ -7,6 +7,7 @@ dist
 build
 eggs
 parts
+.cache
 
 # odml files
 *.odml
