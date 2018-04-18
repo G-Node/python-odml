@@ -5,8 +5,17 @@
 .. image:: https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master
     :target: https://coveralls.io/github/G-Node/python-odml?branch=master
 
-odML libraries and editor
-=========================
+odML (Open metaData Markup Language) core library
+=================================================
+
+The open metadata Markup Language is a file based format (XML, JSON, YAML) for storing
+metadata in an organised human- and machine-readable way. odML is an initiative to define
+and establish an open, flexible, and easy-to-use format to transport metadata.
+
+The Python-odML library can be easily installed via :code:`pip`. The source code is freely
+available on `GitHub <https://github.com/G-Node/python-odml>`_. If you are not familiar
+with the version control system **git**, but still want to use it, have a look at the
+documentation available on the `git-scm website <https://git-scm.com/>`_.
 
 Dependencies
 ------------
@@ -74,4 +83,5 @@ Bugs & Questions
 Should you find a behaviour that is likely a bug, please file a bug report at
 `the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
 
-If you have questions regarding the use of the library or the editor, feel free to join the `#gnode <http://webchat.freenode.net?channels=%23gnode>`_ IRC channel on freenode.
+If you have questions regarding the use of the library, feel free to join the
+`#gnode <http://webchat.freenode.net?channels=%23gnode>`_ IRC channel on freenode.

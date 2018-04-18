@@ -1,9 +1,21 @@
+import json
+import os
 import sys
 try:
     from setuptools import setup
 except ImportError as ex:
     from distutils.core import setup
-from odml.info import AUTHOR, CONTACT, CLASSIFIERS, HOMEPAGE, VERSION
+
+with open(os.path.join("odml", "info.json")) as infofile:
+    infodict = json.load(infofile)
+
+VERSION = infodict["VERSION"]
+FORMAT_VERSION = infodict["FORMAT_VERSION"]
+AUTHOR = infodict["AUTHOR"]
+COPYRIGHT = infodict["COPYRIGHT"]
+CONTACT = infodict["CONTACT"]
+HOMEPAGE = infodict["HOMEPAGE"]
+CLASSIFIERS = infodict["CLASSIFIERS"]
 
 packages = [
     'odml',
@@ -27,6 +39,7 @@ setup(
     packages=packages,
     test_suite='test',
     install_requires=install_req,
+    include_package_data=True,
     long_description=description_text,
     classifiers=CLASSIFIERS,
     license="BSD"
