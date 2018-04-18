@@ -9,12 +9,38 @@ from . import terminology
 from .tools.doc_inherit import allow_inherit_docstring
 
 
-class _baseobj(object):
-    pass
-
-
-class baseobject(_baseobj):
+class BaseObject(object):
     _format = None
+
+    def __hash__(self):
+        """
+        Allow all odML objects to be hash-able.
+        """
+        return id(self)
+
+    def __eq__(self, obj):
+        """
+        Do a deep comparison of this object and its odml properties.
+        The 'id' attribute of an object is excluded, since it is
+        unique within a document.
+        """
+        # cannot compare totally different stuff
+        if not isinstance(self, obj.__class__):
+            return False
+
+        for key in self._format:
+            if key == "id":
+                continue
+            elif getattr(self, key) != getattr(obj, key):
+                return False
+
+        return True
+
+    def __ne__(self, obj):
+        """
+        Use the __eq__ function to determine if both objects are equal
+        """
+        return not self == obj
 
     def format(self):
         return self._format
@@ -33,33 +59,6 @@ class baseobject(_baseobj):
         """
         return None
 
-    def __eq__(self, obj):
-        """
-        Do a deep comparison of this object and its odml properties.
-        The 'id' attribute of an object is excluded, since it is
-        unique within a document.
-        """
-        # cannot compare totally different stuff
-        if not isinstance(obj, _baseobj):
-            return False
-
-        if not isinstance(self, obj.__class__):
-            return False
-
-        for key in self._format:
-            if key == "id":
-                continue
-            elif getattr(self, key) != getattr(obj, key):
-                return False
-
-        return True
-
-    def __ne__(self, obj):
-        """
-        Use the __eq__ function to determine if both objects are equal
-        """
-        return not self == obj
-
     def clean(self):
         """
         Stub that doesn't do anything for this class
@@ -76,12 +75,6 @@ class baseobject(_baseobj):
         import copy
         obj = copy.copy(self)
         return obj
-
-    def __hash__(self):
-        """
-        Allow all odML objects to be hash-able.
-        """
-        return id(self)
 
 
 class SmartList(list):
@@ -167,11 +160,20 @@ class SmartList(list):
 
 
 @allow_inherit_docstring
-class sectionable(baseobject):
+class Sectionable(BaseObject):
     def __init__(self):
         from odml.section import BaseSection
         self._sections = SmartList(BaseSection)
         self._repository = None
+
+    def __getitem__(self, key):
+        return self._sections[key]
+
+    def __len__(self):
+        return len(self._sections)
+
+    def __iter__(self):
+        return self._sections.__iter__()
 
     @property
     def document(self):
@@ -248,15 +250,6 @@ class sectionable(baseobject):
         """ Removes the specified child-section """
         self._sections.remove(section)
         section._parent = None
-
-    def __getitem__(self, key):
-        return self._sections[key]
-
-    def __len__(self):
-        return len(self._sections)
-
-    def __iter__(self):
-        return self._sections.__iter__()
 
     def itersections(self, recursive=True, yield_self=False,
                      filter_func=lambda x: True, max_depth=None):
@@ -565,7 +558,7 @@ class sectionable(baseobject):
         to another document
         """
         from odml.section import BaseSection
-        obj = super(sectionable, self).clone(children)
+        obj = super(Sectionable, self).clone(children)
         obj._parent = None
         obj._sections = SmartList(BaseSection)
         if children:

@@ -12,12 +12,8 @@ from .property import BaseProperty
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
-class Section(base._baseobj):
-    pass
-
-
 @allow_inherit_docstring
-class BaseSection(base.sectionable, Section):
+class BaseSection(base.Sectionable):
     """ An odML Section """
     type = None
     # id = None
@@ -59,8 +55,22 @@ class BaseSection(base.sectionable, Section):
         self.parent = parent
 
     def __repr__(self):
-        return "<Section %s[%s] (%d)>" % (self._name, self.type,
-                                          len(self._sections))
+        return "<Section %s[%s] (%d)>" % (self._name, self.type, len(self._sections))
+
+    def __iter__(self):
+        """
+        Iterate over each section and property contained in this section
+        """
+        for section in self._sections:
+            yield section
+        for prop in self._props:
+            yield prop
+
+    def __len__(self):
+        """
+        Number of children (sections AND properties)
+        """
+        return len(self._sections) + len(self._props)
 
     @property
     def id(self):
@@ -243,9 +253,9 @@ class BaseSection(base.sectionable, Section):
             return self.parent.get_repository()
         return super(BaseSection, self).repository
 
-    @base.sectionable.repository.setter
+    @base.Sectionable.repository.setter
     def repository(self, url):
-        base.sectionable.repository.fset(self, url)
+        base.Sectionable.repository.fset(self, url)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
@@ -353,21 +363,6 @@ class BaseSection(base.sectionable, Section):
             obj._parent = None
         else:
             raise ValueError("Can only remove sections and properties")
-
-    def __iter__(self):
-        """
-        Iterate over each section and property contained in this section
-        """
-        for section in self._sections:
-            yield section
-        for prop in self._props:
-            yield prop
-
-    def __len__(self):
-        """
-        Number of children (sections AND properties)
-        """
-        return len(self._sections) + len(self._props)
 
     def clone(self, children=True):
         """

@@ -8,12 +8,8 @@ from . import terminology
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
-class Document(base._baseobj):
-    pass
-
-
 @allow_inherit_docstring
-class BaseDocument(base.sectionable, Document):
+class BaseDocument(base.Sectionable):
     """
     A representation of an odML document in memory.
     Its odml attributes are: *author*, *date*, *version* and *repository*.
@@ -40,6 +36,10 @@ class BaseDocument(base.sectionable, Document):
         # Make sure date is properly parsed into a datetime object
         self._date = None
         self.date = date
+
+    def __repr__(self):
+        return "<Doc %s by %s (%d sections)>" % (self._version, self._author,
+                                                 len(self._sections))
 
     @property
     def id(self):
@@ -106,11 +106,6 @@ class BaseDocument(base.sectionable, Document):
     def parent(self):
         """ The parent of a document is always None. """
         return None
-
-    def __repr__(self):
-        return "<Doc %s by %s (%d sections)>" % (self._version,
-                                                 self._author,
-                                                 len(self._sections))
 
     def finalize(self):
         """

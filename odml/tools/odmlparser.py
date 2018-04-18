@@ -102,18 +102,6 @@ class ODMLReader:
         self.parser = parser
         self.warnings = []
 
-    def is_valid_attribute(self, attr, fmt):
-        if attr in fmt.arguments_keys:
-            return attr
-
-        if fmt.revmap(attr):
-            return attr
-
-        msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
-        print(msg)
-        self.warnings.append(msg)
-        return None
-
     def from_file(self, file, doc_format=None):
 
         if self.parser == 'XML':
