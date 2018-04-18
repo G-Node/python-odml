@@ -25,9 +25,6 @@ matrix:
 #      env:
 #        - OSXENV=2.7
 
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash resources/install_osx_virtualenv.sh; fi
-
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
   - if [ $PYVER = 3 ]; then
@@ -43,10 +40,18 @@ install:
     fi;
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      which $PYCMD;
-      source venv/bin/activate;
-      brew upgrade python;
-      which $PYCMD;
+      if [[ "$OSXENV" == "2.7" ]]; then
+        brew install python@2;
+        virtualenv venv -p python;
+        source venv/bin/activate;
+        export PYCMD=python;
+        export PIPCMD=pip;
+      else
+        brew upgrade python;
+        source venv/bin/activate;
+        export PYCMD=python3;
+        export PIPCMD=pip3;
+      fi;
     fi;
 
   - $PIPCMD install lxml enum34 pyyaml rdflib
