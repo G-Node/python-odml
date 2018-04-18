@@ -134,7 +134,10 @@ class BaseSection(base.Sectionable):
         if self._include is not None:
             self.clean()
         self._include = new_value
-        self.merge(new_section)
+
+        # strict needs to be False, otherwise finalizing a document will
+        # basically always fail.
+        self.merge(new_section, strict=False)
 
     @property
     def link(self):
@@ -172,7 +175,10 @@ class BaseSection(base.Sectionable):
         if self._link is not None:
             self.clean()
         self._link = new_value
-        self.merge(new_section)
+
+        # strict needs to be False, otherwise finalizing a document will
+        # basically always fail.
+        self.merge(new_section, strict=False)
 
     @property
     def definition(self):
