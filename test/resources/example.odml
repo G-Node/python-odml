@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1.1">
+  <version>42</version>
+  <section>
+    <name>TheCrew</name>
+    <property>
+      <type>person</type>
+      <name>NameCrewMembers</name>
+      <value>[Arthur Philip Dent,Zaphod Beeblebrox,Tricia Marie McMillan,Ford Prefect]</value>
+      <id>77cdad5c-5d74-4e9f-9d74-c1ce8e79e951</id>
+      <definition>List of crew members names</definition>
+    </property>
+    <property>
+      <type>int</type>
+      <uncertainty>1</uncertainty>
+      <name>NoCrewMembers</name>
+      <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
+      <value>[4]</value>
+      <id>05e14adf-1ca2-4b2d-984d-6c84814a84de</id>
+      <definition>Number of crew members</definition>
+    </property>
+    <section>
+      <name>Arthur Philip Dent</name>
+      <property>
+        <type>string</type>
+        <name>Species</name>
+        <value>[Human]</value>
+        <id>f64e9d6a-e38d-499e-a03f-fe59b91ad6ba</id>
+        <definition>Species to which subject belongs to</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Nickname</name>
+        <value>[The sandwich-maker]</value>
+        <id>c9dd7ae6-66a1-49f0-9853-80f2cdf6b574</id>
+        <definition>Nickname(s) of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Occupation</name>
+        <value>[]</value>
+        <id>76941971-132a-4b3a-94db-e3cf356ea429</id>
+        <definition>Occupation of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Gender</name>
+        <value>[male]</value>
+        <id>5f1a5e56-d893-47bd-989a-9d3a596bc29e</id>
+        <definition>Sex of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>HomePlanet</name>
+        <value>[Earth]</value>
+        <id>6470acca-5457-4a43-a61c-6744372dff3b</id>
+        <definition>Home planet of the subject</definition>
+      </property>
+      <definition>Information on Arthur Dent</definition>
+      <id>e547c987-4beb-4250-bcb3-1991c535e7e8</id>
+      <type>crew/person</type>
+    </section>
+    <section>
+      <name>Zaphod Beeblebrox</name>
+      <property>
+        <type>string</type>
+        <name>Species</name>
+        <value>[Betelgeusian]</value>
+        <id>861a8469-708e-4950-be71-12c640d7e7d6</id>
+        <definition>Species to which subject belongs to</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Nickname</name>
+        <value>[]</value>
+        <id>ba06784b-d323-45c8-bb52-918b727f2ef1</id>
+        <definition>Nickname(s) of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Occupation</name>
+        <value>[Ex-Galactic President]</value>
+        <id>09b96b49-7bf3-4449-9e43-62d87bb23f16</id>
+        <definition>Occupation of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Gender</name>
+        <value>[male]</value>
+        <id>41f4ab65-afda-43c9-aa08-a384c9fba585</id>
+        <definition>Sex of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>HomePlanet</name>
+        <value>[A planet in the vicinity of Betelgeuse]</value>
+        <id>c81063a1-4727-4d51-bdfd-574923f387ab</id>
+        <definition>Home planet of the subject</definition>
+      </property>
+      <definition>Information on Zaphod Beeblebrox</definition>
+      <id>5d22732f-ebfd-494d-9fb0-0e938fc83291</id>
+      <type>crew/person</type>
+    </section>
+    <section>
+      <name>Tricia Marie McMillan</name>
+      <property>
+        <type>string</type>
+        <name>Species</name>
+        <value>[Human]</value>
+        <id>087d4862-50a5-4764-a2b5-01dded29ccab</id>
+        <definition>Species to which subject belongs to</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Nickname</name>
+        <value>[Trillian Astra]</value>
+        <id>15fef4d3-a9ed-4fc2-95db-7f7c90d85a8c</id>
+        <definition>Nickname(s) of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Occupation</name>
+        <value>[]</value>
+        <id>4ab85d8a-f884-4ef7-bf33-0d42044d95bb</id>
+        <definition>Occupation of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Gender</name>
+        <value>[female]</value>
+        <id>dd553e39-b3b1-4ef2-9b21-6145a3222d15</id>
+        <definition>Sex of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>HomePlanet</name>
+        <value>[Earth]</value>
+        <id>fe2abddf-f2e7-43f3-b3db-0932f94e17e9</id>
+        <definition>Home planet of the subject</definition>
+      </property>
+      <definition>Information on Trillian Astra</definition>
+      <id>b85c4c2d-4722-48fa-a118-5c2f553d7282</id>
+      <type>crew/person</type>
+    </section>
+    <section>
+      <name>Ford Prefect</name>
+      <property>
+        <type>string</type>
+        <name>Species</name>
+        <value>[Betelgeusian]</value>
+        <id>1493fb9b-6fb2-479e-923c-61242567ffd7</id>
+        <definition>Species to which subject belongs to</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Nickname</name>
+        <value>[Ix]</value>
+        <id>4b6eb605-dbfb-40e0-83c4-acca43e4fdbb</id>
+        <definition>Nickname(s) of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Occupation</name>
+        <value>[Researcher/Reporter]</value>
+        <id>3a69dba5-c780-447a-b9d9-e8da3cbbd4f4</id>
+        <definition>Occupation of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>Gender</name>
+        <value>[male]</value>
+        <id>01b8b16c-c80b-4432-93a9-0fab8de74e22</id>
+        <definition>Sex of the subject</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>HomePlanet</name>
+        <value>[A planet in the vicinity of Betelgeuse]</value>
+        <id>f47c0d5e-e2b8-425b-83f3-57bcbe44164d</id>
+        <definition>Home planet of the subject</definition>
+      </property>
+      <definition>Information on Ford Prefect</definition>
+      <id>97cbf33c-5aa8-41af-b158-13247e7481dd</id>
+      <type>crew/person</type>
+    </section>
+    <definition>Information on the crew</definition>
+    <id>6df940b5-b502-4749-8ad9-33d7432064f3</id>
+    <type>crew</type>
+  </section>
+  <section>
+    <name>TheStarship</name>
+    <property>
+      <type>string</type>
+      <name>Name</name>
+      <value>[Heart of Gold]</value>
+      <id>b0f80f23-e976-4a06-b146-b81e5f565d6b</id>
+      <definition>Name of person/device</definition>
+    </property>
+    <property>
+      <type>string</type>
+      <name>OwnerStatus</name>
+      <value>[stolen]</value>
+      <id>43b26234-6023-4e7f-8bc4-401b0fd0504a</id>
+      <definition>Owner status of device</definition>
+    </property>
+    <property>
+      <type>string</type>
+      <name>DriveType</name>
+      <value>[Infinite Propability Drive]</value>
+      <id>828d51ea-f5c8-4525-b2ff-757555449190</id>
+      <definition>Type of drive</definition>
+    </property>
+    <property>
+      <type>string</type>
+      <name>Technology</name>
+      <value>[secret]</value>
+      <id>0117aaa2-fa5d-4623-a63c-4342733205ec</id>
+      <definition>Technology used to built device</definition>
+    </property>
+    <property>
+      <type>float</type>
+      <name>Length</name>
+      <unit>m</unit>
+      <value>[150.0]</value>
+      <id>7e2a3940-833c-407b-9047-918d317af204</id>
+      <definition>Length of device</definition>
+    </property>
+    <property>
+      <type>string</type>
+      <name>Shape</name>
+      <value>[various]</value>
+      <id>f34bfcbb-1a57-4905-bc8b-ef953c0e736e</id>
+      <definition>Shape of device</definition>
+    </property>
+    <property>
+      <type>string</type>
+      <name>FactoryPlanet</name>
+      <value>[Damogran]</value>
+      <id>c39386b4-2023-4dd3-bf03-57bd3c65d5c0</id>
+      <definition>Planet where device was constructed</definition>
+    </property>
+    <section>
+      <name>Cybernetics</name>
+      <property>
+        <type>int</type>
+        <name>NoOfCybernetics</name>
+        <value>[2]</value>
+        <id>534155a2-8d6a-471d-a7cb-8a950ff5e157</id>
+        <definition>Number of cybernetic robots on the ship</definition>
+      </property>
+      <property>
+        <type>string</type>
+        <name>NamesOfCybernetics</name>
+        <value>[Marvin,Eddie]</value>
+        <id>7c00d7e3-2822-42b5-b5b3-b5c7dc51f67e</id>
+        <definition>Names of cybernetic robots on the ship</definition>
+      </property>
+      <section>
+        <name>Marvin</name>
+        <property>
+          <type>string</type>
+          <name>Type</name>
+          <value>[Genuine People Personality]</value>
+          <id>7f74bd80-4d08-43b3-aedc-7e3668b48d34</id>
+          <definition>Type of robot</definition>
+        </property>
+        <property>
+          <type>string</type>
+          <name>Manufacturer</name>
+          <value>[Sirius Cybernetics Corporation]</value>
+          <id>45cb21b1-b0e6-4eb0-a153-2059dd3d3444</id>
+          <definition>Manufacturer of robots</definition>
+        </property>
+        <definition>Information on Marvin</definition>
+        <id>2d66ac3e-5d25-45cc-89c1-1cc5890daa7b</id>
+        <type>starship/cybernetics</type>
+      </section>
+      <section>
+        <name>Eddie</name>
+        <property>
+          <type>string</type>
+          <name>Type</name>
+          <value>[Genuine People Personality]</value>
+          <id>2899d6df-7f15-48f5-aa11-aa368ba75eeb</id>
+          <definition>Type of robot</definition>
+        </property>
+        <property>
+          <type>string</type>
+          <name>Manufacturer</name>
+          <value>[Sirius Cybernetics Corporation]</value>
+          <id>dda738bb-47e4-462b-821c-ea900633dbee</id>
+          <definition>Manufacturer of robots</definition>
+        </property>
+        <definition>Information on Eddie</definition>
+        <id>953852d6-bbca-44d5-bad1-fb9bbca08655</id>
+        <type>starship/cybernetics</type>
+      </section>
+      <definition>Information on cybernetics present on the ship</definition>
+      <id>4f6f4994-cc0f-4d10-a643-4cdda5aa8248</id>
+      <type>starship/cybernetics</type>
+    </section>
+    <definition>Information on the starship</definition>
+    <id>38a36e78-ceca-4045-87a5-53a4dac29f10</id>
+    <type>starship</type>
+  </section>
+  <author>D. N. Adams</author>
+  <date>1979-10-12</date>
+  <id>cf6d24de-c780-4ad2-91ce-45dd5157d6b8</id>
+</odML>
