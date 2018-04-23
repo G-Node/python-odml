@@ -527,3 +527,20 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.find("property")
         self.assertIsNotNone(prop.find("name"))
         self.assertIsNotNone(prop.find("value"))
+
+    def test_convert_yaml_file(self):
+        # Test minimal reading from a yaml file.
+        basefile = os.path.join(self.basepath, "version_conversion.yaml")
+
+        root = self.VC(basefile)._parse_yaml().getroot()
+        self.assertIsNotNone(root.find("section"))
+
+        sec = root.find("section")
+        self.assertIsNotNone(sec.find("name"))
+        self.assertIsNotNone(sec.find("type"))
+        self.assertIsNotNone(sec.find("section"))
+        self.assertIsNotNone(sec.find("property"))
+
+        prop = sec.find("property")
+        self.assertIsNotNone(prop.find("name"))
+        self.assertIsNotNone(prop.find("value"))
