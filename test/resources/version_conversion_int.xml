@@ -1,0 +1,116 @@
+<odML version="1">
+  <section>
+    <definition>def s1</definition>
+    <section>
+      <definition>def subs1</definition>
+      <reference>ref subs1</reference>
+      <include>url subs1</include>
+      <type>subsec</type>
+      <link>somewhere subs1</link>
+      <name>subsec_one</name>
+      <property>
+        <definition>def prop1</definition>
+        <dependency>dep p1</dependency>
+        <value><type>string</type></value>
+        <name>prop_one</name>
+        <dependencyvalue>dep val p1</dependencyvalue>
+      </property>
+      <property>
+        <definition>def prop3</definition>
+        <dependency>dep p3</dependency>
+        <value><type>string</type></value>
+        <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+        <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+        <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+        <value>2<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+        <name>prop three</name>
+        <dependencyvalue>dep val p3</dependencyvalue>
+      </property>
+      <property>
+        <definition>def prop2</definition>
+        <dependency>dep p2</dependency>
+        <value><type>string</type></value>
+        <name>prop two</name>
+        <dependencyvalue>dep val p2</dependencyvalue>
+      </property>
+    </section>
+    <reference>ref s1</reference>
+    <include>url s1</include>
+    <type>mainsec</type>
+    <link>somewhere s1</link>
+    <name>sec_one</name>
+    <property>
+      <definition>def prop1</definition>
+      <dependency>dep p1</dependency>
+      <value><type>string</type></value>
+      <value>'1'
+          <uncertainty>11</uncertainty>
+          <unit>arbitrary</unit>
+          <type>string</type>
+          <reference>ref val 1</reference>
+          <filename>filename val 1</filename>
+          <definition>def val 1</definition>
+      </value>
+      <value>2
+          <uncertainty>12</uncertainty>
+          <unit>arbitrary 2</unit>
+          <type>int</type>
+          <reference>ref val 2</reference>
+          <filename>filename val 2</filename>
+          <definition>def val 2</definition>
+      </value>
+      <value>'3'
+          <uncertainty>13</uncertainty>
+          <unit>arbitrary 3</unit>
+          <type>string</type>
+          <reference>ref val 3</reference>
+          <filename>filename val 3</filename>
+          <definition>def val 3</definition>
+      </value>
+      <name>prop_one</name>
+      <dependencyvalue>dep val p1</dependencyvalue>
+    </property>
+    <property>
+      <definition>def prop2</definition>
+      <dependency>dep p2</dependency>
+      <value><type>string</type></value>
+      <value>1<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>2<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>3<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <value>4<uncertainty>12</uncertainty><unit>arbitrary</unit><type>int</type><reference>ref val 1</reference><filename>filename val 1</filename><definition>def val 1</definition></value>
+      <name>prop_two</name>
+      <dependencyvalue>dep val p2</dependencyvalue>
+    </property>
+    <property>
+      <definition>def prop3</definition>
+      <dependency>dep p3</dependency>
+      <value><type>string</type></value>
+      <name>prop_three</name>
+      <dependencyvalue>dep val p3</dependencyvalue>
+    </property>
+  </section>
+  <section>
+    <definition>def s2</definition>
+    <reference>ref s2</reference>
+    <include>url s2</include>
+    <type>mainsec</type>
+    <link>somewhere s2</link>
+    <name>section two</name>
+  </section>
+  <section>
+    <definition>def s3</definition>
+    <reference>ref s3</reference>
+    <include>url s3</include>
+    <type>mainsec</type>
+    <link>somewhere s3</link>
+    <name>section three</name>
+  </section>
+  <author>author</author>
+  <date>2018-07-07</date>
+  <repository>http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml</repository>
+  <version>v1.13</version>
+</odML>
