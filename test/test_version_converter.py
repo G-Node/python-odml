@@ -544,3 +544,20 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.find("property")
         self.assertIsNotNone(prop.find("name"))
         self.assertIsNotNone(prop.find("value"))
+
+    def test_convert_json_file(self):
+        # Test minimal reading from a json file.
+        basefile = os.path.join(self.basepath, "version_conversion.json")
+
+        root = self.VC(basefile)._parse_json().getroot()
+        self.assertIsNotNone(root.find("section"))
+
+        sec = root.find("section")
+        self.assertIsNotNone(sec.find("name"))
+        self.assertIsNotNone(sec.find("type"))
+        self.assertIsNotNone(sec.find("section"))
+        self.assertIsNotNone(sec.find("property"))
+
+        prop = sec.find("property")
+        self.assertIsNotNone(prop.find("name"))
+        self.assertIsNotNone(prop.find("value"))

@@ -1,0 +1,36 @@
+{
+    "Document": {
+        "version": "v1.13",
+        "date": "2018-07-07",
+        "author": "author",
+        "sections": [
+            {
+                "name": "sec_one",
+                "type" : "mainsec",
+                "properties": [
+                    {
+                        "name": "prop_one",
+                        "values": [
+                            {
+                                "value": "['one', 'two']",
+                                "dtype": "string"
+                            },
+                            {
+                                "value": "1",
+                                "dtype": "int"
+                            }
+                        ]
+                    }
+                ],
+                "sections": [
+                    {
+                        "name": "subsec_one",
+                        "sections": [],
+                        "type": "subsec"
+                    }
+                ]
+            }
+        ]
+    },
+    "odml-version": "1"
+}
