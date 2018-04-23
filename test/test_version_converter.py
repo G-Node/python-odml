@@ -12,6 +12,7 @@ except ImportError:
 
 from contextlib import contextmanager
 from lxml import etree as ET
+from odml.terminology import REPOSITORY_BASE
 from odml.tools.version_converter import VersionConverter
 
 try:
@@ -518,6 +519,31 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.findall("property")[5]
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
+
+    def test_handle_repository(self):
+        repo = ET.Element("repository")
+
+        # Test working and valid repository link
+        repo.text = '/'.join([REPOSITORY_BASE, 'v1.1', 'analysis', 'analysis.xml'])
+        vc = self.VC("")
+        self.assertIsNone(vc._handle_repository(repo))
+        self.assertEqual(vc.conversion_log, [])
+
+        # Test replaced working repository link
+        repo.text = '/'.join([REPOSITORY_BASE, 'v1.0', 'analysis', 'analysis.xml'])
+        self.assertIsNone(vc._handle_repository(repo))
+        self.assertEqual(repo.text, '/'.join([REPOSITORY_BASE, 'v1.1',
+                                              'analysis', 'analysis.xml']))
+        self.assertEqual(len(vc.conversion_log), 1)
+        self.assertTrue("[Info]" in vc.conversion_log[0])
+
+        # Test invalid repository link
+        invalid = "I am leading nowhere"
+        repo.text = invalid
+        self.assertIsNone(vc._handle_repository(repo))
+        self.assertEqual(len(vc.conversion_log), 2)
+        self.assertTrue("[Warning]" in vc.conversion_log[1])
+        self.assertEqual(repo.text, invalid)
 
     def test_convert_xml_file(self):
         # Test minimal reading from an xml file.
