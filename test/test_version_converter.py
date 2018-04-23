@@ -520,6 +520,44 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
 
+    def test_parse_dict_sections(self):
+        # Test appending tags; not appending empty subsections or properties
+        root = ET.Element("root")
+        sec_dict = [{'name': 'sec_one', 'sections': [], 'properties': []}]
+
+        self.assertEqual(len(root.getchildren()), 0)
+        self.VC("")._parse_dict_sections(root, sec_dict)
+        self.assertEqual(len(root.getchildren()), 1)
+        self.assertIsNotNone(root.find("section").find("name"))
+
+        # Test appending multiple sections
+        root = ET.Element("root")
+        sec_dict = [{'name': 'sec_one'}, {'name': 'sec_two'}, {'name': 'sec_three'}]
+
+        self.assertEqual(len(root.getchildren()), 0)
+        self.VC("")._parse_dict_sections(root, sec_dict)
+        self.assertEqual(len(root.getchildren()), 3)
+
+        # Test appending subsections
+        root = ET.Element("root")
+        sec_dict = [{'name': 'sec_one', 'sections': [{'name': 'sub_one'},
+                                                     {'name': 'sub_two'}]}]
+        self.assertEqual(len(root.getchildren()), 0)
+        self.VC("")._parse_dict_sections(root, sec_dict)
+        sec = root.find("section")
+        self.assertEqual(len(sec.getchildren()), 3)
+        self.assertEqual(len(sec.findall("section")), 2)
+
+        # Test appending properties
+        root = ET.Element("root")
+        sec_dict = [{'name': 'sec_one', 'properties': [{'name': 'prop_one'},
+                                                       {'name': 'prop_two'}]}]
+        self.assertEqual(len(root.getchildren()), 0)
+        self.VC("")._parse_dict_sections(root, sec_dict)
+        sec = root.find("section")
+        self.assertEqual(len(sec.getchildren()), 3)
+        self.assertEqual(len(sec.findall("property")), 2)
+
     def test_parse_dict_properties(self):
         # Test appending tags and moving values
         root = ET.Element("root")
