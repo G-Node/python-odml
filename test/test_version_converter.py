@@ -520,6 +520,20 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
 
+    def test_parse_dict_values(self):
+        root = ET.Element("root")
+        val_dict = [{'unit': 'arbitrary', 'value': "['one', 'two']"},
+                    {'unit': 'mV', 'value': '1'}]
+
+        self.VC("")._parse_dict_values(root, val_dict)
+        self.assertEqual(len(root.getchildren()), 2)
+
+        for val in root.iterchildren():
+            self.assertEqual(val.tag, "value")
+            self.assertEqual(len(val.getchildren()), 1)
+            self.assertIsNotNone(val.find("unit"))
+            self.assertIsNotNone(val.text)
+
     def test_handle_repository(self):
         repo = ET.Element("repository")
 
