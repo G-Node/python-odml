@@ -344,7 +344,7 @@ class TestVersionConverter(unittest.TestCase):
                       <type>Property type</type>
                       <definition>Property definition</definition>
                       <dependency>Property dependency</dependency>
-                      <dependencyvalue>Property dependency value</dependencyvalue>
+                      <dependency_value>Property dependency value</dependency_value>
                     </property>
                   </section>
 
