@@ -17,11 +17,14 @@ try:
 except NameError:
     unicode = str
 
-VC = VersionConverter
-
 
 class TestVersionConverter(unittest.TestCase):
     def setUp(self):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.basepath = os.path.join(dir_path, "resources")
+
+        self.VC = VersionConverter
+
         self.doc = """
                      <odML version="1">
                         <date>2008-07-07</date>
@@ -72,7 +75,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(props_names[0], props_names[1])
 
         tree = ET.ElementTree(root)
-        tree = VC._replace_same_name_entities(tree)
+        tree = self.VC._replace_same_name_entities(tree)
         root = tree.getroot()
         sec_names = []
         sec_elems = []
@@ -90,7 +93,7 @@ class TestVersionConverter(unittest.TestCase):
 
     def test_convert_odml_file(self):
         with self.assertRaises(Exception) as exc:
-            VC("/not_valid_path").convert()
+            self.VC("/not_valid_path").convert()
         self.assertIn("Cannot parse provided file", str(exc.exception))
 
         root = ET.fromstring(self.doc)
@@ -106,7 +109,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("type"), None)
 
         file = io.StringIO(unicode(self.doc))
-        vc = VC(file)
+        vc = self.VC(file)
         tree = vc._convert(vc._parse_xml())
         root = tree.getroot()
         prop = root.find("section").find("property")
@@ -173,7 +176,7 @@ class TestVersionConverter(unittest.TestCase):
         """ % local_old_url
 
         file = io.StringIO(unicode(doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         # Test export of Document tags, repository is excluded
@@ -189,7 +192,7 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test warning message on non-importable repository
         file = io.StringIO(unicode(invalid_repo_doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         self.assertEqual(root.findall("repository")[0].text, "Unresolvable")
@@ -197,7 +200,7 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test warning message on old repository
         file = io.StringIO(unicode(old_repo_doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         self.assertEqual(root.findall("repository")[0].text, local_old_url)
@@ -256,7 +259,7 @@ class TestVersionConverter(unittest.TestCase):
         """ % (local_url, local_url)
 
         file = io.StringIO(unicode(doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
 
@@ -301,7 +304,7 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>""" % local_old_url
 
         file = io.StringIO(unicode(doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         sec = conv_doc.getroot().findall("section")
         self.assertEqual(sec[0].find("repository").text, local_old_url)
@@ -317,7 +320,7 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>""" % local_old_url
 
         file = io.StringIO(unicode(doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         sec = conv_doc.getroot().findall("section")
 
@@ -358,7 +361,7 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         file = io.StringIO(unicode(doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         sec = root.findall("section")
@@ -461,7 +464,7 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         file = io.StringIO(unicode(doc))
-        vc = VC(file)
+        vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         sec = root.find("section")
