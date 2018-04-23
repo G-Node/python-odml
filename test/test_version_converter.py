@@ -1,5 +1,7 @@
 import io
 import os
+import shutil
+import tempfile
 import unittest
 try:
     import urllib.request as urllib2
@@ -50,6 +52,12 @@ class TestVersionConverter(unittest.TestCase):
                         <author>Author</author>
                      </odML>
                    """
+
+        self.tmp_dir = None
+
+    def tearDown(self):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
+            shutil.rmtree(self.tmp_dir)
 
     @contextmanager
     def assertNotRaises(self, exc_type):
@@ -561,3 +569,20 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.find("property")
         self.assertIsNotNone(prop.find("name"))
         self.assertIsNotNone(prop.find("value"))
+
+    def test_write_to_file(self):
+        infile = os.path.join(self.basepath, "version_conversion.xml")
+        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+
+        # Test write to named file
+        outfile = os.path.join(self.tmp_dir, "test.odml")
+        self.VC(infile).write_to_file(outfile)
+
+        self.assertTrue(os.path.exists(outfile))
+
+        # Test file extension append write to named file w/o file extension
+        outfile = os.path.join(self.tmp_dir, "test")
+        self.VC(infile).write_to_file(outfile)
+
+        self.assertFalse(os.path.exists(outfile))
+        self.assertTrue(os.path.exists("%s.xml" % outfile))
