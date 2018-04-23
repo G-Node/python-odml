@@ -545,6 +545,31 @@ class TestVersionConverter(unittest.TestCase):
         self.assertTrue("[Warning]" in vc.conversion_log[1])
         self.assertEqual(repo.text, invalid)
 
+    def test_handle_include(self):
+        repo = ET.Element("include")
+
+        # Test working and valid repository link
+        repo.text = '/'.join([REPOSITORY_BASE, 'v1.1', 'analysis', 'analysis.xml'])
+        vc = self.VC("")
+        self.assertIsNone(vc._handle_include(repo))
+        self.assertEqual(vc.conversion_log, [])
+
+        # Test replaced working repository link
+        repo.text = '/'.join([REPOSITORY_BASE, 'v1.0', 'analysis', 'analysis.xml'])
+        self.assertIsNone(vc._handle_include(repo))
+        self.assertEqual(repo.text, '/'.join([REPOSITORY_BASE, 'v1.1',
+                                              'analysis', 'analysis.xml']))
+        self.assertEqual(len(vc.conversion_log), 1)
+        self.assertTrue("[Info]" in vc.conversion_log[0])
+
+        # Test invalid repository link
+        invalid = "I am leading nowhere"
+        repo.text = invalid
+        self.assertIsNone(vc._handle_include(repo))
+        self.assertEqual(len(vc.conversion_log), 2)
+        self.assertTrue("[Warning]" in vc.conversion_log[1])
+        self.assertEqual(repo.text, invalid)
+
     def test_convert_xml_file(self):
         # Test minimal reading from an xml file.
         basefile = os.path.join(self.basepath, "version_conversion.xml")
