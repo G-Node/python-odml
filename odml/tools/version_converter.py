@@ -91,7 +91,6 @@ class VersionConverter(object):
                 curr_element.text = parsed_doc[elem]
                 root.append(curr_element)
 
-        print(ET.tounicode(root, pretty_print=True))
         return ET.ElementTree(root)
 
     @classmethod
