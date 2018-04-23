@@ -510,3 +510,20 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.findall("property")[5]
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
+
+    def test_convert_xml_file(self):
+        # Test minimal reading from an xml file.
+        basefile = os.path.join(self.basepath, "version_conversion.xml")
+
+        root = self.VC(basefile)._parse_xml().getroot()
+        self.assertIsNotNone(root.find("section"))
+
+        sec = root.find("section")
+        self.assertIsNotNone(sec.find("name"))
+        self.assertIsNotNone(sec.find("type"))
+        self.assertIsNotNone(sec.find("section").find("name"))
+        self.assertIsNotNone(sec.find("property"))
+
+        prop = sec.find("property")
+        self.assertIsNotNone(prop.find("name"))
+        self.assertIsNotNone(prop.find("value"))

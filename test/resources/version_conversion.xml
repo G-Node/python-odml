@@ -1,0 +1,23 @@
+ <odML version="1">
+    <date>2008-07-07</date>
+    <section>
+        <name>sec_one</name>
+        <type>mainsec</type>
+        <section>
+            <name>subsec_one</name>
+            <type>subsec</type>
+        </section>
+        <property>
+            <name>prop_name</name>
+            <value>
+                ['one', 'two']
+                <type>string</type>
+            </value>
+            <value>
+                1
+                <type>int</type>
+            </value>
+        </property>
+    </section>
+    <author>author</author>
+ </odML>
