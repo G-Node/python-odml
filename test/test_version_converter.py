@@ -520,6 +520,30 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
 
+    def test_parse_dict_properties(self):
+        # Test appending tags and moving values
+        root = ET.Element("root")
+        prop_dict = [{'name': 'prop_one', 'values': [{'unit': 'none'},
+                                                     {'value': '1'}]}]
+
+        self.assertEqual(len(root.getchildren()), 0)
+        self.VC("")._parse_dict_properties(root, prop_dict)
+        self.assertEqual(len(root.getchildren()), 1)
+        self.assertIsNotNone(root.find("property"))
+        prop = root.find("property")
+        self.assertEqual(len(prop.getchildren()), 3)
+        self.assertIsNotNone(prop.find("name"))
+        self.assertEqual(len(prop.findall("value")), 2)
+
+        # Test multiple entries
+        root = ET.Element("root")
+        prop_dict = [{'name': 'prop_one'},
+                     {'name': 'prop_two'}]
+
+        self.assertEqual(len(root.getchildren()), 0)
+        self.VC("")._parse_dict_properties(root, prop_dict)
+        self.assertEqual(len(root.getchildren()), 2)
+
     def test_parse_dict_values(self):
         root = ET.Element("root")
         val_dict = [{'unit': 'arbitrary', 'value': "['one', 'two']"},
