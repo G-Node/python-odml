@@ -520,6 +520,22 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
 
+    def test_parse_dict_document(self):
+        # Test appending tags; not appending empty sections
+        doc_dict = {'Document': {'author': 'HPL', 'sections': []}}
+
+        root = self.VC("")._parse_dict_document(doc_dict).getroot()
+        self.assertEqual(len(root.getchildren()), 1)
+        self.assertIsNotNone(root.find("author"))
+
+        # Test appending multiple sections
+        doc_dict = {'Document': {'author': 'HPL', 'sections': [{'name': 'sec_one'},
+                                                               {'name': 'sec_two'}]}}
+
+        root = self.VC("")._parse_dict_document(doc_dict).getroot()
+        self.assertEqual(len(root.getchildren()), 3)
+        self.assertEqual(len(root.findall("section")), 2)
+
     def test_parse_dict_sections(self):
         # Test appending tags; not appending empty subsections or properties
         root = ET.Element("root")
