@@ -6,7 +6,6 @@
       <reference>ref subs1</reference>
       <include>url subs1</include>
       <type>subsec</type>
-      <link>somewhere subs1</link>
       <name>subsec_one</name>
       <property>
         <definition>def prop1</definition>
@@ -37,7 +36,6 @@
     <reference>ref s1</reference>
     <include>url s1</include>
     <type>mainsec</type>
-    <link>somewhere s1</link>
     <name>sec_one</name>
     <property>
       <definition>def prop1</definition>
@@ -96,7 +94,6 @@
   <section>
     <definition>def s2</definition>
     <reference>ref s2</reference>
-    <include>url s2</include>
     <type>mainsec</type>
     <link>somewhere s2</link>
     <name>section two</name>
@@ -106,7 +103,6 @@
     <reference>ref s3</reference>
     <include>url s3</include>
     <type>mainsec</type>
-    <link>somewhere s3</link>
     <name>section three</name>
   </section>
   <author>author</author>

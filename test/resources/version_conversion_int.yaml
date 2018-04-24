@@ -5,7 +5,6 @@ Document:
   sections:
   - definition: def s1
     include: url s1
-    link: somewhere s1
     name: sec_one
     properties:
     - definition: def prop1
@@ -117,7 +116,6 @@ Document:
     reference: ref s1
     sections:
     - definition: def subs1
-      include: url subs1
       link: somewhere subs1
       name: subsection one
       properties:
@@ -177,14 +175,12 @@ Document:
     type: mainsec
   - definition: def s2
     include: url s2
-    link: somewhere s2
     name: section two
     properties: []
     reference: ref s2
     sections: []
     type: mainsec
   - definition: def s3
-    include: url s3
     link: somewhere s3
     name: section three
     properties: []

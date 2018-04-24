@@ -220,18 +220,15 @@
                         ],
                         "sections": [],
                         "type": "subsec",
-                        "link": "somewhere subs1",
                         "reference": "ref subs1"
                     }
                 ],
                 "type": "mainsec",
-                "link": "somewhere s1",
                 "reference": "ref s1"
             },
             {
                 "definition": "def s2",
                 "name": "section two",
-                "include": "url s2",
                 "properties": [],
                 "sections": [],
                 "type": "mainsec",
@@ -245,7 +242,6 @@
                 "properties": [],
                 "sections": [],
                 "type": "mainsec",
-                "link": "somewhere s3",
                 "reference": "ref s3"
             }
         ],
