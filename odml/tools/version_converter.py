@@ -356,10 +356,22 @@ class VersionConverter(object):
                 elif val_elem.tag in format.Property.arguments_keys:
                     new_elem = ET.Element(val_elem.tag)
                     new_elem.text = val_elem.text
+
+                    if val_elem.tag in ["type", "dtype"] and val_elem.text == "binary":
+                        new_elem.text = "text"
+                        self._log("[Warning] Replacing unsupported value type "
+                                  "'binary' with 'text' (%s)" % log_id)
+
                     parent.append(new_elem)
                 elif val_elem.tag in self._version_map:
                     new_elem = ET.Element(self._version_map[val_elem.tag])
                     new_elem.text = val_elem.text
+
+                    if val_elem.tag in ["type", "dtype"] and val_elem.text == "binary":
+                        new_elem.text = "text"
+                        self._log("[Warning] Replacing unsupported value type "
+                                  "'binary' with 'text' (%s)" % log_id)
+
                     parent.append(new_elem)
                 else:
                     self._log("[Info] Omitted non-Value attribute '%s: %s/%s'"
