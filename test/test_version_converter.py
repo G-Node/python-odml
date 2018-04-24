@@ -467,7 +467,20 @@ class TestVersionConverter(unittest.TestCase):
                         <checksum>Checksum</checksum>
                       </value>
                     </property>
-                
+
+                    <property>
+                      <name>Unsupported binary value type replace</name>
+                      <value>0
+                        <type>binary</type>
+                      </value>
+                    </property>
+                    <property>
+                      <name>Unsupported binary value dtype replace</name>
+                      <value>1
+                        <dtype>binary</dtype>
+                      </value>
+                    </property>
+
                   </section>
                 </odML>
         """
@@ -477,7 +490,7 @@ class TestVersionConverter(unittest.TestCase):
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         sec = root.find("section")
-        self.assertEqual(len(sec), 7)
+        self.assertEqual(len(sec), 9)
 
         # Test single value export
         prop = sec.findall("property")[0]
@@ -519,6 +532,14 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.findall("property")[5]
         self.assertEqual(len(prop), 1)
         self.assertEqual(len(prop.findall("name")), 1)
+
+        # Test dtype 'binary' replacement
+        prop = sec.findall("property")[6]
+        self.assertEqual(prop.find("name").text, "Unsupported binary value type replace")
+        self.assertEqual(prop.find("type").text, "text")
+        prop = sec.findall("property")[7]
+        self.assertEqual(prop.find("name").text, "Unsupported binary value dtype replace")
+        self.assertEqual(prop.find("type").text, "text")
 
     def test_parse_dict_document(self):
         # Test appending tags; not appending empty sections
