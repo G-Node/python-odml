@@ -98,6 +98,13 @@ class BaseSection(base.Sectionable):
 
     @name.setter
     def name(self, new_value):
+        if self.name == new_value:
+            return
+
+        curr_parent = self.parent
+        if hasattr(curr_parent, "sections") and new_value in curr_parent.sections:
+            raise KeyError("Object with the same name already exists!")
+
         self._name = new_value
 
     @property
