@@ -123,6 +123,14 @@ class BaseProperty(base.BaseObject):
 
     @name.setter
     def name(self, new_name):
+        if self.name == new_name:
+            return
+
+        curr_parent = self.parent
+        if hasattr(curr_parent, "properties") and new_name in curr_parent.properties:
+
+            raise KeyError("Object with the same name already exists!")
+
         self._name = new_name
 
     def __repr__(self):
