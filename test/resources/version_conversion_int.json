@@ -1,0 +1,251 @@
+{
+    "Document": {
+        "repository": "http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml",
+        "version": "v1.13",
+        "date": "2018-02-02",
+        "sections": [
+            {
+                "definition": "def s1",
+                "name": "sec_one",
+                "include": "url s1",
+                "properties": [
+                    {
+                        "definition": "def prop1",
+                        "values": [
+                            {
+                                "dtype": "string"
+                            },
+                            {
+                                "uncertainty": 11,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "'1'",
+                                "reference": "ref val 1",
+                                "dtype": "string",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary 2",
+                                "definition": "def val 1",
+                                "value": "2",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 13,
+                                "unit": "arbitrary 3",
+                                "definition": "def val 3",
+                                "value": "'3'",
+                                "reference": "ref val 3",
+                                "dtype": "string",
+                                "filename": "filename val 3"
+                            }
+                        ],
+                        "name": "prop_one",
+                        "dependency_value": "dep val p1",
+                        "dependency": "dep p1"
+                    },
+                    {
+                        "definition": "def prop2",
+                        "values": [
+                            {
+                                "dtype": "string"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "1",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "2",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "3",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "4",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "4",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "4",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "4",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            },
+                            {
+                                "uncertainty": 12,
+                                "unit": "arbitrary",
+                                "definition": "def val 1",
+                                "value": "4",
+                                "reference": "ref val 1",
+                                "dtype": "int",
+                                "filename": "filename val 1"
+                            }
+                        ],
+                        "name": "prop_two",
+                        "dependency_value": "dep val p2",
+                        "dependency": "dep p2"
+                    },
+                    {
+                        "definition": "def prop3",
+                        "values": [
+                            {
+                                "dtype": "string"
+                            }
+                        ],
+                        "name": "prop_three",
+                        "dependency_value": "dep val p3",
+                        "dependency": "dep p3"
+                    }
+                ],
+                "sections": [
+                    {
+                        "definition": "def subs1",
+                        "name": "subsection one",
+                        "include": "url subs1",
+                        "properties": [
+                            {
+                                "definition": "def prop1",
+                                "values": [
+                                    {
+                                        "dtype": "string"
+                                    }
+                                ],
+                                "name": "prop one",
+                                "dependency_value": "dep val p1",
+                                "dependency": "dep p1"
+                            },
+                            {
+                                "definition": "def prop3",
+                                "values": [
+                                    {
+                                        "dtype": "string"
+                                    },
+                                    {
+                                        "uncertainty": 12,
+                                        "unit": "arbitrary",
+                                        "definition": "def val 1",
+                                        "value": "4",
+                                        "reference": "ref val 1",
+                                        "dtype": "int",
+                                        "filename": "filename val 1"
+                                    },
+                                    {
+                                        "uncertainty": 12,
+                                        "unit": "arbitrary",
+                                        "definition": "def val 1",
+                                        "value": "4",
+                                        "reference": "ref val 1",
+                                        "dtype": "int",
+                                        "filename": "filename val 1"
+                                    },
+                                    {
+                                        "uncertainty": 12,
+                                        "unit": "arbitrary",
+                                        "definition": "def val 1",
+                                        "value": "4",
+                                        "reference": "ref val 1",
+                                        "dtype": "int",
+                                        "filename": "filename val 1"
+                                    },
+                                    {
+                                        "uncertainty": 12,
+                                        "unit": "arbitrary",
+                                        "definition": "def val 1",
+                                        "value": "2",
+                                        "reference": "ref val 1",
+                                        "dtype": "int",
+                                        "filename": "filename val 1"
+                                    }
+                                ],
+                                "name": "prop three",
+                                "dependency_value": "dep val p3",
+                                "dependency": "dep p3"
+                            },
+                            {
+                                "definition": "def prop2",
+                                "values": [
+                                    {
+                                        "dtype": "string"
+                                    }
+                                ],
+                                "name": "prop two",
+                                "dependency_value": "dep val p2",
+                                "dependency": "dep p2"
+                            }
+                        ],
+                        "sections": [],
+                        "type": "subsec",
+                        "reference": "ref subs1"
+                    }
+                ],
+                "type": "mainsec",
+                "reference": "ref s1"
+            },
+            {
+                "definition": "def s2",
+                "name": "section two",
+                "properties": [],
+                "sections": [],
+                "type": "mainsec",
+                "link": "somewhere s2",
+                "reference": "ref s2"
+            },
+            {
+                "definition": "def s3",
+                "name": "section three",
+                "include": "http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml",
+                "properties": [],
+                "sections": [],
+                "type": "mainsec",
+                "reference": "ref s3"
+            }
+        ],
+        "author": "author"
+    },
+    "odml-version": "1"
+}

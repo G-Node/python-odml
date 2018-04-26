@@ -1,0 +1,191 @@
+Document:
+  author: author
+  date: '2018-02-02'
+  repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
+  sections:
+  - definition: def s1
+    include: url s1
+    name: sec_one
+    properties:
+    - definition: def prop1
+      dependency: dep p1
+      dependency_value: dep val p1
+      name: prop_one
+      values:
+      - dtype: string
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - string
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 11
+        unit: arbitrary
+        value: '1'
+      - definition: def val 2
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 2
+        reference: ref val 2
+        uncertainty: 12
+        unit: arbitrary 2
+        value: '2'
+      - definition: def val 3
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - string
+        filename: filename val 3
+        reference: ref val 3
+        uncertainty: 13
+        unit: arbitrary 3
+        value: '3'
+    - definition: def prop2
+      dependency: dep p2
+      dependency_value: dep val p2
+      name: prop_two
+      values:
+      - dtype: string
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '1'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '2'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '3'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '4'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '4'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '4'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '4'
+      - definition: def val 1
+        dtype: !!python/object/apply:odml.dtypes.DType
+        - int
+        filename: filename val 1
+        reference: ref val 1
+        uncertainty: 12
+        unit: arbitrary
+        value: '4'
+    - definition: def prop3
+      dependency: dep p3
+      dependency_value: dep val p3
+      name: prop_three
+      values:
+      - dtype: string
+    reference: ref s1
+    sections:
+    - definition: def subs1
+      link: somewhere subs1
+      name: subsection one
+      properties:
+      - definition: def prop1
+        dependency: dep p1
+        dependency_value: dep val p1
+        name: prop one
+        values:
+        - dtype: string
+      - definition: def prop3
+        dependency: dep p3
+        dependency_value: dep val p3
+        name: prop three
+        values:
+        - dtype: string
+        - definition: def val 1
+          dtype: !!python/object/apply:odml.dtypes.DType
+          - int
+          filename: filename val 1
+          reference: ref val 1
+          uncertainty: 12
+          unit: arbitrary
+          value: '4'
+        - definition: def val 1
+          dtype: !!python/object/apply:odml.dtypes.DType
+          - int
+          filename: filename val 1
+          reference: ref val 1
+          uncertainty: 12
+          unit: arbitrary
+          value: '4'
+        - definition: def val 1
+          dtype: !!python/object/apply:odml.dtypes.DType
+          - int
+          filename: filename val 1
+          reference: ref val 1
+          uncertainty: 12
+          unit: arbitrary
+          value: '4'
+        - definition: def val 1
+          dtype: !!python/object/apply:odml.dtypes.DType
+          - int
+          filename: filename val 1
+          reference: ref val 1
+          uncertainty: 12
+          unit: arbitrary
+          value: '2'
+      - definition: def prop2
+        dependency: dep p2
+        dependency_value: dep val p2
+        name: prop two
+        values:
+        - dtype: string
+      reference: ref subs1
+      sections: []
+      type: subsec
+    type: mainsec
+  - definition: def s2
+    include: url s2
+    name: section two
+    properties: []
+    reference: ref s2
+    sections: []
+    type: mainsec
+  - definition: def s3
+    link: somewhere s3
+    name: section three
+    properties: []
+    reference: ref s3
+    sections: []
+    type: mainsec
+  version: v1.13
+odml-version: '1'
