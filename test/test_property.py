@@ -327,6 +327,40 @@ class TestProperty(unittest.TestCase):
         assert(p.dtype == 'string')
         assert(p.value == ['7', '20', '1 Dog', 'Seven'])
 
+    def test_name(self):
+        # Test id is used when name is not provided
+        p = Property()
+        self.assertIsNotNone(p.name)
+        self.assertEqual(p.name, p.id)
+
+        # Test name is properly set on init
+        name = "rumpelstilzchen"
+        p = Property(name)
+        self.assertEqual(p.name, name)
+
+        # Test name can be properly set on single and connected Properties
+        prop = Property()
+        self.assertNotEqual(prop.name, "prop")
+        prop.name = "prop"
+        self.assertEqual(prop.name, "prop")
+
+        sec = Section()
+        prop_a = Property(parent=sec)
+        self.assertNotEqual(prop_a.name, "prop_a")
+        prop_a.name = "prop_a"
+        self.assertEqual(prop_a.name, "prop_a")
+
+        # Test property name can be changed with siblings
+        prop_b = Property(name="prop_b", parent=sec)
+        self.assertEqual(prop_b.name, "prop_b")
+        prop_b.name = "prop"
+        self.assertEqual(prop_b.name, "prop")
+
+        # Test property name set will fail on existing sibling with same name
+        with self.assertRaises(KeyError):
+            prop_b.name = "prop_a"
+        self.assertEqual(prop_b.name, "prop")
+
     def test_parent(self):
         p = Property("property_section", parent=Section("S"))
         self.assertIsInstance(p.parent, BaseSection)

@@ -5,11 +5,11 @@ Parses odML files. Can be invoked standalone:
     python -m odml.tools.xmlparser file.odml
 """
 import csv
+import sys
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
-import sys
 
 try:
     from StringIO import StringIO
@@ -118,10 +118,9 @@ class XMLWriter:
         else:
             data = str(self)
 
-        f = open(filename, "w")
-        f.write(self.header)
-        f.write(data)
-        f.close()
+        with open(filename, "w") as file:
+            file.write(self.header)
+            file.write(data)
 
 
 def load(filename):
@@ -223,18 +222,20 @@ class XMLReader(object):
             return None  # won't be able to parse this one
         return getattr(self, "parse_" + node.tag)(node, self.tags[node.tag])
 
-    def parse_tag(self, root, fmt, insert_children=True, create=None):
+    def parse_tag(self, root, fmt, insert_children=True):
         """
         Parse an odml node based on the format description *fmt*
-        and a function *create* to instantiate a corresponding object
+        and instantiate the corresponding object.
+        :param root: lxml.etree node containing an odML object or object tree.
+        :param fmt: odML class corresponding to the content of the root node.
+        :param insert_children: Bool value. When True, child elements of the root node
+                                will be parsed to their odML equivalents and appended to
+                                the odML document. When False, child elements of the
+                                root node will be ignored.
         """
         arguments = {}
         extra_args = {}
         children = []
-        text = []
-
-        if root.text:
-            text.append(root.text.strip())
 
         for k, v in root.attrib.iteritems():
             k = k.lower()
@@ -258,8 +259,6 @@ class XMLReader(object):
                 else:
                     tag = fmt.map(node.tag)
                     if tag in arguments:
-                        # TODO make this an error, however first figure out a
-                        # way to let <odML version=><version/> pass
                         self.warn("Element <%s> is given multiple times in "
                                   "<%s> tag" % (node.tag, root.tag), node)
 
@@ -273,38 +272,21 @@ class XMLReader(object):
             else:
                 self.error("Invalid element <%s> in odML document section <%s>"
                            % (node.tag, root.tag), node)
-            if node.tail:
-                text.append(node.tail.strip())
 
         if sys.version_info > (3,):
-            self.check_mandatory_arguments(dict(list(arguments.items()) +
-                                           list(extra_args.items())),
-                                           fmt, root.tag, root)
+            check_args = dict(list(arguments.items()) + list(extra_args.items()))
         else:
-            self.check_mandatory_arguments(dict(arguments.items() +
-                                           extra_args.items()),
-                                           fmt, root.tag, root)
-        if create is None:
-            obj = fmt.create()
-        else:
-            obj = create(args=arguments, text=''.join(text), children=children)
+            check_args = dict(arguments.items() + extra_args.items())
 
-        for k, v in arguments.items():
-            if hasattr(obj, k) and (getattr(obj, k) is None or k == 'id'):
-                try:
-                    if k == 'id' and v is not None:
-                        obj._id = v
-                    else:
-                        setattr(obj, k, v)
-                except Exception as e:
-                    self.warn("cannot set '%s' property on <%s>: %s" %
-                              (k, root.tag, repr(e)), root)
-                    if not self.ignore_errors:
-                        raise e
+        self.check_mandatory_arguments(check_args, fmt, root.tag, root)
+
+        # Instantiate the current odML object with the parsed attributes.
+        obj = fmt.create(**arguments)
 
         if insert_children:
             for child in children:
                 obj.append(child)
+
         return obj
 
     def parse_odML(self, root, fmt):
@@ -312,24 +294,10 @@ class XMLReader(object):
         return doc
 
     def parse_section(self, root, fmt):
-        name = root.get("name")  # property name= overrides
-        if name is None:  # the element
-            name_node = root.find("name")
-            if name_node is not None:
-                name = name_node.text
-                root.remove(name_node)
-                # delete the name_node so its value won't
-                # be used to overwrite the already set name-attribute
-
-        if name is None:
-            self.error("Missing name element in <section>", root)
-
-        return self.parse_tag(root, fmt,
-                              create=lambda **kargs: fmt.create(name))
+        return self.parse_tag(root, fmt)
 
     def parse_property(self, root, fmt):
-        create = lambda children, args, **kargs: fmt.create(**args)
-        return self.parse_tag(root, fmt, insert_children=False, create=create)
+        return self.parse_tag(root, fmt, insert_children=False)
 
 
 if __name__ == '__main__':

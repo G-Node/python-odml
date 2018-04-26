@@ -13,7 +13,7 @@ class BaseProperty(base.BaseObject):
     """An odML Property"""
     _format = frmt.Property
 
-    def __init__(self, name, value=None, parent=None, unit=None,
+    def __init__(self, name=None, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None,
                  value_origin=None, id=None):
@@ -58,6 +58,11 @@ class BaseProperty(base.BaseObject):
             print(e)
             self._id = str(uuid.uuid4())
 
+        # Use id if no name was provided.
+        if not name:
+            name = self._id
+
+        self._name = name
         self._parent = None
         self._name = name
         self._value_origin = value_origin
@@ -118,6 +123,14 @@ class BaseProperty(base.BaseObject):
 
     @name.setter
     def name(self, new_name):
+        if self.name == new_name:
+            return
+
+        curr_parent = self.parent
+        if hasattr(curr_parent, "properties") and new_name in curr_parent.properties:
+
+            raise KeyError("Object with the same name already exists!")
+
         self._name = new_name
 
     def __repr__(self):

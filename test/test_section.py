@@ -39,6 +39,50 @@ class TestSection(unittest.TestCase):
         sec.definition = ""
         self.assertIsNone(sec.definition)
 
+    def test_name(self):
+        # Test id is used when name is not provided
+        s = Section()
+        self.assertIsNotNone(s.name)
+        self.assertEqual(s.name, s.id)
+
+        # Test name is properly set on init
+        name = "rumpelstilzchen"
+        s = Section(name)
+        self.assertEqual(s.name, name)
+
+        name = "rumpelstilzchen"
+        s = Section(name=name)
+        self.assertEqual(s.name, name)
+
+        # Test name can be properly set on single and connected Sections
+        sec = Section()
+        self.assertNotEqual(sec.name, "sec")
+        sec.name = "sec"
+        self.assertEqual(sec.name, "sec")
+
+        subsec_a = Section(parent=sec)
+        self.assertNotEqual(subsec_a.name, "subsec_a")
+        subsec_a.name = "subsec_a"
+        self.assertEqual(subsec_a.name, "subsec_a")
+
+        # Test subsection name can be changed with siblings
+        subsec_b = Section(name="subsec_b", parent=sec)
+        self.assertEqual(subsec_b.name, "subsec_b")
+        subsec_b.name = "subsec"
+        self.assertEqual(subsec_b.name, "subsec")
+
+        # Test subsection name set will fail on existing sibling with same name
+        with self.assertRaises(KeyError):
+            subsec_b.name = "subsec_a"
+        self.assertEqual(subsec_b.name, "subsec")
+
+        # Test section name set will fail on existing same name document sibling
+        doc = Document()
+        sec_a = Section(name="a", parent=doc)
+        sec_b = Section(name="b", parent=doc)
+        with self.assertRaises(KeyError):
+            sec_b.name = "a"
+
     def test_parent(self):
         s = Section("Section")
         self.assertIsNone(s.parent)

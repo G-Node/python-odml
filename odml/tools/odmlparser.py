@@ -48,6 +48,10 @@ class ODMLWriter:
             raise ParserException(msg)
 
         with open(filename, 'w') as file:
+            # Add XML header to support odML stylesheets.
+            if self.parser == 'XML':
+                file.write(xmlparser.XMLWriter.header)
+
             file.write(self.to_string(odml_document))
 
     def to_string(self, odml_document):
