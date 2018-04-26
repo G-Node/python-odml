@@ -130,7 +130,7 @@ class Section(Format):
     _args = {
         'id': 0,
         'type': 1,
-        'name': 0,
+        'name': 1,
         'definition': 0,
         'reference': 0,
         'link': 0,
