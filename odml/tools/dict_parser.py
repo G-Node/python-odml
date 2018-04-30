@@ -5,7 +5,7 @@ into a proper and verified odML document.
 
 from .. import format as odmlfmt
 from ..info import FORMAT_VERSION
-from .parser_utils import ParserException
+from .parser_utils import InvalidVersionException, ParserException
 
 
 class DictWriter:
@@ -131,7 +131,7 @@ class DictReader:
             msg = ("Cannot read file: invalid odML document format version '%s'. \n"
                    "This package supports odML format versions: '%s'."
                    % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
-            raise ParserException(msg)
+            raise InvalidVersionException(msg)
 
         self.parsed_doc = self.parsed_doc['Document']
 
