@@ -18,7 +18,7 @@ except ImportError:
 
 from .. import format
 from ..info import FORMAT_VERSION
-from .parser_utils import ParserException
+from .parser_utils import InvalidVersionException, ParserException
 
 try:
     unicode = unicode
@@ -162,7 +162,7 @@ class XMLReader(object):
             msg = ("Cannot read file: invalid odML document format version '%s'. \n"
                    "This package supports odML format versions: '%s'."
                    % (root.attrib['version'], FORMAT_VERSION))
-            raise ParserException(msg)
+            raise InvalidVersionException(msg)
 
     def from_file(self, xml_file):
         """
