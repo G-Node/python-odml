@@ -11,3 +11,10 @@ class ParserException(Exception):
     Exception wrapper used by various odML parsers.
     """
     pass
+
+
+class InvalidVersionException(ParserException):
+    """
+    Exception wrapper to indicate a non-compatible odML version.
+    """
+    pass
