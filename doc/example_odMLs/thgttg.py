@@ -24,13 +24,14 @@ if not os.path.isdir(output_directory):
 
 save_to = os.path.join(output_directory, "THGTTG.odml")
 
-odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+
+odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
 
 # CREATE A DOCUMENT
 doc = odml.Document(author="D. N. Adams",
                     date=datetime.date(1979, 10, 12),
-                    version=42)
-#                    repository=odmlrepo)
+                    version=42,
+                    repository=odmlrepo)
 
 # CREATE AND APPEND THE MAIN SECTIONs
 doc.append(odml.Section(name="TheCrew",
