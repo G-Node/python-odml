@@ -11,19 +11,19 @@ odML Tutorial
 :License:
     Creative Commons Attribution-ShareAlike 4.0 International
     `License <http://creativecommons.org/licenses/by-sa/4.0/>`_
--------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
 
 odML (open metadata Markup Language)
 ====================================
 
-odML (open metadata Markup Language) is a framework, proposed by `Grewe et al. 
-(2011) <http://journal.frontiersin.org/article/10.3389/fninf.2011.00016/full>`_, 
-to organize and store experimental metadata in a human- and machine-readable, 
-XML based format (odml). In this tutorial we will illustrate the conceptual 
-design of the odML framework and show hands-on how you can generate your own 
-odML metadata file collection. A well organized metadata management of your 
-experiment is a key component to guarantee the reproducibility of your research 
+odML (open metadata Markup Language) is a framework, proposed by `Grewe et al.
+(2011) <http://journal.frontiersin.org/article/10.3389/fninf.2011.00016/full>`_,
+to organize and store experimental metadata in a human- and machine-readable,
+XML based format (odml). In this tutorial we will illustrate the conceptual
+design of the odML framework and show hands-on how you can generate your own
+odML metadata file collection. A well organized metadata management of your
+experiment is a key component to guarantee the reproducibility of your research
 and facilitate the provenance tracking of your analysis projects.
 
 What are metadata and why are they needed?
@@ -46,62 +46,60 @@ Key features of odML
     - Machine- and human-readable
     - Interactive odML-Editor
     - Python-odML library
--------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
 
 Structure of this tutorial
 ==========================
 
-The scientific background of the possible user community of odML varies 
+The scientific background of the possible user community of odML varies
 enormously (e.g. physics, informatics, mathematics, biology, medicine,
-psychology). Some users will be trained programmers, others probably have never 
-learned a programming language. 
+psychology). Some users will be trained programmers, others probably have never
+learned a programming language.
 
-To cover the different demands of all users, we provide a slow introduction to 
-the odML framework that even allows programming beginners to learn the basic 
-concepts. We will demonstrate how to generate an odML file and present more 
-advanced possibilies of the Python-odML library (e.g., how to search for 
-certain metadata or how to integrate existing terminologies). 
+To cover the different demands of all users, we provide a slow introduction to
+the odML framework that even allows programming beginners to learn the basic
+concepts. We will demonstrate how to generate an odML file and present more
+advanced possibilies of the Python-odML library (e.g., how to search for
+certain metadata or how to integrate existing terminologies).
 
 At the end of this tutorial we will provide a few guidelines that will help you
-to create an odML file structure that is optimised for your individual 
-experimental project and complements the special needs of your laboratory. 
+to create an odML file structure that is optimised for your individual
+experimental project and complements the special needs of your laboratory.
 
-The code for the example odML files, which we use within this tutorial is part 
-of the documentation package (see doc/example_odMLs/). 
+The code for the example odML files, which we use within this tutorial is part
+of the documentation package (see doc/example_odMLs/).
 
 A summary of available odML terminologies and templates can be found `here
-<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_. 
-
+<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_.
 
 -------------------------------------------------------------------------------
-
 
 Download and Installation
 =========================
 
 The odML framework is an open source project of the German Neuroinformatics
-Node (`G-Node <http://www.g-node.org/>`_, `odML project website 
-<http://www.g-node.org/projects/odml>`_) of the International Neuroinformatics 
-Coordination Facility (`INCF <http://www.g-node.org/>`_). The source code for 
-the Python-odML library is available on `GitHub <https://github.com/>`_ under 
+Node (`G-Node <http://www.g-node.org/>`_, `odML project website
+<http://www.g-node.org/projects/odml>`_) of the International Neuroinformatics
+Coordination Facility (`INCF <http://www.g-node.org/>`_). The source code for
+the Python-odML library is available on `GitHub <https://github.com/>`_ under
 the project name `python-odml <https://github.com/G-Node/python-odml>`_.
 
 Dependencies
 ------------
 
-The Python-odML library (version 1.3) runs under Python 2.7 or 3.5. 
+The Python-odML library (version 1.3) runs under Python 2.7 or 3.5.
 
 Additionally, the Python-odML library depends on Enum (version 0.4.4).
 
-When the odML-Python library is installed via pip or the setup.py, these 
-packages will be automatically downloaded and installed. Alternatively, they 
-can be installed from the OS package manager. 
+When the odML-Python library is installed via pip or the setup.py, these
+packages will be automatically downloaded and installed. Alternatively, they
+can be installed from the OS package manager.
 
-On Ubuntu, the dependency packages are available as ``python-enum`` and 
+On Ubuntu, the dependency packages are available as ``python-enum`` and
 ``python-lxml``.
 
-Note that on Ubuntu 14.04, the latter package additionally requires the 
+Note that on Ubuntu 14.04, the latter package additionally requires the
 installation of ``libxml2-dev``, ``libxslt1-dev``, and ``lib32z1-dev``.
 
 
@@ -111,12 +109,12 @@ Installation...
 ... via pip:
 ************
 
-The simplest way to install the Python-odML library is from `PyPI 
+The simplest way to install the Python-odML library is from `PyPI
 <https://pypi.python.org/pypi>`_ using `pip <https://pip.pypa.io/en/stable/>`_::
 
     $ pip install odml
 
-The appropriate Python dependencies (Enum and lxml) will be automatically 
+The appropriate Python dependencies (Enum and lxml) will be automatically
 downloaded and installed.
 
 If you are not familiar with PyPI and pip, please have a look at the available
@@ -125,14 +123,14 @@ online documentation.
 Installation
 ------------
 
-To download the Python-odML library please either use git and clone the 
+To download the Python-odML library please either use git and clone the
 repository from GitHub::
 
     $ cd /home/usr/toolbox/
     $ git clone https://github.com/G-Node/python-odml.git
 
-... or if you don't want to use git download the ZIP file also provided on 
-GitHub to your computer (e.g. as above on your home directory under a "toolbox" 
+... or if you don't want to use git download the ZIP file also provided on
+GitHub to your computer (e.g. as above on your home directory under a "toolbox"
 folder).
 
 To install the Python-odML library, enter the corresponding directory and run::
@@ -144,23 +142,21 @@ To install the Python-odML library, enter the corresponding directory and run::
 Bugs & Questions
 ----------------
 
-Should you find a behaviour that is likely a bug, please file a bug report at 
+Should you find a behaviour that is likely a bug, please file a bug report at
 `the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
 
 If you have questions regarding the use of the library or the editor, ask
 the question on `Stack Overflow <http://stackoverflow.com/>`_, be sure to tag
 it with `odml` and we'll do our best to quickly solve the problem.
 
-
 -------------------------------------------------------------------------------
-
 
 Basic knowledge on odML
 =======================
 
-Before we start, it is important to know the basic structure of an odML 
-file. Within an odML file metadata are grouped and stored in a 
-hierarchical tree structure which consists of four different odML 
+Before we start, it is important to know the basic structure of an odML
+file. Within an odML file metadata are grouped and stored in a
+hierarchical tree structure which consists of four different odML
 objects.
 
 Document:
@@ -179,20 +175,20 @@ Property:
     - children: *none*
 
 
-Each of these odML objects has a certain set of attributes where the 
-user can describe the object and its contents. Which attribute belongs 
-to which object and what the attributes are used for, is better explained 
+Each of these odML objects has a certain set of attributes where the
+user can describe the object and its contents. Which attribute belongs
+to which object and what the attributes are used for, is better explained
 in an example odML file (e.g., "THGTTG.odml").
 
 
 A first look
 ============
 
-If you want to get familiar with the concept behind the odML framework and how 
-to handle odML files in Python, you can have a first look at the example odML 
-file provided in the Python-odML library. For this you first need to run the 
-python code ("thgttg.py") to generate the example odML file ("THGTTG.odml"). 
-When using the following commands, make sure you adapt the paths to the 
+If you want to get familiar with the concept behind the odML framework and how
+to handle odML files in Python, you can have a first look at the example odML
+file provided in the Python-odML library. For this you first need to run the
+python code ("thgttg.py") to generate the example odML file ("THGTTG.odml").
+When using the following commands, make sure you adapt the paths to the
 python-odml module to your owns!::
 
     $ cd /home/usr/.../python-odml
@@ -218,15 +214,15 @@ Second, load the example odML file with the following command lines::
 If you open a Python shell outside of the Python-odML library directory, please
 adapt your Python-Path and the path to the "THGTTG.odml" file accordingly.
 
-How you can access the different odML objects and their attributes once you 
-loaded an odML file and how you can make use of the attributes is described in 
-more detail in the following chapters for each odML object type (Document, 
+How you can access the different odML objects and their attributes once you
+loaded an odML file and how you can make use of the attributes is described in
+more detail in the following chapters for each odML object type (Document,
 Section, Property).
 
-How you can create the different odML objects on your own and how to connect 
+How you can create the different odML objects on your own and how to connect
 them to build your own metadata odML file will be described in later chapters.
 Further advanced functions you can use to navigate threw your odML files, or to
-create an odML template file, or to make use of common odML terminologies 
+create an odML template file, or to make use of common odML terminologies
 provided via `the G-Node repository
 <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_ can also
 be found later on in this tutorial.
@@ -242,8 +238,8 @@ If you loaded the example odML file, let's have a first look at the Document::
     >>> print odmlEX
     <Doc 42 by Douglas Adams (2 sections)>
 
-As you can see, the printout gives you a short summary of the Document of the 
-loaded example odML file. 
+As you can see, the printout gives you a short summary of the Document of the
+loaded example odML file.
 
 The print out gives you already the follwing information about the odML file:
 
@@ -251,12 +247,12 @@ The print out gives you already the follwing information about the odML file:
 - ``Doc`` tells you that you are looking at an odML Document
 - ``42`` is the user defined version of this odML file
 - ``by D. N. Adams`` states the author of the odML file
-- ``(2 sections)`` tells you that this odML Document has 2 Section directly 
+- ``(2 sections)`` tells you that this odML Document has 2 Section directly
   appended
-  
-Note that the Document printout tells you nothing about the depth of the 
-complete tree structure, because it is not displaying the children of its 
-directly attached Sections. It also does not display all Document attributes. 
+
+Note that the Document printout tells you nothing about the depth of the
+complete tree structure, because it is not displaying the children of its
+directly attached Sections. It also does not display all Document attributes.
 In total, a Document has the following 4 attributes:
 
 author
@@ -295,29 +291,29 @@ Let's check out all attributes with the following commands::
     >>> print(odmlEX.version)
     42
 
-As expected for a Document, the attributes author and version match the 
-information given in the Document printout, the document attribute just returns 
+As expected for a Document, the attributes author and version match the
+information given in the Document printout, the document attribute just returns
 the Document, and the parent attribute is ``None``.
 
-As you learned in the beginning, Sections can be attached to a Document. They 
-represent the next hierarchy level of an odML file. Let's have a look which 
-Sections were attached to the Document of our example odML file using the 
+As you learned in the beginning, Sections can be attached to a Document. They
+represent the next hierarchy level of an odML file. Let's have a look which
+Sections were attached to the Document of our example odML file using the
 following command::
 
     >>> print(odmlEX.sections)
     [<Section TheCrew[crew] (4)>, <Section TheStarship[crew] (1)>]
 
-As expected from the Document printout our example contains two Sections. The 
+As expected from the Document printout our example contains two Sections. The
 printout and attributes of a Section are explained in the next chapter.
 
 
 The Sections
 ------------
 
-There are several ways to access Sections. You can either call them by name or 
-by index using either explicitely the function that returns the list of 
-Sections (see last part of `The Document`_ chapter) or using again a short cut 
-notation. Let's test all the different ways to access a Section, by having a 
+There are several ways to access Sections. You can either call them by name or
+by index using either explicitely the function that returns the list of
+Sections (see last part of `The Document`_ chapter) or using again a short cut
+notation. Let's test all the different ways to access a Section, by having a
 look at the first Section in the sections list attached to the Document in our
 example odML file::
 
@@ -330,22 +326,22 @@ example odML file::
     >>> print(odmlEX[0])
     <Section TheCrew[crew] (4)>
 
-In the following we will call Sections explicitely by their name using the 
+In the following we will call Sections explicitely by their name using the
 short cut notation.
 
-The printout of a Section is similar to the Document printout and gives you 
+The printout of a Section is similar to the Document printout and gives you
 already the following information:
 
-- ``<...>' indicates that you are looking at an object
+- ``<...>`` indicates that you are looking at an object
 - ``Section`` tells you that you are looking at an odML Section
 - ``TheCrew`` is the name of this Section
 - ``[...]`` highlights the type of the Section (here ``crew``)
 - ``(4)`` states that this Section has four Sections directly attached to it
 
 Note that the Section printout tells you nothing about the number of attached
-Properties or again about the depth of a possible sub-Section tree below the 
-directly attached ones. It also only list the type of the Section as one of the 
-Section attributes. In total, a Section can be defined by the following 5 
+Properties or again about the depth of a possible sub-Section tree below the
+directly attached ones. It also only list the type of the Section as one of the
+Section attributes. In total, a Section can be defined by the following 5
 attributes:
 
 name
@@ -402,10 +398,10 @@ Let's have a look at the attributes for the Section 'TheCrew'::
     None
 
 As expected for this Section, the name and type attribute match the information
-given in the Section printout, and the document and parent attribute return the 
+given in the Section printout, and the document and parent attribute return the
 same object, namely the our example Document.
 
-To see which Sections are directly attached to the Section 'TheCrew' use again 
+To see which Sections are directly attached to the Section 'TheCrew' use again
 the following command::
 
     >>> print(odmlEX['TheCrew'].sections)
@@ -425,7 +421,7 @@ Or, for accessing these sub-Sections::
     >>> print(odmlEX['TheCrew'][3])
     <Section Ford Prefect[crew/person] (0)>
 
-As you learned, besides sub-Sections, a Section can also have Properties 
+As you learned, besides sub-Sections, a Section can also have Properties
 attached. Let's see which Properties are attached to the Section 'TheCrew'::
 
     >>> print(odmlEX['TheCrew'].properties)
@@ -437,7 +433,7 @@ The printout and attributes of a Property are explained in the next chapter.
 The Properties
 --------------
 
-Properties need to be called explicitely via the properties function of a 
+Properties need to be called explicitely via the properties function of a
 Section. You can then, either call a Property by name or by index::
 
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'])
@@ -447,15 +443,15 @@ Section. You can then, either call a Property by name or by index::
 
 In the following we will only call Properties explicitely by their name.
 
-The Property printout is reduced and only gives you information about the 
+The Property printout is reduced and only gives you information about the
 following:
 
 - ``<...>`` indicates that you are looking at an object
 - ``Property`` tells you that you are looking at an odML Property
-- ``NoCrewMembers`` is the name of this Property 
+- ``NoCrewMembers`` is the name of this Property
 
-Note that the Property printout tells you nothing about the number of Values, 
-and very little about the Property attributes. In total, a Property can be 
+Note that the Property printout tells you nothing about the number of Values,
+and very little about the Property attributes. In total, a Property can be
 defined by the following 9 attributes:
 
 name
@@ -533,7 +529,7 @@ Let's check which attributes were defined for the Property 'NoCrewMembers'::
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].dependency_value)
     None
 
-As mentioned the value attribute of a Property can only contain multiple 
+As mentioned the value attribute of a Property can only contain multiple
 metadata when they have the same ``dtype`` and ``unit``, as it is the case for
 the Property 'NameCrewMembers'::
 
@@ -546,10 +542,9 @@ the Property 'NameCrewMembers'::
     person
     >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].unit)
     None
-     
+
 
 -------------------------------------------------------------------------------
-
 
 Generating an odML-file
 =======================
