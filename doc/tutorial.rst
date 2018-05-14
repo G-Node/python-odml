@@ -317,7 +317,7 @@ The Sections
 ------------
 
 There are several ways to access Sections. You can either call them by name or
-by index using either explicitely the function that returns the list of
+by index using either explicitly the function that returns the list of
 Sections (see last part of `The Document`_ chapter) or using again a short cut
 notation. Let's test all the different ways to access a Section, by having a
 look at the first Section in the sections list attached to the Document in our
@@ -332,7 +332,7 @@ example odML file::
     >>> print(odmlEX[0])
     <Section TheCrew[crew] (4)>
 
-In the following we will call Sections explicitely by their name using the
+In the following we will call Sections explicitly by their name using the
 short cut notation.
 
 The printout of a Section is similar to the Document printout and gives you
@@ -363,9 +363,6 @@ document
       attribute is set automatically for a Section and all its children when
       it is attached to a Document.
 
-id
-    - XXXTODOXXX
-
 parent
     - Returns the parent to which this Section was directly attached to. Can be
       either a Document or another Section.
@@ -384,6 +381,11 @@ repository
       terminologies used in this Document. Could be the URL to the G-Node
       terminologies or to a user defined template.
 
+id
+    - id is a UUID (universally unique identifiers) that uniquely identifies
+      the current section. If not otherwise specified, this id is automatically
+      created and assigned.
+
 Let's have a look at the attributes for the Section 'TheCrew'::
 
     >>> print(odmlEX['TheCrew'].name)
@@ -392,22 +394,22 @@ Let's have a look at the attributes for the Section 'TheCrew'::
     Information on the crew
     >>> print(odmlEX['TheCrew'].document)
     <Doc 42 by D. N. Adams (2 sections)>
-    >>> print(sec1.parent)
+    >>> print(odmlEX['TheCrew'].parent)
     <Doc 42 by D. N. Adams (2 sections)>
-    >>> print(odmlEX['TheCrew'].id)
-    None
     >>> print(odmlEX['TheCrew'].type)
     crew
     >>> print(odmlEX['TheCrew'].reference)
     None
     >>> print(odmlEX['TheCrew'].repository)
     None
+    >>> print(odmlEX['TheCrew'].id)
+    None
 
 As expected for this Section, the name and type attribute match the information
 given in the Section printout, and the document and parent attribute return the
-same object, namely the our example Document.
+same object, namely our example Document.
 
-To see which Sections are directly attached to the Section 'TheCrew' use again
+To see which Sections are directly attached to the Section 'TheCrew' again use
 the following command::
 
     >>> print(odmlEX['TheCrew'].sections)
