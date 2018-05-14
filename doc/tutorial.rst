@@ -38,14 +38,14 @@ What are metadata and why are they needed?
 
     While maintaining the relation to the actual raw-data, odML can help to
     collect all metadata which are usually distributed over several files and
-    formats, and to store them unitetly which facilitates sharing data and
+    formats, and to store them unitedly which facilitates sharing data and
     metadata.
 
 Key features of odML
     - open, XML based language, to collect, store and share metadata
     - Machine- and human-readable
-    - Interactive odML-Editor
     - Python-odML library
+    - Interactive odML-Editor
 
 -------------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ learned a programming language.
 To cover the different demands of all users, we provide a slow introduction to
 the odML framework that even allows programming beginners to learn the basic
 concepts. We will demonstrate how to generate an odML file and present more
-advanced possibilies of the Python-odML library (e.g., how to search for
+advanced possibilities of the Python-odML library (e.g., how to search for
 certain metadata or how to integrate existing terminologies).
 
 At the end of this tutorial we will provide a few guidelines that will help you
@@ -71,7 +71,7 @@ The code for the example odML files, which we use within this tutorial is part
 of the documentation package (see doc/example_odMLs/).
 
 A summary of available odML terminologies and templates can be found `here
-<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_.
+<http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml>`_.
 
 -------------------------------------------------------------------------------
 
@@ -88,9 +88,9 @@ the project name `python-odml <https://github.com/G-Node/python-odml>`_.
 Dependencies
 ------------
 
-The Python-odML library (version 1.3) runs under Python 2.7 or 3.5.
+The Python-odML library (version 1.4) runs under Python 2.7 or 3.5.
 
-Additionally, the Python-odML library depends on Enum (version 0.4.4).
+Additionally, the Python-odML library depends on Enum, lxml, pyyaml and rdflib.
 
 When the odML-Python library is installed via pip or the setup.py, these
 packages will be automatically downloaded and installed. Alternatively, they
@@ -110,11 +110,11 @@ Installation...
 ************
 
 The simplest way to install the Python-odML library is from `PyPI
-<https://pypi.python.org/pypi>`_ using `pip <https://pip.pypa.io/en/stable/>`_::
+<https://pypi.python.org/>`_ using `pip <https://pip.pypa.io/en/stable/>`_::
 
     $ pip install odml
 
-The appropriate Python dependencies (Enum and lxml) will be automatically
+The appropriate Python dependencies will be automatically
 downloaded and installed.
 
 If you are not familiar with PyPI and pip, please have a look at the available
@@ -129,7 +129,7 @@ repository from GitHub::
     $ cd /home/usr/toolbox/
     $ git clone https://github.com/G-Node/python-odml.git
 
-... or if you don't want to use git download the ZIP file also provided on
+... or if you don't want to use git, download the ZIP file also provided on
 GitHub to your computer (e.g. as above on your home directory under a "toolbox"
 folder).
 
