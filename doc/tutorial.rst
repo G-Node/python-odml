@@ -736,9 +736,11 @@ the stored metadata:
 +-----------------------------------+---------------------------------------+
 | odml.DType.url or 'url'           | "https://en.wikipedia.org/wiki/Earth" |
 +-----------------------------------+---------------------------------------+
+| odml.DType.tuple                  | "(39.12; 67.19)"                      |
++-----------------------------------+---------------------------------------+
 
-The available types are implemented in the odml.types Module. Note that the 
-last three data types, it not defined, cannot be deduced, but are instead 
+The available types are implemented in the 'odml.dtypes' Module. Note that the
+last four data types, if not defined, cannot be deduced, but are instead
 always interpreted as string.
 
 If we append now our new Property to the previously created sub-Section 
@@ -780,6 +782,29 @@ Note that it is also possible to add a metadata entry later on::
      u'Tricia Marie McMillan',
      u'Ford Prefect',
      u'Blind Passenger']
+
+
+The tuple datatype you might have noticed in the dtype table above has to be
+specially handled. It is intended to enforce a specific number of datapoints
+for each value entry. This is useful in case of 2D or 3D data, where all
+datapoints always have to be present for each entry.
+The dtype itself has to contain the number corresponding to the required value
+data points. For the value data points themselves, they have to be enclosed
+by brackets and separated by a semicolon.
+
+    >>> pixel_prop = odml.Property(name="pixel map")
+    >>> pixel_prop.dtype = "2-tuple"
+    >>> pixel_prop.value = ["(1; 2)", "(3; 4)"]
+
+    >>> voxel_prop = odml.Property(name="voxel map")
+    >>> voxel_prop.dtype = "3-tuple"
+    >>> voxel_prop.value = "(1; 2; 3)"
+
+Please note, that inconsistent tuple values will raise an error:
+
+    >>> tprop = odml.Property(name="tuple fail")
+    >>> tprop.dtype = "3-tuple"
+    >>> tprop.value = ["(1; 2)"]
 
 
 Printing XML-representation of an odML file:
