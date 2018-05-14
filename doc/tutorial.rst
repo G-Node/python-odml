@@ -881,7 +881,7 @@ Data type conversions
 
 After creating a Property with metadata the data type can be changed and the 
 format of the corresponding entry will converted to the new data type, if the 
-new format is valid for the given metadata:: 
+new format is valid for the given metadata::
 
     >>> test_dtype_conv = odml.Property('p', value=1.0)
     >>> print(test_dtype_conv.value)
@@ -896,7 +896,7 @@ new format is valid for the given metadata::
 
 If the conversion is invalid a ValueError is raised.
        
-Also note, that during such a process, metadata loss may occur if a float is 
+Also note, that during such a process metadata loss may occur if a float is
 converted to an integer and then back to a float::
 
     >>> test_dtype_conv = odml.Property('p', value=42.42)
@@ -906,57 +906,6 @@ converted to an integer and then back to a float::
     >>> test_dtype_conv.dtype = odml.DType.float
     >>> print(test_dtype_conv.value)
     [42.0]
-
-Terminologies
--------------
-(DEPRECATED; new version coming soon)
-odML supports terminologies that are data structure templates for typical use cases.
-Sections can have a ``repository`` attribute. As repositories can be inherited,
-the current applicable one can be obtained using the :py:meth:`odml.section.BaseSection.get_repository`
-method.
-
-Binary metadata
-***************
-
-For metadata of binary data type you also need to be specify the correct 
-encoder. The following table lists all possible encoders of the odML-libarary
-and their binary metadata representation:
-
-+------------------+--------------------------+
-| binary encoder   | binary metadata example  |
-+==================+==========================+
-| quoted-printable | Ford Prefect             |
-+------------------+--------------------------+
-| hexadecimal      | 466f72642050726566656374 |
-+------------------+--------------------------+
-| base64           | Rm9yZCBQcmVmZWN0         |
-+------------------+--------------------------+
-
-The encoder can also be edited later on::
-
-    >>> test_value = odml.Value(data='Ford Prefect',
-                                dtype=odml.DType.binary,
-                                encoder='quoted-printable')
-    >>> test_value
-    <binary Ford Prefect>
-    >>> test_value.encoder = 'hexadecimal'
-    >>> test_value
-    <binary 466f72642050726566656374>
-    >>> test_value.encoder = 'base64'
-    >>> test_value
-    <binary Rm9yZCBQcmVmZWN0>
-
-The checksum of binary metadata is automatically calculated with ``crc32`` as
-default checksum::
-
-    >>> test_value.checksum
-    'crc32$10e6c0cf
-    
-Alternatively, ``md5`` can be used for the checksum calculation::
- 
-    >>> test_value.checksum = "md5"
-    >>> test_value.checksum
-    'md5$c1282d5763e2249028047757b6209518'
 
 
 Advanced knowledge on Properties
@@ -973,7 +922,7 @@ Links & Includes
 ----------------
 (DEPRECATED; new version coming soon)
 
-Sections can be linked to other Sections, so that they include their defined 
+Sections can be linked to other Sections, so that they include their defined
 attributes. A link can be within the document (``link`` property) or to an
 external one (``include`` property).
 
