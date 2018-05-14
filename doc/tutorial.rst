@@ -156,7 +156,7 @@ Basic knowledge on odML
 
 Before we start, it is important to know the basic structure of an odML
 file. Within an odML file metadata are grouped and stored in a
-hierarchical tree structure which consists of four different odML
+hierarchical tree structure which consists of three basic odML
 objects.
 
 Document:
@@ -208,6 +208,7 @@ In the IPython shell, first import the odml package::
     >>> import odml
 
 Second, load the example odML file with the following command lines::
+
     >>> to_load = './doc/example_odMLs/THGTTG.odml'
     >>> odmlEX = odml.load(to_load)
 
@@ -221,10 +222,10 @@ Section, Property).
 
 How you can create the different odML objects on your own and how to connect
 them to build your own metadata odML file will be described in later chapters.
-Further advanced functions you can use to navigate threw your odML files, or to
+Further advanced functions you can use to navigate through your odML files, or to
 create an odML template file, or to make use of common odML terminologies
 provided via `the G-Node repository
-<http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml>`_ can also
+<http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml>`_ can also
 be found later on in this tutorial.
 
 But now, let us first have a look at the example odML file (THGTTG.odml)!
@@ -259,8 +260,8 @@ author
     - Returns the author (returned as string) of this odML file.
 
 date
-    - Returns ta user defined date (returned as string). Could for example be
-      used to state the date of first creation or the date of last changes.
+    - Returns ta user defined date. Could for example be used to state
+      the date of first creation or the date of last changes.
 
 document
     - Returns the current Document object.
@@ -276,11 +277,16 @@ repository
 version
     - Returns the user defined version (returned as string) of this odML file.
 
+id
+    - id is a UUID (universally unique identifiers) that uniquely identifies
+      the current document. If not otherwise specified, this id is automatically
+      created and assigned.
+
 Let's check out all attributes with the following commands::
 
     >>> print(odmlEX.author)
     D. N. Adams
-    >>> print(odmlfile.date)
+    >>> print(odmlEX.date)
     1979-10-12
     >>> print(odmlEX.document)
     <Doc 42 by D. N. Adams (2 sections)>
@@ -301,7 +307,7 @@ Sections were attached to the Document of our example odML file using the
 following command::
 
     >>> print(odmlEX.sections)
-    [<Section TheCrew[crew] (4)>, <Section TheStarship[crew] (1)>]
+    [<Section TheCrew[crew] (4)>, <Section TheStarship[starship] (1)>]
 
 As expected from the Document printout our example contains two Sections. The
 printout and attributes of a Section are explained in the next chapter.
