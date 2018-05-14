@@ -919,7 +919,7 @@ Advanced knowledge on Sections
 ------------------------------
 
 Links & Includes
-----------------
+****************
 (DEPRECATED; new version coming soon)
 
 Sections can be linked to other Sections, so that they include their defined
@@ -956,36 +956,9 @@ Terminologies
 (deprecated; new version coming soon)
 odML supports terminologies that are data structure templates for typical use cases.
 Sections can have a ``repository`` attribute. As repositories can be inherited,
-the current applicable one can be obtained using the :py:meth:`odml.section.BaseSection.get_repository`
-method.
+the current applicable one can be obtained using the
+:py:meth:`odml.section.BaseSection.get_repository` method.
 
-To see whether an object has a terminology equivalent, use the :py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
+To see whether an object has a terminology equivalent, use the
+:py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
 method, which returns the corresponding object of the terminology.
-
-Mappings
-********
-(deprecated; new version coming soon)
-A sometimes obscure but very useful feature is the idea of mappings, which can
-be used to write documents in a user-defined terminology, but provide mapping
-information to a standard-terminology that allows the document to be viewed in
-the standard-terminology (provided that adequate mapping-information is provided).
-
-See :py:class:`test.mapping.TestMapping` if you need to understand the
-mapping-process itself.
-
-Mappings are views on documents and are created as follows::
-
-    >>> import odml
-    >>> import odml.mapping as mapping
-    >>> doc = odml.Document()
-    >>> mdoc = mapping.create_mapping(doc)
-    >>> mdoc
-    P(<Doc None by None (0 sections)>)
-    >>> mdoc.__class__
-    <class 'odml.tools.proxy.DocumentProxy'>
-
-Creating a view has the advantage, that changes on a Proxy-object are
-propagated to the original document.
-This works quite well and is extensively used in the GUI.
-However, be aware that you are typically dealing with proxy objects only
-and not all API methods may be available.
