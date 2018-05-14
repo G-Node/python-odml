@@ -671,11 +671,11 @@ updated::
     >>> print(sec1.parent)
     <Doc 42 by D. N. Adams (1 sections)>
 
-It is also possible to directly connect a Section directly to a parent object.
+It is also possible to connect a Section directly to a parent object.
 Let's try this with the next Section we create::
 
-    >>> sec2 = odml.Section(name="Arthur Philip Dent',
-                            definition="Information on Arthur Dent',
+    >>> sec2 = odml.Section(name="Arthur Philip Dent",
+                            definition="Information on Arthur Dent",
                             type="crew/person",
                             parent=sec1)
 
@@ -704,7 +704,7 @@ Note that again, only the name attribute is obligatory for creating a Property.
 The remaining attributes can be defined later on, or are automatically 
 generated in the process.
 
-If a value is defined, but the dtype not, as it is the case for our example 
+If a value is defined, but the dtype is not, as it is the case for our example
 above, the dtype is deduced automatically::
 
     >>> print(prop1.dtype)
@@ -732,7 +732,7 @@ the stored metadata:
 +-----------------------------------+---------------------------------------+
 | odml.DType.person or 'person'     | 'Zaphod Beeblebrox'                   |
 +-----------------------------------+---------------------------------------+
-| odml.DType.text or 'text'         |                                       |
+| odml.DType.text or 'text'         | 'any text containing \n linebreaks'   |
 +-----------------------------------+---------------------------------------+
 | odml.DType.url or 'url'           | "https://en.wikipedia.org/wiki/Earth" |
 +-----------------------------------+---------------------------------------+
@@ -761,12 +761,12 @@ Next, let us create a Property with multiple metadata entries::
                                      "Tricia Marie McMillan",
                                      "Ford Prefect"],
                               dtype=odml.DType.person)
-               
+
 As you learned before, in such a case, the metadata entries must be 
 homogeneous! That means they have to be of the same dtype, unit, and 
 uncertainty (here ``odml.DType.person``, None, and None, respectively).
 
-To further build up our odML file, let us attach now this new Porperty to the 
+To further build up our odML file, let us attach now this new Property to the
 previously created Section 'TheCrew'::
 
     >>> MYodML['TheCrew'].append(prop2)
@@ -792,7 +792,7 @@ hierarchical structure of the odML file looks like.
 Let's have a look at the XML-representation of our small odML file we just 
 generated::
 
-    >>> print unicode(odml.tools.xmlparser.XMLWriter(MYodML))
+    >>> print(odml.tools.xmlparser.XMLWriter(MYodML))
     <odML version="1.1">
       <date>1979-10-12</date>
       <section>
