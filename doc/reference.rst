@@ -6,6 +6,4 @@ Class-Reference
    :maxdepth: 2
 
    base-classes
-   mappings
    tools
-
