@@ -588,9 +588,9 @@ some of the commands you learned before::
     >>> <Doc None by None (0 sections)>
 
 As you can see, we created an "empty" Document where the version and the author
-attributes are not defined and no section is yet attached. How to create and 
-add a Section to a Document you will learn in the next chapter. Let's focus 
-here on defining the Document attributes::
+attributes are not defined and no section is yet attached. You will learn how to create
+and add a Section to a Document in the next chapter. Let's focus here on defining
+the Document attributes::
 
     >>> MYodML.author = 'D. N. Adams'
     >>> MYodML.version = 42
@@ -605,7 +605,7 @@ Now, let's define the date attribute of the Document::
     >>> MYodML.date = dt.date(1979, 10, 12)
 
 Next, let us also add a repository attribute. Exemplary, we can import the 
-Python package os to extract the absolut path to our previously used example 
+Python package os to extract the absolute path to our previously used example
 odML file and add this as repository::
 
     >>> import os
@@ -617,17 +617,17 @@ fiddled with.
 
 Check if your new Document contains actually all attributes now::
 
-    >>> print(odmlEX.author)
+    >>> print(MYodML.author)
     D. N. Adams
-    >>> print(odmlfile.date)
+    >>> print(MYodML.date)
     1979-10-12
-    >>> print(odmlEX.document)
-    <Doc 42 by D. N. Adams (2 sections)>
-    >>> print(odmlEX.parent)
+    >>> print(MYodML.document)
+    <Doc 42 by D. N. Adams (0 sections)>
+    >>> print(MYodML.parent)
     None
-    >>> print(odmlEX.repository)
+    >>> print(MYodML.repository)
     file:///home/usr/.../python-odml/doc/example_odMLs/THGTTG.odml
-    >>> print(odmlEX.version)
+    >>> print(MYodML.version)
     42
 
 Note that you can also define all attributes when first creating a Document::
