@@ -544,6 +544,11 @@ the Property 'NameCrewMembers'::
     >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].unit)
     None
 
+NOTE: 'property.value' will always return a copy! Any direct changes to the
+returned list will have no affect on the actual property value. If you want to
+make changes to a property value, either use the 'append', 'extend' and 'remove'
+methods or assign a new value list to the property.
+
 
 -------------------------------------------------------------------------------
 
