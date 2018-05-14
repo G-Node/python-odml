@@ -11,17 +11,20 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
+import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
+
+
 class DocStringInheritor(type):
-    '''A variation on
+    """A variation on
     http://groups.google.com/group/comp.lang.python/msg/26f7b4fcb4d66c95
     by Paul McGuire
-    '''
+    """
     def __new__(meta, name, bases, clsdict):
         if not('__doc__' in clsdict and clsdict['__doc__']):
             for mro_cls in (mro_cls for base in bases for mro_cls in base.mro()):
@@ -38,8 +41,6 @@ class DocStringInheritor(type):
                         attribute.__doc__=doc
                         break
         return type.__new__(meta, name, bases, clsdict)
-#import odml.doc
-#odml.doc.BaseDocument = DocStringInheritor("BaseDocument", odml.doc.BaseDocument.__bases__, dict(odml.doc.BaseDocument.__dict__))
 
 # -- General configuration -----------------------------------------------------
 
@@ -61,7 +62,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'python-odml'
-copyright = u'2011, Hagen Fritsch'
+copyright = u'2011-2018, German Neuroinformatics Node (G-Node); based on work by Hagen Fritsch'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
