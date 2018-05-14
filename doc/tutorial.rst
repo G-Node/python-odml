@@ -441,15 +441,15 @@ The printout and attributes of a Property are explained in the next chapter.
 The Properties
 --------------
 
-Properties need to be called explicitely via the properties function of a
-Section. You can then, either call a Property by name or by index::
+Properties need to be called explicitly via the properties function of a
+Section. You can then either call a Property by name or by index::
 
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'])
     <Property NoCrewMembers>
-    >>> print(odmlEX['Setup'].properties[1])
+    >>> print(odmlEX['TheCrew'].properties[1])
     <Property NoCrewMembers>
 
-In the following we will only call Properties explicitely by their name.
+In the following we will only call Properties explicitly by their name.
 
 The Property printout is reduced and only gives you information about the
 following:
@@ -506,13 +506,6 @@ dependency_value
     - optional
     - Value of the other Property specified in the 'dependency' attribute on
       which this Property depends on.
-
-mapping
-    - optional Property attribute
-    - The odML path within the same odML file (internal link) to another
-      Section to which all children of this section, if a conversion is
-      requested, should be transferred to, as long as the children not
-      themselves define a mapping.
 
 Let's check which attributes were defined for the Property 'NoCrewMembers'::
 
