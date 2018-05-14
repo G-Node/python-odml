@@ -494,8 +494,8 @@ uncertainty
     - Can be used to specify the uncertainty of the given metadata value.
 
 reference
-    - Returns a reference that can be used to state the origin or source file
-      of the metadata of this Property.
+    - Returns a reference that can be used to state an external definition
+      of the metadata value.
 
 dependency
     - optional
@@ -506,6 +506,9 @@ dependency_value
     - optional
     - Value of the other Property specified in the 'dependency' attribute on
       which this Property depends on.
+
+value_origin
+    - A reference to state the origin of the metadata value e.g. a file name.
 
 Let's check which attributes were defined for the Property 'NoCrewMembers'::
 
