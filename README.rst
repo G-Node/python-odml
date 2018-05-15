@@ -17,6 +17,15 @@ available on `GitHub <https://github.com/G-Node/python-odml>`_. If you are not f
 with the version control system **git**, but still want to use it, have a look at the
 documentation available on the `git-scm website <https://git-scm.com/>`_.
 
+
+Breaking changes
+----------------
+
+odML Version 1.4 introduced breaking format and API changes compared to the previous
+versions of odML. Files saved in the previous format versions can be converted to a 1.4
+compatible format using the version converter from the odml/tools package.
+
+
 Dependencies
 ------------
 

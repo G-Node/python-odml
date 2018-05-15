@@ -7,26 +7,31 @@ Script to generate intro-example.odml
 @author: zehl
 """
 
-import sys
-if len(sys.argv) != 2:
-	print("You have to provide the absolute path to the odml-python module ", 
-	      "your command line.")
-else:
-	odml_pythonpath = sys.argv[-1]
-sys.path.append(odml_pythonpath)
-
+import datetime
 import os
 import odml
-import datetime
+import sys
 
 
-odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml'
+if len(sys.argv) != 2:
+    print("Please provide an existing directory for the example odml file.")
+    quit()
+
+output_directory = sys.argv[-1]
+if not os.path.isdir(output_directory):
+    print("Please provide an existing directory for the example odml file.")
+    quit()
+
+save_to = os.path.join(output_directory, "THGTTG.odml")
+
+
+odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
 
 # CREATE A DOCUMENT
 doc = odml.Document(author="D. N. Adams",
                     date=datetime.date(1979, 10, 12),
-                    version=42)
-#                    repository=odmlrepo)
+                    version=42,
+                    repository=odmlrepo)
 
 # CREATE AND APPEND THE MAIN SECTIONs
 doc.append(odml.Section(name="TheCrew",
@@ -303,8 +308,6 @@ parent.append(odml.Property(name="Manufacturer",
                             value="Sirius Cybernetics Corporation",
                             dtype=odml.DType.string,
                             definition="Manufacturer of robots"))
-
-save_to = os.path.join(odml_pythonpath, "doc", "example_odMLs", "THGTTG.odml")
 
 odml.save(doc, save_to)
 

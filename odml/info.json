@@ -1,8 +1,8 @@
 {
   "VERSION": "1.4.0",
   "FORMAT_VERSION": "1.1",
-  "AUTHOR": "Hagen Fritsch, Christian Kellner, Jan Grewe, Achilleas Koutsou, Michael Sonntag, Lyuba Zehl",
-  "COPYRIGHT": "(c) 2011-2017, German Neuroinformatics Node",
+  "AUTHOR": "Hagen Fritsch, Jan Grewe, Christian Kellner, Achilleas Koutsou, Michael Sonntag, Lyuba Zehl",
+  "COPYRIGHT": "(c) 2011-2018, German Neuroinformatics Node",
   "CONTACT": "dev@g-node.org",
   "HOMEPAGE": "https://github.com/G-Node/python-odml",
   "CLASSIFIERS": [

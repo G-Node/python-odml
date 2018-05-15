@@ -3,7 +3,7 @@
 Data Types
 ==========
 
-.. automodule:: odml.types
+.. automodule:: odml.dtypes
    :members:
    :inherited-members:
    :undoc-members:
@@ -14,6 +14,13 @@ Tools
 =====
 Several tools are provided with the :py:mod:`odml.tools` package.
 
+ODMLParser
+----------
+.. automodule:: odml.tools.odmlparser
+   :members:
+   :inherited-members:
+   :undoc-members:
+
 XMLParser
 ---------
 .. automodule:: odml.tools.xmlparser
@@ -21,11 +28,30 @@ XMLParser
    :inherited-members:
    :undoc-members:
 
-Events
-------
-Events provide the possibility to place hooks on model-changes.
-
-.. automodule:: odml.tools.event
+DictParser
+----------
+.. automodule:: odml.tools.dict_parser
    :members:
+   :inherited-members:
    :undoc-members:
 
+FormatConverter
+----------------
+.. automodule:: odml.tools.format_converter
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+VersionConverter
+----------------
+.. automodule:: odml.tools.version_converter
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+RDFConverter
+----------------
+.. automodule:: odml.tools.rdf_converter
+   :members:
+   :inherited-members:
+   :undoc-members:
