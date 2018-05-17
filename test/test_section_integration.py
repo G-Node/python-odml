@@ -55,20 +55,20 @@ class TestSectionIntegration(unittest.TestCase):
 
         jdoc, xdoc, ydoc = self.save_load()
 
-        self.assertEqual(jdoc.sections[sec_name].id, sec.id)
-        self.assertEqual(xdoc.sections[sec_name].id, sec.id)
-        self.assertEqual(ydoc.sections[sec_name].id, sec.id)
+        self.assertEqual(jdoc.sections[sec_name].oid, sec.oid)
+        self.assertEqual(xdoc.sections[sec_name].oid, sec.oid)
+        self.assertEqual(ydoc.sections[sec_name].oid, sec.oid)
 
         # Test correct save and load of assigned id.
         sec_name = "assigned_id"
         assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
-        _ = odml.Section(name=sec_name, id=assigned_id, parent=self.doc)
+        _ = odml.Section(name=sec_name, oid=assigned_id, parent=self.doc)
 
         jdoc, xdoc, ydoc = self.save_load()
 
-        self.assertEqual(jdoc.sections[sec_name].id, assigned_id)
-        self.assertEqual(xdoc.sections[sec_name].id, assigned_id)
-        self.assertEqual(ydoc.sections[sec_name].id, assigned_id)
+        self.assertEqual(jdoc.sections[sec_name].oid, assigned_id)
+        self.assertEqual(xdoc.sections[sec_name].oid, assigned_id)
+        self.assertEqual(ydoc.sections[sec_name].oid, assigned_id)
 
     def test_simple_attributes(self):
         """

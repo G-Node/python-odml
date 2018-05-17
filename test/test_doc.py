@@ -37,10 +37,10 @@ class TestSection(unittest.TestCase):
         doc = Document()
         self.assertIsNotNone(doc.id)
 
-        doc = Document("D", id="79b613eb-a256-46bf-84f6-207df465b8f7")
+        doc = Document("D", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(doc.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        doc = Document("D", id="id")
+        doc = Document("D", oid="id")
         self.assertNotEqual(doc.id, "id")
 
         # Make sure id cannot be reset programmatically.

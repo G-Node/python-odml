@@ -63,7 +63,7 @@ class TestPropertyIntegration(unittest.TestCase):
         # Test correct save and load of assigned id.
         prop_name = "assigned_id"
         assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
-        _ = odml.Property(name=prop_name, id=assigned_id,
+        _ = odml.Property(name=prop_name, oid=assigned_id,
                           parent=self.doc.sections[0])
 
         jdoc, xdoc, ydoc = self.save_load()
