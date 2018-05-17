@@ -2,7 +2,7 @@ import os
 import unittest
 
 from odml.tools import xmlparser
-from odml.tools.parser_utils import ParserException
+from odml.tools.parser_utils import ParserException, InvalidVersionException
 
 
 class TestXMLParser(unittest.TestCase):
@@ -33,9 +33,6 @@ class TestXMLParser(unittest.TestCase):
 
     def test_invalid_version(self):
         filename = "invalid_version.xml"
-        message = "invalid odML document format version"
 
-        with self.assertRaises(ParserException) as exc:
+        with self.assertRaises(InvalidVersionException):
             _ = self.xml_reader.from_file(os.path.join(self.basepath, filename))
-
-        self.assertIn(message, str(exc.exception))
