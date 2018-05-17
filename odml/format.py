@@ -108,7 +108,8 @@ class Property(Format):
     }
     _map = {
         'dependencyvalue': 'dependency_value',
-        'type': 'dtype'
+        'type': 'dtype',
+        'id': 'oid'
     }
     _rdf_map = {
         'id': _ns.hasId,
@@ -142,6 +143,7 @@ class Section(Format):
     _map = {
         'section': 'sections',
         'property': 'properties',
+        'id': 'oid'
     }
     _rdf_map = {
         'id': _ns.hasId,
@@ -168,7 +170,8 @@ class Document(Format):
         'repository': 0,
     }
     _map = {
-        'section': 'sections'
+        'section': 'sections',
+        'id': 'oid'
     }
     _rdf_map = {
         'id': _ns.hasId,

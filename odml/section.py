@@ -16,26 +16,24 @@ from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 class BaseSection(base.Sectionable):
     """ An odML Section """
     type = None
-    # id = None
+    reference = None  # the *import* property
     _link = None
     _include = None
-    reference = None  # the *import* property
-
     _merged = None
 
     _format = format.Section
 
     def __init__(self, name=None, type=None, parent=None,
                  definition=None, reference=None,
-                 repository=None, link=None, include=None, id=None):
+                 repository=None, link=None, include=None, oid=None):
 
         # Sets _sections Smartlist and _repository to None, so run first.
         super(BaseSection, self).__init__()
         self._props = base.SmartList(BaseProperty)
 
         try:
-            if id is not None:
-                self._id = str(uuid.UUID(id))
+            if oid is not None:
+                self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
         except ValueError as e:
@@ -77,18 +75,29 @@ class BaseSection(base.Sectionable):
         return len(self._sections) + len(self._props)
 
     @property
+    def oid(self):
+        """
+        The uuid for the section. Required for entity creation and comparison,
+        saving and loading.
+        """
+        return self.id
+
+    @property
     def id(self):
+        """
+        The uuid for the section.
+        """
         return self._id
 
-    def new_id(self, id=None):
+    def new_id(self, oid=None):
         """
         new_id sets the id of the current object to a RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
-        :param id: UUID string as specified in RFC 4122.
+        :param oid: UUID string as specified in RFC 4122.
         """
-        if id is not None:
-            self._id = str(uuid.UUID(id))
+        if oid is not None:
+            self._id = str(uuid.UUID(oid))
         else:
             self._id = str(uuid.uuid4())
 

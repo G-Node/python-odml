@@ -29,7 +29,7 @@ class BaseObject(object):
             return False
 
         for key in self._format:
-            if key == "id":
+            if key == "id" or key == "oid":
                 continue
             elif getattr(self, key) != getattr(obj, key):
                 return False
