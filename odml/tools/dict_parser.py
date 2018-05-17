@@ -131,9 +131,9 @@ class DictReader:
             raise ParserException("Invalid odML document: Could not find odml-version.")
 
         elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
-            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
-                   "This package supports odML format versions: '%s'."
-                   % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
+            msg = ("Cannot parse odML document with format version '%s'. \n"
+                   "\tUse the 'tools.VersionConverter' to import previous odML formats."
+                   % self.parsed_doc.get('odml-version'))
             raise InvalidVersionException(msg)
 
         self.parsed_doc = self.parsed_doc['Document']
