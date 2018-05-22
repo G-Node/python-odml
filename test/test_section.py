@@ -207,10 +207,10 @@ class TestSection(unittest.TestCase):
         s = Section(name="S")
         self.assertIsNotNone(s.id)
 
-        s = Section("S", id="79b613eb-a256-46bf-84f6-207df465b8f7")
+        s = Section("S", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(s.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        s = Section("S", id="id")
+        s = Section("S", oid="id")
         self.assertNotEqual(s.id, "id")
 
         # Make sure id cannot be reset programmatically.

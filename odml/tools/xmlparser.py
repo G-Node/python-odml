@@ -159,9 +159,9 @@ class XMLReader(object):
             raise ParserException("Could not find format version attribute "
                                   "in <odML> tag.\n")
         elif root.attrib['version'] != FORMAT_VERSION:
-            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
-                   "This package supports odML format versions: '%s'."
-                   % (root.attrib['version'], FORMAT_VERSION))
+            msg = ("Cannot parse odML document with format version '%s'. \n"
+                   "\tUse the 'tools.VersionConverter' to import previous odML formats."
+                   % root.attrib['version'])
             raise InvalidVersionException(msg)
 
     def from_file(self, xml_file):

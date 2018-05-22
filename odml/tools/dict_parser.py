@@ -33,7 +33,8 @@ class DictWriter:
                     tag = getattr(odml_document, attr)
 
                     if tag:
-                        parsed_doc[attr] = tag
+                        # Always use the arguments key attribute name when saving
+                        parsed_doc[i] = tag
 
         return parsed_doc
 
@@ -60,7 +61,8 @@ class DictWriter:
                         tag = getattr(section, attr)
 
                         if tag:
-                            section_dict[attr] = tag
+                            # Always use the arguments key attribute name when saving
+                            section_dict[i] = tag
 
             section_seq.append(section_dict)
 
@@ -89,7 +91,8 @@ class DictWriter:
                                 prop.dtype.endswith("-tuple") and len(prop.value) > 0:
                             prop_dict["value"] = "(%s)" % ";".join(prop.value[0])
                         else:
-                            prop_dict[attr] = tag
+                            # Always use the arguments key attribute name when saving
+                            prop_dict[i] = tag
 
             props_seq.append(prop_dict)
 
@@ -128,9 +131,9 @@ class DictReader:
             raise ParserException("Invalid odML document: Could not find odml-version.")
 
         elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
-            msg = ("Cannot read file: invalid odML document format version '%s'. \n"
-                   "This package supports odML format versions: '%s'."
-                   % (self.parsed_doc.get('odml-version'), FORMAT_VERSION))
+            msg = ("Cannot parse odML document with format version '%s'. \n"
+                   "\tUse the 'tools.VersionConverter' to import previous odML formats."
+                   % self.parsed_doc.get('odml-version'))
             raise InvalidVersionException(msg)
 
         self.parsed_doc = self.parsed_doc['Document']
@@ -143,7 +146,8 @@ class DictReader:
             if attr == 'sections':
                 doc_secs = self.parse_sections(self.parsed_doc['sections'])
             elif attr:
-                doc_attrs[i] = self.parsed_doc[i]
+                # Make sure to always use the correct odml format attribute name
+                doc_attrs[odmlfmt.Document.map(attr)] = self.parsed_doc[i]
 
         doc = odmlfmt.Document.create(**doc_attrs)
         for sec in doc_secs:
@@ -166,7 +170,8 @@ class DictReader:
                 elif attr == 'sections':
                     children_secs = self.parse_sections(section['sections'])
                 elif attr:
-                    sec_attrs[attr] = section[attr]
+                    # Make sure to always use the correct odml format attribute name
+                    sec_attrs[odmlfmt.Section.map(attr)] = section[attr]
 
             sec = odmlfmt.Section.create(**sec_attrs)
             for prop in sec_props:
@@ -188,7 +193,8 @@ class DictReader:
             for i in _property:
                 attr = self.is_valid_attribute(i, odmlfmt.Property)
                 if attr:
-                    prop_attrs[attr] = _property[attr]
+                    # Make sure to always use the correct odml format attribute name
+                    prop_attrs[odmlfmt.Property.map(attr)] = _property[attr]
 
             prop = odmlfmt.Property.create(**prop_attrs)
             odml_props.append(prop)

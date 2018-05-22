@@ -3,7 +3,7 @@ import unittest
 import yaml
 
 from odml.tools import dict_parser
-from odml.tools.parser_utils import ParserException
+from odml.tools.parser_utils import ParserException, InvalidVersionException
 
 
 class TestYAMLParser(unittest.TestCase):
@@ -40,12 +40,9 @@ class TestYAMLParser(unittest.TestCase):
 
     def test_invalid_version(self):
         filename = "invalid_version.yaml"
-        message = "invalid odML document format version"
 
         with open(os.path.join(self.basepath, filename)) as raw_data:
             parsed_doc = yaml.load(raw_data)
 
-        with self.assertRaises(ParserException) as exc:
+        with self.assertRaises(InvalidVersionException):
             _ = self.yaml_reader.to_odml(parsed_doc)
-
-        self.assertIn(message, str(exc.exception))

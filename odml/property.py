@@ -16,7 +16,7 @@ class BaseProperty(base.BaseObject):
     def __init__(self, name=None, value=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None,
-                 value_origin=None, id=None):
+                 value_origin=None, oid=None):
         """
         Create a new Property. If a value without an explicitly stated dtype
         has been provided, the method will try to infer the value's dtype.
@@ -45,13 +45,13 @@ class BaseProperty(base.BaseObject):
                       if dtype is not given, the type is deduced from the values.
                       Check odml.DType for supported data types.
         :param value_origin: Reference where the value originated from e.g. a file name.
-        :param id: UUID string as specified in RFC 4122. If no id is provided,
+        :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
                    an id will be generated and assigned. An id has to be unique
                    within an odML Document.
         """
         try:
-            if id is not None:
-                self._id = str(uuid.UUID(id))
+            if oid is not None:
+                self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
         except ValueError as e:
@@ -102,18 +102,29 @@ class BaseProperty(base.BaseObject):
                              "converted to data type \'%s\'!" % self._dtype)
 
     @property
+    def oid(self):
+        """
+        The uuid for the property. Required for entity creation and comparison,
+        saving and loading.
+        """
+        return self.id
+
+    @property
     def id(self):
+        """
+        The uuid for the property.
+        """
         return self._id
 
-    def new_id(self, id=None):
+    def new_id(self, oid=None):
         """
-        new_id sets the id of the current object to an RFC 4122 compliant UUID.
+        new_id sets the object id of the current object to an RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
-        :param id: UUID string as specified in RFC 4122.
+        :param oid: UUID string as specified in RFC 4122.
         """
-        if id is not None:
-            self._id = str(uuid.UUID(id))
+        if oid is not None:
+            self._id = str(uuid.UUID(oid))
         else:
             self._id = str(uuid.uuid4())
 

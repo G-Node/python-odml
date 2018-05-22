@@ -3,7 +3,7 @@ import os
 import unittest
 
 from odml.tools import dict_parser
-from odml.tools.parser_utils import ParserException
+from odml.tools.parser_utils import ParserException, InvalidVersionException
 
 
 class TestJSONParser(unittest.TestCase):
@@ -40,12 +40,9 @@ class TestJSONParser(unittest.TestCase):
 
     def test_invalid_version(self):
         filename = "invalid_version.json"
-        message = "invalid odML document format version"
 
         with open(os.path.join(self.basepath, filename)) as json_data:
             parsed_doc = json.load(json_data)
 
-        with self.assertRaises(ParserException) as exc:
+        with self.assertRaises(InvalidVersionException):
             _ = self.json_reader.to_odml(parsed_doc)
-
-        self.assertIn(message, str(exc.exception))

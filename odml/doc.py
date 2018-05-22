@@ -19,11 +19,11 @@ class BaseDocument(base.Sectionable):
 
     _format = format.Document
 
-    def __init__(self, author=None, date=None, version=None, repository=None, id=None):
+    def __init__(self, author=None, date=None, version=None, repository=None, oid=None):
         super(BaseDocument, self).__init__()
         try:
-            if id is not None:
-                self._id = str(uuid.UUID(id))
+            if oid is not None:
+                self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
         except ValueError as e:
@@ -42,21 +42,29 @@ class BaseDocument(base.Sectionable):
                                                  len(self._sections))
 
     @property
+    def oid(self):
+        """
+        The uuid for the document. Required for entity creation and comparison,
+        saving and loading.
+        """
+        return self.id
+
+    @property
     def id(self):
         """
         The uuid for the document.
         """
         return self._id
 
-    def new_id(self, id=None):
+    def new_id(self, oid=None):
         """
         new_id sets the id of the current object to a RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
-        :param id: UUID string as specified in RFC 4122.
+        :param oid: UUID string as specified in RFC 4122.
         """
-        if id is not None:
-            self._id = str(uuid.UUID(id))
+        if oid is not None:
+            self._id = str(uuid.UUID(oid))
         else:
             self._id = str(uuid.uuid4())
 

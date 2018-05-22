@@ -62,7 +62,7 @@ class TestDocumentIntegration(unittest.TestCase):
 
         # Test correct save and load of assigned id.
         assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
-        self.doc = odml.Document(id=assigned_id)
+        self.doc = odml.Document(oid=assigned_id)
         jdoc, xdoc, ydoc = self.save_load()
 
         self.assertEqual(jdoc.id, assigned_id)

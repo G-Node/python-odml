@@ -436,10 +436,10 @@ class TestProperty(unittest.TestCase):
         p = Property(name="P")
         self.assertIsNotNone(p.id)
 
-        p = Property("P", id="79b613eb-a256-46bf-84f6-207df465b8f7")
+        p = Property("P", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
         self.assertEqual(p.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        p = Property("P", id="id")
+        p = Property("P", oid="id")
         self.assertNotEqual(p.id, "id")
 
         # Make sure id cannot be reset programmatically.
