@@ -29,6 +29,9 @@ Be aware that the value dtype :code:`binary` has been removed. Incorporating act
 data into odML files is discouraged, provide references to the original files using the
 :code:`URL` dtype instead.
 
+For details regarding the introduced changes please check the `github release notes
+<https://github.com/G-Node/python-odml/releases>`_.
+
 
 Dependencies
 ------------
