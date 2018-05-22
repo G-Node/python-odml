@@ -25,6 +25,10 @@ odML Version 1.4 introduced breaking format and API changes compared to the prev
 versions of odML. Files saved in the previous format versions can be converted to a 1.4
 compatible format using the version converter from the odml/tools package.
 
+Be aware that the value dtype :code:`binary` has been removed. Incorporating actual binary
+data into odML files is discouraged, provide references to the original files using the
+:code:`URL` dtype instead.
+
 
 Dependencies
 ------------
