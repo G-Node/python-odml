@@ -1,6 +1,7 @@
 # Changelog
 
-Used to collect all changes and references until the next release.
+Used to document all changes from previous releases and collect changes 
+until the next release.
 
 # Version 1.4.0
 ## Breaking changes
