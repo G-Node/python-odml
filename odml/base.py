@@ -158,6 +158,13 @@ class SmartList(list):
 
             super(SmartList, self).append(obj)
 
+    def sort(self, key=lambda x: x.name, reverse=False):
+        """
+        If not otherwise defined, sort by the *name* attribute
+        of the lists *_content_type* object.
+        """
+        super(SmartList, self).sort(key=key, reverse=reverse)
+
 
 @allow_inherit_docstring
 class Sectionable(BaseObject):
