@@ -23,10 +23,6 @@ class BaseObject(object):
         Do a deep comparison of this object and its odml properties.
         The 'id' attribute of an object is excluded, since it is
         unique within a document.
-        SmartList attributes of 'sections' and 'properties' are
-        handled specially: We want to make sure that the lists'
-        objects are properly compared without changing the order
-        of the individual lists.
         """
         # cannot compare totally different stuff
         if not isinstance(self, obj.__class__):
@@ -35,14 +31,6 @@ class BaseObject(object):
         for key in self._format:
             if key == "id" or key == "oid":
                 continue
-            elif (isinstance(getattr(self, key), SmartList) and
-                  sorted(getattr(self, key), key=lambda x: x.name) !=
-                  sorted(getattr(obj, key), key=lambda x: x.name)):
-                # This special case was introduced only due to the fact
-                # that RDF files will be loaded with randomized list
-                # order. With any other file format the list order
-                # remains unchanged.
-                return False
             elif getattr(self, key) != getattr(obj, key):
                 return False
 
@@ -142,6 +130,28 @@ class SmartList(list):
         for obj in self:
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
+
+    def __eq__(self, obj):
+        """
+        SmartList attributes of 'sections' and 'properties' are
+        handled specially: We want to make sure that the lists'
+        objects are properly compared without changing the order
+        of the individual lists.
+        """
+        # This special case was introduced only due to the fact
+        # that RDF files will be loaded with randomized list
+        # order. With any other file format the list order
+        # remains unchanged.
+        if sorted(self, key=lambda x: x.name) != sorted(obj, key=lambda x: x.name):
+            return False
+
+        return True
+
+    def __ne__(self, obj):
+        """
+        Use the __eq__ function to determine if both objects are equal
+        """
+        return not self == obj
 
     def index(self, obj):
         """
