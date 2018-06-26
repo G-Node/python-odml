@@ -123,11 +123,27 @@ class RDFWriter(object):
             elif isinstance(fmt, Property.__class__) and \
                     k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
-                bag = URIRef(odmlns + str(uuid.uuid4()))
-                self.g.add((bag, RDF.type, RDF.Bag))
-                self.g.add((curr_node, fmt.rdf_map(k), bag))
+                seq = URIRef(odmlns + str(uuid.uuid4()))
+                self.g.add((seq, RDF.type, RDF.Seq))
+                self.g.add((curr_node, fmt.rdf_map(k), seq))
+                # rdflib so far does not respect RDF:li item order
+                # in RDF:Seq on loading so we have to use custom
+                # numbered Node elements for now. Once rdflib upgrades
+                # this should be reversed to RDF:li again!
+                # see https://github.com/RDFLib/rdflib/issues/280
+                # -- keep until supported
+                # bag = URIRef(odmlns + str(uuid.uuid4()))
+                # self.g.add((bag, RDF.type, RDF.Bag))
+                # self.g.add((curr_node, fmt.rdf_map(k), bag))
+                # for v in values:
+                #     self.g.add((bag, RDF.li, Literal(v)))
+
+                counter = 1
                 for v in values:
-                    self.g.add((bag, RDF.li, Literal(v)))
+                    pred = "%s_%s" % (str(RDF), counter)
+                    self.g.add((seq, URIRef(pred), Literal(v)))
+                    counter = counter + 1
+
             # adding entities' properties
             else:
                 val = getattr(e, k)
