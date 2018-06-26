@@ -650,6 +650,30 @@ class TestProperty(unittest.TestCase):
         self.assertIsNotNone(prop.get_merged_equivalent())
         self.assertEqual(prop.get_merged_equivalent(), merprop)
 
+    def test_comparison(self):
+        p_name = "propertyName"
+        p_origin = "from over there"
+        p_unit = "pears"
+        p_uncertainty = "+-12"
+        p_ref = "4 8 15 16 23"
+        p_def = "an odml test property"
+        p_dep = "yes"
+        p_dep_val = "42"
+        p_val = ["a", "b"]
+
+        prop_a = Property(name=p_name, value_origin=p_origin, unit=p_unit,
+                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                        dependency=p_dep, dependency_value=p_dep_val, value=p_val)
+
+        prop_b = Property(name=p_name, value_origin=p_origin, unit=p_unit,
+                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                        dependency=p_dep, dependency_value=p_dep_val, value=p_val)
+
+        self.assertEqual(prop_a, prop_b)
+
+        prop_b.name = 'newPropertyName'
+        self.assertNotEqual(prop_a, prop_b)
+
 
 if __name__ == "__main__":
     print("TestProperty")
