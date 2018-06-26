@@ -56,7 +56,7 @@ xsd:date rdf:type rdfs:Datatype ;
 ###  https://g-node.org/projects/odml-rdf#hasValue
 :hasValue rdf:type owl:ObjectProperty ;
           rdfs:domain :Property ;
-          rdfs:range rdf:Bag ;
+          rdfs:range rdf:Seq ;
           rdfs:label "hasValue"^^xsd:string .
 
 
@@ -94,7 +94,7 @@ xsd:date rdf:type rdfs:Datatype ;
 
 ###  https://g-node.org/projects/odml-rdf#isValueOf
 :isValueOf rdf:type owl:ObjectProperty ;
-           rdfs:domain rdf:Bag ;
+           rdfs:domain rdf:Seq ;
            rdfs:range :Property ;
            rdfs:label "isValueOf"^^xsd:string .
 
@@ -211,15 +211,15 @@ xsd:date rdf:type rdfs:Datatype ;
 #    Classes
 #################################################################
 
-###  http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag
-rdf:Bag rdf:type owl:Class ;
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq
+rdf:Seq rdf:type owl:Class ;
         rdfs:subClassOf [ rdf:type owl:Restriction ;
                           owl:onProperty :isValueOf ;
                           owl:someValuesFrom :Property
                         ] ;
-        rdfs:comment "The class of unordered containers." ;
+        rdfs:comment "The class of ordered containers." ;
         rdfs:isDefinedBy rdf: ;
-        rdfs:label "Bag" .
+        rdfs:label "Seq" .
 
 
 ###  https://g-node.org/projects/odml-rdf#Cell
@@ -346,7 +346,7 @@ rdf:Bag rdf:type owl:Class ;
           rdfs:subClassOf owl:Thing ,
                           [ rdf:type owl:Restriction ;
                             owl:onProperty :hasValue ;
-                            owl:someValuesFrom rdf:Bag
+                            owl:someValuesFrom rdf:Seq
                           ] ,
                           [ rdf:type owl:Restriction ;
                             owl:onProperty :isPropertyOf ;
