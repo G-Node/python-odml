@@ -5,6 +5,7 @@ import yaml
 from io import StringIO
 from os.path import dirname, abspath
 from rdflib import Graph, Literal, URIRef
+from rdflib.graph import Seq
 from rdflib.namespace import XSD, RDF
 
 import odml
@@ -274,9 +275,20 @@ class RDFReader(object):
             elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
             if attr[0] == "value" and len(elems) > 0:
                 prop_attrs[attr[0]] = []
+
+                # rdflib does not respect order with RDF.li items yet, see comment above
+                # support both RDF.li and rdf:_nnn for now.
+                # Remove rdf:_nnn once rdflib respects RDF.li order in an RDF.Seq obj.
                 values = list(self.g.objects(subject=elems[0], predicate=RDF.li))
-                for v in values:
-                    prop_attrs[attr[0]].append(v.toPython())
+                if len(values) > 0:
+                    for v in values:
+                        prop_attrs[attr[0]].append(v.toPython())
+                else:
+                    # rdf:__nnn part
+                    valseq = Seq(graph=self.g, subject=elems[0])
+                    for seqitem in valseq:
+                        prop_attrs[attr[0]].append(seqitem.toPython())
+
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
             else:
