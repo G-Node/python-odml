@@ -85,8 +85,11 @@ class TestOdmlParser(unittest.TestCase):
         self.rdf_writer.write_file(self.odml_doc, self.rdf_file)
         rdf_doc = self.rdf_reader.from_file(self.rdf_file, "turtle")
 
-        # RDF does not preserve the order of sections,
-        # need to check the attributes by hand.
+        self.assertEqual(self.odml_doc, rdf_doc[0])
+
+        # RDF does not preserve the order of sections or properties,
+        # check the attributes by hand to make sure everything
+        # was correctly imported.
         self.assertEqual(len(rdf_doc), 1)
         self.assertEqual(rdf_doc[0].author, self.odml_doc.author)
         self.assertEqual(rdf_doc[0].version, self.odml_doc.version)
