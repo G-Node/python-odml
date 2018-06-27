@@ -12,18 +12,21 @@ matrix:
       python: "3.4"
     - os: linux
       python: "3.5"
+    - os: linux
+      python: "3.6"
 
     - os: osx
       language: generic
       env:
         - OSXENV=3.5
-#    Keep only one osx branch active for now
-#    since currently osx builds on travis
-#    are frequently stalled or indefinitely delayed.
-#    - os: osx
-#      language: generic
-#      env:
-#        - OSXENV=2.7
+    - os: osx
+      language: generic
+      env:
+        - OSXENV=3.6
+    - os: osx
+      language: generic
+      env:
+        - OSXENV=2.7
 
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
