@@ -94,10 +94,11 @@ To install the Python-odML library, enter the corresponding directory and run::
 **Note** The master branch is our current development branch, not all features might be
 working as expected. Use the release tags instead.
 
-Documentation
--------------
+odML Project page
+-----------------
 
-`Documentation <https://g-node.github.io/python-odml>`_
+More information about the project including related projects as well as tutorials and
+examples can be found at our `odML project page <https://g-node.github.io/python-odml>`_
 
 Bugs & Questions
 ----------------

@@ -131,6 +131,28 @@ class SmartList(list):
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
 
+    def __eq__(self, obj):
+        """
+        SmartList attributes of 'sections' and 'properties' are
+        handled specially: We want to make sure that the lists'
+        objects are properly compared without changing the order
+        of the individual lists.
+        """
+        # This special case was introduced only due to the fact
+        # that RDF files will be loaded with randomized list
+        # order. With any other file format the list order
+        # remains unchanged.
+        if sorted(self, key=lambda x: x.name) != sorted(obj, key=lambda x: x.name):
+            return False
+
+        return True
+
+    def __ne__(self, obj):
+        """
+        Use the __eq__ function to determine if both objects are equal
+        """
+        return not self == obj
+
     def index(self, obj):
         """
         Find obj in list
@@ -157,6 +179,13 @@ class SmartList(list):
                                  self._content_type)
 
             super(SmartList, self).append(obj)
+
+    def sort(self, key=lambda x: x.name, reverse=False):
+        """
+        If not otherwise defined, sort by the *name* attribute
+        of the lists *_content_type* object.
+        """
+        super(SmartList, self).sort(key=key, reverse=reverse)
 
 
 @allow_inherit_docstring

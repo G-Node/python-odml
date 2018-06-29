@@ -739,6 +739,106 @@ class TestSection(unittest.TestCase):
         self.assertEqual(destination.sections["lvl"].properties[0].value,
                          d_subprop_one.value)
 
+    def test_comparison(self):
+        sec_name = "sec name"
+        sec_type = "sec type"
+        sec_def = "an odml test section"
+        sec_ref = "from over there"
+
+        sec_a = Section(name=sec_name, type=sec_type,
+                        definition=sec_def, reference=sec_ref)
+        sec_b = Section(name=sec_name, type=sec_type,
+                        definition=sec_def, reference=sec_ref)
+
+        self.assertEqual(sec_a, sec_b)
+
+        sec_b.name = "newSecName"
+        self.assertNotEqual(sec_a, sec_b)
+
+        sec_b.name = sec_name
+
+        # Test section equality with subsections
+
+        # Test equality with subsection of different entities
+        # with same content and same children order
+        subsec_aa = Section(name="subsecA", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+        subsec_ab = Section(name="subsecB", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+        subsec_ba = Section(name="subsecA", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+        subsec_bb = Section(name="subsecB", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+
+        sec_a.extend([subsec_aa, subsec_ab])
+        sec_b.extend([subsec_ba, subsec_bb])
+
+        self.assertEqual(sec_a, sec_b)
+        self.assertEqual(sec_a.sections, sec_b.sections)
+
+        sec_b.sections[0].name = "newSubsecA"
+        self.assertNotEqual(sec_a, sec_b)
+        self.assertNotEqual(sec_a.sections, sec_b.sections)
+
+        sec_b.sections[0].name = "subsecA"
+
+        # Test inequality with different number of children
+        sec_b.remove(sec_b.sections[1])
+        self.assertNotEqual(sec_a, sec_b)
+        self.assertNotEqual(sec_a.sections, sec_b.sections)
+
+        # Test equality with subsection of different entities
+        # with same content and different children order
+        sec_b.remove(sec_b.sections[0])
+        sec_b.extend([subsec_bb, subsec_ba])
+
+        self.assertEqual(sec_a, sec_b)
+        self.assertEqual(sec_a.sections, sec_b.sections)
+
+        sec_b.sections[0].name = "newSubsecB"
+        self.assertNotEqual(sec_a, sec_b)
+        self.assertNotEqual(sec_a.sections, sec_b.sections)
+
+        sec_b.sections[0].name = "subsecB"
+
+        # Test section equality with properties
+
+        # Test equality with properties of different entities
+        # with same content and same children order
+        prop_aa = Property(name="propA", definition="propDef")
+        prop_ab = Property(name="propB", definition="propDef")
+        prop_ba = Property(name="propA", definition="propDef")
+        prop_bb = Property(name="propB", definition="propDef")
+
+        sec_a.extend([prop_aa, prop_ab])
+        sec_b.extend([prop_ba, prop_bb])
+
+        self.assertEqual(sec_a, sec_b)
+        self.assertEqual(sec_a.properties, sec_b.properties)
+
+        sec_b.properties[0].name = "newPropA"
+        self.assertNotEqual(sec_a, sec_b)
+        self.assertNotEqual(sec_a.properties, sec_b.properties)
+
+        sec_b.properties[0].name = "propA"
+
+        # Test inequality with different number of children
+        sec_b.remove(sec_b.properties[1])
+        self.assertNotEqual(sec_a, sec_b)
+        self.assertNotEqual(sec_a.properties, sec_b.properties)
+
+        # Test equality with properties of different entities
+        # with same content and different children order
+        sec_b.remove(sec_b.properties[0])
+        sec_b.extend([prop_bb, prop_ba])
+
+        self.assertEqual(sec_a, sec_b)
+        self.assertEqual(sec_a.properties, sec_b.properties)
+
+        sec_b.properties[0].name = "newPropB"
+        self.assertNotEqual(sec_a, sec_b)
+        self.assertNotEqual(sec_a.properties, sec_b.properties)
+
     def test_link(self):
         pass
 

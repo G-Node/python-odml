@@ -196,3 +196,98 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             doc.insert(0, subsec)
         self.assertEqual(len(doc), 3)
+
+    def test_comparison(self):
+        doc_auth = "author"
+        doc_ver = "ver1.0"
+
+        doc_a = Document(author=doc_auth, version=doc_ver)
+        doc_b = Document(author=doc_auth, version=doc_ver)
+
+        self.assertEqual(doc_a, doc_b)
+
+        doc_b.author = "someone else"
+        self.assertNotEqual(doc_a, doc_b)
+
+        doc_b.author = doc_auth
+
+        # Test section equality with subsections
+
+        # Test equality with subsection of different entities
+        # with same content and same children order
+        sec_type = "sec type"
+        sec_def = "an odml test section"
+        sec_ref = "from over there"
+
+        subsec_aa = Section(name="subsecA", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+        subsec_ab = Section(name="subsecB", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+        subsec_ba = Section(name="subsecA", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+        subsec_bb = Section(name="subsecB", type=sec_type,
+                            definition=sec_def, reference=sec_ref)
+
+        doc_a.extend([subsec_aa, subsec_ab])
+        doc_b.extend([subsec_ba, subsec_bb])
+
+        self.assertEqual(doc_a, doc_b)
+        self.assertEqual(doc_a.sections, doc_b.sections)
+
+        doc_b.sections[0].name = "newSubsecA"
+        self.assertNotEqual(doc_a, doc_b)
+        self.assertNotEqual(doc_a.sections, doc_b.sections)
+
+        doc_b.sections[0].name = "subsecA"
+
+        # Test inequality with different number of children
+        doc_b.remove(doc_b.sections[1])
+        self.assertNotEqual(doc_a, doc_b)
+        self.assertNotEqual(doc_a.sections, doc_b.sections)
+
+        # Test equality with subsection of different entities
+        # with same content and different children order
+        doc_b.remove(doc_b.sections[0])
+        doc_b.extend([subsec_bb, subsec_ba])
+
+        self.assertEqual(doc_a, doc_b)
+        self.assertEqual(doc_a.sections, doc_b.sections)
+
+        doc_b.sections[0].name = "newSubsecB"
+        self.assertNotEqual(doc_a, doc_b)
+        self.assertNotEqual(doc_a.sections, doc_b.sections)
+
+        doc_b.sections[0].name = "subsecB"
+
+        # Test section equality with properties
+
+        # Test equality with properties of different entities
+        # with same content and same children order
+        prop_aa = Property(name="propA", definition="propDef")
+        prop_ab = Property(name="propB", definition="propDef")
+        prop_ba = Property(name="propA", definition="propDef")
+        prop_bb = Property(name="propB", definition="propDef")
+
+        doc_a.sections["subsecA"].extend([prop_aa, prop_ab])
+        doc_b.sections["subsecA"].extend([prop_ba, prop_bb])
+
+        self.assertEqual(doc_a, doc_b)
+
+        doc_b.sections["subsecA"].properties[0].name = "newPropA"
+        self.assertNotEqual(doc_a, doc_b)
+
+        doc_b.sections["subsecA"].properties[0].name = "propA"
+
+        # Test inequality with different number of children
+        doc_b.sections["subsecA"].remove(doc_b.sections["subsecA"].properties[1])
+        self.assertNotEqual(doc_a, doc_b)
+
+        # Test equality with properties of different entities
+        # with same content and different children order
+        doc_b.sections["subsecA"].remove(doc_b.sections["subsecA"].properties[0])
+        doc_b.sections["subsecA"].extend([prop_bb, prop_ba])
+
+        self.assertEqual(doc_a, doc_b)
+
+        doc_b.sections["subsecA"].properties[0].name = "newPropB"
+        self.assertNotEqual(doc_a, doc_b)
