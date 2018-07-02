@@ -14,7 +14,7 @@ Document:
       values:
       - dtype: string
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - string
         filename: filename val 1
         reference: ref val 1
@@ -22,7 +22,7 @@ Document:
         unit: arbitrary
         value: '1'
       - definition: def val 2
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 2
         reference: ref val 2
@@ -30,7 +30,7 @@ Document:
         unit: arbitrary 2
         value: '2'
       - definition: def val 3
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - string
         filename: filename val 3
         reference: ref val 3
@@ -44,7 +44,7 @@ Document:
       values:
       - dtype: string
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -52,7 +52,7 @@ Document:
         unit: arbitrary
         value: '1'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -60,7 +60,7 @@ Document:
         unit: arbitrary
         value: '2'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -68,7 +68,7 @@ Document:
         unit: arbitrary
         value: '3'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -76,7 +76,7 @@ Document:
         unit: arbitrary
         value: '4'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -84,7 +84,7 @@ Document:
         unit: arbitrary
         value: '4'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -92,7 +92,7 @@ Document:
         unit: arbitrary
         value: '4'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -100,7 +100,7 @@ Document:
         unit: arbitrary
         value: '4'
       - definition: def val 1
-        dtype: !!python/object/apply:odml.dtypes.DType
+        dtype:
         - int
         filename: filename val 1
         reference: ref val 1
@@ -132,7 +132,7 @@ Document:
         values:
         - dtype: string
         - definition: def val 1
-          dtype: !!python/object/apply:odml.dtypes.DType
+          dtype:
           - int
           filename: filename val 1
           reference: ref val 1
@@ -140,7 +140,7 @@ Document:
           unit: arbitrary
           value: '4'
         - definition: def val 1
-          dtype: !!python/object/apply:odml.dtypes.DType
+          dtype:
           - int
           filename: filename val 1
           reference: ref val 1
@@ -148,7 +148,7 @@ Document:
           unit: arbitrary
           value: '4'
         - definition: def val 1
-          dtype: !!python/object/apply:odml.dtypes.DType
+          dtype:
           - int
           filename: filename val 1
           reference: ref val 1
@@ -156,7 +156,7 @@ Document:
           unit: arbitrary
           value: '4'
         - definition: def val 1
-          dtype: !!python/object/apply:odml.dtypes.DType
+          dtype:
           - int
           filename: filename val 1
           reference: ref val 1
