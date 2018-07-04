@@ -11,10 +11,10 @@ Document:
     properties:
     - name: prop_name
       values:
-      - dtype: !!python/object/apply:odml.dtypes.DType
+      - dtype:
         - string
         value: '[''one'', ''two'']'
-      - dtype: !!python/object/apply:odml.dtypes.DType
+      - dtype:
         - int
         value: '1'
 odml-version: '1'

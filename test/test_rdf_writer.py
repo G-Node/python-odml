@@ -90,6 +90,8 @@ class TestRDFWriter(unittest.TestCase):
         w = RDFWriter([doc])
         w.convert_to_rdf()
         self.assertEqual(len(list(w.g.subject_objects(predicate=RDF.li))), 0)
+        self.assertEqual(len(list(
+            w.g.subject_objects(predicate=URIRef("%s_1" % str(RDF))))), 0)
 
         doc = parse("""
             s1[t1]
@@ -98,14 +100,22 @@ class TestRDFWriter(unittest.TestCase):
 
         w = RDFWriter([doc])
         w.convert_to_rdf()
-        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li,
+                                               object=Literal("val")))), 0)
+        self.assertEqual(len(list(w.g.subjects(predicate=URIRef("%s_1" % str(RDF)),
+                                               object=Literal("val")))), 1)
 
         doc.sections[0].properties[0].append("val2")
         w = RDFWriter([doc])
         w.convert_to_rdf()
-        self.assertEqual(len(list(w.g.subject_objects(predicate=RDF.li))), 2)
-        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 1)
-        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val2")))), 1)
+        self.assertEqual(len(list(w.g.subject_objects(predicate=RDF.li))), 0)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 0)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val2")))), 0)
+
+        self.assertEqual(len(list(w.g.subjects(predicate=URIRef("%s_1" % str(RDF)),
+                                               object=Literal("val")))), 1)
+        self.assertEqual(len(list(w.g.subjects(predicate=URIRef("%s_2" % str(RDF)),
+                                               object=Literal("val2")))), 1)
 
         doc = parse("""
              s1[t1]
@@ -117,7 +127,9 @@ class TestRDFWriter(unittest.TestCase):
 
         w = RDFWriter([doc])
         w.convert_to_rdf()
-        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 3)
+        self.assertEqual(len(list(w.g.subjects(predicate=RDF.li, object=Literal("val")))), 0)
+        self.assertEqual(len(list(w.g.subjects(predicate=URIRef("%s_1" % str(RDF)),
+                                               object=Literal("val")))), 3)
 
     def test_section_subclass(self):
         p = os.path.join(dirname(dirname(abspath(__file__))), 'doc', 'section_subclasses.yaml')
