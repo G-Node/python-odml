@@ -40,8 +40,10 @@ def to_csv(val):
 def from_csv(value_string):
     if not value_string:
         return []
-    if value_string[0] == "[":
+    if value_string[0] == "[" and value_string[-1] == "]":
         value_string = value_string[1:-1]
+    else:
+        return [value_string]
     if not value_string:
         return []
     stream = StringIO(value_string)
