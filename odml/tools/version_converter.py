@@ -52,6 +52,9 @@ class VersionConverter(object):
             if elem in doc:
                 doc = doc.replace(elem, val)
 
+        # Make sure encoding is present for the xml parser
+        doc = doc.encode('utf-8')
+
         # Make pretty print available by resetting format
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.ElementTree(ET.fromstring(doc, parser))
