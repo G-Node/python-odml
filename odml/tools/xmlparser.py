@@ -27,11 +27,15 @@ except NameError:
 
 
 def to_csv(val):
-    unicode_values = list(map(unicode, val))
+    # Make sure all individual values do not contain
+    # leading or trailing whitespaces.
+    unicode_values = list(map(unicode.strip, map(unicode, val)))
     stream = StringIO()
     writer = csv.writer(stream, dialect="excel")
     writer.writerow(unicode_values)
-    csv_string = stream.getvalue().strip()
+    # Strip any csv.writer added carriage return line feeds
+    # and double quotes before saving.
+    csv_string = stream.getvalue().strip().strip('"')
     if len(unicode_values) > 1:
         csv_string = "[" + csv_string + "]"
     return csv_string
