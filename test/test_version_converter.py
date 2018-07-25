@@ -481,6 +481,37 @@ class TestVersionConverter(unittest.TestCase):
                       </value>
                     </property>
 
+                    <property>
+                      <value>Single, string, value, with, many, commata.<type>string</type></value>
+                      <name>testSingleString</name>
+                    </property>
+
+                    <property>
+                      <value>A<type>string</type></value>
+                      <value>B<type>string</type></value>
+                      <value>C<type>string</type></value>
+                      <name>testStringList</name>
+                    </property>
+
+                    <property>
+                      <value> Single string value with wrapping whitespace <type>string</type></value>
+                      <name>testStringWhiteSpace</name>
+                    </property>
+
+                    <property>
+                      <value> Multiple Strings <type>string</type></value>
+                      <value> with wrapping <type>string</type></value>
+                      <value> Whitespace <type>string</type></value>
+                      <name>testStringListWhiteSpace</name>
+                    </property>
+
+                    <property>
+                      <value> 1 <type>int</type></value>
+                      <value> 2 <type>int</type></value>
+                      <value> 3 <type>int</type></value>
+                      <name>testIntListWhiteSpace</name>
+                    </property>
+
                   </section>
                 </odML>
         """
@@ -490,7 +521,7 @@ class TestVersionConverter(unittest.TestCase):
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         sec = root.find("section")
-        self.assertEqual(len(sec), 9)
+        self.assertEqual(len(sec), 14)
 
         # Test single value export
         prop = sec.findall("property")[0]
@@ -540,6 +571,35 @@ class TestVersionConverter(unittest.TestCase):
         prop = sec.findall("property")[7]
         self.assertEqual(prop.find("name").text, "Unsupported binary value dtype replace")
         self.assertEqual(prop.find("type").text, "text")
+
+        # Test single string value with commata
+        prop = sec.findall("property")[8]
+        self.assertEqual(prop.find("name").text, "testSingleString")
+        self.assertEqual(prop.find("value").text,
+                         "Single, string, value, with, many, commata.")
+
+        # Test string list import
+        prop = sec.findall("property")[9]
+        self.assertEqual(prop.find("name").text, "testStringList")
+        self.assertEqual(prop.find("value").text, "[A,B,C]")
+
+        # Test single string values wrapping whitespace removal
+        prop = sec.findall("property")[10]
+        self.assertEqual(prop.find("name").text, "testStringWhiteSpace")
+        self.assertEqual(prop.find("value").text,
+                         "Single string value with wrapping whitespace")
+
+        # Test multiple string values with wrapping whitespace removal
+        prop = sec.findall("property")[11]
+        self.assertEqual(prop.find("name").text, "testStringListWhiteSpace")
+        self.assertEqual(prop.find("value").text,
+                         "[Multiple Strings,with wrapping,Whitespace]")
+
+        # Test multiple int values with wrapping whitespaces
+        prop = sec.findall("property")[12]
+        self.assertEqual(prop.find("name").text, "testIntListWhiteSpace")
+        self.assertEqual(prop.find("type").text, "int")
+        self.assertEqual(prop.find("value").text, "[1,2,3]")
 
     def test_parse_dict_document(self):
         # Test appending tags; not appending empty sections
