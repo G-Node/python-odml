@@ -130,7 +130,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(val_elems[0].find("unit"), None)
         self.assertEqual(val_elems[0].find("type"), None)
         self.assertEqual(val_elems[0].find("uncertainty"), None)
-        self.assertEqual(val_elems[0].text, "[0, 45]")
+        self.assertEqual(val_elems[0].text, "[0,45]")
         self.assertEqual(prop.find("unit").text, "deg")
         self.assertEqual(len(prop.findall("unit")), 1)
         self.assertEqual(prop.find("type").text, "int")
@@ -500,7 +500,7 @@ class TestVersionConverter(unittest.TestCase):
         # Test multiple value export
         prop = sec.findall("property")[1]
         self.assertEqual(len(prop), 2)
-        self.assertEqual(prop.find("value").text, "[1, 2, 3]")
+        self.assertEqual(prop.find("value").text, "[1,2,3]")
 
         # Test empty value export
         prop = sec.findall("property")[2]
@@ -521,7 +521,7 @@ class TestVersionConverter(unittest.TestCase):
         # Test valid multiple Value tag export
         prop = sec.findall("property")[4]
         self.assertEqual(len(prop), 7)
-        self.assertEqual(prop.find("value").text, "[0.1, 0.2, 3]")
+        self.assertEqual(prop.find("value").text, "[0.1,0.2,3]")
         self.assertEqual(prop.find("type").text, "float")
         self.assertEqual(prop.find("uncertainty").text, "0.05")
         self.assertEqual(prop.find("unit").text, "mV")
