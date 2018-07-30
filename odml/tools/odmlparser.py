@@ -7,6 +7,7 @@ Parses odML files and documents.
 
 import datetime
 import json
+import sys
 import yaml
 
 from . import xmlparser
@@ -16,6 +17,11 @@ from .parser_utils import ParserException
 from .parser_utils import SUPPORTED_PARSERS
 from .rdf_converter import RDFReader, RDFWriter
 from ..validation import Validation
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
 
 
 class ODMLWriter:
@@ -58,7 +64,7 @@ class ODMLWriter:
         string_doc = ''
 
         if self.parser == 'XML':
-            string_doc = str(xmlparser.XMLWriter(odml_document))
+            string_doc = unicode(xmlparser.XMLWriter(odml_document))
         elif self.parser == "RDF":
             # Use turtle as default output format for now.
             string_doc = RDFWriter(odml_document).get_rdf_str("turtle")
@@ -73,6 +79,9 @@ class ODMLWriter:
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4,
                                         cls=JSONDateTimeSerializer)
+
+        if sys.version_info.major < 3:
+            string_doc = string_doc.encode("utf-8")
 
         return string_doc
 
