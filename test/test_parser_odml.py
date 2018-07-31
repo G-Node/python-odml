@@ -83,7 +83,7 @@ class TestOdmlParser(unittest.TestCase):
 
     def test_rdf_file(self):
         self.rdf_writer.write_file(self.odml_doc, self.rdf_file)
-        rdf_doc = self.rdf_reader.from_file(self.rdf_file, "turtle")
+        rdf_doc = self.rdf_reader.from_file(self.rdf_file, "xml")
 
         self.assertEqual(self.odml_doc, rdf_doc[0])
 
