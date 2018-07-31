@@ -222,7 +222,11 @@ class RDFReader(object):
 
     def from_file(self, filename, doc_format):
         self.g = Graph().parse(source=filename, format=doc_format)
-        return self.to_odml()
+        docs = self.to_odml()
+        for d in docs:
+            # Provide original file name via the document
+            d._origin_file_name = os.path.basename(filename)
+        return docs
 
     def from_string(self, file, doc_format):
         self.g = Graph().parse(source=StringIO(file), format=doc_format)

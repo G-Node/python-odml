@@ -10,6 +10,8 @@ import json
 import sys
 import yaml
 
+from os.path import basename
+
 from . import xmlparser
 from .dict_parser import DictWriter, DictReader
 from ..info import FORMAT_VERSION
@@ -131,6 +133,8 @@ class ODMLReader:
                     return
 
             self.doc = DictReader().to_odml(self.parsed_doc)
+            # Provide original file name via the in memory document
+            self.doc._origin_file_name = basename(file)
             return self.doc
 
         elif self.parser == 'JSON':
@@ -142,6 +146,8 @@ class ODMLReader:
                     return
 
             self.doc = DictReader().to_odml(self.parsed_doc)
+            # Provide original file name via the in memory document
+            self.doc._origin_file_name = basename(file)
             return self.doc
 
         elif self.parser == 'RDF':
