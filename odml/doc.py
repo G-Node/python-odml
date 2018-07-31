@@ -37,6 +37,10 @@ class BaseDocument(base.Sectionable):
         self._date = None
         self.date = date
 
+        # Enable setting of the file name from whence this document came.
+        # It is for knowing while processing and will not be serialized to a file.
+        self._origin_file_name = None
+
     def __repr__(self):
         return "<Doc %s by %s (%d sections)>" % (self._version, self._author,
                                                  len(self._sections))
