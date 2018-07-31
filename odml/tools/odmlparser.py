@@ -69,7 +69,7 @@ class ODMLWriter:
             string_doc = unicode(xmlparser.XMLWriter(odml_document))
         elif self.parser == "RDF":
             # Use turtle as default output format for now.
-            string_doc = RDFWriter(odml_document).get_rdf_str("turtle")
+            string_doc = RDFWriter(odml_document).get_rdf_str("xml")
         else:
             self.parsed_doc = DictWriter().to_dict(odml_document)
 
