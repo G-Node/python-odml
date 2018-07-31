@@ -88,6 +88,11 @@ class RDFWriter(object):
         if isinstance(fmt, Document.__class__):
             self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
 
+            # If available add the documents filename to the document node
+            # so we can identify where the data came from.
+            if hasattr(e, "_origin_file_name"):
+                self.g.add((curr_node, odmlns.hasFileName, Literal(e._origin_file_name)))
+
         for k in fmt.rdf_map_keys:
             if k == 'id':
                 continue
