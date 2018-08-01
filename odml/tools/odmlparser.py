@@ -7,7 +7,10 @@ Parses odML files and documents.
 
 import datetime
 import json
+import sys
 import yaml
+
+from os.path import basename
 
 from . import xmlparser
 from .dict_parser import DictWriter, DictReader
@@ -16,6 +19,11 @@ from .parser_utils import ParserException
 from .parser_utils import SUPPORTED_PARSERS
 from .rdf_converter import RDFReader, RDFWriter
 from ..validation import Validation
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
 
 
 class ODMLWriter:
@@ -58,10 +66,10 @@ class ODMLWriter:
         string_doc = ''
 
         if self.parser == 'XML':
-            string_doc = str(xmlparser.XMLWriter(odml_document))
+            string_doc = unicode(xmlparser.XMLWriter(odml_document))
         elif self.parser == "RDF":
             # Use turtle as default output format for now.
-            string_doc = RDFWriter(odml_document).get_rdf_str("turtle")
+            string_doc = RDFWriter(odml_document).get_rdf_str("xml")
         else:
             self.parsed_doc = DictWriter().to_dict(odml_document)
 
@@ -73,6 +81,9 @@ class ODMLWriter:
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4,
                                         cls=JSONDateTimeSerializer)
+
+        if sys.version_info.major < 3:
+            string_doc = string_doc.encode("utf-8")
 
         return string_doc
 
@@ -122,6 +133,8 @@ class ODMLReader:
                     return
 
             self.doc = DictReader().to_odml(self.parsed_doc)
+            # Provide original file name via the in memory document
+            self.doc._origin_file_name = basename(file)
             return self.doc
 
         elif self.parser == 'JSON':
@@ -133,6 +146,8 @@ class ODMLReader:
                     return
 
             self.doc = DictReader().to_odml(self.parsed_doc)
+            # Provide original file name via the in memory document
+            self.doc._origin_file_name = basename(file)
             return self.doc
 
         elif self.parser == 'RDF':

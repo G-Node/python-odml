@@ -10,6 +10,7 @@ from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
+from os.path import basename
 
 try:
     from StringIO import StringIO
@@ -187,7 +188,12 @@ class XMLReader(object):
             raise ParserException(e.msg)
 
         self._handle_version(root)
-        return self.parse_element(root)
+        doc = self.parse_element(root)
+
+        # Provide original file name via the in memory document
+        if isinstance(xml_file, unicode):
+            doc._origin_file_name = basename(xml_file)
+        return doc
 
     def from_string(self, string):
         try:

@@ -53,7 +53,8 @@ class VersionConverter(object):
                 doc = doc.replace(elem, val)
 
         # Make sure encoding is present for the xml parser
-        doc = doc.encode('utf-8')
+        if sys.version_info.major > 2:
+            doc = doc.encode('utf-8')
 
         # Make pretty print available by resetting format
         parser = ET.XMLParser(remove_blank_text=True)

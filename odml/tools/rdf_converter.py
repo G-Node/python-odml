@@ -73,7 +73,7 @@ class RDFWriter(object):
         fmt = e.format()
 
         if not node:
-            curr_node = URIRef(odmlns + str(e.id))
+            curr_node = URIRef(odmlns + unicode(e.id))
         else:
             curr_node = node
 
@@ -88,6 +88,11 @@ class RDFWriter(object):
         if isinstance(fmt, Document.__class__):
             self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
 
+            # If available add the documents filename to the document node
+            # so we can identify where the data came from.
+            if hasattr(e, "_origin_file_name"):
+                self.g.add((curr_node, odmlns.hasFileName, Literal(e._origin_file_name)))
+
         for k in fmt.rdf_map_keys:
             if k == 'id':
                 continue
@@ -101,7 +106,7 @@ class RDFWriter(object):
                     self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
                 else:
                     # adding terminology to the hub and to link with the doc
-                    node = URIRef(odmlns + str(uuid.uuid4()))
+                    node = URIRef(odmlns + unicode(uuid.uuid4()))
                     self.g.add((node, RDF.type, URIRef(terminology_url)))
                     self.g.add((self.hub_root, odmlns.hasTerminology, node))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
@@ -111,20 +116,20 @@ class RDFWriter(object):
                     k == 'sections' and len(getattr(e, k)) > 0:
                 sections = getattr(e, k)
                 for s in sections:
-                    node = URIRef(odmlns + str(s.id))
+                    node = URIRef(odmlns + unicode(s.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
             elif isinstance(fmt, Section.__class__) and \
                     k == 'properties' and len(getattr(e, k)) > 0:
                 properties = getattr(e, k)
                 for p in properties:
-                    node = URIRef(odmlns + str(p.id))
+                    node = URIRef(odmlns + unicode(p.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, Property.__class__) and \
                     k == 'value' and len(getattr(e, k)) > 0:
                 values = getattr(e, k)
-                seq = URIRef(odmlns + str(uuid.uuid4()))
+                seq = URIRef(odmlns + unicode(uuid.uuid4()))
                 self.g.add((seq, RDF.type, RDF.Seq))
                 self.g.add((curr_node, fmt.rdf_map(k), seq))
                 # rdflib so far does not respect RDF:li item order
@@ -133,7 +138,7 @@ class RDFWriter(object):
                 # this should be reversed to RDF:li again!
                 # see https://github.com/RDFLib/rdflib/issues/280
                 # -- keep until supported
-                # bag = URIRef(odmlns + str(uuid.uuid4()))
+                # bag = URIRef(odmlns + unicode(uuid.uuid4()))
                 # self.g.add((bag, RDF.type, RDF.Bag))
                 # self.g.add((curr_node, fmt.rdf_map(k), bag))
                 # for v in values:
@@ -141,7 +146,7 @@ class RDFWriter(object):
 
                 counter = 1
                 for v in values:
-                    pred = "%s_%s" % (str(RDF), counter)
+                    pred = "%s_%s" % (unicode(RDF), counter)
                     self.g.add((seq, URIRef(pred), Literal(v)))
                     counter = counter + 1
 
@@ -222,7 +227,11 @@ class RDFReader(object):
 
     def from_file(self, filename, doc_format):
         self.g = Graph().parse(source=filename, format=doc_format)
-        return self.to_odml()
+        docs = self.to_odml()
+        for d in docs:
+            # Provide original file name via the document
+            d._origin_file_name = os.path.basename(filename)
+        return docs
 
     def from_string(self, file, doc_format):
         self.g = Graph().parse(source=StringIO(file), format=doc_format)
@@ -242,7 +251,7 @@ class RDFReader(object):
                 doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
             else:
                 if len(elems) > 0:
-                    doc_attrs[attr[0]] = str(elems[0].toPython())
+                    doc_attrs[attr[0]] = unicode(elems[0].toPython())
 
         return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
 
@@ -264,7 +273,7 @@ class RDFReader(object):
                 sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
             else:
                 if len(elems) > 0:
-                    sec_attrs[attr[0]] = str(elems[0].toPython())
+                    sec_attrs[attr[0]] = unicode(elems[0].toPython())
         self._check_mandatory_attrs(sec_attrs)
         return sec_attrs
 
@@ -293,7 +302,7 @@ class RDFReader(object):
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
             else:
                 if len(elems) > 0:
-                    prop_attrs[attr[0]] = str(elems[0].toPython())
+                    prop_attrs[attr[0]] = unicode(elems[0].toPython())
         self._check_mandatory_attrs(prop_attrs)
         return prop_attrs
 
