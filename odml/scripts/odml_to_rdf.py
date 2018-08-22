@@ -1,11 +1,11 @@
-"""odmlExportRDF
+"""odmlToRDF
 
-odmlExportRDF searches for odML files within a provided SEARCHDIR
+odmlToRDF searches for odML files within a provided SEARCHDIR
 and converts them to the newest odML format version and
 exports all found and resulting odML files to XML formatted RDF.
 Original files will never be overwritten.
 
-Usage: odmlexportrdf [-r] [-o OUT] SEARCHDIR
+Usage: odmltordf [-r] [-o OUT] SEARCHDIR
 
 Arguments:
     SEARCHDIR       Directory to search for odML files.

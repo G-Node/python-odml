@@ -47,5 +47,5 @@ setup(
     long_description=description_text,
     classifiers=CLASSIFIERS,
     license="BSD",
-    entry_points={'console_scripts': ['odmlexportrdf=odml.scripts.odml_export_rdf:main']}
+    entry_points={'console_scripts': ['odmltordf=odml.scripts.odml_to_rdf:main']}
 )
