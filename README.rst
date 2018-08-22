@@ -98,7 +98,7 @@ odML Project page
 -----------------
 
 More information about the project including related projects as well as tutorials and
-examples can be found at our `odML project page <https://g-node.github.io/python-odml>`_
+examples can be found at our odML `project page <https://g-node.github.io/python-odml>`_.
 
 Bugs & Questions
 ----------------
