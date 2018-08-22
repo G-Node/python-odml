@@ -21,13 +21,14 @@ CLASSIFIERS = infodict["CLASSIFIERS"]
 
 packages = [
     'odml',
-    'odml.tools'
+    'odml.tools',
+    'odml.scripts'
 ]
 
 with open('README.rst') as f:
     description_text = f.read()
 
-install_req = ["lxml", "pyyaml==3.12", "rdflib"]
+install_req = ["lxml", "pyyaml==3.13", "rdflib", "docopt"]
 
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
@@ -45,5 +46,6 @@ setup(
     include_package_data=True,
     long_description=description_text,
     classifiers=CLASSIFIERS,
-    license="BSD"
+    license="BSD",
+    entry_points={'console_scripts': ['odmltordf=odml.scripts.odml_to_rdf:main']}
 )
