@@ -3,6 +3,44 @@
 Used to document all changes from previous releases and collect changes 
 until the next release.
 
+# Latest changes in master
+
+
+# Version 1.4.1
+
+## Dependency changes
+
+- `pyyaml` was version fixed on 3.13 to circumvent introduced breaking changes in the library. See #291, #292, #296, #298.
+- `docopt` was added to support console scripts
+
+## Converter and Parser fixes
+
+- Fixes that an XML file with an UTF-8 encoding file header was not being properly parsed by the `VersionConverter` XML parser. See #288, #296.
+- Fixes the `XMLParser` that when reading a single string value from csv which contains commata, it now remains a single value and is not split up at each comma. See #295, #296.
+- In the `XMLParser` any leading or trailing whitespaces are removed from any string values when it is written to csv. Along the same lines, multiple values that are saved to file via the `VersionConverter` do not contain leading whitespaces any longer. See #296.
+- Thorough encoding and usage of `unicode` has been introduced to all Parsers and Converters to avoid encoding errors with Python 2 and Python 3. See #297.
+
+## Changes in `Section` and `Property` SmartList
+
+- Adds `SmartList.sort()`. By default `Document` and `Section` child lists will retain the order in which child elements were added, but now a sort by name can be manually triggered. See #290.
+- Adds `SmartList` comparison magic methods to partially address #265. The introduction of the RDF backend led to an issue when comparing odML entities. The used RDF library `rdflib` does not respect child order upon loading of a file, odML entities with children can not be compared without sorting the child elements. The added magic methods sort child elements by name before comparison without changing the actual order of the child elements. This only addresses the issue for `Section` and `Property` child lists, but does not solve the problem for the order of `Property.values`. See #290.
+
+## Document format update
+
+- A new private attribute `_origin_file_name` is added to the `Document` entity. When an odML document is loaded from file, this attribute is now set with the file name from whence the document was loaded. See #297.
+
+## RDF format changes
+
+- The RDF class `Seq` is now used instead of `Bag` to store `odml.Property` values to respect the order of values. See #292.
+- Since `rdflib` currently does not support proper `Seq` behaviour with RDF `li` items, for now the index of the value items will be manually written as RDF properties, which `rdflib` supports when reading an RDF file. See #292.
+- When writing an RDF file from an odML document that features an `_origin_file_name`, the value is exported as `odml:hasFileName`. See #297.
+- `xml` is now the default `ODMLWriter` format when writing a document to RDF since the XML format of RDF is still the format with the broadest acceptance. See #297.
+
+## Addition of console scripts
+
+- The `odmltordf` convenience console script has been added to convert multiple odML files to the RDF format from any odML format or version. See #298.
+
+
 # Version 1.4.0
 ## Breaking changes
 
