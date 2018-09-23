@@ -14,7 +14,7 @@ class TestProperty(unittest.TestCase):
         p_name = "propertyName"
         p_origin = "from over there"
         p_unit = "pears"
-        p_uncertainty = "+-12"
+        p_uncertainty = "12"
         p_ref = "4 8 15 16 23"
         p_def = "an odml test property"
         p_dep = "yes"
@@ -40,8 +40,8 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(prop.value_origin, "%s_edit" % p_origin)
         prop.unit = "%s_edit" % p_unit
         self.assertEqual(prop.unit, "%s_edit" % p_unit)
-        prop.uncertainty = "%s_edit" % p_uncertainty
-        self.assertEqual(prop.uncertainty, "%s_edit" % p_uncertainty)
+        prop.uncertainty = 13
+        self.assertEqual(prop.uncertainty, 13.0)
         prop.reference = "%s_edit" % p_ref
         self.assertEqual(prop.reference, "%s_edit" % p_ref)
         prop.definition = "%s_edit" % p_def

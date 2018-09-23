@@ -329,6 +329,14 @@ class BaseProperty(base.BaseObject):
     def uncertainty(self, new_value):
         if new_value == "":
             new_value = None
+
+        if new_value and not isinstance(new_value, (int, float)):
+            try:
+                new_value = float(new_value)
+            except ValueError:
+                raise ValueError("odml.Property.uncertainty: passed uncertainty '%s' "
+                                 "is not float or int." % new_value)
+
         self._uncertainty = new_value
 
     @property
