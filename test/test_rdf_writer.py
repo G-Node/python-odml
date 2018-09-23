@@ -159,7 +159,7 @@ class TestRDFWriter(unittest.TestCase):
         p_unit = "u1"
         p_name = "p1"
         p_def = "p comment"
-        p_uncertainty = "un"
+        p_uncertainty = 13.0
         p_dtype = "string"
         p_value_origin = "value"
         p_ref = "p_ref"
