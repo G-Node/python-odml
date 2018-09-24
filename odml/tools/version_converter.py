@@ -24,41 +24,27 @@ class VersionConverter(object):
         'dtype': 'type'
     }
 
-    _error_strings = {
-        '<B0>': ''
-    }
-
     def __init__(self, filename):
         self.filename = filename
         self.conversion_log = []
 
     def _parse_xml(self):
         """
-        _parse_xml checks whether the provided file object can be parsed,
-        fixes known mismatching elements and returns the parsed lxml tree.
+        _parse_xml checks whether the provided file object can be parsed
+        and returns the parsed lxml tree.
         :return: ElementTree
         """
+        # Make pretty print available by resetting format
+        parser = ET.XMLParser(remove_blank_text=True)
         if isinstance(self.filename, io.StringIO):
             doc = self.filename.getvalue()
+            tree = ET.ElementTree(ET.fromstring(doc, parser))
+
         elif os.path.exists(self.filename) and os.path.getsize(self.filename) > 0:
-            with open(self.filename, 'r+') as file:
-                doc = file.read()
+            tree = ET.parse(self.filename, parser)
         else:
             msg = "Cannot parse provided file object '%s'." % self.filename
             raise Exception(msg)
-
-        # Fix known mismatching elements
-        for elem, val in self._error_strings.items():
-            if elem in doc:
-                doc = doc.replace(elem, val)
-
-        # Make sure encoding is present for the xml parser
-        if sys.version_info.major > 2:
-            doc = doc.encode('utf-8')
-
-        # Make pretty print available by resetting format
-        parser = ET.XMLParser(remove_blank_text=True)
-        tree = ET.ElementTree(ET.fromstring(doc, parser))
 
         return tree
 
