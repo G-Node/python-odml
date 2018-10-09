@@ -2,7 +2,9 @@
 
 odmlConversion searches for odML files within a provided SEARCHDIR
 and converts them to the newest odML format version.
-Original files will never be overwritten.
+Original files will never be overwritten. New files will be
+written either to a new directory at the current or a specified
+location.
 
 Usage: odmlconversion [-r] [-o OUT] SEARCHDIR
 
@@ -13,7 +15,8 @@ Options:
     -o OUT          Output directory. Must exist if specified.
                     If not specified, output files will be
                     written to the current directory.
-    -r              Search recursively.
+    -r              Search recursively. Directory structures
+                    will not be retained.
     -h --help       Show this screen.
     --version       Show version.
 """
@@ -23,6 +26,8 @@ import pathlib
 import sys
 import tempfile
 
+from docopt import docopt
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -30,7 +35,6 @@ except ImportError:
 
 import odml
 
-from docopt import docopt
 from odml.tools.version_converter import VersionConverter as VerConf
 
 try:
