@@ -863,6 +863,35 @@ class TestSection(unittest.TestCase):
         self.assertNotEqual(sec_a, sec_b)
         self.assertNotEqual(sec_a.properties, sec_b.properties)
 
+    def test_create_section(self):
+        root = Section("root")
+        self.assertEqual(len(root.sections), 0)
+
+        name = "subsec"
+        type = "subtype"
+        oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        subsec = root.create_section(name, type, oid)
+
+        self.assertEqual(len(root.sections), 1)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(root.sections[name], subsec)
+        self.assertEqual(root.sections[name].type, type)
+        self.assertEqual(root.sections[name].oid, oid)
+
+        name = "othersec"
+        subsec = root.create_section(name)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(root.sections[name], subsec)
+        self.assertEqual(root.sections[name].type, "undefined")
+
+        name = "subsubsec"
+        subsec = root.sections[0].create_section(name)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(subsec.parent, root.sections[0])
+        self.assertEqual(len(root.sections[0].sections), 1)
+        self.assertEqual(root.sections[0].sections[0].name, name)
+
     def test_link(self):
         pass
 
