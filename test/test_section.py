@@ -892,6 +892,34 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(root.sections[0].sections), 1)
         self.assertEqual(root.sections[0].sections[0].name, name)
 
+    def test_create_property(self):
+        root = Section("root")
+        self.assertEqual(len(root.properties), 0)
+
+        name = "prop"
+        oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        prop = root.create_property(name, oid=oid)
+        self.assertEqual(len(root.properties), 1)
+        self.assertEqual(prop.parent, root)
+        self.assertEqual(root.properties[name].oid, oid)
+
+        name = "test_values"
+        values = ["a", "b"]
+        prop = root.create_property(name, value=values)
+        self.assertEqual(len(root.properties), 2)
+        self.assertEqual(root.properties[name].value, values)
+
+        name = "test_dtype"
+        dtype = "str"
+        prop = root.create_property(name, dtype=dtype)
+        self.assertEqual(len(root.properties), 3)
+        self.assertEqual(root.properties[name].dtype, dtype)
+
+        name = "test_dtype_fail"
+        dtype = "I do not exist"
+        prop = root.create_property(name, dtype=dtype)
+        self.assertIsNone(prop.dtype)
+
     def test_link(self):
         pass
 
