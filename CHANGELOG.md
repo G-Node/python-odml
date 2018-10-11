@@ -5,6 +5,25 @@ until the next release.
 
 # Latest changes in master
 
+## Uncertainty changes
+
+Uncertainty is now limited to float only. See #294.
+
+## Version converter changes
+
+The VersionConverter dealt with an edge case of XML test files with opening <B0> tags 
+that were missing their closing tag rendering them broken. Catching this one edge case 
+circumvented opening XML files via lxml, leaving the resulting document open to various 
+encoding problems.
+
+Support to resolve the specific tag edge cases is dropped in favour of properly opening 
+XML files via lxml. See #301.
+
+## Additional console script
+
+The `odmlconversion` convenience console script has been added to convert multiple 
+previous odML version files to the latest odML version.
+
 
 # Version 1.4.1
 
