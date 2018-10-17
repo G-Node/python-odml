@@ -129,6 +129,12 @@ def section_repository_should_be_present(sec):
 Validation.register_handler('section', section_repository_should_be_present)
 
 
+def document_unique_ids(doc):
+    id_map = {doc.id: "Document '%s'" % doc.get_path()}
+    for e in section_unique_ids(doc, id_map):
+        yield e
+
+
 def section_unique_ids(parent, id_map=None):
     if not id_map:
         id_map = {}
@@ -149,6 +155,9 @@ def section_unique_ids(parent, id_map=None):
 
         for e in section_unique_ids(sec, id_map):
             yield e
+
+
+Validation.register_handler('odML', document_unique_ids)
 
 
 def object_unique_names(obj, children, attr=lambda x: x.name,
