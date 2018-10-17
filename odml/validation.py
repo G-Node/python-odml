@@ -74,7 +74,6 @@ class Validation(object):
     def validate(self, obj):
         handlers = self._handlers.get(obj.format().name, [])
         for handler in handlers:
-            print("obj: %s, Handler: %s" % (obj, handler))
             for err in handler(obj):
                 self.error(err)
 
@@ -140,12 +139,8 @@ def section_unique_ids(parent, id_map=None):
         id_map = {}
 
     for sec in parent.sections:
-        for prop in sec:
-            if prop.id in id_map:
-                yield ValidationError(prop, "Duplicate id in Property '%s' and '%s'" %
-                                            (prop.get_path(), id_map[prop.id]))
-                return
-            id_map[prop.id] = "Property '%s'" % prop.get_path()
+        for e in property_unique_ids(sec, id_map):
+            yield e
 
         if sec.id in id_map:
             yield ValidationError(sec, "Duplicate id in Section '%s' and '%s'" %
@@ -155,6 +150,18 @@ def section_unique_ids(parent, id_map=None):
 
         for e in section_unique_ids(sec, id_map):
             yield e
+
+
+def property_unique_ids(parent, id_map=None):
+    if not id_map:
+        id_map = {}
+
+    for prop in parent.properties:
+        if prop.id in id_map:
+            yield ValidationError(prop, "Duplicate id in Property '%s' and '%s'" %
+                                  (prop.get_path(), id_map[prop.id]))
+            return
+        id_map[prop.id] = "Property '%s'" % prop.get_path()
 
 
 Validation.register_handler('odML', document_unique_ids)
