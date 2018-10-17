@@ -74,6 +74,7 @@ class Validation(object):
     def validate(self, obj):
         handlers = self._handlers.get(obj.format().name, [])
         for handler in handlers:
+            print("obj: %s, Handler: %s" % (obj, handler))
             for err in handler(obj):
                 self.error(err)
 
@@ -126,6 +127,28 @@ def section_repository_should_be_present(sec):
                                    'warning')
 
 Validation.register_handler('section', section_repository_should_be_present)
+
+
+def section_unique_ids(parent, id_map=None):
+    if not id_map:
+        id_map = {}
+
+    for sec in parent.sections:
+        for prop in sec:
+            if prop.id in id_map:
+                yield ValidationError(prop, "Duplicate id in Property '%s' and '%s'" %
+                                            (prop.get_path(), id_map[prop.id]))
+                return
+            id_map[prop.id] = "Property '%s'" % prop.get_path()
+
+        if sec.id in id_map:
+            yield ValidationError(sec, "Duplicate id in Section '%s' and '%s'" %
+                                  (sec.get_path(), id_map[sec.id]))
+            return
+        id_map[sec.id] = "Section '%s'" % sec.get_path()
+
+        for e in section_unique_ids(sec, id_map):
+            yield e
 
 
 def object_unique_names(obj, children, attr=lambda x: x.name,
