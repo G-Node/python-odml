@@ -134,12 +134,35 @@ Validation.register_handler('section', section_repository_present)
 
 
 def document_unique_ids(doc):
+    """
+    Traverse an odML Document and check whether all
+    assigned ids are unique within the document.
+
+    Yields all duplicate odML object id entries
+    that are encountered.
+
+    :param doc: odML document
+    """
     id_map = {doc.id: "Document '%s'" % doc.get_path()}
     for i in section_unique_ids(doc, id_map):
         yield i
 
 
 def section_unique_ids(parent, id_map=None):
+    """
+    Traverse a parent (odML Document or Section)
+    and check whether all assigned ids are unique.
+
+    A "id":"odML object / path" dictionary of additional
+    'to-be-excluded' ids may be handed in via the
+    *id_map* attribute.
+
+    Yields all duplicate odML object id entries
+    that are encountered.
+
+    :param parent: odML Document or Section
+    :param id_map: "id":"odML object / path" dictionary
+    """
     if not id_map:
         id_map = {}
 
@@ -157,11 +180,25 @@ def section_unique_ids(parent, id_map=None):
             yield i
 
 
-def property_unique_ids(parent, id_map=None):
+def property_unique_ids(section, id_map=None):
+    """
+    Check whether all ids assigned to the odML
+    Properties of an odML Section are unique.
+
+    A "id":"odML object / path" dictionary of additional
+    'to-be-excluded' ids may be handed in via the
+    *id_map* attribute.
+
+    Yields all duplicate odML object id entries
+    that are encountered.
+
+    :param section: odML Section
+    :param id_map: "id":"odML object / path" dictionary
+    """
     if not id_map:
         id_map = {}
 
-    for prop in parent.properties:
+    for prop in section.properties:
         if prop.id in id_map:
             yield ValidationError(prop, "Duplicate id in Property '%s' and '%s'" %
                                   (prop.get_path(), id_map[prop.id]))
