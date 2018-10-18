@@ -8,15 +8,15 @@ class ValidationError(object):
     """
     Represents an error found in the validation process
 
-    The error is bound to an odML-object (*obj*) or a list of those
-    and contains a message and a type which may be one of:
+    The error is bound to an odML-object (*obj*) or a list of
+    those and contains a message and a rank which may be one of:
     'error', 'warning', 'info'
     """
 
-    def __init__(self, obj, msg, type='error'):
+    def __init__(self, obj, msg, rank='error'):
         self.obj = obj
         self.msg = msg
-        self.type = type
+        self.type = rank
 
     @property
     def is_warning(self):
@@ -31,9 +31,9 @@ class ValidationError(object):
         return self.obj.get_path()
 
     def __repr__(self):
-        return "<ValidationError(%s):%s \"%s\">" % (self.type,
-                                                    self.obj,
-                                                    self.msg)
+        return "<ValidationError(%s):%s '%s'>" % (self.type,
+                                                  self.obj,
+                                                  self.msg)
 
 
 class Validation(object):
