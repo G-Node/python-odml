@@ -65,7 +65,7 @@ class Validation(object):
         self.doc = doc  # may also be a section
         self.errors = []
         self.validate(doc)
-        # TODO isn't there a 'walk' method for these things?
+
         for sec in doc.itersections(recursive=True):
             self.validate(sec)
             for prop in sec.properties:
@@ -100,38 +100,43 @@ def section_type_must_be_defined(sec):
     if sec.type is None or sec.type == '' or sec.type == 'undefined':
         yield ValidationError(sec, 'Section type undefined', 'warning')
 
+
 Validation.register_handler('section', section_type_must_be_defined)
 
 
-def section_repository_should_be_present(sec):
+def section_repository_present(sec):
     """
     1. warn, if a section has no repository or
     2. the section type is not present in the repository
     """
     repo = sec.get_repository()
     if repo is None:
-        yield ValidationError(sec, 'A section should have an associated '
-                                   'repository', 'warning')
+        yield ValidationError(sec,
+                              'A section should have an associated repository',
+                              'warning')
         return
 
     try:
         tsec = sec.get_terminology_equivalent()
-    except Exception as e:
-        yield ValidationError(sec, 'Could not load terminology: %s' % e,
-                                   'warning')
+    except Exception as exc:
+        yield ValidationError(sec,
+                              'Could not load terminology: %s' % exc,
+                              'warning')
         return
 
     if tsec is None:
-        yield ValidationError(sec, "Section type '%s' not found in terminology" % sec.type,
-                                   'warning')
+        yield ValidationError(sec,
+                              "Section type '%s' not found in terminology" % sec.type,
+                              'warning')
 
-Validation.register_handler('section', section_repository_should_be_present)
+
+Validation.register_handler('section', section_repository_present)
 
 
 def document_unique_ids(doc):
     id_map = {doc.id: "Document '%s'" % doc.get_path()}
-    for e in section_unique_ids(doc, id_map):
-        yield e
+    for i in section_unique_ids(doc, id_map):
+        yield i
 
 
 def section_unique_ids(parent, id_map=None):
@@ -139,8 +144,8 @@ def section_unique_ids(parent, id_map=None):
         id_map = {}
 
     for sec in parent.sections:
-        for e in property_unique_ids(sec, id_map):
-            yield e
+        for i in property_unique_ids(sec, id_map):
+            yield i
 
         if sec.id in id_map:
             yield ValidationError(sec, "Duplicate id in Section '%s' and '%s'" %
@@ -148,8 +153,8 @@ def section_unique_ids(parent, id_map=None):
             return
         id_map[sec.id] = "Section '%s'" % sec.get_path()
 
-        for e in section_unique_ids(sec, id_map):
-            yield e
+        for i in section_unique_ids(sec, id_map):
+            yield i
 
 
 def property_unique_ids(parent, id_map=None):
@@ -182,13 +187,13 @@ def object_unique_names(obj, children, attr=lambda x: x.name,
     if len(names) == len(children(obj)):
         return  # quick exit
     names = set()
-    for s in children(obj):
-        if attr(s) in names:
-            yield ValidationError(s, msg, 'error')
-        names.add(attr(s))
+    for i in children(obj):
+        if attr(i) in names:
+            yield ValidationError(i, msg, 'error')
+        names.add(attr(i))
 
 
-def section_unique_name_type_combination(obj):
+def section_unique_name_type(obj):
     for i in object_unique_names(
             obj,
             attr=lambda x: (x.name, x.type),
@@ -201,8 +206,9 @@ def property_unique_names(obj):
     for i in object_unique_names(obj, lambda x: x.properties):
         yield i
 
-Validation.register_handler('odML',    section_unique_name_type_combination)
-Validation.register_handler('section', section_unique_name_type_combination)
+
+Validation.register_handler('odML', section_unique_name_type)
+Validation.register_handler('section', section_unique_name_type)
 Validation.register_handler('section', property_unique_names)
 
 
@@ -221,8 +227,10 @@ def property_terminology_check(prop):
         tprop = tsec.properties[prop.name]
     except KeyError:
         tprop = None
-        yield ValidationError(prop, "Property '%s' not found in terminology" %
-                              prop.name, 'warning')
+        yield ValidationError(prop,
+                              "Property '%s' not found in terminology" % prop.name,
+                              'warning')
+
 
 Validation.register_handler('property', property_terminology_check)
 
@@ -239,12 +247,14 @@ def property_dependency_check(prop):
     try:
         dep_obj = prop.parent[dep]
     except KeyError:
-        yield ValidationError(prop, "Property refers to a non-existent "
-                                    "dependency object", 'warning')
+        yield ValidationError(prop,
+                              "Property refers to a non-existent dependency object",
+                              'warning')
         return
 
-    if prop.dependency_value not in dep_obj.value[0]:  # FIXME
+    if prop.dependency_value not in dep_obj.value[0]:
         yield ValidationError(prop, "Dependency-value is not equal to value of"
                               " the property's dependency", 'warning')
+
 
 Validation.register_handler('property', property_dependency_check)
