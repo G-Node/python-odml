@@ -224,9 +224,8 @@ def property_terminology_check(prop):
     if tsec is None:
         return
     try:
-        tprop = tsec.properties[prop.name]
+        tsec.properties[prop.name]
     except KeyError:
-        tprop = None
         yield ValidationError(prop,
                               "Property '%s' not found in terminology" % prop.name,
                               'warning')
