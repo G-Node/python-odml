@@ -173,8 +173,8 @@ def section_unique_ids(parent, id_map=None):
         if sec.id in id_map:
             yield ValidationError(sec, "Duplicate id in Section '%s' and '%s'" %
                                   (sec.get_path(), id_map[sec.id]))
-            return
-        id_map[sec.id] = "Section '%s'" % sec.get_path()
+        else:
+            id_map[sec.id] = "Section '%s'" % sec.get_path()
 
         for i in section_unique_ids(sec, id_map):
             yield i
@@ -202,8 +202,8 @@ def property_unique_ids(section, id_map=None):
         if prop.id in id_map:
             yield ValidationError(prop, "Duplicate id in Property '%s' and '%s'" %
                                   (prop.get_path(), id_map[prop.id]))
-            return
-        id_map[prop.id] = "Property '%s'" % prop.get_path()
+        else:
+            id_map[prop.id] = "Property '%s'" % prop.get_path()
 
 
 Validation.register_handler('odML', document_unique_ids)
