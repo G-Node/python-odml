@@ -407,15 +407,20 @@ class BaseProperty(base.BaseObject):
 
         return self.parent.get_path() + ":" + self.name
 
-    def clone(self):
+    def clone(self, keep_id=False):
         """
-        Clone this object to copy it independently to another document.
-        The id of the cloned object will be set to a different uuid.
+        Clone this property to copy it independently to another document.
+        By default the id of the cloned object will be set to a different uuid.
+
+        :param keep_id: If this attribute is set to True, the uuid of the
+                        object will remain unchanged.
+        :return: The cloned property
         """
         obj = super(BaseProperty, self).clone()
         obj._parent = None
         obj.value = self._value
-        obj._id = str(uuid.uuid4())
+        if not keep_id:
+            obj._id = str(uuid.uuid4())
 
         return obj
 
