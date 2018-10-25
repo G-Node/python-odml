@@ -274,6 +274,30 @@ class TestSection(unittest.TestCase):
         self.assertListEqual(clone_sec.sections, [])
         self.assertListEqual(clone_sec.properties, [])
 
+    def test_clone_keep_id(self):
+        # Check id kept in clone.
+        sec = Section(name="original")
+        clone_sec = sec.clone(keep_id=True)
+        self.assertEqual(sec, clone_sec)
+        self.assertEqual(sec.id, clone_sec.id)
+
+        # Check cloned child Sections keep their ids.
+        Section(name="sec_one", parent=sec)
+        Section(name="sec_two", parent=sec)
+        clone_sec = sec.clone(keep_id=True)
+        self.assertListEqual(sec.sections, clone_sec.sections)
+        self.assertEqual(sec.sections["sec_one"], clone_sec.sections["sec_one"])
+        self.assertEqual(sec.sections["sec_one"].id, clone_sec.sections["sec_one"].id)
+
+        # Check cloned child Properties keep their ids.
+        Property(name="prop_one", parent=sec)
+        Property(name="prop_two", parent=sec)
+        clone_sec = sec.clone(keep_id=True)
+        self.assertListEqual(sec.properties, clone_sec.properties)
+        self.assertEqual(sec.properties["prop_one"], clone_sec.properties["prop_one"])
+        self.assertEqual(sec.properties["prop_one"].id,
+                         clone_sec.properties["prop_one"].id)
+
     def test_reorder(self):
         # Test reorder of document sections
         doc = Document()
