@@ -420,7 +420,7 @@ class BaseProperty(base.BaseObject):
         obj._parent = None
         obj.value = self._value
         if not keep_id:
-            obj._id = str(uuid.uuid4())
+            obj.new_id()
 
         return obj
 
