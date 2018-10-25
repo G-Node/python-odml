@@ -581,7 +581,7 @@ class Sectionable(BaseObject):
         for i in self:
             i.clean()
 
-    def clone(self, children=True):
+    def clone(self, children=True, keep_id=False):
         """
         Clone this object recursively allowing to copy it independently
         to another document
@@ -592,7 +592,7 @@ class Sectionable(BaseObject):
         obj._sections = SmartList(BaseSection)
         if children:
             for s in self._sections:
-                obj.append(s.clone())
+                obj.append(s.clone(keep_id=keep_id))
 
         return obj
 
