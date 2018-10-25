@@ -50,6 +50,18 @@ pip install odml
 - We have assembled a set of
  [tutorials](http://github.com/G-Node/python-odml/blob/master/doc/tutorial.rst "Python Tutorial").
 
+### Python convenience scripts
+
+The Python installation features two convenience commandline scripts.
+
+- `odmlconversion`: Converts odML files of previous file versions into the current one.
+- `odmltordf`: Converts odML files to the supported RDF version of odML.
+
+Both scripts provide detailed usage descriptions by adding the help flag to the command.
+
+    odmlconversion -h
+    odmltordf -h
+
 ## Support
 
 If you experience problems using *odml* feel free to join our IRC channel
