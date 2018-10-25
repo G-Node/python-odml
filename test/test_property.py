@@ -623,6 +623,11 @@ class TestProperty(unittest.TestCase):
         self.assertIsNotNone(prop.parent)
         self.assertIsNone(clone_prop.parent)
 
+        # Check keep_id
+        prop = Property(name="keepid")
+        clone_prop = prop.clone(True)
+        self.assertEqual(prop.id, clone_prop.id)
+
     def test_get_merged_equivalent(self):
         sec = Section(name="parent")
         mersec = Section(name="merged_section")
