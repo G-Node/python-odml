@@ -16,22 +16,22 @@ class ValidationError(object):
     def __init__(self, obj, msg, rank='error'):
         self.obj = obj
         self.msg = msg
-        self.type = rank
+        self.rank = rank
 
     @property
     def is_warning(self):
-        return self.type == 'warning'
+        return self.rank == 'warning'
 
     @property
     def is_error(self):
-        return self.type == 'error'
+        return self.rank == 'error'
 
     @property
     def path(self):
         return self.obj.get_path()
 
     def __repr__(self):
-        return "<ValidationError(%s):%s '%s'>" % (self.type,
+        return "<ValidationError(%s):%s '%s'>" % (self.rank,
                                                   self.obj,
                                                   self.msg)
 
