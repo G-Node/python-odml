@@ -174,7 +174,7 @@ def section_unique_ids(parent, id_map=None):
             yield i
 
         if sec.id in id_map:
-            yield ValidationError(sec, "Duplicate id in Section '%s' and '%s'" %
+            yield ValidationError(sec, "Duplicate id in Section '%s' and %s" %
                                   (sec.get_path(), id_map[sec.id]))
         else:
             id_map[sec.id] = "Section '%s'" % sec.get_path()
@@ -203,7 +203,7 @@ def property_unique_ids(section, id_map=None):
 
     for prop in section.properties:
         if prop.id in id_map:
-            yield ValidationError(prop, "Duplicate id in Property '%s' and '%s'" %
+            yield ValidationError(prop, "Duplicate id in Property '%s' and %s" %
                                   (prop.get_path(), id_map[prop.id]))
         else:
             id_map[prop.id] = "Property '%s'" % prop.get_path()
