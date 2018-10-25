@@ -3,6 +3,9 @@
 Generic odML validation framework
 """
 
+LABEL_ERROR = 'error'
+LABEL_WARNING = 'warning'
+
 
 class ValidationError(object):
     """
@@ -10,21 +13,21 @@ class ValidationError(object):
 
     The error is bound to an odML-object (*obj*) or a list of
     those and contains a message and a rank which may be one of:
-    'error', 'warning', 'info'
+    'error', 'warning'.
     """
 
-    def __init__(self, obj, msg, rank='error'):
+    def __init__(self, obj, msg, rank=LABEL_ERROR):
         self.obj = obj
         self.msg = msg
         self.rank = rank
 
     @property
     def is_warning(self):
-        return self.rank == 'warning'
+        return self.rank == LABEL_WARNING
 
     @property
     def is_error(self):
-        return self.rank == 'error'
+        return self.rank == LABEL_ERROR
 
     @property
     def path(self):
@@ -98,7 +101,7 @@ class Validation(object):
 def section_type_must_be_defined(sec):
     """test that no section has an undefined type"""
     if sec.type is None or sec.type == '' or sec.type == 'undefined':
-        yield ValidationError(sec, 'Section type undefined', 'warning')
+        yield ValidationError(sec, 'Section type undefined', LABEL_WARNING)
 
 
 Validation.register_handler('section', section_type_must_be_defined)
@@ -113,7 +116,7 @@ def section_repository_present(sec):
     if repo is None:
         yield ValidationError(sec,
                               'A section should have an associated repository',
-                              'warning')
+                              LABEL_WARNING)
         return
 
     try:
@@ -121,13 +124,13 @@ def section_repository_present(sec):
     except Exception as exc:
         yield ValidationError(sec,
                               'Could not load terminology: %s' % exc,
-                              'warning')
+                              LABEL_WARNING)
         return
 
     if tsec is None:
         yield ValidationError(sec,
                               "Section type '%s' not found in terminology" % sec.type,
-                              'warning')
+                              LABEL_WARNING)
 
 
 Validation.register_handler('section', section_repository_present)
@@ -226,7 +229,7 @@ def object_unique_names(obj, children, attr=lambda x: x.name,
     names = set()
     for i in children(obj):
         if attr(i) in names:
-            yield ValidationError(i, msg, 'error')
+            yield ValidationError(i, msg, LABEL_ERROR)
         names.add(attr(i))
 
 
@@ -265,7 +268,7 @@ def property_terminology_check(prop):
     except KeyError:
         yield ValidationError(prop,
                               "Property '%s' not found in terminology" % prop.name,
-                              'warning')
+                              LABEL_WARNING)
 
 
 Validation.register_handler('property', property_terminology_check)
@@ -285,12 +288,12 @@ def property_dependency_check(prop):
     except KeyError:
         yield ValidationError(prop,
                               "Property refers to a non-existent dependency object",
-                              'warning')
+                              LABEL_WARNING)
         return
 
     if prop.dependency_value not in dep_obj.value[0]:
         yield ValidationError(prop, "Dependency-value is not equal to value of"
-                              " the property's dependency", 'warning')
+                              " the property's dependency", LABEL_WARNING)
 
 
 Validation.register_handler('property', property_dependency_check)
