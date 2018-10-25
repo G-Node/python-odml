@@ -24,6 +24,19 @@ XML files via lxml. See #301.
 The `odmlconversion` convenience console script has been added to convert multiple 
 previous odML version files to the latest odML version.
 
+## Changes in cloning behaviour
+
+When cloning a `Section` or a `Property` by default the id of any object is changed
+to a new UUID. The cloning methods now feature a new `keep_id` attribute. If set to
+`True`, the cloned object and any cloned children retain their original id. This
+is meant to create exact copies of Section-Property trees in different documents.
+
+## Additional validation
+
+When a document is saved, a new validation check makes sure, that a document
+contains only unique UUIDs this is required due to the introduction of creating
+clones with identical ids. 
+
 
 # Version 1.4.1
 
