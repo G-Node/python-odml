@@ -113,3 +113,16 @@ class TestValidation(unittest.TestCase):
 
         res = validate(doc)
         self.assertError(res, "Duplicate id in Property")
+
+    def test_section_unique_ids(self):
+        """
+        Test if identical ids in sections raise a validation error.
+        """
+        doc = odml.Document()
+        sec = odml.Section("sec", parent=doc)
+
+        csec = sec.clone(keep_id=True)
+        sec.append(csec)
+
+        res = validate(doc)
+        self.assertError(res, "Duplicate id in Section")
