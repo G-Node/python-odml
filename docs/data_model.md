@@ -13,7 +13,7 @@ interoperability, and being customizable. The model defines four
 entities (Property, Section, Value, RootSection) whose relations and
 elements are shown in the figure below.
 
-![odml_logo](./images/erModel.png "odml data model")
+![odml_logo](images/erModel.png "odml data model")
 
 Property and Section are the core entities. A Section contains
 Properties and can further have subsection thus building a tree-like
