@@ -50,7 +50,7 @@ class ODMLWriter:
         msg = ""
         for err in validation.errors:
             if err.is_error:
-                msg += "\n\t- %s %s: %s" % (err.obj, err.type, err.msg)
+                msg += "\n\t- %s %s: %s" % (err.obj, err.rank, err.msg)
         if msg != "":
             msg = "Resolve document validation errors before saving %s" % msg
             raise ParserException(msg)
