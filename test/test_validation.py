@@ -98,3 +98,31 @@ class TestValidation(unittest.TestCase):
         p.dependency = "p2"
         res = validate(doc)
         self.assertError(res, "non-existent dependency object")
+
+    def test_property_unique_ids(self):
+        """
+        Test if identical ids in properties raise a validation error
+        """
+        doc = odml.Document()
+        sec_one = odml.Section("sec1", parent=doc)
+        sec_two = odml.Section("sec2", parent=doc)
+        prop = odml.Property("prop", parent=sec_one)
+
+        cprop = prop.clone(keep_id=True)
+        sec_two.append(cprop)
+
+        res = validate(doc)
+        self.assertError(res, "Duplicate id in Property")
+
+    def test_section_unique_ids(self):
+        """
+        Test if identical ids in sections raise a validation error.
+        """
+        doc = odml.Document()
+        sec = odml.Section("sec", parent=doc)
+
+        csec = sec.clone(keep_id=True)
+        sec.append(csec)
+
+        res = validate(doc)
+        self.assertError(res, "Duplicate id in Section")

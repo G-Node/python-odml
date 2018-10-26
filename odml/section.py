@@ -390,18 +390,26 @@ class BaseSection(base.Sectionable):
         else:
             raise ValueError("Can only remove sections and properties")
 
-    def clone(self, children=True):
+    def clone(self, children=True, keep_id=False):
         """
-        Clone this object recursively allowing to copy it independently
-        to another document
+        Clone this Section allowing to copy it independently
+        to another document. By default the id of any cloned
+        object will be set to a new uuid.
+
+        :param children: If True, also clone child sections and properties
+                         recursively.
+        :param keep_id: If this attribute is set to True, the uuids of the
+                        Section and all child objects will remain unchanged.
+        :return: The cloned Section.
         """
-        obj = super(BaseSection, self).clone(children)
-        obj._id = str(uuid.uuid4())
+        obj = super(BaseSection, self).clone(children, keep_id)
+        if not keep_id:
+            obj.new_id()
 
         obj._props = base.SmartList(BaseProperty)
         if children:
             for p in self._props:
-                obj.append(p.clone())
+                obj.append(p.clone(keep_id))
 
         return obj
 
