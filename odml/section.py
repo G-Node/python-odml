@@ -583,21 +583,6 @@ class BaseSection(base.Sectionable):
 
         return self._reorder(self.parent.sections, new_index)
 
-    def create_section(self, name, type="undefined", oid=None):
-        """
-        Creates a new subsection that is a child of this section.
-
-        :param name: The name of the section to create.
-        :param type: The type of the section.
-        :param oid: object id, UUID string as specified in RFC 4122. If no id
-                    is provided, an id will be generated and assigned.
-        :return: The new section.
-        """
-        sec = BaseSection(name=name, type=type, oid=oid)
-        sec.parent = self
-
-        return sec
-
     def create_property(self, name, value=None, dtype=None, oid=None):
         """
         Create a new property that is a child of this section.

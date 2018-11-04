@@ -615,3 +615,19 @@ class Sectionable(BaseObject):
         parent) or None
         """
         return self._repository
+
+    def create_section(self, name, type="undefined", oid=None):
+        """
+        Creates a new subsection that is a child of this section.
+
+        :param name: The name of the section to create.
+        :param type: The type of the section.
+        :param oid: object id, UUID string as specified in RFC 4122. If no id
+                    is provided, an id will be generated and assigned.
+        :return: The new section.
+        """
+        from odml.section import BaseSection
+        sec = BaseSection(name=name, type=type, oid=oid)
+        sec.parent = self
+
+        return sec
