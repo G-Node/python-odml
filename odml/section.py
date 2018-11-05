@@ -237,6 +237,12 @@ class BaseSection(base.Sectionable):
         return self._props
 
     @property
+    def props(self):
+        """ The list of all properties contained in this section;
+            NIXpy format style alias for 'properties'."""
+        return self._props
+
+    @property
     def sections(self):
         """ The list of all child-sections of this section """
         return self._sections
