@@ -203,6 +203,29 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             sec.properties[0] = "prop"
 
+        # same tests with props alias
+        prop = Property(name="prop2", parent=sec)
+        newprop = Property(name="newprop2")
+
+        self.assertEqual(prop.parent, sec)
+        self.assertEqual(sec.props[1], prop)
+        self.assertEqual(len(sec.props), 2)
+        self.assertIsNone(newprop.parent)
+
+        sec.props[1] = newprop
+        self.assertEqual(newprop.parent, sec)
+        self.assertEqual(sec.props[1], newprop)
+        self.assertEqual(len(sec.props), 2)
+        self.assertIsNone(prop.parent)
+
+        # Test set property fails
+        with self.assertRaises(ValueError):
+            sec.props[1] = Document()
+        with self.assertRaises(ValueError):
+            sec.props[1] = newsec
+        with self.assertRaises(ValueError):
+            sec.props[1] = "prop2"
+
     def test_id(self):
         s = Section(name="S")
         self.assertIsNotNone(s.id)
