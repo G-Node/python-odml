@@ -144,7 +144,7 @@ class BaseProperty(base.BaseObject):
         self._name = new_name
 
     def __repr__(self):
-        return "<Property %s>" % self._name
+        return "Property: {name = %s}" % self._name
 
     @property
     def dtype(self):
