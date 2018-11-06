@@ -57,9 +57,11 @@ class BaseSection(base.Sectionable):
         self.parent = parent
 
     def __repr__(self):
-        return "Section {name = %s, type = %s, id = %s (%d)>" % (self._name, self.type,
-                                                                 self.id,
-                                                                 len(self._sections))
+        return "Section[%d/%d] {name = %s, type = %s, id = %s}" % (len(self._sections),
+                                                                   len(self._props),
+                                                                   self._name,
+                                                                   self.type,
+                                                                   self.id)
 
     def __iter__(self):
         """
