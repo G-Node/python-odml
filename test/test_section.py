@@ -203,6 +203,29 @@ class TestSection(unittest.TestCase):
         with self.assertRaises(ValueError):
             sec.properties[0] = "prop"
 
+        # same tests with props alias
+        prop = Property(name="prop2", parent=sec)
+        newprop = Property(name="newprop2")
+
+        self.assertEqual(prop.parent, sec)
+        self.assertEqual(sec.props[1], prop)
+        self.assertEqual(len(sec.props), 2)
+        self.assertIsNone(newprop.parent)
+
+        sec.props[1] = newprop
+        self.assertEqual(newprop.parent, sec)
+        self.assertEqual(sec.props[1], newprop)
+        self.assertEqual(len(sec.props), 2)
+        self.assertIsNone(prop.parent)
+
+        # Test set property fails
+        with self.assertRaises(ValueError):
+            sec.props[1] = Document()
+        with self.assertRaises(ValueError):
+            sec.props[1] = newsec
+        with self.assertRaises(ValueError):
+            sec.props[1] = "prop2"
+
     def test_id(self):
         s = Section(name="S")
         self.assertIsNotNone(s.id)
@@ -862,6 +885,63 @@ class TestSection(unittest.TestCase):
         sec_b.properties[0].name = "newPropB"
         self.assertNotEqual(sec_a, sec_b)
         self.assertNotEqual(sec_a.properties, sec_b.properties)
+
+    def test_create_section(self):
+        root = Section("root")
+        self.assertEqual(len(root.sections), 0)
+
+        name = "subsec"
+        type = "subtype"
+        oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        subsec = root.create_section(name, type, oid)
+
+        self.assertEqual(len(root.sections), 1)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(root.sections[name], subsec)
+        self.assertEqual(root.sections[name].type, type)
+        self.assertEqual(root.sections[name].oid, oid)
+
+        name = "othersec"
+        subsec = root.create_section(name)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(root.sections[name], subsec)
+        self.assertEqual(root.sections[name].type, "undefined")
+
+        name = "subsubsec"
+        subsec = root.sections[0].create_section(name)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(subsec.parent, root.sections[0])
+        self.assertEqual(len(root.sections[0].sections), 1)
+        self.assertEqual(root.sections[0].sections[0].name, name)
+
+    def test_create_property(self):
+        root = Section("root")
+        self.assertEqual(len(root.properties), 0)
+
+        name = "prop"
+        oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        prop = root.create_property(name, oid=oid)
+        self.assertEqual(len(root.properties), 1)
+        self.assertEqual(prop.parent, root)
+        self.assertEqual(root.properties[name].oid, oid)
+
+        name = "test_values"
+        values = ["a", "b"]
+        prop = root.create_property(name, value=values)
+        self.assertEqual(len(root.properties), 2)
+        self.assertEqual(root.properties[name].value, values)
+
+        name = "test_dtype"
+        dtype = "str"
+        prop = root.create_property(name, dtype=dtype)
+        self.assertEqual(len(root.properties), 3)
+        self.assertEqual(root.properties[name].dtype, dtype)
+
+        name = "test_dtype_fail"
+        dtype = "I do not exist"
+        prop = root.create_property(name, dtype=dtype)
+        self.assertIsNone(prop.dtype)
 
     def test_link(self):
         pass

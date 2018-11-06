@@ -291,3 +291,32 @@ class TestSection(unittest.TestCase):
 
         doc_b.sections["subsecA"].properties[0].name = "newPropB"
         self.assertNotEqual(doc_a, doc_b)
+
+    def test_create_section(self):
+        root = Document()
+        self.assertEqual(len(root.sections), 0)
+
+        name = "subsec"
+        type = "subtype"
+        oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
+        subsec = root.create_section(name, type, oid)
+
+        self.assertEqual(len(root.sections), 1)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(root.sections[name], subsec)
+        self.assertEqual(root.sections[name].type, type)
+        self.assertEqual(root.sections[name].oid, oid)
+
+        name = "othersec"
+        subsec = root.create_section(name)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(subsec.parent, root)
+        self.assertEqual(root.sections[name], subsec)
+        self.assertEqual(root.sections[name].type, "undefined")
+
+        name = "subsubsec"
+        subsec = root.sections[0].create_section(name)
+        self.assertEqual(len(root.sections), 2)
+        self.assertEqual(subsec.parent, root.sections[0])
+        self.assertEqual(len(root.sections[0].sections), 1)
+        self.assertEqual(root.sections[0].sections[0].name, name)

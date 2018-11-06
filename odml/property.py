@@ -62,7 +62,6 @@ class BaseProperty(base.BaseObject):
         if not name:
             name = self._id
 
-        self._name = name
         self._parent = None
         self._name = name
         self._value_origin = value_origin

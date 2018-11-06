@@ -237,6 +237,12 @@ class BaseSection(base.Sectionable):
         return self._props
 
     @property
+    def props(self):
+        """ The list of all properties contained in this section;
+            NIXpy format style alias for 'properties'."""
+        return self._props
+
+    @property
     def sections(self):
         """ The list of all child-sections of this section """
         return self._sections
@@ -582,3 +588,22 @@ class BaseSection(base.Sectionable):
                              "Section has no parent, cannot reorder in parent list.")
 
         return self._reorder(self.parent.sections, new_index)
+
+    def create_property(self, name, value=None, dtype=None, oid=None):
+        """
+        Create a new property that is a child of this section.
+
+        :param name: The name of the property.
+        :param value: Some data value, it can be a single value or
+                      a list of homogeneous values.
+        :param dtype: The data type of the values stored in the property,
+                      if dtype is not given, the type is deduced from the values.
+                      Check odml.DType for supported data types.
+        :param oid: object id, UUID string as specified in RFC 4122. If no id
+                    is provided, an id will be generated and assigned.
+        :return: The new property.
+        """
+        prop = BaseProperty(name=name, value=value, dtype=dtype, oid=oid)
+        prop.parent = self
+
+        return prop
