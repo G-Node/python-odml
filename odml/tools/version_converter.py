@@ -377,12 +377,9 @@ class VersionConverter(object):
         sec_map = {}
         prop_map = {}
         root = tree.getroot()
+
+        # update property names
         for sec in root.iter("section"):
-            n = sec.find("name")
-            if n is not None:
-                cls._change_entity_name(sec_map, n)
-            else:
-                raise Exception("Section attribute name is not specified")
             for prop in sec.iter("property"):
                 if prop.getparent() == sec:
                     n = prop.find("name")
