@@ -370,7 +370,8 @@ class VersionConverter(object):
     @classmethod
     def _replace_same_name_entities(cls, tree):
         """
-        Changes same section names in the doc by adding <-{index}> to the next section occurrences.
+        Changes same section names in the doc by adding <-{index}>
+        to the next section occurrences.
         :param tree: ElementTree of the doc
         :return: ElementTree
         """
@@ -378,26 +379,36 @@ class VersionConverter(object):
         prop_map = {}
         root = tree.getroot()
         for sec in root.iter("section"):
-            n = sec.find("name")
-            if n is not None:
-                cls._change_entity_name(sec_map, n)
+
+            sec_name = sec.find("name")
+            if sec_name is not None:
+                cls._change_entity_name(tree, sec_map, sec_name)
             else:
                 raise Exception("Section attribute name is not specified")
+
             for prop in sec.iter("property"):
                 if prop.getparent() == sec:
-                    n = prop.find("name")
-                    if n is not None:
-                        cls._change_entity_name(prop_map, n)
+                    prop_name = prop.find("name")
+                    if prop_name is not None:
+                        cls._change_entity_name(tree, prop_map, prop_name)
             prop_map.clear()
         return tree
 
     @staticmethod
-    def _change_entity_name(elem_map, name):
-        if name.text not in elem_map:
-            elem_map[name.text] = 1
+    def _change_entity_name(tree, elem_map, name):
+        """
+        Adds numbering to identical element names where their odml.Section
+        or odml.Property parents reside on the same level in the tree.
+        :param tree: The element tree containing the 'name' element.
+        :param elem_map: lxml path to occurrence maps of named Sections or Properties.
+        :param name: lxml element containing the name text of a Section or Property.
+        """
+        named_path = "%s:%s" % (tree.getpath(name.getparent().getparent()), name.text)
+        if named_path not in elem_map:
+            elem_map[named_path] = 1
         else:
-            elem_map[name.text] += 1
-            name.text += "-" + str(elem_map[name.text])
+            elem_map[named_path] += 1
+            name.text += "-" + str(elem_map[named_path])
 
     def _log(self, msg):
         """
