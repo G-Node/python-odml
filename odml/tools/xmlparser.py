@@ -148,10 +148,21 @@ class XMLReader(object):
         >>> doc = XMLReader().from_file("file.odml")
     """
 
-    def __init__(self, ignore_errors=False, filename=None):
+    def __init__(self, ignore_errors=False, show_warnings=True, filename=None):
+        """
+        :param ignore_errors: To allow loading and fixing of invalid odml files
+                              encountered errors can be converted to warnings
+                              instead. Such a document can only be saved when
+                              all errors have been addressed though.
+        :param show_warnings: Toggle whether to print warnings to the command line.
+                              Any warnings can be accessed via the Reader's class
+                              warnings attribute after parsing is done.
+        :param filename: Path to an odml file.
+        """
         self.parser = ET.XMLParser(remove_comments=True)
         self.tags = dict([(obj.name, obj) for obj in format.__all__])
         self.ignore_errors = ignore_errors
+        self.show_warnings = show_warnings
         self.filename = filename
         self.warnings = []
 
@@ -229,8 +240,10 @@ class XMLReader(object):
                 self.filename, elem.sourceline, elem.tag, msg)
         else:
             msg = "warning: %s\n" % msg
+
         self.warnings.append(msg)
-        sys.stderr.write(msg)
+        if self.show_warnings:
+            sys.stderr.write(msg)
 
     def parse_element(self, node):
         if node.tag not in self.tags:

@@ -104,8 +104,14 @@ class DictReader:
     A reader to parse dictionaries with odML content into a proper odML document.
     """
 
-    def __init__(self):
+    def __init__(self, show_warnings=True):
+        """
+        :param show_warnings: Toggle whether to print warnings to the command line.
+                              Any warnings can be accessed via the Reader's class
+                              warnings attribute after parsing is done.
+        """
         self.parsed_doc = None  # Python dictionary object equivalent
+        self.show_warnings = show_warnings
         self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
@@ -116,8 +122,9 @@ class DictReader:
             return attr
 
         msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
-        print(msg)
         self.warnings.append(msg)
+        if self.show_warnings:
+            print(msg)
         return None
 
     def to_odml(self, parsed_doc):
