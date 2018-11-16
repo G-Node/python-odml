@@ -107,19 +107,25 @@ class ODMLReader:
         json_odml_doc = ODMLReader(parser='JSON').from_file("odml_doc.json")
     """
 
-    def __init__(self, parser='XML'):
+    def __init__(self, parser='XML', show_warnings=True):
+        """
+        :param parser: odml parser; supported are 'XML', 'JSON', 'YAML' and 'RDF'.
+        :param show_warnings: Toggle whether to print warnings to the command line.
+        """
         self.doc = None  # odML document
         self.parsed_doc = None  # Python dictionary object equivalent
         parser = parser.upper()
         if parser not in SUPPORTED_PARSERS:
             raise NotImplementedError("'%s' odML parser does not exist!" % parser)
         self.parser = parser
+        self.show_warnings = show_warnings
         self.warnings = []
 
     def from_file(self, file, doc_format=None):
 
         if self.parser == 'XML':
-            par = xmlparser.XMLReader(ignore_errors=True)
+            par = xmlparser.XMLReader(ignore_errors=True,
+                                      show_warnings=self.show_warnings)
             self.warnings = par.warnings
             self.doc = par.from_file(file)
             return self.doc
@@ -132,7 +138,8 @@ class ODMLReader:
                     print(err)
                     return
 
-            self.doc = DictReader().to_odml(self.parsed_doc)
+            par = DictReader(show_warnings=self.show_warnings)
+            self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
             self.doc._origin_file_name = basename(file)
             return self.doc
@@ -145,7 +152,8 @@ class ODMLReader:
                     print("JSON Decoder Error: %s" % err)
                     return
 
-            self.doc = DictReader().to_odml(self.parsed_doc)
+            par = DictReader(show_warnings=self.show_warnings)
+            self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
             self.doc._origin_file_name = basename(file)
             return self.doc
