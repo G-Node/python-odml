@@ -396,6 +396,13 @@ class VersionConverter(object):
 
     @staticmethod
     def _change_entity_name(tree, elem_map, name):
+        """
+        Adds numbering to identical element names where their odml.Section
+        or odml.Property parents reside on the same level in the tree.
+        :param tree: The element tree containing the 'name' element.
+        :param elem_map: lxml path to occurrence maps of named Sections or Properties.
+        :param name: lxml element containing the name text of a Section or Property.
+        """
         named_path = "%s:%s" % (tree.getpath(name.getparent().getparent()), name.text)
         if named_path not in elem_map:
             elem_map[named_path] = 1
