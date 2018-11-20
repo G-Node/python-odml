@@ -311,6 +311,64 @@ class BaseProperty(base.BaseObject):
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
+    def values(self):
+        """
+        Returns the value(s) stored in this property. Method always returns a list
+        that is a copy (!) of the stored value. Changing this list will NOT change
+        the property.
+        For manipulation of the stored values use the append, extend, and direct
+        access methods (using brackets).
+
+        For example:
+        >>> p = odml.Property("prop", values=[1, 2, 3])
+        >>> print(p.values)
+        [1, 2, 3]
+        >>> p.values.append(4)
+        >>> print(p.values)
+        [1, 2, 3]
+
+        Individual values can be accessed and manipulated like this:
+        >>> print(p[0])
+        [1]
+        >>> p[0] = 4
+        >>> print(p[0])
+        [4]
+
+        The values can be iterated e.g. with a loop:
+        >>> for v in p.values:
+        >>>   print(v)
+        4
+        2
+        3
+        """
+        return list(self._values)
+
+    @values.setter
+    def values(self, new_value):
+        """
+        Set the values of the property discarding any previous information.
+        Method will try to convert the passed value to the dtype of
+        the property and raise a ValueError if not possible.
+
+        :param new_value: a single value or list of values.
+        """
+        # Make sure boolean value 'False' gets through as well...
+        if new_value is None or \
+                (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
+            self._values = []
+            return
+
+        new_value = self._convert_value_input(new_value)
+
+        if self._dtype is None:
+            self._dtype = dtypes.infer_dtype(new_value[0])
+
+        if not self._validate_values(new_value):
+            raise ValueError("odml.Property.value: passed values are not of "
+                             "consistent type!")
+        self._values = [dtypes.get(v, self.dtype) for v in new_value]
+
+    @property
     def value_origin(self):
         return self._value_origin
 
