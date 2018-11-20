@@ -79,7 +79,7 @@ class BaseProperty(base.BaseObject):
             print("Warning: Unknown dtype '%s'." % dtype)
 
         self._values = []
-        self.value = value
+        self.values = value
 
         self.parent = parent
 
@@ -169,7 +169,7 @@ class BaseProperty(base.BaseObject):
         old_values = self._values
         try:
             self._dtype = new_type
-            self.value = old_values
+            self.values = old_values
         except:
             self._dtype = old_type  # If conversion failed, restore old dtype
             raise ValueError("cannot convert from '%s' to '%s'" %
@@ -435,7 +435,7 @@ class BaseProperty(base.BaseObject):
         """
         obj = super(BaseProperty, self).clone()
         obj._parent = None
-        obj.value = self._values
+        obj.values = self._values
         if not keep_id:
             obj.new_id()
 
@@ -459,7 +459,7 @@ class BaseProperty(base.BaseObject):
 
         # Catch unmerge-able values at this point to avoid
         # failing Section tree merges which cannot easily be rolled back.
-        new_value = self._convert_value_input(source.value)
+        new_value = self._convert_value_input(source.values)
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.merge: passed value(s) cannot "
                              "be converted to data type '%s'!" % self._dtype)
@@ -530,7 +530,7 @@ class BaseProperty(base.BaseObject):
         if self.unit is None and other.unit is not None:
             self.unit = other.unit
 
-        to_add = [v for v in other.value if v not in self._values]
+        to_add = [v for v in other.values if v not in self._values]
         self.extend(to_add, strict=strict)
 
     def unmerge(self, other):
@@ -575,11 +575,11 @@ class BaseProperty(base.BaseObject):
             if obj.unit != self.unit:
                 raise ValueError("odml.Property.extend: src and dest units (%s, %s) "
                                  "do not match!" % (obj.unit, self.unit))
-            self.extend(obj.value)
+            self.extend(obj.values)
             return
 
         if self.__len__() == 0:
-            self.value = obj
+            self.values = obj
             return
 
         new_value = self._convert_value_input(obj)
@@ -605,8 +605,8 @@ class BaseProperty(base.BaseObject):
         if obj in [None, "", [], {}]:
             return
 
-        if not self.value:
-            self.value = obj
+        if not self.values:
+            self.values = obj
             return
 
         new_value = self._convert_value_input(obj)
