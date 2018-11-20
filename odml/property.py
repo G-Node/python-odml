@@ -78,16 +78,16 @@ class BaseProperty(base.BaseObject):
         else:
             print("Warning: Unknown dtype '%s'." % dtype)
 
-        self._value = []
+        self._values = []
         self.value = value
 
         self.parent = parent
 
     def __len__(self):
-        return len(self._value)
+        return len(self._values)
 
     def __getitem__(self, key):
-        return self._value[key]
+        return self._values[key]
 
     def __setitem__(self, key, item):
         if int(key) < 0 or int(key) > self.__len__():
@@ -95,7 +95,7 @@ class BaseProperty(base.BaseObject):
                              "array of length %i" % (int(key), self.__len__()))
         try:
             val = dtypes.get(item, self.dtype)
-            self._value[int(key)] = val
+            self._values[int(key)] = val
         except Exception:
             raise ValueError("odml.Property.__setitem__:  passed value cannot be "
                              "converted to data type \'%s\'!" % self._dtype)
@@ -166,7 +166,7 @@ class BaseProperty(base.BaseObject):
             raise AttributeError("'%s' is not a valid type." % new_type)
         # we convert the value if possible
         old_type = self._dtype
-        old_values = self._value
+        old_values = self._values
         try:
             self._dtype = new_type
             self.value = old_values
@@ -237,14 +237,14 @@ class BaseProperty(base.BaseObject):
         2
         3
         """
-        return list(self._value)
+        return list(self._values)
 
     def value_str(self, index=0):
         """
         Used to access typed data of the value at a specific
         index position as a string.
         """
-        return dtypes.set(self._value[index], self._dtype)
+        return dtypes.set(self._values[index], self._dtype)
 
     def _validate_values(self, values):
         """
@@ -297,7 +297,7 @@ class BaseProperty(base.BaseObject):
         # Make sure boolean value 'False' gets through as well...
         if new_value is None or \
                 (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
-            self._value = []
+            self._values = []
             return
 
         new_value = self._convert_value_input(new_value)
@@ -308,7 +308,7 @@ class BaseProperty(base.BaseObject):
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.value: passed values are not of "
                              "consistent type!")
-        self._value = [dtypes.get(v, self.dtype) for v in new_value]
+        self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
     def value_origin(self):
@@ -394,8 +394,8 @@ class BaseProperty(base.BaseObject):
         occurrence of the passed in value is removed from the properties
         list of values.
         """
-        if value in self._value:
-            self._value.remove(value)
+        if value in self._values:
+            self._values.remove(value)
 
     def get_path(self):
         """
@@ -417,7 +417,7 @@ class BaseProperty(base.BaseObject):
         """
         obj = super(BaseProperty, self).clone()
         obj._parent = None
-        obj.value = self._value
+        obj.value = self._values
         if not keep_id:
             obj.new_id()
 
@@ -512,7 +512,7 @@ class BaseProperty(base.BaseObject):
         if self.unit is None and other.unit is not None:
             self.unit = other.unit
 
-        to_add = [v for v in other.value if v not in self._value]
+        to_add = [v for v in other.value if v not in self._values]
         self.extend(to_add, strict=strict)
 
     def unmerge(self, other):
@@ -572,7 +572,7 @@ class BaseProperty(base.BaseObject):
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.extend: passed value(s) cannot be converted "
                              "to data type \'%s\'!" % self._dtype)
-        self._value.extend([dtypes.get(v, self.dtype) for v in new_value])
+        self._values.extend([dtypes.get(v, self.dtype) for v in new_value])
 
     def append(self, obj, strict=True):
         """
@@ -603,4 +603,4 @@ class BaseProperty(base.BaseObject):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted "
                              "to data type \'%s\'!" % self._dtype)
 
-        self._value.append(dtypes.get(new_value[0], self.dtype))
+        self._values.append(dtypes.get(new_value[0], self.dtype))
