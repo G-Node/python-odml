@@ -357,8 +357,8 @@ class Sectionable(BaseObject):
         :type filter_func: function
         """
         for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
-            if filter_func(prop.value):
-                yield prop.value
+            if filter_func(prop.values):
+                yield prop.values
 
     def contains(self, obj):
         """
