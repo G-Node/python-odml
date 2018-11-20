@@ -209,35 +209,20 @@ class BaseProperty(base.BaseObject):
     @property
     def value(self):
         """
-        Returns the value(s) stored in this property. Method always returns a list
-        that is a copy (!) of the stored value. Changing this list will NOT change
-        the property.
-        For manipulation of the stored values use the append, extend, and direct
-        access methods (using brackets).
-
-        For example:
-        >>> p = odml.Property("prop", value=[1, 2, 3])
-        >>> print(p.value)
-        [1, 2, 3]
-        >>> p.value.append(4)
-        >>> print(p.value)
-        [1, 2, 3]
-
-        Individual values can be accessed and manipulated like this:
-        >>> print(p[0])
-        [1]
-        >>> p[0] = 4
-        >>> print(p[0])
-        [4]
-
-        The values can be iterated e.g. with a loop:
-        >>> for v in p.value:
-        >>>   print(v)
-        4
-        2
-        3
+        Deprecated alias of 'values'. Will be removed with the next minor release.
         """
-        return list(self._values)
+        print("The attribute 'value' is deprecated. Please use 'values' instead.")
+        return self.values
+
+    @value.setter
+    def value(self, new_value):
+        """
+        Deprecated alias of 'values'. Will be removed with the next minor release.
+
+        :param new_value: a single value or list of values.
+        """
+        print("The attribute 'value' is deprecated. Please use 'values' instead.")
+        self.values = new_value
 
     def value_str(self, index=0):
         """
@@ -284,31 +269,6 @@ class BaseProperty(base.BaseObject):
             raise ValueError("odml.Property._convert_value_input: "
                              "unsupported data type for values: %s" % type(new_value))
         return new_value
-
-    @value.setter
-    def value(self, new_value):
-        """
-        Set the value of the property discarding any previous information.
-        Method will try to convert the passed value to the dtype of
-        the property and raise an ValueError if not possible.
-
-        :param new_value: a single value or list of values.
-        """
-        # Make sure boolean value 'False' gets through as well...
-        if new_value is None or \
-                (isinstance(new_value, (list, tuple, str)) and len(new_value) == 0):
-            self._values = []
-            return
-
-        new_value = self._convert_value_input(new_value)
-
-        if self._dtype is None:
-            self._dtype = dtypes.infer_dtype(new_value[0])
-
-        if not self._validate_values(new_value):
-            raise ValueError("odml.Property.value: passed values are not of "
-                             "consistent type!")
-        self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
     def values(self):
@@ -364,7 +324,7 @@ class BaseProperty(base.BaseObject):
             self._dtype = dtypes.infer_dtype(new_value[0])
 
         if not self._validate_values(new_value):
-            raise ValueError("odml.Property.value: passed values are not of "
+            raise ValueError("odml.Property.values: passed values are not of "
                              "consistent type!")
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
