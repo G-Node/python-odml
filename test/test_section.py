@@ -773,8 +773,8 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(destination.sections["lvl"].properties), 1)
         self.assertIsNone(destination.definition)
         self.assertIsNone(destination.sections["lvl"].definition)
-        self.assertEqual(destination.sections["lvl"].properties[0].value,
-                         d_subprop_one.value)
+        self.assertEqual(destination.sections["lvl"].properties[0].values,
+                         d_subprop_one.values)
 
         with self.assertRaises(ValueError):
             destination.merge(source)
@@ -783,8 +783,8 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(destination.sections["lvl"].properties), 1)
         self.assertIsNone(destination.definition)
         self.assertIsNone(destination.sections["lvl"].definition)
-        self.assertEqual(destination.sections["lvl"].properties[0].value,
-                         d_subprop_one.value)
+        self.assertEqual(destination.sections["lvl"].properties[0].values,
+                         d_subprop_one.values)
 
     def test_comparison(self):
         sec_name = "sec name"
@@ -930,7 +930,7 @@ class TestSection(unittest.TestCase):
         values = ["a", "b"]
         prop = root.create_property(name, value=values)
         self.assertEqual(len(root.properties), 2)
-        self.assertEqual(root.properties[name].value, values)
+        self.assertEqual(root.properties[name].values, values)
 
         name = "test_dtype"
         dtype = "str"
