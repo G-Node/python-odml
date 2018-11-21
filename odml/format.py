@@ -109,7 +109,8 @@ class Property(Format):
     _map = {
         'dependencyvalue': 'dependency_value',
         'type': 'dtype',
-        'id': 'oid'
+        'id': 'oid',
+        'value': 'values'
     }
     _rdf_map = {
         'id': _ns.hasId,
