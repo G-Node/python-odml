@@ -293,7 +293,7 @@ class XMLReader(object):
 
                     # Special handling of values;
                     curr_text = node.text.strip() if node.text else None
-                    if tag == "value" and curr_text:
+                    if tag == "values" and curr_text:
                         content = from_csv(node.text)
                         arguments[tag] = content
                     else:
