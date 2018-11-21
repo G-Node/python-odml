@@ -13,10 +13,10 @@ class BaseProperty(base.BaseObject):
     """An odML Property"""
     _format = frmt.Property
 
-    def __init__(self, name=None, value=None, parent=None, unit=None,
+    def __init__(self, name=None, values=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None,
-                 value_origin=None, oid=None):
+                 value_origin=None, oid=None, value=None):
         """
         Create a new Property. If a value without an explicitly stated dtype
         has been provided, the method will try to infer the value's dtype.
@@ -31,8 +31,8 @@ class BaseProperty(base.BaseObject):
         >>> p.dtype
         >>> int
         :param name: The name of the property.
-        :param value: Some data value, it can be a single value or
-                      a list of homogeneous values.
+        :param values: Some data value, it can be a single value or
+                       a list of homogeneous values.
         :param unit: The unit of the stored data.
         :param uncertainty: The uncertainty (e.g. the standard deviation)
                             associated with a measure value.
@@ -48,6 +48,8 @@ class BaseProperty(base.BaseObject):
         :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
                    an id will be generated and assigned. An id has to be unique
                    within an odML Document.
+        :param value: Legacy code to the 'values' attribute. If 'values' is provided,
+                      any data provided via 'value' will be ignored.
         """
         try:
             if oid is not None:
@@ -79,7 +81,9 @@ class BaseProperty(base.BaseObject):
             print("Warning: Unknown dtype '%s'." % dtype)
 
         self._values = []
-        self.values = value
+        self.values = values
+        if not values and (value or isinstance(value, bool)):
+            self.values = value
 
         self.parent = parent
 
