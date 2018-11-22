@@ -5,6 +5,26 @@ until the next release.
 
 # Latest changes in master
 
+...
+
+# Version 1.4.2
+
+## Print methods
+
+`pprint` methods have been added to both `Section` and `Property`
+to print whole Section trees with their child sections and properties.
+The `__repr__` style of `Section` and `Property` has been changed to
+be more similar to the [nixpy](https://github.com/G-Node/nixpy) `__repr__` style.
+Printing a `Section` now also features the immediate `Property` child count
+in addition to the immediate `Section` child count. See #309.
+
+## Deprecation of 'Property.value' in favor of 'Property.values'
+
+To make working with odML more similar to working with the 
+metadata part of [nixpy](https://github.com/G-Node/nixpy), the `Property.value` 
+attribute has been marked deprecated and the `Property.values` 
+attribute has been added. See #308. 
+
 ## Uncertainty changes
 
 Uncertainty is now limited to float only. See #294.
