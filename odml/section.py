@@ -611,3 +611,30 @@ class BaseSection(base.Sectionable):
         prop.parent = self
 
         return prop
+
+    def pprint(self, indent=2, max_depth=1, max_length=80, current_depth=0):
+        """
+        Pretty print method to visualize Section-Property trees.
+
+        :param indent: number of leading spaces for every child Section or Property.
+        :param max_length: maximum number of characters printed in one line.
+        :param current_depth: number of hierarchical levels printed from the
+                              starting Section.
+        """
+        spaces = " " * (current_depth * indent)
+        sec_str = "{} {} [{}]".format(spaces, self.name, self.type)
+        print(sec_str)
+        for p in self.props:
+            p.pprint(current_depth=current_depth, indent=indent,
+                     max_length=max_length)
+        if max_depth == -1 or current_depth < max_depth:
+            for s in self.sections:
+                s.pprint(current_depth=current_depth+1, max_depth=max_depth,
+                         indent=indent, max_length=max_length)
+        elif max_depth == current_depth:
+            child_sec_indent = spaces + " " * indent
+            more_indent = spaces + " " * (current_depth + 2 * indent)
+            for s in self.sections:
+                print("{} {} [{}]\n{}[...]".format(child_sec_indent,
+                                                   s.name, s.type,
+                                                   more_indent))
