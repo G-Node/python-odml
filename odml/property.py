@@ -626,3 +626,35 @@ class BaseProperty(base.BaseObject):
                              "to data type \'%s\'!" % self._dtype)
 
         self._values.append(dtypes.get(new_value[0], self.dtype))
+
+    def pprint(self, indent=2, max_length=80, current_depth=-1):
+        """
+        Pretty print method to visualize Properties and Section-Property trees.
+
+        :param indent: number of leading spaces for every child Property.
+        :param max_length: maximum number of characters printed in one line.
+        :param current_depth: number of hierarchical levels printed from the
+                              starting Section.
+        """
+        property_spaces = ""
+        prefix = ""
+        if current_depth >= 0:
+            property_spaces = " " * ((current_depth + 2) * indent)
+            prefix = "|-"
+
+        if self.unit is None:
+            value_string = str(self.values)
+        else:
+            value_string = "{}{}".format(self.values, self.unit)
+
+        p_len = len(property_spaces) + len(self.name) + len(value_string)
+        if p_len >= max_length - 4:
+            split_len = int((max_length - len(property_spaces)
+                             + len(self.name) - len(prefix))/2)
+            str1 = value_string[0: split_len]
+            str2 = value_string[-split_len:]
+            print(("{}{} {}: {} ... {}".format(property_spaces, prefix,
+                                               self.name, str1, str2)))
+        else:
+            print(("{}{} {}: {}".format(property_spaces, prefix, self.name,
+                                        value_string)))
