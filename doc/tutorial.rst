@@ -237,18 +237,18 @@ The Document
 If you loaded the example odML file, let's have a first look at the Document::
 
     >>> print odmlEX
-    <Doc 42 by Douglas Adams (2 sections)>
+    Document 42 {author = D. N. Adams, 2 sections}
 
 As you can see, the printout gives you a short summary of the Document of the
 loaded example odML file.
 
 The print out gives you already the follwing information about the odML file:
 
-- ``<...>`` indicates that you are looking at an object
-- ``Doc`` tells you that you are looking at an odML Document
+- ``Document`` tells you that you are looking at an odML Document
 - ``42`` is the user defined version of this odML file
-- ``by D. N. Adams`` states the author of the odML file
-- ``(2 sections)`` tells you that this odML Document has 2 Section directly
+- ``{...}`` provides ``author`` and number of attached sections
+- ``author`` states the author of the odML file, "D. N. Adams" in the example case
+- ``2 sections`` tells you that this odML Document has 2 Section directly
   appended
 
 Note that the Document printout tells you nothing about the depth of the
@@ -289,11 +289,11 @@ Let's check out all attributes with the following commands::
     >>> print(odmlEX.date)
     1979-10-12
     >>> print(odmlEX.document)
-    <Doc 42 by D. N. Adams (2 sections)>
+    Document 42 {author = D. N. Adams, 2 sections}
     >>> print(odmlEX.parent)
     None
     >>> print(odmlEX.repository)
-    http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
+    http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml
     >>> print(odmlEX.version)
     42
 
@@ -307,7 +307,8 @@ Sections were attached to the Document of our example odML file using the
 following command::
 
     >>> print(odmlEX.sections)
-    [<Section TheCrew[crew] (4)>, <Section TheStarship[starship] (1)>]
+    [Section[4|2] {name = TheCrew, type = crew, id = ...},
+     Section[1|7] {name = TheStarship, type = starship, id = ...}]
 
 As expected from the Document printout our example contains two Sections. The
 printout and attributes of a Section are explained in the next chapter.
@@ -324,13 +325,13 @@ look at the first Section in the sections list attached to the Document in our
 example odML file::
 
     >>> print(odmlEX.sections['TheCrew'])
-    <Section TheCrew[crew] (4)>
+    Section[4|2] {name = TheCrew, type = crew, id = ...}
     >>> print(odmlEX.sections[0])
-    <Section TheCrew[crew] (4)>
+    Section[4|2] {name = TheCrew, type = crew, id = ...}
     >>> print(odmlEX['TheCrew'])
-    <Section TheCrew[crew] (4)>
+    Section[4|2] {name = TheCrew, type = crew, id = ...}
     >>> print(odmlEX[0])
-    <Section TheCrew[crew] (4)>
+    Section[4|2] {name = TheCrew, type = crew, id = ...}
 
 In the following we will call Sections explicitly by their name using the
 short cut notation.
@@ -338,17 +339,18 @@ short cut notation.
 The printout of a Section is similar to the Document printout and gives you
 already the following information:
 
-- ``<...>`` indicates that you are looking at an object
 - ``Section`` tells you that you are looking at an odML Section
-- ``TheCrew`` is the name of this Section
-- ``[...]`` highlights the type of the Section (here ``crew``)
-- ``(4)`` states that this Section has four Sections directly attached to it
+- ``[4|2]`` states that this Section has four Sections and two Properties directly attached to it
+- ``{...}`` provides ``name``, ``type`` and ``id`` of the Section
+- ``name`` is the name of this Section, 'TheCrew' in the example case
+- ``type`` provides the type of the Section, 'crew' in the example case
+- ``id`` provides the uuid of the Section, the actual value has been omitted in the example to improve readability.
 
-Note that the Section printout tells you nothing about the number of attached
-Properties or again about the depth of a possible sub-Section tree below the
-directly attached ones. It also only list the type of the Section as one of the
-Section attributes. In total, a Section can be defined by the following 5
-attributes:
+
+Note that the Section printout tells you nothing about the depth of a possible
+sub-Section tree below the directly attached ones. It also only list the type
+of the Section as one of the Section attributes. In total, a Section can be
+defined by the following 5 attributes:
 
 name
     - Returns the name of this Section. Should indicate what kind of
@@ -393,9 +395,9 @@ Let's have a look at the attributes for the Section 'TheCrew'::
     >>> print(odmlEX['TheCrew'].definition)
     Information on the crew
     >>> print(odmlEX['TheCrew'].document)
-    <Doc 42 by D. N. Adams (2 sections)>
+    Document 42 {author = D. N. Adams, 2 sections}
     >>> print(odmlEX['TheCrew'].parent)
-    <Doc 42 by D. N. Adams (2 sections)>
+    Document 42 {author = D. N. Adams, 2 sections}
     >>> print(odmlEX['TheCrew'].type)
     crew
     >>> print(odmlEX['TheCrew'].reference)
@@ -413,27 +415,28 @@ To see which Sections are directly attached to the Section 'TheCrew' again use
 the following command::
 
     >>> print(odmlEX['TheCrew'].sections)
-    [<Section Arthur Philip Dent[crew/person] (0)>,
-     <Section Zaphod Beeblebrox[crew/person] (0)>,
-     <Section Tricia Marie McMillan[crew/person] (0)>,
-     <Section Ford Prefect[crew/person] (0)>]
+    [Section[0|5] {name = Arthur Philip Dent, type = crew/person, id = ...},
+     Section[0|5] {name = Zaphod Beeblebrox, type = crew/person, id = ...},
+     Section[0|5] {name = Tricia Marie McMillan, type = crew/person, id = ...},
+     Section[0|5] {name = Ford Prefect, type = crew/person, id = ...}]
 
 Or, for accessing these sub-Sections::
 
     >>> print(odmlEX['TheCrew'].sections['Ford Prefect'])
-    <Section Ford Prefect[crew/person] (0)>
+    Section[0|5] {name = Ford Prefect, type = crew/person, id = ...}
     >>> print(odmlEX['TheCrew'].sections[3])
-    <Section Ford Prefect[crew/person] (0)>
+    Section[0|5] {name = Ford Prefect, type = crew/person, id = ...}
     >>> print(odmlEX['TheCrew']['Ford Prefect'])
-    <Section Ford Prefect[crew/person] (0)>
+    Section[0|5] {name = Ford Prefect, type = crew/person, id = ...}
     >>> print(odmlEX['TheCrew'][3])
-    <Section Ford Prefect[crew/person] (0)>
+    Section[0|5] {name = Ford Prefect, type = crew/person, id = ...}
 
 As you learned, besides sub-Sections, a Section can also have Properties
 attached. Let's see which Properties are attached to the Section 'TheCrew'::
 
     >>> print(odmlEX['TheCrew'].properties)
-    [<Property NameCrewMembers>, <Property NoCrewMembers>]
+    [Property: {name = NameCrewMembers},
+     Property: {name = NoCrewMembers}]
 
 The printout and attributes of a Property are explained in the next chapter.
 
@@ -445,17 +448,17 @@ Properties need to be called explicitly via the properties function of a
 Section. You can then either call a Property by name or by index::
 
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'])
-    <Property NoCrewMembers>
+    Property: {name = NoCrewMembers}
     >>> print(odmlEX['TheCrew'].properties[1])
-    <Property NoCrewMembers>
+    Property: {name = NoCrewMembers}
 
 In the following we will only call Properties explicitly by their name.
 
 The Property printout is reduced and only gives you information about the
 following:
 
-- ``<...>`` indicates that you are looking at an object
 - ``Property`` tells you that you are looking at an odML Property
+- ``{...}`` provides the ``name`` of the Property
 - ``NoCrewMembers`` is the name of this Property
 
 Note that the Property printout tells you nothing about the number of Values,
@@ -478,7 +481,7 @@ document
 parent
     - Returns the parent Section to which this Property was attached to.
 
-value
+values
     - Returns the metadata of this Property. Can be either a single metadata or
       multiple, but homogeneous metadata (all with same dtype and unit). For
       this reason, the output is always provided as a list.
@@ -517,8 +520,8 @@ Let's check which attributes were defined for the Property 'NoCrewMembers'::
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].definition)
     Number of crew members
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].document)
-    <Doc 42 by D. N. Adams (2 sections)>
-    >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].value)
+    Document 42 {author = D. N. Adams, 2 sections}
+    >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].values)
     [4]
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].dtype)
     int
@@ -533,22 +536,22 @@ Let's check which attributes were defined for the Property 'NoCrewMembers'::
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].dependency_value)
     None
 
-As mentioned the value attribute of a Property can only contain multiple
+As mentioned the values attribute of a Property can only contain multiple
 metadata when they have the same ``dtype`` and ``unit``, as it is the case for
 the Property 'NameCrewMembers'::
 
-    >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].value)
-    [u'Arthur Philip Dent',
-     u'Zaphod Beeblebrox',
-     u'Tricia Marie McMillan',
-     u'Ford Prefect']
+    >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].values)
+    ['Arthur Philip Dent',
+     'Zaphod Beeblebrox',
+     'Tricia Marie McMillan',
+     'Ford Prefect']
     >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].dtype)
     person
     >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].unit)
     None
 
-NOTE: 'property.value' will always return a copy! Any direct changes to the
-returned list will have no affect on the actual property value. If you want to
+NOTE: 'property.values' will always return a copy! Any direct changes to the
+returned list will have no affect on the actual property values. If you want to
 make changes to a property value, either use the 'append', 'extend' and 'remove'
 methods or assign a new value list to the property.
 
@@ -585,7 +588,7 @@ You can check if your new Document contains actually what you created by using
 some of the commands you learned before::
 
     >>> MYodML
-    >>> <Doc None by None (0 sections)>
+    >>> Document None {author = None, 0 sections}
 
 As you can see, we created an "empty" Document where the version and the author
 attributes are not defined and no section is yet attached. You will learn how to create
@@ -622,7 +625,7 @@ Check if your new Document contains actually all attributes now::
     >>> print(MYodML.date)
     1979-10-12
     >>> print(MYodML.document)
-    <Doc 42 by D. N. Adams (0 sections)>
+    Document 42 {author = D. N. Adams, 0 sections}
     >>> print(MYodML.parent)
     None
     >>> print(MYodML.repository)
@@ -662,14 +665,14 @@ updated::
     >>> MYodML.append(sec1)
 
     >>> print(MYodML)
-    <Doc 42 by Douglas Adams (1 sections)>
+    Document 42 {author = D. N. Adams, 1 sections}
     >>> print(MYodML.sections)
-    [<Section TheCrew[crew] (0)>]
+    [Section[0|0] {name = TheCrew, type = crew, id = ...}]
 
     >>> print(sec1.document)
-    <Doc 42 by D. N. Adams (1 sections)>
+    Document 42 {author = D. N. Adams, 1 sections}
     >>> print(sec1.parent)
-    <Doc 42 by D. N. Adams (1 sections)>
+    Document 42 {author = D. N. Adams, 1 sections}
 
 It is also possible to connect a Section directly to a parent object.
 Let's try this with the next Section we create::
@@ -680,12 +683,12 @@ Let's try this with the next Section we create::
                             parent=sec1)
 
     >>> print(sec2)
-    <Section Arthur Philip Dent[crew/person] (0)>
+    Section[0|0] {name = Arthur Philip Dent, type = crew/person, id = ...}
 
     >>> print(sec2.document)
-    <Doc 42 by D. N. Adams (1 sections)>
+    Document 42 {author = D. N. Adams, 1 sections}
     >>> print(sec2.parent)
-    <Section TheCrew[crew] (1)>
+    [Section[1|0] {name = TheCrew, type = crew, id = ...}
 
 Note that all of our created Sections do not contain any Properties yet. Let's 
 see if we can change this...
@@ -698,7 +701,7 @@ Let's create our first Property::
 
     >>> prop1 = odml.Property(name="Gender",
                               definition="Sex of the subject",
-                              value="male")
+                              values="male")
 
 Note that again, only the name attribute is obligatory for creating a Property.
 The remaining attributes can be defined later on, or are automatically 
@@ -750,18 +753,18 @@ automatically update its parent attribute::
     >>> MYodML['TheCrew']['Arthur Philip Dent'].append(prop1)
 
     >>> print(prop1.document)
-    <Doc 42 by D. N. Adams (1 sections)>
+    Document 42 {author = D. N. Adams, 1 sections}
     >>> print(prop1.parent)
-    <Section Arthur Philip Dent[crew/person] (0)>
+    Section[0|1] {name = Arthur Philip Dent, type = crew/person, id = ...}
 
 Next, let us create a Property with multiple metadata entries::
 
     >>> prop2 = odml.Property(name="NameCrewMembers",
                               definition="List of crew members names",
-                              value=["Arthur Philip Dent",
-                                     "Zaphod Beeblebrox",
-                                     "Tricia Marie McMillan",
-                                     "Ford Prefect"],
+                              values=["Arthur Philip Dent",
+                                      "Zaphod Beeblebrox",
+                                      "Tricia Marie McMillan",
+                                      "Ford Prefect"],
                               dtype=odml.DType.person)
 
 As you learned before, in such a case, the metadata entries must be 
@@ -776,12 +779,12 @@ previously created Section 'TheCrew'::
 Note that it is also possible to add a metadata entry later on::
 
     >>> prop2.append("Blind Passenger")
-    >>> print(MYodML['TheCrew'].properties['NameCrewMembers'].value)
-    [u'Arthur Philip Dent',
-     u'Zaphod Beeblebrox',
-     u'Tricia Marie McMillan',
-     u'Ford Prefect',
-     u'Blind Passenger']
+    >>> print(MYodML['TheCrew'].properties['NameCrewMembers'].values)
+    ['Arthur Philip Dent',
+     'Zaphod Beeblebrox',
+     'Tricia Marie McMillan',
+     'Ford Prefect',
+     'Blind Passenger']
 
 
 The tuple datatype you might have noticed in the dtype table above has to be
@@ -794,17 +797,17 @@ by brackets and separated by a semicolon.
 
     >>> pixel_prop = odml.Property(name="pixel map")
     >>> pixel_prop.dtype = "2-tuple"
-    >>> pixel_prop.value = ["(1; 2)", "(3; 4)"]
+    >>> pixel_prop.values = ["(1; 2)", "(3; 4)"]
 
     >>> voxel_prop = odml.Property(name="voxel map")
     >>> voxel_prop.dtype = "3-tuple"
-    >>> voxel_prop.value = "(1; 2; 3)"
+    >>> voxel_prop.values = "(1; 2; 3)"
 
 Please note, that inconsistent tuple values will raise an error:
 
     >>> tprop = odml.Property(name="tuple fail")
     >>> tprop.dtype = "3-tuple"
-    >>> tprop.value = ["(1; 2)"]
+    >>> tprop.values = ["(1; 2)"]
 
 
 Printing XML-representation of an odML file:
@@ -883,13 +886,13 @@ After creating a Property with metadata the data type can be changed and the
 format of the corresponding entry will converted to the new data type, if the 
 new format is valid for the given metadata::
 
-    >>> test_dtype_conv = odml.Property('p', value=1.0)
-    >>> print(test_dtype_conv.value)
+    >>> test_dtype_conv = odml.Property('p', values=1.0)
+    >>> print(test_dtype_conv.values)
     [1.0]
     >>> print(test_dtype_conv.dtype)
     float
     >>> test_dtype_conv.dtype = odml.DType.int
-    >>> print(test_dtype_conv.value)
+    >>> print(test_dtype_conv.values)
     [1]
     >>> print(test_dtype_conv.dtype)
     int
@@ -899,21 +902,17 @@ If the conversion is invalid a ValueError is raised.
 Also note, that during such a process metadata loss may occur if a float is
 converted to an integer and then back to a float::
 
-    >>> test_dtype_conv = odml.Property('p', value=42.42)
-    >>> print(test_dtype_conv.value)
+    >>> test_dtype_conv = odml.Property('p', values=42.42)
+    >>> print(test_dtype_conv.values)
     [42.42]
     >>> test_dtype_conv.dtype = odml.DType.int
     >>> test_dtype_conv.dtype = odml.DType.float
-    >>> print(test_dtype_conv.value)
+    >>> print(test_dtype_conv.values)
     [42.0]
 
 
 Advanced knowledge on Properties
 --------------------------------
-
-Dependencies & dependency values
-********************************
-(coming soon)
 
 Advanced knowledge on Sections
 ------------------------------

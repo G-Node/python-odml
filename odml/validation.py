@@ -291,7 +291,7 @@ def property_dependency_check(prop):
                               LABEL_WARNING)
         return
 
-    if prop.dependency_value not in dep_obj.value[0]:
+    if prop.dependency_value not in dep_obj.values[0]:
         yield ValidationError(prop, "Dependency-value is not equal to value of"
                               " the property's dependency", LABEL_WARNING)
 

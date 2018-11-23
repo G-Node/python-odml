@@ -192,26 +192,26 @@ class AttributeTest(unittest.TestCase):
 
     def test_value_int(self):
         p = odml.Property("test", 1, dtype="int")
-        self.assertEqual(p.value[0], 1)
+        self.assertEqual(p.values[0], 1)
 
     def test_conversion_int_to_float(self):
         p = odml.Property("test", "1", dtype="int")
         self.assertEqual(p.dtype, "int")
-        self.assertIsInstance(p.value[0], int)
+        self.assertIsInstance(p.values[0], int)
         p.dtype = "float"  # change dtype
         self.assertEqual(p.dtype, "float")
-        self.assertEqual(p.value[0], 1.0)
+        self.assertEqual(p.values[0], 1.0)
 
     def test_conversion_float_to_int(self):
         p = odml.Property("test", "1.5", dtype="float")
         self.assertEqual(p.dtype, "float")
         p.dtype = "int"
         self.assertEqual(p.dtype, "int")
-        self.assertEqual(p.value[0], 1)
+        self.assertEqual(p.values[0], 1)
 
     def test_value_float(self):
         p = odml.Property("test", value="1.5", dtype="float")
-        self.assertEqual(p.value[0], 1.5)
+        self.assertEqual(p.values[0], 1.5)
 
 
 class CopyTest(unittest.TestCase):
@@ -223,15 +223,15 @@ class CopyTest(unittest.TestCase):
         a = self.p
         b = self.p
         self.assertEqual(a, b)
-        a.value = 5
+        a.values = 5
         self.assertEqual(a, b)
-        self.assertEqual(a.value, b.value)
+        self.assertEqual(a.values, b.values)
 
     def test_independence(self):
         a = self.p.clone()
         b = self.p.clone()
         self.assertEqual(a, b)
-        a.value = 5
+        a.values = 5
         self.assertNotEqual(a, b)
         # self.assertUn
 

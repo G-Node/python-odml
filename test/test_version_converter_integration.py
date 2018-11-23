@@ -78,10 +78,10 @@ class TestVersionConverterIntegration(unittest.TestCase):
         self.assertEqual(prop.unit, "arbitrary")
         self.assertEqual(prop.value_origin, "filename val 1")
         self.assertEqual(prop.dtype, "string")
-        self.assertEqual(len(prop.value), 3)
+        self.assertEqual(len(prop.values), 3)
 
         prop = sec.properties["prop_two"]
-        self.assertEqual(len(prop.value), 8)
+        self.assertEqual(len(prop.values), 8)
 
         prop = sec.properties["prop_three"]
-        self.assertEqual(len(prop.value), 0)
+        self.assertEqual(len(prop.values), 0)
