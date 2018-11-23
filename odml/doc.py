@@ -42,8 +42,8 @@ class BaseDocument(base.Sectionable):
         self._origin_file_name = None
 
     def __repr__(self):
-        return "<Doc %s by %s (%d sections)>" % (self._version, self._author,
-                                                 len(self._sections))
+        return "Document %s {author = %s, %d sections}" % \
+               (self._version, self._author, len(self._sections))
 
     @property
     def oid(self):
