@@ -104,6 +104,9 @@ class BaseProperty(base.BaseObject):
             raise ValueError("odml.Property.__setitem__:  passed value cannot be "
                              "converted to data type \'%s\'!" % self._dtype)
 
+    def __repr__(self):
+        return "Property: {name = %s}" % self._name
+
     @property
     def oid(self):
         """
@@ -146,9 +149,6 @@ class BaseProperty(base.BaseObject):
             raise KeyError("Object with the same name already exists!")
 
         self._name = new_name
-
-    def __repr__(self):
-        return "Property: {name = %s}" % self._name
 
     @property
     def dtype(self):
