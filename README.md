@@ -99,6 +99,10 @@ working as expected. Use the release tags instead.
 More information about the project including related projects as well as tutorials and
 examples can be found at our odML [project page](https://g-node.github.io/python-odml).
 
+# Contributing and Governance
+
+See the [CONTRIBUTING](CONTIBUTING.md) document for more information on this.
+
 # Bugs & Questions
 
 Should you find a behaviour that is likely a bug, please file a bug report at
