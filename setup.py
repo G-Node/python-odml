@@ -45,6 +45,7 @@ setup(
     install_requires=install_req,
     include_package_data=True,
     long_description=description_text,
+    long_description_content_type="text/markdown",
     classifiers=CLASSIFIERS,
     license="BSD",
     entry_points={'console_scripts': ['odmltordf=odml.scripts.odml_to_rdf:main',
