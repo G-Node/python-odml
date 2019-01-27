@@ -25,7 +25,7 @@ packages = [
     'odml.scripts'
 ]
 
-with open('README.rst') as f:
+with open('README.md') as f:
     description_text = f.read()
 
 install_req = ["lxml", "pyyaml==3.13", "rdflib", "docopt", "pathlib"]
