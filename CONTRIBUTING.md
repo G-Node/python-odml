@@ -4,6 +4,14 @@ How to contribute to python-odml
 This document gives some information about how to contribute to the odML project.
 
 
+Governance model
+----------------
+We do not employ a strict governance model in this project. There is a core team of **maintainers** who are more or less long-term contributors and feel a certain level of responsibility for the project. There is also a set of one-time, or short period **contributors**. We consider everyone a contributor who reports issues, opens pull requests, or takes part in issue discussions. That means our governance model is somewhere between *Meritocracy* and *BDFL* [(more on governance)](https://opensource.guide/leadership-and-governance/).
+
+So far, only **maintainers** have commit access to the repository and will review and merge pull-requests. Becoming a maintainer is possible for eveyone who wants to help maintaining and shaping the project and to take over more responsibility.
+
+Any addition to the code happens via pull-requests (there are only very few exceptions in which anyone of us pushes directly to master, see below for more information). Thus, any contribution will be reviewed before it is merged. Bug-fixes and other contributions to the API will undergo this pragmatic approach. Format changes, especially those that would lead to breaking changes, will be discussed in the issue tracker and meetings beforehands and need to be agreed on by the **maintainters**. 
+
 Contributing
 ------------
 
