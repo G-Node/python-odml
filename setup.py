@@ -25,7 +25,7 @@ packages = [
     'odml.scripts'
 ]
 
-with open('README.rst') as f:
+with open('README.md') as f:
     description_text = f.read()
 
 install_req = ["lxml", "pyyaml==3.13", "rdflib", "docopt", "pathlib"]
@@ -45,6 +45,7 @@ setup(
     install_requires=install_req,
     include_package_data=True,
     long_description=description_text,
+    long_description_content_type="text/markdown",
     classifiers=CLASSIFIERS,
     license="BSD",
     entry_points={'console_scripts': ['odmltordf=odml.scripts.odml_to_rdf:main',
