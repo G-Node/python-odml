@@ -9,7 +9,7 @@ Governance model
 
 The project has a core team of **maintainers** who are long-term contributors and responsible for coordinating the project. There is also a set of one-time or short period **contributors**. We consider everyone a contributor who reports issues, opens pull requests, or takes part in issue discussions. Any such contribution is welcome. Maintainers have commit access to the repository and will review and merge pull requests. Becoming a maintainer is possible for everyone who wants to help maintaining and shaping the project and to take over more responsibility. Requests to become a maintainer need to be approved by the existing maintainers.
 
-Any addition to the code happens via pull requests (there are only very few exceptions in which someone pushes directly to master, see below for more information). Thus, any contribution will be reviewed before it is merged. Bug fixes and other contributions to the API will undergo this pragmatic approach. Format or API changes, especially those that would lead to breaking changes, will be discussed via the issue tracker and video meetings and need to be agreed on by the maintainters. We aim at consensus decisions, but where this is not possible decisions are made by majority vote among the maintainers.
+Any addition to the code happens via pull requests (there are only very few exceptions in which someone pushes directly to master, see below for more information). Thus, any contribution will be reviewed before it is merged. Bug fixes and other contributions to the API will undergo this pragmatic approach. Format or API changes, especially those that would lead to breaking changes, will be discussed via the issue tracker and video meetings and need to be agreed on by the maintainers. We aim at consensus decisions, but where this is not possible decisions are made by majority vote among the maintainers.
 
 
 Contributing
@@ -67,12 +67,12 @@ Each pull request that passes all builds and tests should be reviewed by at leas
 If a contribution is rather complex or leads to significant API changes, the respective pull request should be
 reviewed by two other developers.
 In such cases the first reviewer or the contributor should request a second review in a comment.
-
+To streamline the review process reviewers are encouraged to use the github "review" option.
 
 Testing
 -------
 
-* Unit test can be found in the test sub directory. Currently, the test coverage is a bit low but we are working on improving it.
+* Unit tests can be found in the test sub directory. Currently, the test coverage is a bit low but we are working on improving it.
 
 * Provide a unit test for every class, method or function.
 

@@ -9,8 +9,6 @@ matrix:
       python: "2.7"
       env: COVERALLS=1
     - os: linux
-      python: "3.4"
-    - os: linux
       python: "3.5"
     - os: linux
       python: "3.6"
@@ -55,7 +53,7 @@ install:
       export PIPCMD=pip;
     fi;
 
-  - $PIPCMD install lxml enum34 pyyaml rdflib
+  - $PIPCMD install lxml enum34 pyyaml==4.2b4 rdflib
 
 script:
   - which $PYCMD
