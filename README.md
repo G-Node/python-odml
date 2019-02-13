@@ -1,5 +1,5 @@
 ![Travis build](https://travis-ci.org/G-Node/python-odml.svg?branch=master)
-![Appveyor](https://ci.appveyor.com/api/projects/status/2wfvsu7boe18kwjy?svg=true)
+[![Build status](https://ci.appveyor.com/api/projects/status/br7pe6atlwdg5618/branch/master?svg=true)](https://ci.appveyor.com/project/G-Node/python-odml/branch/master)
 ![Test coverage](https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master)
 
 # odML (Open metaData Markup Language) core library
