@@ -75,6 +75,29 @@ Both scripts provide detailed usage descriptions by adding the help flag to the 
     odmlconversion -h
     odmltordf -h
 
+### odML - NIX conversion script
+
+You can also find a command line script for importing metadata from odML files into the
+second, more data centric, data format, [NIX](https://g-node.github.io/nix/), or
+exporting metadata from a NIX file to a new odML file.
+
+You can install the command line script via pip:
+
+
+    pip install nixodmlconverter
+
+
+The script can then be run from the command line and provides a detailed usage
+description by adding the help flag to the command.
+
+
+    nixodmlconverter -h
+
+
+The source code of the converter can be found
+[on github](https://github.com/G-Node/nix-odML-converter).
+
+
 ## Support
 
 If you experience problems using *odml* feel free to join our IRC channel
