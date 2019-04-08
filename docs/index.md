@@ -5,29 +5,31 @@
 odML (open metadata Markup Language) is a file format for storing
 arbitrary metadata. The underlying [data model](./data_model.md)
 offers a way to store metadata in a structured human- and
-machine-readable way.  Well organized metadata management is a key
+machine-readable way. Well organized metadata management is a key
 component to guarantee reproducibility of experiments and to track
 provenance of performed analyses.
 
 
-*python-odml* is the python library for reading and writing odml metadata files. It is a registered research resource with
-the  [RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
+*python-odml* is the python library for reading and writing odml metadata files.
+It is a registered research resource with the
+[RRID:SCR_001376](https://scicrunch.org/browse/resources/SCR_001376)
 .
 
-## APIs
+## The odML eco system
+
+### APIs
 
 - [*odml* python library](https://github.com/g-node/python-odml "python library for odml files"). Python library for reading and writing odml files.
 - [*java-odml-lib*](https://github.com/g-node/odml-java-lib "Java library for odml files") Java implementation of the data model.
 - [*matlab-odml*](https://github.com/g-node/matlab-odml "Matlab interface for odml files") Matlab interface for odml files.
 
-## Viewer/Editor
+### Viewer/Editor
 
 - [odml-ui](https://github.com/g-node/odml-ui "odml-ui - editor for odml metadata files"): Graphical editor
 - [odmlTables](https://github.com/INM-6/python-odmltables) Spreadsheet interface (by INM-6 FZ JÛlich) for odml files.
 
-## Terminologies
-*odML* facilitates and encourages standardization by
-providing
+### Terminologies
+*odML* facilitates and encourages standardization by providing
 [terminologies](https://github.com/G-Node/odml-terminologies). An
 odml-file can be based on such a terminology. In that case one does
 not need to provide definitions since they are part of the linked
@@ -101,20 +103,22 @@ The source code of the converter can be found
 ## Support
 
 If you experience problems using *odml* feel free to join our IRC channel
-[#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>. If you find a
-bug please report it using
-the [project issue tracker](https://github.com/G-Node/python-odml/issues "pyhton-odml issue tracker").
+[#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>.
+If you find a bug please report it using the
+[project issue tracker](https://github.com/G-Node/python-odml/issues "pyhton-odml issue tracker").
 
 
 ## License
 
-This project is open source published under an MIT license-like see [license file](https://github.com/G-Node/python-odml/blob/master/LICENSE) for details.
+This project is open source published under an MIT license-like see
+[license file](https://github.com/G-Node/python-odml/blob/master/LICENSE) for details.
 
 * * *
 
 ## Citing
 
-If you use *odml*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_001376 and/or the reference:
+If you use *odml*, it would be much appreciated if you would cite it in publications with
+its identifier RRID:SCR_001376 and/or the reference:
 
 *Grewe J., Wachtler T., and Benda J. (2011). A bottom-up approach to data annotation in neurophysiology. Front. Neuroinform. 5:16, [doi:10.3389/fninf.2011.00016](https://doi.org/10.3389/fninf.2011.00016)*
 
