@@ -33,6 +33,19 @@ odml-file can be based on such a terminology. In that case one does
 not need to provide definitions since they are part of the linked
 terminology.
 
+### Templates
+Templates are odML documents that can be re-used when collecting the same kind of
+information over the course of multiple identical experiments.
+
+Templates that were created using the odML terminologies and are used to
+systematically collect metadata during scientific experiments can be found, 
+discussed and shared at the
+[templates github repository](https://github.com/G-Node/odml-templates).
+
+If you have created your own templates that others might find useful, 
+you are encouraged to share your templates via this repository.
+  
+
 * * *
 
 ## Getting started
