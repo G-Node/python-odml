@@ -145,10 +145,6 @@ Bugs & Questions
 Should you find a behaviour that is likely a bug, please file a bug report at
 `the github bug tracker <https://github.com/G-Node/python-odml/issues>`_.
 
-If you have questions regarding the use of the library or the editor, ask
-the question on `Stack Overflow <http://stackoverflow.com/>`_, be sure to tag
-it with `odml` and we'll do our best to quickly solve the problem.
-
 -------------------------------------------------------------------------------
 
 Basic knowledge on odML
@@ -177,8 +173,8 @@ Property:
 
 Each of these odML objects has a certain set of attributes where the
 user can describe the object and its contents. Which attribute belongs
-to which object and what the attributes are used for, is better explained
-in an example odML file (e.g., "THGTTG.odml").
+to which object and what the attributes are used for is better explained
+in an example odML file (cf., "THGTTG.odml").
 
 
 A first look
@@ -189,7 +185,7 @@ to handle odML files in Python, you can have a first look at the example odML
 file provided in the Python-odML library. For this you first need to run the
 python code ("thgttg.py") to generate the example odML file ("THGTTG.odml").
 When using the following commands, make sure you adapt the paths to the
-python-odml module to your owns!::
+python-odml module to your own!::
 
     $ cd /home/usr/.../python-odml
     $ ls doc/example_odMLs
@@ -242,7 +238,7 @@ If you loaded the example odML file, let's have a first look at the Document::
 As you can see, the printout gives you a short summary of the Document of the
 loaded example odML file.
 
-The print out gives you already the follwing information about the odML file:
+The print out gives you already the following information about the odML file:
 
 - ``Document`` tells you that you are looking at an odML Document
 - ``42`` is the user defined version of this odML file
@@ -254,14 +250,14 @@ The print out gives you already the follwing information about the odML file:
 Note that the Document printout tells you nothing about the depth of the
 complete tree structure, because it is not displaying the children of its
 directly attached Sections. It also does not display all Document attributes.
-In total, a Document has the following 4 attributes:
+In total, a Document has the following attributes:
 
 author
-    - Returns the author (returned as string) of this odML file.
+    - Returns the author (returned as string) of an odML document.
 
 date
-    - Returns ta user defined date. Could for example be used to state
-      the date of first creation or the date of last changes.
+    - Returns a user defined date. Could for example be used to state
+      the date of the document creation or the date of the latest change.
 
 document
     - Returns the current Document object.
@@ -278,7 +274,7 @@ version
     - Returns the user defined version (returned as string) of this odML file.
 
 id
-    - id is a UUID (universally unique identifiers) that uniquely identifies
+    - id is a UUID (universally unique identifier) that uniquely identifies
       the current document. If not otherwise specified, this id is automatically
       created and assigned.
 
@@ -297,7 +293,7 @@ Let's check out all attributes with the following commands::
     >>> print(odmlEX.version)
     42
 
-As expected for a Document, the attributes author and version match the
+As expected for a Document, the attributes ``author`` and ``version`` match the
 information given in the Document printout, the document attribute just returns
 the Document, and the parent attribute is ``None``.
 
@@ -348,9 +344,9 @@ already the following information:
 
 
 Note that the Section printout tells you nothing about the depth of a possible
-sub-Section tree below the directly attached ones. It also only list the type
+sub-Section tree below the directly attached ones. It also only lists the type
 of the Section as one of the Section attributes. In total, a Section can be
-defined by the following 5 attributes:
+defined by the following attributes:
 
 name
     - Returns the name of this Section. Should indicate what kind of
@@ -405,10 +401,10 @@ Let's have a look at the attributes for the Section 'TheCrew'::
     >>> print(odmlEX['TheCrew'].repository)
     None
     >>> print(odmlEX['TheCrew'].id)
-    None
+    6df940b5-b502-4749-8ad9-33d7432064f3
 
 As expected for this Section, the name and type attribute match the information
-given in the Section printout, and the document and parent attribute return the
+given in the Section printout, and the document and parent attributes return the
 same object, namely our example Document.
 
 To see which Sections are directly attached to the Section 'TheCrew' again use
@@ -463,7 +459,7 @@ following:
 
 Note that the Property printout tells you nothing about the number of Values,
 and very little about the Property attributes. In total, a Property can be
-defined by the following 9 attributes:
+defined by the following attributes:
 
 name
     - Returns the name of the Property. Should indicate what kind of metadata
@@ -483,8 +479,8 @@ parent
 
 values
     - Returns the metadata of this Property. Can be either a single metadata or
-      multiple, but homogeneous metadata (all with same dtype and unit). For
-      this reason, the output is always provided as a list.
+      multiple, but homogeneous metadata (all with the same dtype, unit and uncertainty).
+      For this reason, the output is always provided as a list.
 
 dtype
     - Returns the odml data type of the stored metadata.
@@ -536,7 +532,7 @@ Let's check which attributes were defined for the Property 'NoCrewMembers'::
     >>> print(odmlEX['TheCrew'].properties['NoCrewMembers'].dependency_value)
     None
 
-As mentioned the values attribute of a Property can only contain multiple
+As mentioned the ``values`` attribute of a Property can only contain multiple
 metadata when they have the same ``dtype`` and ``unit``, as it is the case for
 the Property 'NameCrewMembers'::
 
@@ -550,9 +546,9 @@ the Property 'NameCrewMembers'::
     >>> print(odmlEX['TheCrew'].properties['NameCrewMembers'].unit)
     None
 
-NOTE: 'property.values' will always return a copy! Any direct changes to the
-returned list will have no affect on the actual property values. If you want to
-make changes to a property value, either use the 'append', 'extend' and 'remove'
+NOTE: ``property.values`` will always return a copy! Any direct changes to the
+returned list will have no affect on the actual Property values. If you want to
+make changes to a Property value, either use the ``append``, ``extend`` and ``remove``
 methods or assign a new value list to the property.
 
 
@@ -569,7 +565,7 @@ We will show you first how to create the different odML objects with their
 attributes. Please note that some attributes are obligatory, some are 
 recommended and others are optional when creating the corresponding odML 
 objects. A few are automatically generated in the process of creating an odML 
-file. Furthermore, all attributes of an odml object can be edited at any time.
+file. Furthermore, all attributes of an odML object can be edited at any time.
 
 If you opened a new IPython shell, please import first again the odml package::
 
@@ -608,7 +604,7 @@ Now, let's define the date attribute of the Document::
     >>> MYodML.date = dt.date(1979, 10, 12)
 
 Next, let us also add a repository attribute. Exemplary, we can import the 
-Python package os to extract the absolute path to our previously used example
+Python package ``os`` to extract the absolute path to our previously used example
 odML file and add this as repository::
 
     >>> import os
@@ -618,7 +614,7 @@ odML file and add this as repository::
 The document and parent attribute are automatically set and should not be 
 fiddled with.
 
-Check if your new Document contains actually all attributes now::
+Check if your new Document actually contains all attributes now::
 
     >>> print(MYodML.author)
     D. N. Adams
@@ -640,27 +636,25 @@ Note that you can also define all attributes when first creating a Document::
                                date=dt.date(1979, 10, 12),
                                repository=url2odmlEX)
 
-Our new created Document is, though, still "empty", because it does not contain 
-yet Sections. Let's change this!
+Our newly created Document is, though, still "empty", because it does not contain
+Sections yet. Let's change this!
 
 
 Create a section
 ----------------
 
 We now create a Section by reproducing the Section "TheCrew" of the example 
-odml file from the beginning::
+odML file from the beginning::
 
     >>> sec1 = odml.Section(name="TheCrew",
                            definition="Information on the crew",
                            type="crew")
 
-Note that only the attribute name is obligatory. The attributes definition and 
-type are recommended, but could be either not defined at all or defined later 
-on.
+Note that only the attribute name is obligatory. The attributes ``definition`` and
+``type`` are recommended, but could be either not defined at all or defined later on.
 
 Let us now attach this Section to our previously generated Document. With this,
-the attribute document and parent of our new Section are automatically 
-updated::
+the attribute document and parent of our new Section are automatically updated::
 
     >>> MYodML.append(sec1)
 
@@ -703,12 +697,12 @@ Let's create our first Property::
                               definition="Sex of the subject",
                               values="male")
 
-Note that again, only the name attribute is obligatory for creating a Property.
+Note that again, only the ``name`` attribute is obligatory for creating a Property.
 The remaining attributes can be defined later on, or are automatically 
 generated in the process.
 
-If a value is defined, but the dtype is not, as it is the case for our example
-above, the dtype is deduced automatically::
+If a value is defined, but the ``dtype`` is not, as it is the case for our example
+above, the ``dtype`` is deduced automatically::
 
     >>> print(prop1.dtype)
     string
@@ -739,7 +733,7 @@ the stored metadata:
 +-----------------------------------+---------------------------------------+
 | odml.DType.url or 'url'           | "https://en.wikipedia.org/wiki/Earth" |
 +-----------------------------------+---------------------------------------+
-| odml.DType.tuple                  | "(39.12; 67.19)"                      |
+| odml.DType.tuple                  | "(39.12; 67.19)" cf. usage note below |
 +-----------------------------------+---------------------------------------+
 
 The available types are implemented in the 'odml.dtypes' Module. Note that the
@@ -767,9 +761,9 @@ Next, let us create a Property with multiple metadata entries::
                                       "Ford Prefect"],
                               dtype=odml.DType.person)
 
-As you learned before, in such a case, the metadata entries must be 
-homogeneous! That means they have to be of the same dtype, unit, and 
-uncertainty (here ``odml.DType.person``, None, and None, respectively).
+As you learned before, in such a case the metadata entries must be
+homogeneous! That means they have to be of the same ``dtype``, ``unit``, and
+``uncertainty`` (here ``odml.DType.person``, None, and None, respectively).
 
 To further build up our odML file, let us attach now this new Property to the
 previously created Section 'TheCrew'::
@@ -787,10 +781,10 @@ Note that it is also possible to add a metadata entry later on::
      'Blind Passenger']
 
 
-The tuple datatype you might have noticed in the dtype table above has to be
-specially handled. It is intended to enforce a specific number of datapoints
+The ``tuple`` datatype you might have noticed in the dtype table above has to be
+specially handled. It is intended to enforce a specific number of data points
 for each value entry. This is useful in case of 2D or 3D data, where all
-datapoints always have to be present for each entry.
+data points always have to be present for each entry.
 The dtype itself has to contain the number corresponding to the required value
 data points. For the value data points themselves, they have to be enclosed
 by brackets and separated by a semicolon.
@@ -810,8 +804,8 @@ Please note, that inconsistent tuple values will raise an error:
     >>> tprop.values = ["(1; 2)"]
 
 
-Printing XML-representation of an odML file:
---------------------------------------------
+Printing the XML-representation of an odML file:
+------------------------------------------------
 
 Although the XML-representation of an odML file is a bit hard to read, it is 
 sometimes helpful to check, especially during a generation process, how the 
@@ -846,7 +840,7 @@ generated::
         <type>crew</type>
       </section>
       <version>42</version>
-      <repository>file:///home/zehl/Projects/toolbox/python-odml/doc/example_odMLs/THGTTG.odml</repository>
+      <repository>file:///home/usr/Projects/toolbox/python-odml/doc/example_odMLs/THGTTG.odml</repository>
       <author>D. N. Adams</author>
     </odML>
 
@@ -860,6 +854,17 @@ You can save your odML file using the following command::
     >>> odml.save(MYodML, save_to)
 
 
+By default, every odML file will be saved using the ``XML`` file format.
+Note, that you can also choose to save an odML Document using the ``JSON``
+or the ``YAML`` file format as well, specifying the corresponding option in
+the command.
+
+    >>> save_to = '/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.json'
+    >>> odml.save(MYodML, save_to, "JSON")
+    >>> save_to = '/home/usr/toolbox/python-odml/doc/example_odMLs/myodml.yaml'
+    >>> odml.save(MYodML, save_to, "YAML")
+
+
 Loading an odML file:
 ---------------------
 
@@ -869,12 +874,19 @@ you can try to reload your own saved odML file::
     >>> my_reloaded_odml = odml.load(save_to)
 
 
--------------------------------------------------------------------------------
 
+Again, the load function by default assumes, that an odML file was saved using the
+``XML`` format. If it was saved in either ``JSON`` or ``YAML``, add the appropriate
+format option when loading the document:
+
+    >>> my_reloaded_odml_json = odml.load(save_to, "JSON")
+    >>> my_reloaded_odml_yaml = odml.load(save_to, "YAML")
+
+
+-------------------------------------------------------------------------------
 
 Advanced odML-Features
 ======================
-
 
 Advanced knowledge on Values
 ----------------------------
@@ -882,9 +894,9 @@ Advanced knowledge on Values
 Data type conversions
 *********************
 
-After creating a Property with metadata the data type can be changed and the 
-format of the corresponding entry will converted to the new data type, if the 
-new format is valid for the given metadata::
+After creating a Property with metadata, the data type can be changed and the
+format of the corresponding entry will be converted to the new data type, if the
+new type is valid for the given metadata::
 
     >>> test_dtype_conv = odml.Property('p', values=1.0)
     >>> print(test_dtype_conv.values)
@@ -897,10 +909,10 @@ new format is valid for the given metadata::
     >>> print(test_dtype_conv.dtype)
     int
 
-If the conversion is invalid a ValueError is raised.
-       
-Also note, that during such a process metadata loss may occur if a float is
-converted to an integer and then back to a float::
+If the conversion is invalid, a ``ValueError`` is raised.
+
+Also note, that during such a process metadata loss may occur, if a float is
+converted to integer and then back to float::
 
     >>> test_dtype_conv = odml.Property('p', values=42.42)
     >>> print(test_dtype_conv.values)
@@ -911,22 +923,16 @@ converted to an integer and then back to a float::
     [42.0]
 
 
-Advanced knowledge on Properties
---------------------------------
-
-Advanced knowledge on Sections
-------------------------------
-
 Links & Includes
 ****************
-(DEPRECATED; new version coming soon)
+Please note, that this section is outdated but still valid.
 
 Sections can be linked to other Sections, so that they include their defined
 attributes. A link can be within the document (``link`` property) or to an
 external one (``include`` property).
 
 After parsing a document, these links are not yet resolved, but can be using
-the :py:meth:`odml.doc.BaseDocument.finalize` method::
+the ``odml.doc.BaseDocument.finalize`` method::
 
     >>> d = xmlparser.load("sample.odml")
     >>> d.finalize()
@@ -937,12 +943,12 @@ However, when manually setting the ``link`` (or ``include``) attribute, it will
 be immediately resolved. To avoid this behaviour, set the ``_link`` (or ``_include``)
 attribute instead.
 The object remembers to which one it is linked in its ``_merged`` attribute.
-The link can be unresolved manually using :py:meth:`odml.section.BaseSection.unmerge`
-and merged again using :py:meth:`odml.section.BaseSection.merge`.
+The link can be unresolved manually using ``odml.section.BaseSection.unmerge``
+and merged again using ``odml.section.BaseSection.merge``.
 
 Unresolving means to remove sections and properties that do not differ from their
 linked equivalents. This should be done globally before saving using the
-:py:meth:`odml.doc.BaseDocument.clean` method::
+``odml.doc.BaseDocument.clean`` method::
 
     >>> d.clean()
     >>> xmlparser.XMLWriter(d).write_file('sample.odml')
@@ -952,12 +958,13 @@ then set merge with the new object.
 
 Terminologies
 *************
-(deprecated; new version coming soon)
+Please note, that this section is outdated but still valid.
+
 odML supports terminologies that are data structure templates for typical use cases.
 Sections can have a ``repository`` attribute. As repositories can be inherited,
 the current applicable one can be obtained using the
-:py:meth:`odml.section.BaseSection.get_repository` method.
+``odml.section.BaseSection.get_repository`` method.
 
 To see whether an object has a terminology equivalent, use the
-:py:meth:`odml.property.BaseProperty.get_terminology_equivalent`
+``odml.property.BaseProperty.get_terminology_equivalent``
 method, which returns the corresponding object of the terminology.
