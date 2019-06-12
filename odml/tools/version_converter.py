@@ -422,6 +422,7 @@ class VersionConverter(object):
         :return: ElementTree
         """
         root = tree.getroot()
+        self._add_id(root)
         for sec in root.iter("section"):
             self._add_id(sec)
             for prop in sec.iter("property"):

@@ -272,6 +272,8 @@ class TestVersionConverter(unittest.TestCase):
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
 
+        root_id = root.findall("id")
+        self.assertEqual(len(root_id), 1)
         sec = root.findall("section")
         self.assertEqual(len(sec), 2)
 
@@ -541,6 +543,8 @@ class TestVersionConverter(unittest.TestCase):
         vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
+        root_id = root.findall("id")
+        self.assertEqual(len(root_id), 1)
         sec = root.find("section")
         self.assertEqual(len(sec), 18)
         self.assertEqual(len(sec.findall("id")), 1)
