@@ -423,6 +423,7 @@ class VersionConverter(object):
         """
         root = tree.getroot()
         for sec in root.iter("section"):
+            self._add_id(sec)
             for prop in sec.iter("property"):
                 self._add_id(prop)
 

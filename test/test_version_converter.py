@@ -276,7 +276,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(sec), 2)
 
         # Test valid section tags.
-        self.assertEqual(len(sec[0]), 10)
+        self.assertEqual(len(sec[0]), 11)
         self.assertEqual(sec[0].find("name").text, "Section name")
         self.assertEqual(sec[0].find("type").text, "Section type")
         self.assertEqual(sec[0].find("definition").text, "Section definition")
@@ -286,10 +286,11 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(sec[0].find("include").text, "Section include")
         self.assertEqual(len(sec[0].findall("property")), 2)
         self.assertEqual(len(sec[0].findall("section")), 1)
+        self.assertEqual(len(sec[0].findall("id")), 1)
 
         # Test valid subsection tags.
         subsec = sec[0].find("section")
-        self.assertEqual(len(subsec), 8)
+        self.assertEqual(len(subsec), 9)
         self.assertEqual(subsec.find("name").text, "SubSection name")
         self.assertEqual(subsec.find("type").text, "SubSection type")
         self.assertEqual(subsec.find("definition").text, "SubSection definition")
@@ -298,10 +299,12 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(subsec.find("repository").text, local_url)
         self.assertEqual(subsec.find("include").text, "SubSection include")
         self.assertEqual(len(subsec.findall("property")), 1)
+        self.assertEqual(len(subsec.findall("id")), 1)
 
         # Test absence of non-Section tags
-        self.assertEqual(len(sec[1]), 1)
+        self.assertEqual(len(sec[1]), 2)
         self.assertEqual(len(sec[1].findall("name")), 1)
+        self.assertEqual(len(sec[1].findall("id")), 1)
 
         # Test presence of v1.0 repository tag and warning log entry
         doc = """
@@ -539,7 +542,8 @@ class TestVersionConverter(unittest.TestCase):
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
         sec = root.find("section")
-        self.assertEqual(len(sec), 17)
+        self.assertEqual(len(sec), 18)
+        self.assertEqual(len(sec.findall("id")), 1)
 
         # Test single value export
         prop = sec.findall("property")[0]
