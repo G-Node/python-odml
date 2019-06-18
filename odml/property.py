@@ -617,9 +617,12 @@ class BaseProperty(base.BaseObject):
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
 
+        special_dtypes = ["url", "person", "text"]
         if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
-            raise ValueError("odml.Property.append: "
-                             "passed value data type does not match dtype!")
+
+            if not (dtypes.infer_dtype(new_value[0]) == "string" and self.dtype in special_dtypes):
+                raise ValueError("odml.Property.append: "
+                                 "passed value data type does not match dtype!")
 
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted "
