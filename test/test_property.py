@@ -285,6 +285,27 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             prop.extend([6, "some text"])
 
+        p1 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
+        p1.extend("D Dickins")
+        self.assertEqual(len(p1), 4)
+        self.assertRaises(ValueError, p1.extend, 1)
+        self.assertRaises(ValueError, p1.extend, 1.3)
+        self.assertRaises(ValueError, p1.extend, True)
+
+        p2 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
+        p2.extend("https://en.wikipedia.org/wiki/Mars")
+        self.assertEqual(len(p2), 2)
+        self.assertRaises(ValueError, p2.append, 1)
+        self.assertRaises(ValueError, p2.append, 1.3)
+        self.assertRaises(ValueError, p2.append, True)
+
+        p3 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
+        p3.extend("Mars is No. 4.")
+        self.assertEqual(len(p3), 2)
+        self.assertRaises(ValueError, p3.append, 1)
+        self.assertRaises(ValueError, p3.append, 1.3)
+        self.assertRaises(ValueError, p3.append, True)
+
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
         p = Property("property", value=values)

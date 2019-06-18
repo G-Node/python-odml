@@ -587,9 +587,12 @@ class BaseProperty(base.BaseObject):
             return
 
         new_value = self._convert_value_input(obj)
+        special_dtypes = ["url", "person", "text"]
         if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
-            raise ValueError("odml.Property.extend: "
-                             "passed value data type does not match dtype!")
+
+            if not (dtypes.infer_dtype(new_value[0]) == "string" and self.dtype in special_dtypes):
+                raise ValueError("odml.Property.extend: "
+                                 "passed value data type does not match dtype!")
 
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.extend: passed value(s) cannot be converted "
