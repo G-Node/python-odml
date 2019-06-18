@@ -432,27 +432,22 @@ class VersionConverter(object):
 
     @staticmethod
     def _add_id(element):
+
         """
-        Checks, whether element possesses ID. If yes, make sure, it has right format.
-        Otherwise a new UUID is created.
+        Checks, whether an element possesses an ID. If yes, make sure it has
+        the right format. Otherwise a new UUID is created.
         :param element: lxml element.
         """
         oid = element.find("id")
         new_id = ET.Element("id")
-        try:
-            if oid is not None:
-                try:
-                    if oid.text is not None:
-                        new_id.text = str(uuid.UUID(oid.text))
-                except ValueError as e:
-                    print(e)
-                    new_id.text = str(uuid.uuid4())
-                element.remove(oid)
-            else:
-                new_id.text = str(uuid.uuid4())
-        except ValueError as e:
-            print(e)
-            new_id.text = str(uuid.uuid4())
+        new_id.text = str(uuid.uuid4())
+        if oid is not None:
+            try:
+                if oid.text is not None:
+                    new_id.text = str(uuid.UUID(oid.text))
+            except ValueError as e:
+                print(e)
+            element.remove(oid)
         element.append(new_id)
 
     def _log(self, msg):
