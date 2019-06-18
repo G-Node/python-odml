@@ -103,6 +103,10 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
 
+        p3 = Property('myprop', value=0, dtype=DType.int)
+        self.assertEqual(p3.value, [0])
+        self.assertEqual(p3.values, [0])
+
     def test_value_append(self):
         # Test append w/o Property value or dtype
         prop = Property(name="append")
@@ -183,30 +187,26 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(p5), 2)
         self.assertRaises(ValueError, p5.append, "[a, b, c]")
 
-        p6 = Property('myprop', value=0, dtype=DType.int)
-        self.assertEqual(p6.value, [0])
-        self.assertEqual(p6.values, [0])
+        p6 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
+        p6.append("D Dickins")
+        self.assertEqual(len(p6), 4)
+        self.assertRaises(ValueError, p6.append, 1)
+        self.assertRaises(ValueError, p6.append, 1.3)
+        self.assertRaises(ValueError, p6.append, True)
 
-        p7 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
-        p7.append("D Dickins")
-        self.assertEqual(len(p7), 4)
+        p7 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
+        p7.append("https://en.wikipedia.org/wiki/Mars")
+        self.assertEqual(len(p7), 2)
         self.assertRaises(ValueError, p7.append, 1)
         self.assertRaises(ValueError, p7.append, 1.3)
         self.assertRaises(ValueError, p7.append, True)
 
-        p8 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
-        p8.append("https://en.wikipedia.org/wiki/Mars")
+        p8 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
+        p8.append("Mars is No. 4.")
         self.assertEqual(len(p8), 2)
         self.assertRaises(ValueError, p8.append, 1)
         self.assertRaises(ValueError, p8.append, 1.3)
         self.assertRaises(ValueError, p8.append, True)
-
-        p9 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
-        p9.append("Mars is No. 4.")
-        self.assertEqual(len(p9), 2)
-        self.assertRaises(ValueError, p9.append, 1)
-        self.assertRaises(ValueError, p9.append, 1.3)
-        self.assertRaises(ValueError, p9.append, True)
 
     def test_value_extend(self):
         prop = Property(name="extend")
