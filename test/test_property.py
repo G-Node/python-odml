@@ -183,6 +183,10 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(p5), 2)
         self.assertRaises(ValueError, p5.append, "[a, b, c]")
 
+        p6 = Property('myprop', value=0, dtype=DType.int)
+        self.assertEqual(p6.value, [0])
+        self.assertEqual(p6.values, [0])
+
     def test_value_extend(self):
         prop = Property(name="extend")
 

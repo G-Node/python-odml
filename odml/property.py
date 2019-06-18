@@ -82,7 +82,7 @@ class BaseProperty(base.BaseObject):
 
         self._values = []
         self.values = values
-        if not values and (value or isinstance(value, bool)):
+        if not values and (value or isinstance(value, bool) or isinstance(value, int)):
             self.values = value
 
         self.parent = parent
