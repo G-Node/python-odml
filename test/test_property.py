@@ -107,6 +107,14 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p3.value, [0])
         self.assertEqual(p3.values, [0])
 
+        p4 = Property('myprop', value=0, dtype=DType.boolean)
+        self.assertEqual(p4.value, [False])
+        self.assertEqual(p4.values, [False])
+
+        p5 = Property('myprop', value=0)
+        self.assertEqual(p5.value, [0])
+        self.assertEqual(p5.values, [0])
+
     def test_value_append(self):
         # Test append w/o Property value or dtype
         prop = Property(name="append")
