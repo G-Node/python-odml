@@ -432,7 +432,6 @@ class VersionConverter(object):
 
     @staticmethod
     def _add_id(element):
-
         """
         Checks, whether an element possesses an ID. If yes, make sure it has
         the right format. Otherwise a new UUID is created.
