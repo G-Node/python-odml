@@ -141,3 +141,21 @@ class BaseDocument(base.Sectionable):
             return None
         term = terminology.load(self.repository)
         return term
+def pprint(self, indent=2, max_depth=1, max_length=80, current_depth=0):
+    """
+    Pretty print method to visualize Document-Section trees.
+
+    :param indent: number of leading spaces for every child Section or Property.
+    :param max_depth: maximum number of hierarchical levels printed from the
+                          starting Section.
+    :param max_length: maximum number of characters printed in one line.
+    :param current_depth: number of hierarchical levels printed from the
+                          starting Section.
+    """
+    doc_str = "[{} [{}] {}, sections: {}, repository: {}]".format(self.author, self.version,
+                                                                  self.date, len(self._sections), self.repository)
+    print(doc_str)
+
+    for s in self._sections:
+        s.pprint(current_depth=current_depth+1, max_depth=max_depth,
+                 indent=indent, max_length=max_length)

@@ -62,6 +62,8 @@ def default_values(dtype):
 
 _dtype_map = {'str': 'string', 'bool': 'boolean'}
 
+special_dtypes = ["url", "person", "text"]
+
 
 def infer_dtype(value):
     dtype = (type(value)).__name__

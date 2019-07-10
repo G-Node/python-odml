@@ -272,11 +272,13 @@ class TestVersionConverter(unittest.TestCase):
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
 
+        root_id = root.findall("id")
+        self.assertEqual(len(root_id), 1)
         sec = root.findall("section")
         self.assertEqual(len(sec), 2)
 
         # Test valid section tags.
-        self.assertEqual(len(sec[0]), 10)
+        self.assertEqual(len(sec[0]), 11)
         self.assertEqual(sec[0].find("name").text, "Section name")
         self.assertEqual(sec[0].find("type").text, "Section type")
         self.assertEqual(sec[0].find("definition").text, "Section definition")
@@ -286,10 +288,11 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(sec[0].find("include").text, "Section include")
         self.assertEqual(len(sec[0].findall("property")), 2)
         self.assertEqual(len(sec[0].findall("section")), 1)
+        self.assertEqual(len(sec[0].findall("id")), 1)
 
         # Test valid subsection tags.
         subsec = sec[0].find("section")
-        self.assertEqual(len(subsec), 8)
+        self.assertEqual(len(subsec), 9)
         self.assertEqual(subsec.find("name").text, "SubSection name")
         self.assertEqual(subsec.find("type").text, "SubSection type")
         self.assertEqual(subsec.find("definition").text, "SubSection definition")
@@ -298,10 +301,12 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(subsec.find("repository").text, local_url)
         self.assertEqual(subsec.find("include").text, "SubSection include")
         self.assertEqual(len(subsec.findall("property")), 1)
+        self.assertEqual(len(subsec.findall("id")), 1)
 
         # Test absence of non-Section tags
-        self.assertEqual(len(sec[1]), 1)
+        self.assertEqual(len(sec[1]), 2)
         self.assertEqual(len(sec[1].findall("name")), 1)
+        self.assertEqual(len(sec[1].findall("id")), 1)
 
         # Test presence of v1.0 repository tag and warning log entry
         doc = """
@@ -379,19 +384,21 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(sec[0].find("name").text, "Valid Property tags test")
         self.assertEqual(len(sec[0].findall("property")), 1)
         prop = sec[0].find("property")
-        self.assertEqual(len(prop), 5)
+        self.assertEqual(len(prop), 6)
         self.assertEqual(prop.find("name").text, "Property name")
         self.assertEqual(prop.find("type").text, "Property type")
         self.assertEqual(prop.find("definition").text, "Property definition")
         self.assertEqual(prop.find("dependency").text, "Property dependency")
         self.assertEqual(prop.find("dependencyvalue").text, "Property dependency value")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test non-import of Property w/o name
         self.assertEqual(len(sec[1].findall("property")), 1)
         # Test absence of non-Property tags
         prop = sec[1].find("property")
-        self.assertEqual(len(prop), 1)
+        self.assertEqual(len(prop), 2)
         self.assertEqual(len(prop.findall("name")), 1)
+        self.assertEqual(len(prop.findall("id")), 1)
 
     def test_convert_odml_file_value(self):
         """Test proper conversion of the odml.Value entity from
@@ -511,6 +518,22 @@ class TestVersionConverter(unittest.TestCase):
                       <value> 3 <type>int</type></value>
                       <name>testIntListWhiteSpace</name>
                     </property>
+                    
+                     <property>
+                      <name>Single value with UUID</name>
+                      <value>1</value>
+                      <id>aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</id>
+                    </property>
+                    
+                     <property>
+                      <name>Single value with none-UUID ID</name>
+                      <id>1</id>
+                    </property>
+                    
+                    <property>
+                      <name>Single value with empty ID</name>
+                      <id></id>
+                    </property>
 
                   </section>
                 </odML>
@@ -520,27 +543,33 @@ class TestVersionConverter(unittest.TestCase):
         vc = self.VC(file)
         conv_doc = vc._convert(vc._parse_xml())
         root = conv_doc.getroot()
+        root_id = root.findall("id")
+        self.assertEqual(len(root_id), 1)
         sec = root.find("section")
-        self.assertEqual(len(sec), 14)
+        self.assertEqual(len(sec), 18)
+        self.assertEqual(len(sec.findall("id")), 1)
 
         # Test single value export
         prop = sec.findall("property")[0]
-        self.assertEqual(len(prop), 2)
+        self.assertEqual(len(prop), 3)
         self.assertEqual(prop.find("value").text, "1")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test multiple value export
         prop = sec.findall("property")[1]
-        self.assertEqual(len(prop), 2)
+        self.assertEqual(len(prop), 3)
         self.assertEqual(prop.find("value").text, "[1,2,3]")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test empty value export
         prop = sec.findall("property")[2]
-        self.assertEqual(len(prop), 1)
+        self.assertEqual(len(prop), 2)
         self.assertEqual(prop.find("name").text, "Empty value export")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test valid Value tags
         prop = sec.findall("property")[3]
-        self.assertEqual(len(prop), 7)
+        self.assertEqual(len(prop), 8)
         self.assertEqual(prop.find("value").text, "0.1")
         self.assertEqual(prop.find("type").text, "float")
         self.assertEqual(prop.find("uncertainty").text, "0.05")
@@ -548,58 +577,88 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("value_origin").text, "raw.txt")
         self.assertEqual(prop.find("reference").text, "Value reference")
         self.assertEqual(len(prop.findall("filename")), 0)
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test valid multiple Value tag export
         prop = sec.findall("property")[4]
-        self.assertEqual(len(prop), 7)
+        self.assertEqual(len(prop), 8)
         self.assertEqual(prop.find("value").text, "[0.1,0.2,3]")
         self.assertEqual(prop.find("type").text, "float")
         self.assertEqual(prop.find("uncertainty").text, "0.05")
         self.assertEqual(prop.find("unit").text, "mV")
         self.assertEqual(prop.find("value_origin").text, "raw.txt")
         self.assertEqual(prop.find("reference").text, "Value reference")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test non-export of invalid Value tags
         prop = sec.findall("property")[5]
-        self.assertEqual(len(prop), 1)
+        self.assertEqual(len(prop), 2)
         self.assertEqual(len(prop.findall("name")), 1)
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test dtype 'binary' replacement
         prop = sec.findall("property")[6]
         self.assertEqual(prop.find("name").text, "Unsupported binary value type replace")
         self.assertEqual(prop.find("type").text, "text")
+        self.assertEqual(len(prop.findall("id")), 1)
         prop = sec.findall("property")[7]
         self.assertEqual(prop.find("name").text, "Unsupported binary value dtype replace")
         self.assertEqual(prop.find("type").text, "text")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test single string value with commata
         prop = sec.findall("property")[8]
         self.assertEqual(prop.find("name").text, "testSingleString")
         self.assertEqual(prop.find("value").text,
                          "Single, string, value, with, many, commata.")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test string list import
         prop = sec.findall("property")[9]
         self.assertEqual(prop.find("name").text, "testStringList")
         self.assertEqual(prop.find("value").text, "[A,B,C]")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test single string values wrapping whitespace removal
         prop = sec.findall("property")[10]
         self.assertEqual(prop.find("name").text, "testStringWhiteSpace")
         self.assertEqual(prop.find("value").text,
                          "Single string value with wrapping whitespace")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test multiple string values with wrapping whitespace removal
         prop = sec.findall("property")[11]
         self.assertEqual(prop.find("name").text, "testStringListWhiteSpace")
         self.assertEqual(prop.find("value").text,
                          "[Multiple Strings,with wrapping,Whitespace]")
+        self.assertEqual(len(prop.findall("id")), 1)
 
         # Test multiple int values with wrapping whitespaces
         prop = sec.findall("property")[12]
         self.assertEqual(prop.find("name").text, "testIntListWhiteSpace")
         self.assertEqual(prop.find("type").text, "int")
         self.assertEqual(prop.find("value").text, "[1,2,3]")
+        self.assertEqual(len(prop.findall("id")), 1)
+
+        # Test single value export
+        prop = sec.findall("property")[13]
+        self.assertEqual(len(prop), 3)
+        self.assertEqual(prop.find("value").text, "1")
+        self.assertEqual(len(prop.findall("id")), 1)
+        self.assertEqual(prop.find("id").text, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+
+        # Test single value export
+        prop = sec.findall("property")[14]
+        self.assertEqual(len(prop), 2)
+        self.assertEqual(len(prop.findall("id")), 1)
+        self.assertNotEqual(prop.find("id").text, "1")
+
+        # Test single value export
+        prop = sec.findall("property")[15]
+        self.assertEqual(len(prop), 2)
+        self.assertEqual(len(prop.findall("id")), 1)
+        self.assertNotEqual(prop.find("id").text, "1")
+
 
     def test_parse_dict_document(self):
         # Test appending tags; not appending empty sections

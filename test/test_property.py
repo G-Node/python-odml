@@ -103,6 +103,18 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
 
+        p3 = Property('myprop', value=0, dtype=DType.int)
+        self.assertEqual(p3.value, [0])
+        self.assertEqual(p3.values, [0])
+
+        p4 = Property('myprop', value=0, dtype=DType.boolean)
+        self.assertEqual(p4.value, [False])
+        self.assertEqual(p4.values, [False])
+
+        p5 = Property('myprop', value=0)
+        self.assertEqual(p5.value, [0])
+        self.assertEqual(p5.values, [0])
+
     def test_value_append(self):
         # Test append w/o Property value or dtype
         prop = Property(name="append")
@@ -183,6 +195,27 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(p5), 2)
         self.assertRaises(ValueError, p5.append, "[a, b, c]")
 
+        p6 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
+        p6.append("D Dickins")
+        self.assertEqual(len(p6), 4)
+        self.assertRaises(ValueError, p6.append, 1)
+        self.assertRaises(ValueError, p6.append, 1.3)
+        self.assertRaises(ValueError, p6.append, True)
+
+        p7 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
+        p7.append("https://en.wikipedia.org/wiki/Mars")
+        self.assertEqual(len(p7), 2)
+        self.assertRaises(ValueError, p7.append, 1)
+        self.assertRaises(ValueError, p7.append, 1.3)
+        self.assertRaises(ValueError, p7.append, True)
+
+        p8 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
+        p8.append("Mars is No. 4.")
+        self.assertEqual(len(p8), 2)
+        self.assertRaises(ValueError, p8.append, 1)
+        self.assertRaises(ValueError, p8.append, 1.3)
+        self.assertRaises(ValueError, p8.append, True)
+
     def test_value_extend(self):
         prop = Property(name="extend")
 
@@ -259,6 +292,27 @@ class TestProperty(unittest.TestCase):
         # Make sure non-convertible values still raise an error
         with self.assertRaises(ValueError):
             prop.extend([6, "some text"])
+
+        p1 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
+        p1.extend("D Dickins")
+        self.assertEqual(len(p1), 4)
+        self.assertRaises(ValueError, p1.extend, 1)
+        self.assertRaises(ValueError, p1.extend, 1.3)
+        self.assertRaises(ValueError, p1.extend, True)
+
+        p2 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
+        p2.extend("https://en.wikipedia.org/wiki/Mars")
+        self.assertEqual(len(p2), 2)
+        self.assertRaises(ValueError, p2.append, 1)
+        self.assertRaises(ValueError, p2.append, 1.3)
+        self.assertRaises(ValueError, p2.append, True)
+
+        p3 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
+        p3.extend("Mars is No. 4.")
+        self.assertEqual(len(p3), 2)
+        self.assertRaises(ValueError, p3.append, 1)
+        self.assertRaises(ValueError, p3.append, 1.3)
+        self.assertRaises(ValueError, p3.append, True)
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]

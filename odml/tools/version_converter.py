@@ -9,6 +9,8 @@ from .. import format
 from ..info import FORMAT_VERSION
 from ..terminology import Terminologies, REPOSITORY_BASE
 
+import uuid
+
 try:
     unicode = unicode
 except NameError:
@@ -193,6 +195,8 @@ class VersionConverter(object):
 
             if e.tag == "repository":
                 self._handle_repository(e)
+
+        tree = self._check_add_ids(tree)
 
         return tree
 
@@ -409,6 +413,41 @@ class VersionConverter(object):
         else:
             elem_map[named_path] += 1
             name.text += "-" + str(elem_map[named_path])
+
+    def _check_add_ids(self, tree):
+        """
+        Checks, whether elements (properties) possess an UUID
+        and adds one in case of absence.
+        :param tree: ElementTree of the doc
+        :return: ElementTree
+        """
+        root = tree.getroot()
+        self._add_id(root)
+        for sec in root.iter("section"):
+            self._add_id(sec)
+            for prop in sec.iter("property"):
+                self._add_id(prop)
+
+        return tree
+
+    @staticmethod
+    def _add_id(element):
+        """
+        Checks, whether an element possesses an ID. If yes, make sure it has
+        the right format. Otherwise a new UUID is created.
+        :param element: lxml element.
+        """
+        oid = element.find("id")
+        new_id = ET.Element("id")
+        new_id.text = str(uuid.uuid4())
+        if oid is not None:
+            try:
+                if oid.text is not None:
+                    new_id.text = str(uuid.UUID(oid.text))
+            except ValueError as e:
+                print(e)
+            element.remove(oid)
+        element.append(new_id)
 
     def _log(self, msg):
         """
