@@ -195,7 +195,7 @@ class RDFWriter(object):
     def __unicode__(self):
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
 
-    def get_rdf_str(self, rdf_format):
+    def get_rdf_str(self, rdf_format="turtle"):
         """
         Get converted into one of the supported formats data 
         :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 
@@ -206,7 +206,7 @@ class RDFWriter(object):
         """
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
-    def write_file(self, filename, rdf_format):
+    def write_file(self, filename, rdf_format="turtle"):
         data = self.get_rdf_str(rdf_format)
         filename_ext = filename
         if not filename.find("." + rdf_format):
