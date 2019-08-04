@@ -119,6 +119,9 @@ class FormatConverter(object):
                 p, _ = os.path.splitext(output_path)
                 output_path = p + cls._conversion_formats[res_format]
             RDFWriter(odml.load(input_path)).write_file(output_path, res_format)
+        else:
+            raise ValueError("Format for output files is incorrect. "
+                             "Please choose from the list: {}".format(cls._conversion_formats.keys()))
 
     @staticmethod
     def _create_sub_directory(dir_path):
