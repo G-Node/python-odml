@@ -56,6 +56,21 @@ class RDFWriter(object):
                     print(err)
                     return
 
+    _conversion_formats = {
+        # rdflib version "4.2.2" serialization formats
+        'xml': '.rdf',
+        'pretty-xml': '.rdf',
+        'trix': '.rdf',
+        'n3': '.n3',
+        'turtle': '.ttl',
+        'ttl': '.ttl',
+        'ntriples': '.nt',
+        'nt': '.nt',
+        'nt11': '.nt',
+        'trig': '.trig',
+        'json-ld': '.jsonld'
+    }
+
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
         if self.docs:
@@ -193,7 +208,10 @@ class RDFWriter(object):
 
     def write_file(self, filename, rdf_format):
         data = self.get_rdf_str(rdf_format)
-        with open(filename, "w") as file:
+        filename_ext = filename
+        if not filename.find("." + rdf_format):
+            filename_ext += "." + rdf_format
+        with open(filename_ext, "w") as file:
             file.write(data)
 
 
