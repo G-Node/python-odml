@@ -206,7 +206,7 @@ class RDFWriter(object):
         """
         if rdf_format not in self._conversion_formats:
             raise ValueError("odml.RDFWriter.get_rdf_str: Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(self._conversion_formats.keys()))
+                             "Please choose from the list: {}".format(list(self._conversion_formats)))
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
     def write_file(self, filename, rdf_format="turtle"):
