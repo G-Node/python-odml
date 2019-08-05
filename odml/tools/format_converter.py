@@ -74,7 +74,7 @@ class FormatConverter(object):
         """
         if res_format not in cls._conversion_formats:
             raise ValueError("Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(cls._conversion_formats.keys()))
+                             "Please choose from the list: {}".format(list(cls._conversion_formats)))
 
         cls._check_input_output_directory(input_dir, output_dir)
         input_dir = os.path.join(input_dir, '')
@@ -121,7 +121,7 @@ class FormatConverter(object):
             RDFWriter(odml.load(input_path)).write_file(output_path, res_format)
         else:
             raise ValueError("Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(cls._conversion_formats.keys()))
+                             "Please choose from the list: {}".format(list(cls._conversion_formats)))
 
     @staticmethod
     def _create_sub_directory(dir_path):
