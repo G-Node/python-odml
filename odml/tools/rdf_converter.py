@@ -212,10 +212,10 @@ class RDFWriter(object):
     def write_file(self, filename, rdf_format="turtle"):
         data = self.get_rdf_str(rdf_format)
         filename_ext = filename
-        if not filename.find("." + rdf_format):
-            filename_ext += "." + rdf_format
-        with open(filename_ext, "w") as file:
-            file.write(data)
+        if filename.find(self._conversion_formats.get(rdf_format)) < 0:
+            filename_ext += self._conversion_formats.get(rdf_format)
+        with open(filename_ext, "w") as wFile:
+            wFile.write(data)
 
 
 class RDFReader(object):
