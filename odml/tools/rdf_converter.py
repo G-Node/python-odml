@@ -13,6 +13,7 @@ from ..format import Format, Document, Section, Property
 from .dict_parser import DictReader
 from .parser_utils import ParserException
 from ..info import FORMAT_VERSION
+from .utils import RDFConversionFormats
 
 try:
     unicode = unicode
@@ -33,7 +34,7 @@ class RDFWriter(object):
 
     def __init__(self, odml_documents):
         """
-        :param odml_documents: list of odml documents 
+        :param odml_documents: list of odml documents
         """
         self.docs = odml_documents if not isinstance(odml_documents, odml.doc.BaseDocument) else [odml_documents]
         self.hub_root = None
@@ -56,21 +57,6 @@ class RDFWriter(object):
                     print(err)
                     return
 
-    _conversion_formats = {
-        # rdflib version "4.2.2" serialization formats
-        'xml': '.rdf',
-        'pretty-xml': '.rdf',
-        'trix': '.rdf',
-        'n3': '.n3',
-        'turtle': '.ttl',
-        'ttl': '.ttl',
-        'ntriples': '.nt',
-        'nt': '.nt',
-        'nt11': '.nt',
-        'trig': '.trig',
-        'json-ld': '.jsonld'
-    }
-
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
         if self.docs:
@@ -81,9 +67,9 @@ class RDFWriter(object):
     def save_element(self, e, node=None):
         """
         Save the current element to the RDF graph
-        :param e: current element 
+        :param e: current element
         :param node: A node to pass the earlier created node to inner elements
-        :return: the RDF graph 
+        :return: the RDF graph
         """
         fmt = e.format()
 
@@ -197,23 +183,23 @@ class RDFWriter(object):
 
     def get_rdf_str(self, rdf_format="turtle"):
         """
-        Get converted into one of the supported formats data 
-        :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 
-                                             'nt', 'pretty-xml', 'trix', 
+        Get converted into one of the supported formats data
+        :param rdf_format: possible formats: 'xml', 'n3', 'turtle',
+                                             'nt', 'pretty-xml', 'trix',
                                              'trig', 'nquads', 'json-ld'.
-               Full lists see in odml.tools.format_converter.FormatConverter._conversion_formats
+               Full lists see in utils.RDFConversionFormats
         :return: string object
         """
-        if rdf_format not in self._conversion_formats:
+        if rdf_format not in RDFConversionFormats:
             raise ValueError("odml.RDFWriter.get_rdf_str: Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(list(self._conversion_formats)))
+                             "Please choose from the list: {}".format(list(RDFConversionFormats)))
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
     def write_file(self, filename, rdf_format="turtle"):
         data = self.get_rdf_str(rdf_format)
         filename_ext = filename
-        if filename.find(self._conversion_formats.get(rdf_format)) < 0:
-            filename_ext += self._conversion_formats.get(rdf_format)
+        if filename.find(RDFConversionFormats.get(rdf_format)) < 0:
+            filename_ext += RDFConversionFormats.get(rdf_format)
         with open(filename_ext, "w") as wFile:
             wFile.write(data)
 
