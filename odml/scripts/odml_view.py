@@ -41,20 +41,21 @@ REPOSITORY = "https://templates.g-node.org/_resources/"
 STYLESHEET = "odmlTerms.xsl"
 
 
-def fetch_stylesheet():
+def download_file(repo, filename):
     try:
-        data = urllib2.urlopen("%s%s" % (REPOSITORY, STYLESHEET)).read()
+        data = urllib2.urlopen("%s%s" % (repo, filename)).read()
         data = data.decode("utf-8")
-    except Exception as e:
-        print("failed loading '%s%s': %s" % (REPOSITORY, STYLESHEET, e))
+    except Exception as err:
+        print("[Warning] Failed loading '%s%s': %s" % (repo, filename, err))
         return
 
-    with open(STYLESHEET, "w") as fp:
-        fp.write(str(data))
+    with open(filename, "w") as local_file:
+        local_file.write(str(data))
 
 
 def run(port=PORT):
     handler = hs.SimpleHTTPRequestHandler
+
     # files with odML extensions should be interpreted as XML
     handler.extensions_map.update({'.odml': 'application/xml'})
 
@@ -63,10 +64,10 @@ def run(port=PORT):
     with socketserver.TCPServer(server_address, handler) as httpd:
         webbrowser.open_new_tab('http://localhost:%s' % port)
         try:
-            print("You can end the server by pressing Ctrl+C")
+            print("[Info] The server can be stopped by pressing Ctrl+C")
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("Received Keyboard interrupt, shutting down")
+            print("[Info] Received Keyboard interrupt, shutting down")
             httpd.server_close()
 
 
@@ -75,7 +76,8 @@ def main(args=None):
 
     # Fetch stylesheet
     if parser['--fetch'] and not os.path.exists(STYLESHEET):
-        fetch_stylesheet()
+        print("[Info] Downloading stylesheet '%s'" % STYLESHEET)
+        download_file(REPOSITORY, STYLESHEET)
 
     server_port = int(parser['-p']) if parser['-p'] else PORT
 
