@@ -75,6 +75,7 @@ def run(port=PORT, extensions=None):
 
     server_address = ('', port)
 
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(server_address, handler) as httpd:
         webbrowser.open_new_tab('http://localhost:%s' % port)
         try:
@@ -82,6 +83,7 @@ def run(port=PORT, extensions=None):
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("[Info] Received Keyboard interrupt, shutting down")
+            httpd.shutdown()
             httpd.server_close()
 
 
