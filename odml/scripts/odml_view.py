@@ -1,15 +1,21 @@
-"""odmlView
+"""odmlview
 
-odmlView sets up a minimal webserver and serves
-and renders odml files locally from the directory
-the server is started in.
+odmlview sets up a minimal webserver to view odml files saved in the
+XML format via the webbrowser. After it started, the webserver will
+open a new tab in the default webbrowser and display the content of
+the directory the server was started from. odML files can then be
+viewed from there.
+To properly render XML, an odML file may contain the element
+'<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>' where the
+'odmlTerms.xsl' stylesheet should reside in the same directory as the
+odML file to be rendered. By using the '--fetch' flag the latest version
+of this stylesheet will be downloaded from 'templates.g-node.org' to
+the current directory when starting up the service.
 
-Usage: odmlView [-d DIRECTORY] [-p PORT]
 Usage: odmlview [-p PORT] [--fetch]
 
 Options:
-    -p PORT         Port the server will use.
-                    Default is port 8000.
+    -p PORT         Port the server will use. Default: 8000
     --fetch         Fetch latest stylesheet from templates.g-node.org
                     to current directory
     -h --help       Show this screen
@@ -57,6 +63,7 @@ def run(port=PORT):
     with socketserver.TCPServer(server_address, handler) as httpd:
         webbrowser.open_new_tab('http://localhost:%s' % port)
         try:
+            print("You can end the server by pressing Ctrl+C")
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("Received Keyboard interrupt, shutting down")
