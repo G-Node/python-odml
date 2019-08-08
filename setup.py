@@ -49,5 +49,6 @@ setup(
     classifiers=CLASSIFIERS,
     license="BSD",
     entry_points={'console_scripts': ['odmltordf=odml.scripts.odml_to_rdf:main',
-                                      'odmlconversion=odml.scripts.odml_conversion:main']}
+                                      'odmlconversion=odml.scripts.odml_conversion:main',
+                                      'odmlview=odml.scripts.odml_view:main']}
 )
