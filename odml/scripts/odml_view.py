@@ -53,11 +53,11 @@ def download_file(repo, filename):
         local_file.write(str(data))
 
 
-def run(port=PORT):
+def run(port=PORT, extensions=None):
     handler = hs.SimpleHTTPRequestHandler
 
-    # files with odML extensions should be interpreted as XML
-    handler.extensions_map.update({'.odml': 'application/xml'})
+    if extensions:
+        handler.extensions_map.update(extensions)
 
     server_address = ('', port)
 
@@ -81,7 +81,10 @@ def main(args=None):
 
     server_port = int(parser['-p']) if parser['-p'] else PORT
 
-    run(server_port)
+    # files with odML file extensions should be interpreted as XML
+    extensions = {'.odml': 'application/xml'}
+
+    run(server_port, extensions)
 
 
 if __name__ == "__main__":
