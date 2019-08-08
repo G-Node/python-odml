@@ -16,7 +16,13 @@ Options:
     --version       Show version
 """
 
-import http.server as hs
+import os
+try:
+    import http.server as hs
+except ImportError:
+    print("This script is only supported with Python 3")
+    exit(-1)
+
 import socketserver
 import sys
 import urllib.request as urllib2
