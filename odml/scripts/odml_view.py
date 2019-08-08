@@ -1,7 +1,7 @@
 """odmlview
 
 odmlview sets up a minimal webserver to view odml files saved in the
-XML format via the webbrowser. After it started, the webserver will
+XML format via the webbrowser. After it is started, the webserver will
 open a new tab in the default webbrowser and display the content of
 the directory the server was started from. odML files can then be
 viewed from there.
