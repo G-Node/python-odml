@@ -5,12 +5,15 @@ and renders odml files locally from the directory
 the server is started in.
 
 Usage: odmlView [-d DIRECTORY] [-p PORT]
+Usage: odmlview [-p PORT] [--fetch]
 
 Options:
     -p PORT         Port the server will use.
                     Default is port 8000.
-    -h --help       Show this screen.
-    --version       Show version.
+    --fetch         Fetch latest stylesheet from templates.g-node.org
+                    to current directory
+    -h --help       Show this screen
+    --version       Show version
 """
 
 import http.server as hs
@@ -56,6 +59,10 @@ def run(port=PORT):
 
 def main(args=None):
     parser = docopt(__doc__, argv=args, version="0.1.0")
+
+    # Fetch stylesheet
+    if parser['--fetch'] and not os.path.exists(STYLESHEET):
+        fetch_stylesheet()
 
     server_port = int(parser['-p']) if parser['-p'] else PORT
 
