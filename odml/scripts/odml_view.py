@@ -16,11 +16,26 @@ Options:
 import http.server as hs
 import socketserver
 import sys
+import urllib.request as urllib2
 import webbrowser
 
 from docopt import docopt
 
 PORT = 8000
+REPOSITORY = "https://templates.g-node.org/_resources/"
+STYLESHEET = "odmlTerms.xsl"
+
+
+def fetch_stylesheet():
+    try:
+        data = urllib2.urlopen("%s%s" % (REPOSITORY, STYLESHEET)).read()
+        data = data.decode("utf-8")
+    except Exception as e:
+        print("failed loading '%s%s': %s" % (REPOSITORY, STYLESHEET, e))
+        return
+
+    with open(STYLESHEET, "w") as fp:
+        fp.write(str(data))
 
 
 def run(port=PORT):
