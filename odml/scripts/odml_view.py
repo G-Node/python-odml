@@ -42,6 +42,10 @@ STYLESHEET = "odmlTerms.xsl"
 
 
 def download_file(repo, filename):
+    """
+    download_file fetches 'filename' from url 'repo' and
+    saves it in the current directory as file 'filename'.
+    """
     try:
         data = urllib2.urlopen("%s%s" % (repo, filename)).read()
         data = data.decode("utf-8")
@@ -54,6 +58,16 @@ def download_file(repo, filename):
 
 
 def run(port=PORT, extensions=None):
+    """
+    run starts a simple webserver on localhost serving the current directory.
+    Once started, it will open a tab on the default webbrowser and will continue
+    to serve until manually stopped.
+
+    :param port: server port
+    :param extensions: dictionary containing additional file extension - mime type
+                       mappings the server should be aware of.
+                       e.g. {'.xml': 'application/xml'}
+    """
     handler = hs.SimpleHTTPRequestHandler
 
     if extensions:
