@@ -12,6 +12,7 @@ class TestXMLParser(unittest.TestCase):
         self.basepath = os.path.join(dir_path, "resources")
 
         self.xml_reader = xmlparser.XMLReader()
+        self.xml_reader_ignore = xmlparser.XMLReader(ignore_errors=True)
 
     def test_invalid_root(self):
         filename = "invalid_root.xml"
@@ -36,3 +37,9 @@ class TestXMLParser(unittest.TestCase):
 
         with self.assertRaises(InvalidVersionException):
             _ = self.xml_reader.from_file(os.path.join(self.basepath, filename))
+
+    def test_ignore_errors(self):
+        filename = "ignore_errors.xml"
+
+        doc = self.xml_reader_ignore.from_file(os.path.join(self.basepath, filename))
+        doc.pprint()

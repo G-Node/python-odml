@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1.1">
+    <author>D. N. Adams</author>
+    <repository>http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml</repository>
+    <section>
+        <property>
+            <type>int</type>
+            <uncertainty>[zergrve sdic, 1]</uncertainty>
+            <value>["string 1", "string 2"]</value>
+            <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
+            <id>wrongid</id>
+            <name>NoCrewMembers</name>
+            <definition>Number of crew members</definition>
+        </property>
+        <type>crew</type>
+        <definition>Information on the crew</definition>
+        <id>0f96a050-2d9b-498f-a532-fbfcc6aae55e</id>
+        <name>TheCrew</name>
+        <section>
+            <property>
+                <type>string</type>
+                <value>[1, 2]</value>
+                <id>wrongid2</id>
+                <name>Nickname</name>
+                <definition>Nickname(s) of the subject</definition>
+            </property>
+            <type>crew/person</type>
+            <definition>Information on Arthur Dent</definition>
+            <id>1d6469b5-5322-408b-916e-3224b7a22008</id>
+        </section>
+    </section>
+    <date>1979-10-12</date>
+    <id>79b613eb-a256-46bf-84f6-207df465b8f7</id>
+    <version>new version</version>
+</odML>
