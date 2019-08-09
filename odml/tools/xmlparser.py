@@ -310,7 +310,12 @@ class XMLReader(object):
         self.check_mandatory_arguments(check_args, fmt, root.tag, root)
 
         # Instantiate the current odML object with the parsed attributes.
-        obj = fmt.create(**arguments)
+        # Return None, if
+        obj = None
+        try:
+            obj = fmt.create(**arguments)
+        except Exception as e:
+            self.error(str(e), root)
 
         if insert_children:
             for child in children:
