@@ -49,13 +49,12 @@ class RDFWriter(object):
         subclass_path = os.path.join(dirname(dirname(dirname(abspath(__file__)))),
                          'doc', 'section_subclasses.yaml')
 
-        if os.path.isfile(subclass_path):
-            with open(subclass_path, "r") as f:
-                try:
-                    self.section_subclasses = yaml.load(f)
-                except yaml.parser.ParserError as err:
-                    print(err)
-                    return
+        with open(subclass_path, "r") as f:
+            try:
+                self.section_subclasses = yaml.load(f)
+            except yaml.parser.ParserError as err:
+                print(err)
+                return
 
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
