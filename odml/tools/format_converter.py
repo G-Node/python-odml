@@ -6,6 +6,7 @@ import sys
 import odml
 from .rdf_converter import RDFWriter
 from .version_converter import VersionConverter
+from .utils import ConversionFormats
 
 try:
     unicode = unicode
@@ -14,23 +15,6 @@ except NameError:
 
 
 class FormatConverter(object):
-
-    _conversion_formats = {
-        'v1_1': '.xml',
-        'odml': '.odml',
-        # rdflib version "4.2.2" serialization formats
-        'xml': '.rdf',
-        'pretty-xml': '.rdf',
-        'trix': '.rdf',
-        'n3': '.n3',
-        'turtle': '.ttl',
-        'ttl': '.ttl',
-        'ntriples': '.nt',
-        'nt': '.nt',
-        'nt11': '.nt',
-        'trig': '.trig',
-        'json-ld': '.jsonld'
-    }
 
     @classmethod
     def convert(cls, args=None):
@@ -50,7 +34,7 @@ class FormatConverter(object):
         """
         parser = argparse.ArgumentParser(description="Convert directory with odml files to another format")
         parser.add_argument("input_dir", help="Path to input directory")
-        parser.add_argument("result_format", choices=list(cls._conversion_formats),
+        parser.add_argument("result_format", choices=list(ConversionFormats),
                             help="Format of output files")
         parser.add_argument("-out", "--output_dir", help="Path for output directory")
         parser.add_argument("-r", "--recursive", action="store_true",
@@ -70,11 +54,11 @@ class FormatConverter(object):
                            Possible choices: "v1_1" (converts to version 1.1 from version 1 xml)
                                              "odml" (converts to .odml from version 1.1 .xml files)
                                              "turtle", "nt" etc. (converts to rdf formats from version 1.1 .odml files)
-                                             (see full list of rdf serializers in FormatConverter._conversion_formats)
+                                             (see full list of rdf serializers in utils.ConversionFormats)
         """
-        if res_format not in cls._conversion_formats:
+        if res_format not in ConversionFormats:
             raise ValueError("Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(cls._conversion_formats.keys()))
+                             "Please choose from the list: {}".format(list(ConversionFormats)))
 
         cls._check_input_output_directory(input_dir, output_dir)
         input_dir = os.path.join(input_dir, '')
@@ -114,11 +98,14 @@ class FormatConverter(object):
                 p, _ = os.path.splitext(output_path)
                 output_path = p + ".odml"
             odml.save(odml.load(input_path), output_path)
-        elif res_format in cls._conversion_formats:
-            if not output_path.endswith(cls._conversion_formats[res_format]):
+        elif res_format in ConversionFormats:
+            if not output_path.endswith(ConversionFormats[res_format]):
                 p, _ = os.path.splitext(output_path)
-                output_path = p + cls._conversion_formats[res_format]
+                output_path = p + ConversionFormats[res_format]
             RDFWriter(odml.load(input_path)).write_file(output_path, res_format)
+        else:
+            raise ValueError("Format for output files is incorrect. "
+                             "Please choose from the list: {}".format(list(ConversionFormats)))
 
     @staticmethod
     def _create_sub_directory(dir_path):

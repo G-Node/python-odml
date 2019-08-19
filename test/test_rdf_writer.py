@@ -195,3 +195,9 @@ class TestRDFWriter(unittest.TestCase):
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasDtype, object=Literal(p_dtype)))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasValueOrigin, object=Literal(p_value_origin)))), 1)
         self.assertEqual(len(list(w.g.subjects(predicate=odmlns.hasReference, object=Literal(p_ref)))), 1)
+
+    def test_get_rdf_string(self):
+        w = RDFWriter([self.doc1])
+        w.get_rdf_str()
+        with self.assertRaises(ValueError):
+            w.get_rdf_str("abc")
