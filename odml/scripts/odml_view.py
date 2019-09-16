@@ -6,8 +6,8 @@ open a new tab in the default webbrowser and display the content of
 the directory the server was started from. odML files can then be
 viewed from there.
 To properly render XML, an odML file may contain the element
-'<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>' where the
-'odmlTerms.xsl' stylesheet should reside in the same directory as the
+'<?xml-stylesheet  type="text/xsl" href="odmlDocument.xsl"?>' where the
+'odmlDocument.xsl' stylesheet should reside in the same directory as the
 odML file to be rendered. By using the '--fetch' flag the latest version
 of this stylesheet will be downloaded from 'templates.g-node.org' to
 the current directory when starting up the service.
@@ -38,7 +38,8 @@ from docopt import docopt
 
 PORT = 8000
 REPOSITORY = "https://templates.g-node.org/_resources/"
-STYLESHEET = "odmlTerms.xsl"
+STYLESHEET = "odmlDocument.xsl"
+CSS = "odml_style.css"
 
 
 def download_file(repo, filename):
@@ -94,6 +95,8 @@ def main(args=None):
     if parser['--fetch'] and not os.path.exists(STYLESHEET):
         print("[Info] Downloading stylesheet '%s'" % STYLESHEET)
         download_file(REPOSITORY, STYLESHEET)
+        print("[Info] Downloading stylesheet '%s'" % CSS)
+        download_file(REPOSITORY, CSS)
 
     server_port = int(parser['-p']) if parser['-p'] else PORT
 
