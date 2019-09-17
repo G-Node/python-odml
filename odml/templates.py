@@ -57,9 +57,21 @@ def cache_load(url):
     return open(cache_file)
 
 
-class Templates(dict):
+class TemplateHandler(dict):
     # Used for deferred loading
     loading = {}
+
+    def browse(self, url):
+        """
+        Load, cache and pretty print an odML template XML file from a URL.
+
+        :param url: location of an odML template XML file.
+        :return: The odML document loaded from url.
+        """
+        doc = self.load(url)
+        doc.pprint(max_depth=0)
+
+        return doc
 
     def load(self, url):
         """
@@ -78,10 +90,6 @@ class Templates(dict):
             doc = self.load(url)
         else:
             doc = self._load(url)
-
-        # Give the user an idea of what can be accessed
-        print("\n")
-        doc.pprint(max_depth=0)
 
         return doc
 
@@ -110,8 +118,8 @@ class Templates(dict):
         self.loading[url].start()
 
 
-templates = Templates()
-load = templates.load
+templates = TemplateHandler()
+load_template = templates.load
 deferred_load = templates.deferred_load
 
 
