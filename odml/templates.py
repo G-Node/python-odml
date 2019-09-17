@@ -74,6 +74,10 @@ class TemplateHandler(dict):
         :return: The odML document loaded from url.
         """
         doc = self.load(url)
+
+        if not doc:
+            raise ValueError("Could not load template from '%s'" % url)
+
         doc.pprint(max_depth=0)
 
         return doc
@@ -95,6 +99,9 @@ class TemplateHandler(dict):
         :return: The cloned odML section loaded from url.
         """
         doc = self.load(url)
+        if not doc:
+            raise ValueError("Could not load template from '%s'" % url)
+
         try:
             sec = doc[section_name]
         except KeyError:
