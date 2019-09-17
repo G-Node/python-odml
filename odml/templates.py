@@ -10,9 +10,12 @@ import threading
 try:
     import urllib.request as urllib2
     from urllib.parse import urljoin
+    from urllib.error import URLError
+
 except ImportError:
     import urllib2
     from urlparse import urljoin
+    from urllib2 import URLError
 
 from hashlib import md5
 
@@ -50,7 +53,7 @@ def cache_load(url):
             data = urllib2.urlopen(url).read()
             if sys.version_info.major > 2:
                 data = data.decode("utf-8")
-        except Exception as e:
+        except (ValueError, URLError) as e:
             print("failed loading '%s': %s" % (url, e))
             return
         fp = open(cache_file, "w")
