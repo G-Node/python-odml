@@ -73,6 +73,30 @@ class TemplateHandler(dict):
 
         return doc
 
+    def clone_section(self, url, section_name, children=True, keep_id=False):
+        """
+        Load a section by name from an odML template found at the provided URL
+        and return a clone. By default it will return a clone with all child
+        sections and properties as well as changed IDs for every entity.
+        The named section has to be a root (direct) child of the referenced
+        odML document.
+
+        :param url: location of an odML template XML file.
+        :param section_name: Unique name of the requested Section.
+        :param children: Boolean whether the child entities of a Section will be
+                         returned as well. Default is True.
+        :param keep_id: Boolean whether all returned entities will keep the
+                        original ID or have a new one assigned. Default is False.
+        :return: The cloned odML section loaded from url.
+        """
+        doc = self.load(url)
+        try:
+            sec = doc[section_name]
+        except KeyError:
+            raise KeyError("Section '%s' not found in document at '%s'" % (section_name, url))
+
+        return sec.clone(children=children, keep_id=keep_id)
+
     def load(self, url):
         """
         Load and cache a terminology-url
