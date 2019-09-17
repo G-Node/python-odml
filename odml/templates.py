@@ -9,14 +9,15 @@ import tempfile
 import threading
 try:
     import urllib.request as urllib2
-    from urllib.parse import urljoin
     from urllib.error import URLError
+    from urllib.parse import urljoin
 
 except ImportError:
     import urllib2
-    from urlparse import urljoin
     from urllib2 import URLError
+    from urlparse import urljoin
 
+from datetime import datetime as dati
 from hashlib import md5
 
 from .tools.parser_utils import ParserException
@@ -27,6 +28,8 @@ REPOSITORY_BASE = 'https://templates.g-node.org/'
 REPOSITORY = urljoin(REPOSITORY_BASE, 'templates.xml')
 
 CACHE_AGE = datetime.timedelta(days=1)
+CACHE_DIR = "odml.cache"
+
 
 # TODO after prototyping move functions common with
 # terminologies to a common file.
@@ -34,31 +37,42 @@ CACHE_AGE = datetime.timedelta(days=1)
 
 def cache_load(url):
     """
-    Load the url and store it in a temporary cache directory
-    subsequent requests for this url will use the cached version
+    Load the url and store the file in a temporary cache directory.
+    Subsequent requests for this url will use the cached version until
+    the file is older than the CACHE_AGE.
+
+    Exceptions are caught and not re-raised to enable loading of nested
+    odML files without breaking of one of the child files is unavailable.
+
+    :param url: location of an odML template XML file.
     """
+
     filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
-    cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+    cache_dir = os.path.join(tempfile.gettempdir(), CACHE_DIR)
+
+    # Create temporary folder if required
     if not os.path.exists(cache_dir):
         try:
             os.makedirs(cache_dir)
         except OSError:  # might happen due to concurrency
             if not os.path.exists(cache_dir):
                 raise
+
     cache_file = os.path.join(cache_dir, filename)
-    if not os.path.exists(cache_file) \
-       or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
-       datetime.datetime.now() - CACHE_AGE:
+
+    if not os.path.exists(cache_file) or dati.fromtimestamp(os.path.getmtime(cache_file)) < (dati.now() - CACHE_AGE):
         try:
             data = urllib2.urlopen(url).read()
             if sys.version_info.major > 2:
                 data = data.decode("utf-8")
-        except (ValueError, URLError) as e:
-            print("failed loading '%s': %s" % (url, e))
+        except (ValueError, URLError) as exc:
+            print("Could not load template from '%s': %s" % (url, exc))
             return
+
         fp = open(cache_file, "w")
         fp.write(str(data))
         fp.close()
+
     return open(cache_file)
 
 
@@ -111,11 +125,13 @@ class TemplateHandler(dict):
 
     def load(self, url):
         """
-        Load and cache a terminology-url
+        Load and cache an odML template from a URL.
 
-        Returns the odml-document for the url
+        :param url: location of an odML template XML file.
+        :return: The odML document loaded from url.
         """
-        # Some feedback for the user
+        # Some feedback for the user when loading large or
+        # nested (include) odML files.
         print("\nLoading file %s" % url)
 
         if url in self:
@@ -130,34 +146,36 @@ class TemplateHandler(dict):
         return doc
 
     def _load(self, url):
+        """
+        Cache loads an odML template for a URL and returns
+        the parsed result odML document.
+
+        :param url: location of an odML template XML file.
+        :return: The odML document loaded from url.
+        """
         fp = cache_load(url)
         if fp is None:
-            print("did not successfully load '%s'" % url)
+            print("Unable to load '%s'" % url)
             return
+
         try:
-            term = XMLReader(filename=url, ignore_errors=True).from_file(fp)
-            term.finalize()
-        except ParserException as e:
-            print("Failed to load %s due to parser errors" % url)
-            print(' "%s"' % e)
-            term = None
-        self[url] = term
-        return term
+            doc = XMLReader(filename=url, ignore_errors=True).from_file(fp)
+            doc.finalize()
+        except ParserException as exc:
+            print("Failed to load '%s' due to parser errors:\n %s" % (url, exc))
+            doc = None
+
+        self[url] = doc
+        return doc
 
     def deferred_load(self, url):
         """
-        Start a thread to load the terminology in background
+        Start a background thread to load an odML template from a URL.
+
+        :param url: location of an odML template XML file.
         """
         if url in self or url in self.loading:
             return
+
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
-
-
-templates = TemplateHandler()
-load_template = templates.load
-deferred_load = templates.deferred_load
-
-
-if __name__ == "__main__":
-    f = cache_load(REPOSITORY)
