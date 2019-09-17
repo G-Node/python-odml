@@ -9,8 +9,10 @@ import tempfile
 import threading
 try:
     import urllib.request as urllib2
+    from urllib.parse import urljoin
 except ImportError:
     import urllib2
+    from urlparse import urljoin
 
 from hashlib import md5
 
@@ -19,7 +21,7 @@ from .tools.xmlparser import XMLReader
 
 
 REPOSITORY_BASE = 'https://templates.g-node.org/'
-REPOSITORY = '/'.join([REPOSITORY_BASE, 'templates.xml'])
+REPOSITORY = urljoin(REPOSITORY_BASE, 'templates.xml')
 
 CACHE_AGE = datetime.timedelta(days=1)
 
