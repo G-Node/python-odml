@@ -77,6 +77,11 @@ def cache_load(url):
 
 
 class TemplateHandler(dict):
+    """
+    TemplateHandler facilitates synchronious and deferred
+    loading, caching, browsing and importing of full or partial
+    odML templates.
+    """
     # Used for deferred loading
     loading = {}
 
