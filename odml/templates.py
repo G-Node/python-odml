@@ -2,7 +2,6 @@
 Handles (deferred) loading of odML templates
 """
 
-import datetime
 import os
 import sys
 import tempfile
@@ -18,6 +17,7 @@ except ImportError:
     from urlparse import urljoin
 
 from datetime import datetime as dati
+from datetime import timedelta
 from hashlib import md5
 
 from .tools.parser_utils import ParserException
@@ -27,7 +27,7 @@ from .tools.xmlparser import XMLReader
 REPOSITORY_BASE = 'https://templates.g-node.org/'
 REPOSITORY = urljoin(REPOSITORY_BASE, 'templates.xml')
 
-CACHE_AGE = datetime.timedelta(days=1)
+CACHE_AGE = timedelta(days=1)
 CACHE_DIR = "odml.cache"
 
 
@@ -45,6 +45,7 @@ def cache_load(url):
     odML files without breaking of one of the child files is unavailable.
 
     :param url: location of an odML template XML file.
+    :return: Local file location of the requested file.
     """
 
     filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
@@ -66,14 +67,13 @@ def cache_load(url):
             if sys.version_info.major > 2:
                 data = data.decode("utf-8")
         except (ValueError, URLError) as exc:
-            print("Could not load template from '%s': %s" % (url, exc))
-            return
+            print("Failed to load resource from '%s': %s" % (url, exc))
+            raise
 
-        fp = open(cache_file, "w")
-        fp.write(str(data))
-        fp.close()
+        with open(cache_file, "w") as local_file:
+            local_file.write(str(data))
 
-    return open(cache_file)
+    return cache_file
 
 
 class TemplateHandler(dict):
@@ -90,7 +90,7 @@ class TemplateHandler(dict):
         doc = self.load(url)
 
         if not doc:
-            raise ValueError("Could not load template from '%s'" % url)
+            raise ValueError("Failed to load resource from '%s'" % url)
 
         doc.pprint(max_depth=0)
 
@@ -114,7 +114,7 @@ class TemplateHandler(dict):
         """
         doc = self.load(url)
         if not doc:
-            raise ValueError("Could not load template from '%s'" % url)
+            raise ValueError("Failed to load resource from '%s'" % url)
 
         try:
             sec = doc[section_name]
@@ -148,22 +148,24 @@ class TemplateHandler(dict):
     def _load(self, url):
         """
         Cache loads an odML template for a URL and returns
-        the parsed result odML document.
+        the result as a parsed odML document.
 
         :param url: location of an odML template XML file.
         :return: The odML document loaded from url.
+                 It will silently return None, if any exceptions
+                 occur to enable loading of nested odML files.
         """
-        fp = cache_load(url)
-        if fp is None:
-            print("Unable to load '%s'" % url)
-            return
+        try:
+            local_file = cache_load(url)
+        except (ValueError, URLError):
+            return None
 
         try:
-            doc = XMLReader(filename=url, ignore_errors=True).from_file(fp)
+            doc = XMLReader(filename=url, ignore_errors=True).from_file(local_file)
             doc.finalize()
         except ParserException as exc:
             print("Failed to load '%s' due to parser errors:\n %s" % (url, exc))
-            doc = None
+            return None
 
         self[url] = doc
         return doc
