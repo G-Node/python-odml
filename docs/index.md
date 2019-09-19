@@ -75,15 +75,17 @@ pip install odml
 
 ### Python convenience scripts
 
-The Python installation features two convenience commandline scripts.
+The Python installation features multiple convenience commandline scripts.
 
 - `odmlconversion`: Converts odML files of previous file versions into the current one.
 - `odmltordf`: Converts odML files to the supported RDF version of odML.
+- `odmlview`: Render and browse local XML odML files in the webbrowser.
 
-Both scripts provide detailed usage descriptions by adding the help flag to the command.
+All scripts provide detailed usage descriptions by adding the `help` flag to the command.
 
     odmlconversion -h
     odmltordf -h
+    odmlview -h
 
 ### odML - NIX conversion script
 
@@ -98,7 +100,7 @@ You can install the command line script via pip:
 
 
 The script can then be run from the command line and provides a detailed usage
-description by adding the help flag to the command.
+description by adding the `help` flag to the command.
 
 
     nixodmlconverter -h
