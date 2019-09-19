@@ -42,7 +42,7 @@ def cache_load(url):
     the file is older than the CACHE_AGE.
 
     Exceptions are caught and not re-raised to enable loading of nested
-    odML files without breaking of one of the child files is unavailable.
+    odML files without breaking if one of the child files is unavailable.
 
     :param url: location of an odML template XML file.
     :return: Local file location of the requested file.
@@ -78,7 +78,7 @@ def cache_load(url):
 
 class TemplateHandler(dict):
     """
-    TemplateHandler facilitates synchronious and deferred
+    TemplateHandler facilitates synchronous and deferred
     loading, caching, browsing and importing of full or partial
     odML templates.
     """
