@@ -28,12 +28,17 @@ It is a registered research resource with the
 - [odml-ui](https://github.com/g-node/odml-ui "odml-ui - editor for odml metadata files"): Graphical editor
 - [odmlTables](https://github.com/INM-6/python-odmltables) Spreadsheet interface (by INM-6 FZ JÛlich) for odml files.
 
+
 ### Terminologies
 *odML* facilitates and encourages standardization by providing
 [terminologies](https://github.com/G-Node/odml-terminologies). An
 odml-file can be based on such a terminology. In that case one does
 not need to provide definitions since they are part of the linked
 terminology.
+
+Existing terminologies can be browsed and imported from 
+[terminologies.g-node.org](https://terminologies.g-node.org).
+
 
 ### Templates
 Templates are odML documents that can be re-used when collecting the same kind of
@@ -46,7 +51,10 @@ discussed and shared at the
 
 If you have created your own templates that others might find useful, 
 you are encouraged to share your templates via this repository.
-  
+
+Already available odML templates can be browsed and imported from
+[templates.g-node.org](https://templates.g-node.org).
+
 
 * * *
 
