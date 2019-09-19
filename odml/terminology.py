@@ -19,7 +19,7 @@ from .tools.parser_utils import ParserException
 from .tools.xmlparser import XMLReader
 
 
-REPOSITORY_BASE = 'http://portal.g-node.org/odml/terminologies'
+REPOSITORY_BASE = 'https://terminologies.g-node.org'
 REPOSITORY = '/'.join([REPOSITORY_BASE, 'v1.1', 'terminologies.xml'])
 
 CACHE_AGE = datetime.timedelta(days=1)
