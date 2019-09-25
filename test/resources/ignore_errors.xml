@@ -26,9 +26,14 @@
                 <name>Nickname</name>
                 <definition>Nickname(s) of the subject</definition>
             </property>
-            <type>crew/person</type>
+            <property>
+                <type>int</type>
+                <value>535</value>
+                <id>wrongid3</id>
+                <definition>Nickname(s) of the subject</definition>
+            </property>
+            <type>ADent</type>
             <definition>Information on Arthur Dent</definition>
-            <id>1d6469b5-5322-408b-916e-3224b7a22008</id>
         </section>
     </section>
     <date>1979-10-12</date>
