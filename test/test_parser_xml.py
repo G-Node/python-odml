@@ -41,5 +41,8 @@ class TestXMLParser(unittest.TestCase):
     def test_ignore_errors(self):
         filename = "ignore_errors.xml"
 
+        with self.assertRaises(ParserException):
+            _ = self.xml_reader.from_file(os.path.join(self.basepath, filename))
+
         doc = self.xml_reader_ignore.from_file(os.path.join(self.basepath, filename))
         doc.pprint()
