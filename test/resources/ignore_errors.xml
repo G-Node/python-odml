@@ -7,12 +7,23 @@
     <section>
         <property>
             <type>int</type>
+            <value>123</value>
+        </property>
+        <property>
+            <type>int</type>
             <uncertainty>[zergrve sdic, 1]</uncertainty>
             <value>["string 1", "string 2"]</value>
             <reference>The Hitchhiker's guide to the Galaxy (novel)</reference>
             <id>wrongid</id>
             <name>NoCrewMembers</name>
             <definition>Number of crew members</definition>
+        </property>
+        <property>
+            <name>NoBones</name>
+            <type></type>
+            <value>235</value>
+            <id>wrongid4</id>
+            <definition>Number of bones within the crew member.</definition>
         </property>
         <type>crew</type>
         <definition>Information on the crew</definition>
