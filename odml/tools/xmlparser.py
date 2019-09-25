@@ -218,12 +218,12 @@ class XMLReader(object):
     def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
         for k, v in ArgClass.arguments:
             if v != 0 and not ArgClass.map(k) in data:
-                self.error("missing element <%s> within <%s> tag" %
+                self.error("missing element <%s> within <%s> tag\n" %
                            (k, tag_name) + repr(data), node)
 
     def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
         if tag_name not in ArgClass.arguments_keys:
-            self.error("Invalid element <%s> inside <%s> tag" %
+            self.error("Invalid element <%s> inside <%s> tag\n" %
                        (tag_name, parent_node.tag),
                        parent_node if child is None else child)
 
@@ -247,7 +247,7 @@ class XMLReader(object):
 
     def parse_element(self, node):
         if node.tag not in self.tags:
-            self.error("Invalid element <%s>" % node.tag, node)
+            self.error("Invalid element <%s> " % node.tag, node)
             return None  # won't be able to parse this one
         return getattr(self, "parse_" + node.tag)(node, self.tags[node.tag])
 
@@ -273,7 +273,7 @@ class XMLReader(object):
                 continue
 
             # We currently do not support XML attributes.
-            self.error("Attribute not supported, ignoring '%s=%s'" % (k, v), root)
+            self.error("Attribute not supported, ignoring '%s=%s' " % (k, v), root)
 
         for node in root:
             node.tag = node.tag.lower()
@@ -299,7 +299,7 @@ class XMLReader(object):
                     else:
                         arguments[tag] = curr_text
             else:
-                self.error("Invalid element <%s> in odML document section <%s>"
+                self.error("Invalid element <%s> in odML document section <%s> "
                            % (node.tag, root.tag), node)
 
         if sys.version_info > (3,):
@@ -314,7 +314,8 @@ class XMLReader(object):
         try:
             obj = fmt.create(**arguments)
         except ValueError:
-            self.error("ValueError: Values '%s' do not match given DType '%s'!" % (arguments['values'], arguments['dtype']), root)
+            self.error("ValueError: Values '%s' do not match given DType '%s'!" %
+                       (arguments['values'], arguments['dtype']), root)
 
         if insert_children:
             for child in children:
