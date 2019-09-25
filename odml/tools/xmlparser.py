@@ -11,6 +11,7 @@ from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
 from os.path import basename
+import uuid
 
 try:
     from StringIO import StringIO
@@ -310,8 +311,7 @@ class XMLReader(object):
         self.check_mandatory_arguments(check_args, fmt, root.tag, root)
 
         # Instantiate the current odML object with the parsed attributes.
-        # Return None, if
-        obj = None
+        obj = fmt.create()
         try:
             obj = fmt.create(**arguments)
         except Exception as e:
