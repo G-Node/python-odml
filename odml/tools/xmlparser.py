@@ -11,7 +11,6 @@ from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
 from os.path import basename
-import uuid
 
 try:
     from StringIO import StringIO
