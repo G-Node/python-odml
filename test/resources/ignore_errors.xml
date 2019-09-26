@@ -3,7 +3,7 @@
 <?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
 <odML version="1.1">
     <author>D. N. Adams</author>
-    <repository>http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml</repository>
+    <repository>hello</repository>
     <section>
         <property>
             <type>int</type>
@@ -47,7 +47,7 @@
             <definition>Information on Arthur Dent</definition>
         </section>
     </section>
-    <date>1979-10-12</date>
+    <date>ztuz</date>
     <id>79b613eb-a256-46bf-84f6-207df465b8f7</id>
     <version>new version</version>
 </odML>
