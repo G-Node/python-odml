@@ -313,9 +313,8 @@ class XMLReader(object):
         obj = fmt.create()
         try:
             obj = fmt.create(**arguments)
-        except ValueError:
-            self.error("ValueError: Values '%s' do not match given DType '%s'!" %
-                       (arguments['values'], arguments['dtype']), root)
+        except Exception as e:
+            self.error(str(e), root)
 
         if insert_children:
             for child in children:
