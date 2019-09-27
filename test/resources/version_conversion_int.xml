@@ -107,6 +107,6 @@
   </section>
   <author>author</author>
   <date>2018-07-07</date>
-  <repository>http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml</repository>
+  <repository>https://terminologies.g-node.org/v1.0/terminologies.xml</repository>
   <version>v1.13</version>
 </odML>

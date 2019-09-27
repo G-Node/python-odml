@@ -58,7 +58,7 @@ class TestVersionConverterIntegration(unittest.TestCase):
         # Test document attribute export
         self.assertEqual(doc.author, "author")
         self.assertEqual(doc.version, "v1.13")
-        repo = "http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml"
+        repo = "https://terminologies.g-node.org/v1.1/terminologies.xml"
         self.assertEqual(doc.repository, repo)
         self.assertEqual(len(doc.sections), 3)
 

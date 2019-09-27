@@ -1,6 +1,6 @@
 {
     "Document": {
-        "repository": "http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml",
+        "repository": "https://terminologies.g-node.org/v1.0/terminologies.xml",
         "version": "v1.13",
         "date": "2018-02-02",
         "sections": [
@@ -238,7 +238,7 @@
             {
                 "definition": "def s3",
                 "name": "section three",
-                "include": "http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml",
+                "include": "https://terminologies.g-node.org/v1.0/terminologies.xml",
                 "properties": [],
                 "sections": [],
                 "type": "mainsec",

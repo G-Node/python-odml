@@ -1,7 +1,7 @@
 Document:
   author: author
   date: '2018-02-02'
-  repository: http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml
+  repository: https://terminologies.g-node.org/v1.0/terminologies.xml
   sections:
   - definition: def s1
     include: url s1
