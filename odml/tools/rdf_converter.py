@@ -43,9 +43,6 @@ class RDFWriter(object):
 
         self.section_subclasses = {}
 
-        # TODO doc/section_subclasses.yaml has to be exported on install, otherwise
-        # the RDFWriter is broken. Below is a quick and dirty fix to at least
-        # unbreak on install.
         subclass_path = os.path.join(dirname(dirname(dirname(abspath(__file__)))),
                          'doc', 'section_subclasses.yaml')
 
