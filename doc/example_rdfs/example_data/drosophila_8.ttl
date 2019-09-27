@@ -1351,5 +1351,5 @@ odml:fe6a8363-a5f4-46ed-8eea-b57257d4823b a odml:Property ;
 odml:ff532446-ca25-4092-8abb-302e12344b3b a rdf:Bag ;
     rdf:li "1.0" .
 
-odml:b0d95b14-a12f-4057-aed3-fdd3a6ea5f82 a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+odml:b0d95b14-a12f-4057-aed3-fdd3a6ea5f82 a <https://terminologies.g-node.org/v1.0/terminologies.xml> .
 

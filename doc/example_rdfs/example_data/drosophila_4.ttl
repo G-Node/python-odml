@@ -1352,5 +1352,5 @@ odml:fedefe26-0f36-433f-993d-ad827dcb0a50 a odml:Property ;
     odml:hasUnit "ms" ;
     odml:hasValue <https://g-node.org/projects/odml-rdf#7fe2ea64-262c-4cdd-acd2-4d59c42cd4aa> .
 
-<https://g-node.org/projects/odml-rdf#9cf7f270-eb40-4406-a78b-d5de29fe5879> a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+<https://g-node.org/projects/odml-rdf#9cf7f270-eb40-4406-a78b-d5de29fe5879> a <https://terminologies.g-node.org/v1.0/terminologies.xml> .
 

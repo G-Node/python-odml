@@ -227,7 +227,7 @@ rdf:Seq rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "Cell" ;
-      rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/cell/cell.xml> .
+      rdfs:seeAlso <https://terminologies.g-node.org/v1.0/cell/cell.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#CellProperties
@@ -242,7 +242,7 @@ rdf:Seq rdf:type owl:Class ;
                  rdfs:subClassOf :Section ;
                  rdfs:comment "Description"^^xsd:string ;
                  rdfs:label "DataAcquisition" ;
-                 rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/hardware/daq.xml> .
+                 rdfs:seeAlso <https://terminologies.g-node.org/v1.0/hardware/daq.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Dataset
@@ -250,7 +250,7 @@ rdf:Seq rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Dataset" ;
-         rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/dataset/dataset.xml> .
+         rdfs:seeAlso <https://terminologies.g-node.org/v1.0/dataset/dataset.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Document
@@ -298,7 +298,7 @@ rdf:Seq rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Electrode" ;
-           rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/electrode/electrode.xml> .
+           rdfs:seeAlso <https://terminologies.g-node.org/v1.0/electrode/electrode.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Hardware
@@ -306,7 +306,7 @@ rdf:Seq rdf:type owl:Class ;
           rdfs:subClassOf :Section ;
           rdfs:comment "Description"^^xsd:string ;
           rdfs:label "Hardware" ;
-          rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/hardware/hardware.xml> .
+          rdfs:seeAlso <https://terminologies.g-node.org/v1.0/hardware/hardware.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#HardwareSettings
@@ -314,7 +314,7 @@ rdf:Seq rdf:type owl:Class ;
                   rdfs:subClassOf :Section ;
                   rdfs:comment "Description"^^xsd:string ;
                   rdfs:label "HardwareSettings" ;
-                  rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/collection/hardware_settings.xml> .
+                  rdfs:seeAlso <https://terminologies.g-node.org/v1.0/collection/hardware_settings.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Hub
@@ -338,7 +338,7 @@ rdf:Seq rdf:type owl:Class ;
              rdfs:subClassOf :Section ;
              rdfs:comment "Description"^^xsd:string ;
              rdfs:label "Preparation" ;
-             rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/preparation/preparation.xml> .
+             rdfs:seeAlso <https://terminologies.g-node.org/v1.0/preparation/preparation.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Property
@@ -394,7 +394,7 @@ rdf:Seq rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Recording" ;
-           rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/recording/recording.xml> .
+           rdfs:seeAlso <https://terminologies.g-node.org/v1.0/recording/recording.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Section
@@ -457,7 +457,7 @@ rdf:Seq rdf:type owl:Class ;
        rdfs:subClassOf :Section ;
        rdfs:comment "Description"^^xsd:string ;
        rdfs:label "Setup" ;
-       rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/setup/setup.xml> .
+       rdfs:seeAlso <https://terminologies.g-node.org/v1.0/setup/setup.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Stimulus
@@ -465,7 +465,7 @@ rdf:Seq rdf:type owl:Class ;
           rdfs:subClassOf :Section ;
           rdfs:comment "Description of the Stimulus."^^xsd:string ;
           rdfs:label "Stimulus" ;
-          rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/stimulus/stimulus.xml> .
+          rdfs:seeAlso <https://terminologies.g-node.org/v1.0/stimulus/stimulus.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Subject
@@ -473,7 +473,7 @@ rdf:Seq rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Subject" ;
-         rdfs:seeAlso <http://portal.g-node.org/odml/terminologies/v1.0/subject/subject.xml> .
+         rdfs:seeAlso <https://terminologies.g-node.org/v1.0/subject/subject.xml> .
 
 
 ###  https://g-node.org/projects/odml-rdf#Terminology

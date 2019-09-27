@@ -25,7 +25,7 @@ if not os.path.isdir(output_directory):
 save_to = os.path.join(output_directory, "THGTTG.odml")
 
 
-odmlrepo = 'http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml'
+odmlrepo = 'https://terminologies.g-node.org/v1.1/terminologies.xml'
 
 # CREATE A DOCUMENT
 doc = odml.Document(author="D. N. Adams",
