@@ -67,8 +67,9 @@ def cache_load(url):
             if sys.version_info.major > 2:
                 data = data.decode("utf-8")
         except (ValueError, URLError) as exc:
-            print("Failed to load resource from '%s': %s" % (url, exc))
-            raise
+            msg = "Failed to load resource from '%s': %s" % (url, exc)
+            exc.args = (msg,)  # needs to be a tuple
+            raise exc
 
         with open(cache_file, "w") as local_file:
             local_file.write(str(data))
