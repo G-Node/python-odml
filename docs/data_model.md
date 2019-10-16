@@ -1,7 +1,7 @@
 # The odML data model
 
 Data exchange requires that annotations, metadata, are also
-shared. In oder to allow interoperability both a common
+shared. In order to allow interoperability both a common
 (meta) data model, the format in which the metadata are exchanged, and
 a common terminology are required.
 
