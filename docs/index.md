@@ -52,7 +52,7 @@ discussed and shared at the
 If you have created your own templates that others might find useful, 
 you are encouraged to share your templates via this repository.
 
-Already available odML templates can be browsed and imported from
+Currently available odML templates can be browsed and imported from
 [templates.g-node.org](https://templates.g-node.org).
 
 
