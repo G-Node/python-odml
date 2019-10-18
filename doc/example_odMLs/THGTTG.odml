@@ -2,7 +2,7 @@
 <?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
 <?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
 <odML version="1.1">
-  <repository>http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml</repository>
+  <repository>https://terminologies.g-node.org/v1.1/terminologies.xml</repository>
   <version>42</version>
   <section>
     <name>TheCrew</name>

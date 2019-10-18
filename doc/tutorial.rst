@@ -71,7 +71,7 @@ The code for the example odML files, which we use within this tutorial is part
 of the documentation package (see doc/example_odMLs/).
 
 A summary of available odML terminologies and templates can be found `here
-<http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml>`_.
+<https://terminologies.g-node.org/v1.1/terminologies.xml>`_.
 
 -------------------------------------------------------------------------------
 
@@ -221,7 +221,7 @@ them to build your own metadata odML file will be described in later chapters.
 Further advanced functions you can use to navigate through your odML files, or to
 create an odML template file, or to make use of common odML terminologies
 provided via `the G-Node repository
-<http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml>`_ can also
+<https://terminologies.g-node.org/v1.1/terminologies.xml>`_ can also
 be found later on in this tutorial.
 
 But now, let us first have a look at the example odML file (THGTTG.odml)!
@@ -289,7 +289,7 @@ Let's check out all attributes with the following commands::
     >>> print(odmlEX.parent)
     None
     >>> print(odmlEX.repository)
-    http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml
+    https://terminologies.g-node.org/v1.1/terminologies.xml
     >>> print(odmlEX.version)
     42
 

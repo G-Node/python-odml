@@ -643,5 +643,5 @@ odml:fadffec7-6b23-454e-bfd1-9d5884802abb a odml:Property ;
 odml:ff5fb5e5-5104-41c8-ab45-9d8787e7fbdc a rdf:Bag ;
     rdf:li "simpleErg" .
 
-<https://g-node.org/projects/odml-rdf#7517fc3b-a12c-47b3-bfc5-96cc98fefa8a> a <http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml> .
+<https://g-node.org/projects/odml-rdf#7517fc3b-a12c-47b3-bfc5-96cc98fefa8a> a <https://terminologies.g-node.org/v1.0/terminologies.xml> .
 

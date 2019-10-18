@@ -83,5 +83,5 @@ odml:d98afe9b-3982-44bf-9373-12aaa4798628 a rdf:Bag ;
         "Tricia Marie McMillan",
         "Zaphod Beeblebrox" .
 
-<https://g-node.org/projects/odml-rdf#7e0e07c7-7501-454e-88e7-cfa072db94c1> a <http://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml> .
+<https://g-node.org/projects/odml-rdf#7e0e07c7-7501-454e-88e7-cfa072db94c1> a <https://terminologies.g-node.org/v1.1/terminologies.xml> .
 
