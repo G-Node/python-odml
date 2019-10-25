@@ -32,6 +32,9 @@ of this stylesheet will be downloaded from `templates.g-node.org` to
 the current directory when starting up the service.
 ```
 
+## Console script 'odmlconversion' is renamed
+The console script `odmlconversion` is renamed to `odmlconvert`. For backwards compatibility the script will be available as `odmlconversion` with a deprecation notice.
+
 ## 'pyyaml' dependency update
 The `pyyaml` dependency has been changed to the non-breaking beta version 4.2b4. See issue #291 for details.
 
