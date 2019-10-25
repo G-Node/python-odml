@@ -6,12 +6,16 @@ environment:
       PYVER: "3.5"
     - PYTHON: "C:\\Python36"
       PYVER: "3.6"
+    - PYTHON: "C:\\Python37"
+      PYVER: "3.7"
     - PYTHON: "C:\\Python27-x64"
       PYVER: "2.7"
     - PYTHON: "C:\\Python35-x64"
       PYVER: "3.5"
     - PYTHON: "C:\\Python36-x64"
       PYVER: "3.6"
+    - PYTHON: "C:\\Python37-x64"
+      PYVER: "3.7"
 
 build: false
 

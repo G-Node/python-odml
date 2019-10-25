@@ -77,13 +77,13 @@ pip install odml
 
 The Python installation features multiple convenience commandline scripts.
 
-- `odmlconversion`: Converts odML files of previous file versions into the current one.
+- `odmlconvert`: Converts odML files of previous file versions into the current one.
 - `odmltordf`: Converts odML files to the supported RDF version of odML.
 - `odmlview`: Render and browse local XML odML files in the webbrowser.
 
 All scripts provide detailed usage descriptions by adding the `help` flag to the command.
 
-    odmlconversion -h
+    odmlconvert -h
     odmltordf -h
     odmlview -h
 

@@ -2,6 +2,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/br7pe6atlwdg5618/branch/master?svg=true)](https://ci.appveyor.com/project/G-Node/python-odml/branch/master)
 ![Test coverage](https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master)
 [![PyPI version](https://img.shields.io/pypi/v/odml.svg)](https://pypi.org/project/odML/)
+[![Read the Docs](https://img.shields.io/readthedocs/python-odml)](https://python-odml.readthedocs.io/en/latest/)
+
 
 # odML (Open metaData Markup Language) core library
 
@@ -15,8 +17,43 @@ with the version control system **git**, but still want to use it, have a look a
 documentation available on the [git-scm website](https://git-scm.com/).
 
 
-# Breaking changes
+# odML Project page
 
+More information about the project including related projects as well as tutorials and
+examples can be found at our odML [project page](https://g-node.github.io/python-odml).
+
+
+# Getting started
+
+## Installation
+
+*python-odml* is most conveniently installed via pip.
+
+```
+pip install odml
+```
+
+## Tutorial and examples
+
+- We have assembled a set of
+ [tutorials](http://github.com/G-Node/python-odml/blob/master/doc/tutorial.rst "Python Tutorial").
+
+## Python convenience scripts
+
+The Python installation features multiple convenience commandline scripts.
+
+- `odmlconvert`: Converts odML files of previous file versions into the current one.
+- `odmltordf`: Converts odML files to the supported RDF version of odML.
+- `odmlview`: Render and browse local XML odML files in the webbrowser.
+
+All scripts provide detailed usage descriptions by adding the `help` flag to the command.
+
+    odmlconvert -h
+    odmltordf -h
+    odmlview -h
+
+
+# Breaking changes
 
 odML Version 1.4 introduced breaking format and API changes compared to the previous
 versions of odML. Files saved in the previous format versions can be converted to a 1.4
@@ -57,21 +94,6 @@ release notes](https://github.com/G-Node/python-odml/releases).
   * lib32z1-dev
 
 
-# Installation
-
-The simplest way to install Python-odML is from PyPI using the pip tool:
-
-
-```
-  $ pip install odml
-```
-
-On Ubuntu, the pip package manager is available in the repositories as ```python-pip```.
-
-If this method is used, the appropriate Python dependencies are downloaded and installed
-automatically.
-
-
 # Building from source
 
 To download the Python-odML library please either use git and clone
@@ -95,14 +117,11 @@ To install the Python-odML library, enter the corresponding directory and run:
 **Note** The master branch is our current development branch, not all features might be
 working as expected. Use the release tags instead.
 
-# odML Project page
-
-More information about the project including related projects as well as tutorials and
-examples can be found at our odML [project page](https://g-node.github.io/python-odml).
 
 # Contributing and Governance
 
 See the [CONTRIBUTING](CONTIBUTING.md) document for more information on this.
+
 
 # Bugs & Questions
 

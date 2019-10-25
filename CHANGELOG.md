@@ -5,7 +5,52 @@ until the next release.
 
 # Latest changes in master
 
-...
+# Version 1.4.3
+
+## Introduction of odML templates support and update in odML terminology handling
+
+Support for importing and working with odML templates is added:
+- the core library now features the `TemplateHandler` class to handle import and usage of odML templates.
+- the default URL to fetch templates from has been set to `https://templates.g-node.org`.
+- all terminology URLs are updated to the new terminology deployment at `https://terminology.g-node.org`.
+
+## Additional console script: 'odmlview'
+
+Currently most web browsers no longer support viewing local files that include further local files like stylesheets; check [here](https://developer.mozilla.org/en-US/docs/Archive/Misc_top_level/Same-origin_policy_for_file:_URIs) for additional details. The console script `odmlview` provides a local webserver that is able to properly serve odML XML files from a local directory and render them correctly, if the appropriate stylesheets are present in the same directory.
+
+```
+'odmlview' sets up a minimal webserver to view odml files saved in the
+XML format via the webbrowser. After it is started, the webserver will
+open a new tab in the default webbrowser and display the content of
+the directory the server was started from. odML files can then be
+viewed from there.
+To properly render XML, an odML file may contain the element
+'<?xml-stylesheet  type="text/xsl" href="odmlDocument.xsl"?>' where the
+'odmlDocument.xsl' stylesheet should reside in the same directory as the
+odML file to be rendered. By using the '--fetch' flag the latest version
+of this stylesheet will be downloaded from `templates.g-node.org` to
+the current directory when starting up the service.
+```
+
+## Console script 'odmlconversion' is renamed
+The console script `odmlconversion` is renamed to `odmlconvert`. For backwards compatibility the script will be available as `odmlconversion` with a deprecation notice.
+
+## 'pyyaml' dependency update
+The `pyyaml` dependency has been changed to the non-breaking beta version 4.2b4. See issue #291 for details.
+
+## Minor changes, updates and fixes
+- odML entity IDs are automatically added when converting from odML version 1 to odMl version 1.1 for `Document`, `Section` and `Property` elements. If an ID already exists, it stays the same, if it is compatible with the Python UUID types. Otherwise (also if empty) a new ID is created for the odML entity.
+- `Property` can now be set as `int` with value `0`. See issue #314 for details.
+- appending and extending of `Property` values of dtypes `person`, `url` and `text` is now possible. See issue #318 for details.
+- the default `RDFWriter` format is set to `turtle`. See issue #214 for details.
+- the `RDFWriter` now checks for a given file extension within the RDF document name if accidentally given there. See issue #213 for details.
+- the `RDFWriter` now throws a `ValueError` if an unsupported RDF format is given. See issue #215 for details.
+- the `XMLReader` now properly handles entity creation failures when started with option `ignore_errors=True`. See issue #276 for details.
+- the `pprint` method has been added to `Document` to print while document section. See issue #319 for details.
+- the README file has been changed from `rst` to the `md` format.
+- the current tutorial has been updated to include latest changes.
+- the automated builds have been updated to include Python versions 3.7 and 3.8; version 3.4 has been removed since it is no longer supported on travis.
+
 
 # Version 1.4.2
 
