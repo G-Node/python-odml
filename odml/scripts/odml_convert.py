@@ -1,12 +1,12 @@
-"""odmlConversion
+"""odmlConvert
 
-odmlConversion searches for odML files within a provided SEARCHDIR
+odmlConvert searches for odML files within a provided SEARCHDIR
 and converts them to the newest odML format version.
 Original files will never be overwritten. New files will be
 written either to a new directory at the current or a specified
 location.
 
-Usage: odmlconversion [-r] [-o OUT] SEARCHDIR
+Usage: odmlconvert [-r] [-o OUT] SEARCHDIR
 
 Arguments:
     SEARCHDIR       Directory to search for odML files.
@@ -121,6 +121,18 @@ def main(args=None):
 
     print(report.getvalue())
     report.close()
+
+
+def dep_note(args=None):
+    """
+    Print deprecation warning and call main function.
+
+    :param args: Command line arguments
+    """
+
+    print("\n[DEPRECATION WARNING] 'odmlconversion' will be removed with \n"
+          "the next version release. Please use 'odmlconvert' instead.\n")
+    main(args)
 
 
 if __name__ == "__main__":
