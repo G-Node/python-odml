@@ -55,3 +55,30 @@ RDFConverter
    :members:
    :inherited-members:
    :undoc-members:
+
+.. _cli_scripts:
+
+Command line scripts
+====================
+Several cli convenience scripts are automatically installed and are available from the command line.
+
+odML conversion script
+----------------------
+.. automodule:: odml.scripts.odml_convert
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+odML to RDF script
+------------------
+.. automodule:: odml.scripts.odml_to_rdf
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+odML view (browse odml files locally)
+-------------------------------------
+.. automodule:: odml.scripts.odml_view
+   :members:
+   :inherited-members:
+   :undoc-members:
