@@ -150,69 +150,69 @@ class RDFWriter(object):
 
     def save_element(self, odml_elem, node=None):
         """
-        Save the current element to the RDF graph
-        :param odml_elem: current element
-        :param node: A node to pass the earlier created node to inner elements
-        :return: the RDF graph
+        Save the current odml element to the RDF graph and handle all child
+        elements of the current odml element recursively.
+
+        :param odml_elem: An odml element that should be added to the RDF graph.
+        :param node: An RDF node that is used to append the current odml element
+                     to the RDF graph. If None, a new node will be created and
+                     added to the 'Hub' node of the RDF graph.
         """
         fmt = odml_elem.format()
 
-        is_doc = isinstance(fmt, Document.__class__)
-        is_sec = isinstance(fmt, Section.__class__)
-        is_prop = isinstance(fmt, Property.__class__)
+        is_doc = fmt.name == Document.name
+        is_sec = fmt.name == Section.name
+        is_prop = fmt.name == Property.name
 
-        if not node:
+        curr_node = node
+        if not curr_node:
             curr_node = URIRef(ODML_NS + unicode(odml_elem.id))
-        else:
-            curr_node = node
 
-        if fmt.name == "section":
+        # Add type of current node to the RDF graph
+        curr_type = fmt.rdf_type
+        # Handle section subclass types
+        if is_sec:
             sub_sec = self._get_section_subclass(odml_elem)
-            sec_type = sub_sec if sub_sec else fmt.rdf_type
-            self.graph.add((curr_node, RDF.type, URIRef(sec_type)))
-        else:
-            self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+            if sub_sec:
+                curr_type = sub_sec
+        self.graph.add((curr_node, RDF.type, URIRef(curr_type)))
 
-        # adding doc to the hub
+        # Add a new document to the RDF Hub node
         if is_doc:
             self.graph.add((self.hub_root, ODML_NS.hasDocument, curr_node))
 
-            # If available add the documents filename to the document node
+            # If available, add the documents' filename to the document node
             # so we can identify where the data came from.
             if hasattr(odml_elem, "_origin_file_name"):
                 curr_lit = Literal(odml_elem._origin_file_name)
                 self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
 
         for k in fmt.rdf_map_keys:
-            if k == 'id':
+            if k == "id" or \
+                    (k == "value" and not getattr(odml_elem, fmt.map(k))) or \
+                    (not getattr(odml_elem, k)):
                 continue
-            elif (is_doc or is_sec) and k == "repository" and getattr(odml_elem, k):
+
+            if (is_doc or is_sec) and k == "repository":
                 self.save_repository_node(curr_node, fmt.rdf_map(k),
                                           getattr(odml_elem, k))
 
-            # generating nodes for entities: sections, properties and bags of values
-            elif (is_doc or is_sec) and k == 'sections' and getattr(odml_elem, k):
+            # generating nodes for sections and properties
+            elif ((is_doc or is_sec) and k == "sections") or \
+                    (is_sec and k == "properties"):
                 self.save_odml_list(getattr(odml_elem, k), curr_node, fmt.rdf_map(k))
 
-            elif is_sec and k == 'properties' and getattr(odml_elem, k):
-                self.save_odml_list(getattr(odml_elem, k), curr_node, fmt.rdf_map(k))
-
-            elif is_prop and k == 'value' and getattr(odml_elem, fmt.map(k)):
+            # generating nodes for Property values
+            elif is_prop and k == "value":
                 # 'value' needs to be mapped to its appropriate odml Property attribute.
                 self.save_odml_values(curr_node, fmt.rdf_map(k),
                                       getattr(odml_elem, fmt.map(k)))
-
-            # adding entities' properties
+            elif k == "date":
+                curr_lit = Literal(getattr(odml_elem, k), datatype=XSD.date)
+                self.graph.add((curr_node, fmt.rdf_map(k), curr_lit))
             else:
-                val = getattr(odml_elem, k)
-                if val is None or not val:
-                    continue
-                elif k == 'date':
-                    curr_lit = Literal(val, datatype=XSD.date)
-                    self.graph.add((curr_node, fmt.rdf_map(k), curr_lit))
-                else:
-                    self.graph.add((curr_node, fmt.rdf_map(k), Literal(val)))
-        return self.graph
+                curr_lit = Literal(getattr(odml_elem, k))
+                self.graph.add((curr_node, fmt.rdf_map(k), curr_lit))
 
     def _get_section_subclass(self, elem):
         """
