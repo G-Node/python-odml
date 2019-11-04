@@ -1,19 +1,19 @@
 import os
 import uuid
-import yaml
 
 from io import StringIO
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
 from rdflib.namespace import XSD, RDF
 
+import yaml
 import odml
 
 from ..doc import BaseDocument
 from ..format import Format, Document, Section, Property
+from ..info import FORMAT_VERSION
 from .dict_parser import DictReader
 from .parser_utils import ParserException
-from ..info import FORMAT_VERSION
 from .utils import RDFConversionFormats
 
 try:
