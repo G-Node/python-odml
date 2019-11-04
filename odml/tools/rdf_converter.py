@@ -81,6 +81,36 @@ class RDFWriter(object):
 
         return self.graph
 
+    def save_odml_values(self, parent_node, rdf_predicate, values):
+        """
+        save_odml_values adds an RDF seq node to the parent RDF node
+        and creates a value leaf node for every odml value.
+
+        :param parent_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate used to add the Seq node
+                              to the current parent node.
+        :param values: list of odml values.
+        """
+        seq = URIRef(ODML_NS + unicode(uuid.uuid4()))
+        self.graph.add((seq, RDF.type, RDF.Seq))
+        self.graph.add((parent_node, rdf_predicate, seq))
+
+        # rdflib so far does not respect RDF:li item order in RDF:Seq on
+        # loading so we have to use custom numbered Node elements for now.
+        # Once rdflib upgrades this should be reversed to RDF:li again!
+        # see https://github.com/RDFLib/rdflib/issues/280
+        # -- keep until supported
+        # bag = URIRef(ODML_NS + unicode(uuid.uuid4()))
+        # self.graph.add((bag, RDF.type, RDF.Bag))
+        # self.graph.add((curr_node, fmt.rdf_map(k), bag))
+        # for curr_val in values:
+        #     self.graph.add((bag, RDF.li, Literal(curr_val)))
+        counter = 1
+        for curr_val in values:
+            custom_predicate = "%s_%s" % (unicode(RDF), counter)
+            self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
+            counter = counter + 1
+
     def save_odml_list(self, odml_list, parent_node, rdf_predicate):
         """
         save_odml_list adds all odml elements in a list to the current
@@ -168,28 +198,9 @@ class RDFWriter(object):
                 self.save_odml_list(getattr(odml_elem, k), curr_node, fmt.rdf_map(k))
 
             elif is_prop and k == 'value' and getattr(odml_elem, fmt.map(k)):
-                # "value" needs to be mapped to its appropriate
-                # Property library attribute.
-                values = getattr(odml_elem, fmt.map(k))
-                seq = URIRef(ODML_NS + unicode(uuid.uuid4()))
-                self.graph.add((seq, RDF.type, RDF.Seq))
-                self.graph.add((curr_node, fmt.rdf_map(k), seq))
-
-                # rdflib so far does not respect RDF:li item order in RDF:Seq on
-                # loading so we have to use custom numbered Node elements for now.
-                # Once rdflib upgrades this should be reversed to RDF:li again!
-                # see https://github.com/RDFLib/rdflib/issues/280
-                # -- keep until supported
-                # bag = URIRef(ODML_NS + unicode(uuid.uuid4()))
-                # self.graph.add((bag, RDF.type, RDF.Bag))
-                # self.graph.add((curr_node, fmt.rdf_map(k), bag))
-                # for curr_val in values:
-                #     self.graph.add((bag, RDF.li, Literal(curr_val)))
-                counter = 1
-                for curr_val in values:
-                    pred = "%s_%s" % (unicode(RDF), counter)
-                    self.graph.add((seq, URIRef(pred), Literal(curr_val)))
-                    counter = counter + 1
+                # 'value' needs to be mapped to its appropriate odml Property attribute.
+                self.save_odml_values(curr_node, fmt.rdf_map(k),
+                                      getattr(odml_elem, fmt.map(k)))
 
             # adding entities' properties
             else:
