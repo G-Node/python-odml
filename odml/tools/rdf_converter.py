@@ -270,9 +270,8 @@ class RDFReader(object):
                     doc_attrs[attr[0]].append(self.parse_section(s))
             elif attr[0] == "id":
                 doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
-            else:
-                if elems:
-                    doc_attrs[attr[0]] = unicode(elems[0].toPython())
+            elif elems:
+                doc_attrs[attr[0]] = unicode(elems[0].toPython())
 
         return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
 
@@ -292,9 +291,9 @@ class RDFReader(object):
                     sec_attrs[attr[0]].append(self.parse_property(p))
             elif attr[0] == "id":
                 sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
-            else:
-                if elems:
-                    sec_attrs[attr[0]] = unicode(elems[0].toPython())
+            elif elems:
+                sec_attrs[attr[0]] = unicode(elems[0].toPython())
+
         self._check_mandatory_attrs(sec_attrs)
         return sec_attrs
 
@@ -321,9 +320,9 @@ class RDFReader(object):
 
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
-            else:
-                if elems:
-                    prop_attrs[attr[0]] = unicode(elems[0].toPython())
+            elif elems:
+                prop_attrs[attr[0]] = unicode(elems[0].toPython())
+
         self._check_mandatory_attrs(prop_attrs)
         return prop_attrs
 
