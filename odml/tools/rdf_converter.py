@@ -1,3 +1,8 @@
+"""
+The RDF converter module provides conversion of odML documents to RDF and
+the conversion of odML flavored RDF to odML documents.
+"""
+
 import os
 import uuid
 
@@ -59,7 +64,7 @@ class RDFWriter(object):
 
     def __init__(self, odml_documents):
         """
-        :param odml_documents: list of odml documents
+        :param odml_documents: list of odML documents
         """
         if not isinstance(odml_documents, list):
             odml_documents = [odml_documents]
@@ -72,6 +77,13 @@ class RDFWriter(object):
         self.section_subclasses = load_rdf_subclasses()
 
     def convert_to_rdf(self):
+        """
+        convert_to_rdf converts all odML documents to RDF,
+        connects them via a common "Hub" RDF node and
+        returns the created RDF graph.
+
+        :return: An RDF graph.
+        """
         self.hub_root = URIRef(ODML_NS.Hub)
         if self.docs:
             for doc in self.docs:
@@ -219,8 +231,12 @@ class RDFWriter(object):
 
     def _get_section_subclass(self, elem):
         """
+        _get_section_subclass checks whether the current odML element
+        is of a type that can be converted into an RDF subclass of
+        class Section.
+
         :return: RDF identifier of section subclass type if present
-                 in section_subclasses dict.
+                 in the section_subclasses dict.
         """
         sec_type = getattr(elem, "type")
         if sec_type and sec_type in self.section_subclasses:
@@ -236,11 +252,13 @@ class RDFWriter(object):
 
     def get_rdf_str(self, rdf_format="turtle"):
         """
-        Get converted into one of the supported formats data
+        Convert the current odML content of the parser to a common RDF graph
+        and return the graph as a string object in the specified RDF format.
 
         :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 'nt', 'pretty-xml',
                                              'trix', 'trig', 'nquads', 'json-ld'.
                Full lists see in utils.RDFConversionFormats
+
         :return: string object
         """
         if rdf_format not in RDFConversionFormats:
@@ -251,6 +269,16 @@ class RDFWriter(object):
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
     def write_file(self, filename, rdf_format="turtle"):
+        """
+        Convert the current odML content of the parser to a common RDF graph
+        and write the resulting graph to an output file using the provided
+        RDF output format.
+
+        :param filename:
+        :param rdf_format: Possible RDF output format. See utils.RDFConversionFormats
+                           for a full list of supported formats.
+                           Default format is 'turtle'.
+        """
         data = self.get_rdf_str(rdf_format)
         filename_ext = filename
         if filename.find(RDFConversionFormats.get(rdf_format)) < 0:
@@ -262,7 +290,7 @@ class RDFWriter(object):
 
 class RDFReader(object):
     """
-    A reader to parse odML RDF files or strings into odml documents.
+    A reader to parse odML RDF files or strings into odML documents.
 
     Usage:
         file = RDFReader().from_file("/path_to_input_rdf", "rdf_format")
@@ -271,13 +299,20 @@ class RDFReader(object):
     """
 
     def __init__(self, filename=None, doc_format=None):
+        """
+        :param filename: Path of the input odML RDF file.
+        :param doc_format: RDF format of the input odML RDF file.
+        """
         self.docs = []  # list of parsed odml docs
         if filename and doc_format:
             self.graph = Graph().parse(source=filename, format=doc_format)
 
     def to_odml(self):
         """
-        :return: list of converter odml documents
+        to_odml converts all odML documents from a common RDF graph
+        into individual odML documents.
+
+        :return: list of converted odML documents
         """
         docs_uris = list(self.graph.objects(subject=URIRef(ODML_NS.Hub),
                                             predicate=ODML_NS.hasDocument))
@@ -289,19 +324,41 @@ class RDFReader(object):
         return self.docs
 
     def from_file(self, filename, doc_format):
+        """
+        from_file loads an odML RDF file and converts all odML documents
+        from this RDF graph into individual odML documents.
+
+        :param filename: Path of the input odML RDF file.
+        :param doc_format: RDF format of the input odML RDF file.
+        :return: list of converted odML documents
+        """
         self.graph = Graph().parse(source=filename, format=doc_format)
         docs = self.to_odml()
         for curr_doc in docs:
             # Provide original file name via the document
             curr_doc._origin_file_name = os.path.basename(filename)
+
         return docs
 
     def from_string(self, file, doc_format):
+        """
+        from_string loads an odML RDF file or string object and converts all
+        odML documents from this RDF graph into individual odML documents.
+
+        :param file: Path of the input odML RDF file or an RDF graph string object.
+        :param doc_format: RDF format of the input odML RDF graph.
+        :return: list of converted odML documents
+        """
         self.graph = Graph().parse(source=StringIO(file), format=doc_format)
         return self.to_odml()
 
-    # TODO check mandatory attrs
     def parse_document(self, doc_uri):
+        """
+        parse_document parses an odML RDF Document node into an odML Document.
+
+        :param doc_uri: RDF URI of an odML Document node within an RDF graph.
+        :return: dict containing an odML Document
+        """
         doc_attrs = {}
         for attr in Document.rdf_map_items:
             elems = list(self.graph.objects(subject=doc_uri, predicate=attr[1]))
@@ -316,8 +373,13 @@ class RDFReader(object):
 
         return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
 
-    # TODO section subclass conversion
     def parse_section(self, sec_uri):
+        """
+        parse_section parses an odML RDF Section node into an odML Section.
+
+        :param sec_uri: RDF URI of an odML Section node within an RDF graph.
+        :return: dict containing an odML Section
+        """
         sec_attrs = {}
         for attr in Section.rdf_map_items:
             elems = list(self.graph.objects(subject=sec_uri, predicate=attr[1]))
@@ -338,6 +400,12 @@ class RDFReader(object):
         return sec_attrs
 
     def parse_property(self, prop_uri):
+        """
+        parse_property parses an odML RDF Property node into an odML Property.
+
+        :param prop_uri: RDF URI of an odML Property node within an RDF graph.
+        :return: dict containing an odML Property
+        """
         prop_attrs = {}
         for attr in Property.rdf_map_items:
             elems = list(self.graph.objects(subject=prop_uri, predicate=attr[1]))
@@ -366,10 +434,16 @@ class RDFReader(object):
         return prop_attrs
 
     @staticmethod
-    def _check_mandatory_attrs(attrs):
-        if "name" not in attrs:
+    def _check_mandatory_attrs(odml_entity):
+        """
+        _check_mandatory_attrs checks whether a passed odML entity contains
+        the required "name" attribute and raises a ParserException otherwise.
+
+        :param odml_entity: dict containing an odmL entity
+        """
+        if "name" not in odml_entity:
             msg = "Entity missing required 'name' attribute"
-            if "id" in attrs:
-                msg = "%s id:'%s'" % (msg, attrs["id"])
+            if "id" in odml_entity:
+                msg = "%s id:'%s'" % (msg, odml_entity["id"])
 
             raise ParserException(msg)
