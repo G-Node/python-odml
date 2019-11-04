@@ -3,12 +3,13 @@ import uuid
 import yaml
 
 from io import StringIO
-from os.path import dirname, abspath
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
 from rdflib.namespace import XSD, RDF
 
 import odml
+
+from ..doc import BaseDocument
 from ..format import Format, Document, Section, Property
 from .dict_parser import DictReader
 from .parser_utils import ParserException
@@ -21,6 +22,31 @@ except NameError:
     unicode = str
 
 odmlns = Format.namespace()
+
+
+def load_rdf_subclasses():
+    """
+    load_rdf_subclasses loads odml section types to RDF Section subclass types
+    mappings from a file and returns the mapping as a dictionary.
+    Will return an empty dictionary, if the Subclasses file cannot be loaded.
+
+    :return: Dictionary of the form {'Section type': 'RDF class type'}
+    """
+    section_subclasses = {}
+
+    subclass_file = os.path.join(odml.__path__[0], 'resources', 'section_subclasses.yaml')
+
+    if not os.path.isfile(subclass_file):
+        print("[Warning] Could not find subclass file '%s'" % subclass_file)
+        return section_subclasses
+
+    with open(subclass_file, "r") as yaml_file:
+        try:
+            section_subclasses = yaml.load(yaml_file)
+        except yaml.parser.ParserError as err:
+            print("[Error] Loading RDF subclass file: %s" % err)
+
+    return section_subclasses
 
 
 class RDFWriter(object):
@@ -36,25 +62,12 @@ class RDFWriter(object):
         """
         :param odml_documents: list of odml documents
         """
-        self.docs = odml_documents if not isinstance(odml_documents, odml.doc.BaseDocument) else [odml_documents]
+        self.docs = odml_documents if not isinstance(odml_documents, BaseDocument) else [odml_documents]
         self.hub_root = None
         self.g = Graph()
         self.g.bind("odml", odmlns)
 
-        self.section_subclasses = {}
-
-        subclass_path = os.path.join(odml.__path__[0], 'resources',
-                                     'section_subclasses.yaml')
-
-        if os.path.isfile(subclass_path):
-            with open(subclass_path, "r") as f:
-                try:
-                    self.section_subclasses = yaml.load(f)
-                except yaml.parser.ParserError as err:
-                    print(err)
-                    return
-        else:
-            print("[Warning] Could not find subclass file '%s'" % subclass_path)
+        self.section_subclasses = load_rdf_subclasses()
 
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
