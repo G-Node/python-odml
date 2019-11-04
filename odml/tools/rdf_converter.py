@@ -81,16 +81,31 @@ class RDFWriter(object):
 
         return self.graph
 
-    def save_repository_node(self, curr_node, rdf_predicate, leaf_value):
+    def save_odml_list(self, odml_list, parent_node, rdf_predicate):
         """
-        Save repository adds a node with a given repository url to the
-        current graphs terminology node. If the current graph does not
-        yet contain a terminology node, it creates one and attaches
+        save_odml_list adds all odml elements in a list to the current
+        parent node and handles all child items via save_element.
+
+        :param odml_list: list of odml entities.
+        :param parent_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate used to add all odml entities
+                              to the parent node.
+        """
+        for curr_item in odml_list:
+            node = URIRef(ODML_NS + unicode(curr_item.id))
+            self.graph.add((parent_node, rdf_predicate, node))
+            self.save_element(curr_item, node)
+
+    def save_repository_node(self, parent_node, rdf_predicate, leaf_value):
+        """
+        save_repository_node adds a node with a given repository url to
+        the current graphs terminology node. If the current graph does
+        not yet contain a terminology node, it creates one and attaches
         the current node to it.
 
-        :param curr_node: current parent node in the RDF graph.
-        :param rdf_predicate: RDF predicate that us used to add the terminology.
-                              to the current node.
+        :param parent_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate used to add the terminology
+                              to the parent node.
         :param leaf_value: Value that will be added to the RDF graph.
         """
         terminology_node = self.graph.value(predicate=RDF.type, object=URIRef(leaf_value))
@@ -101,7 +116,7 @@ class RDFWriter(object):
             self.graph.add((terminology_node, RDF.type, URIRef(leaf_value)))
             self.graph.add((self.hub_root, ODML_NS.hasTerminology, terminology_node))
 
-        self.graph.add((curr_node, rdf_predicate, terminology_node))
+        self.graph.add((parent_node, rdf_predicate, terminology_node))
 
     def save_element(self, odml_elem, node=None):
         """
@@ -147,17 +162,11 @@ class RDFWriter(object):
 
             # generating nodes for entities: sections, properties and bags of values
             elif (is_doc or is_sec) and k == 'sections' and getattr(odml_elem, k):
-                sections = getattr(odml_elem, k)
-                for curr_sec in sections:
-                    node = URIRef(ODML_NS + unicode(curr_sec.id))
-                    self.graph.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(curr_sec, node)
+                self.save_odml_list(getattr(odml_elem, k), curr_node, fmt.rdf_map(k))
+
             elif is_sec and k == 'properties' and getattr(odml_elem, k):
-                properties = getattr(odml_elem, k)
-                for curr_prop in properties:
-                    node = URIRef(ODML_NS + unicode(curr_prop.id))
-                    self.graph.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(curr_prop, node)
+                self.save_odml_list(getattr(odml_elem, k), curr_node, fmt.rdf_map(k))
+
             elif is_prop and k == 'value' and getattr(odml_elem, fmt.map(k)):
                 # "value" needs to be mapped to its appropriate
                 # Property library attribute.
