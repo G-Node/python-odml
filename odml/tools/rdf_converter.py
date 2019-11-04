@@ -53,6 +53,8 @@ class RDFWriter(object):
                 except yaml.parser.ParserError as err:
                     print(err)
                     return
+        else:
+            print("[Warning] Could not find subclass file '%s'" % subclass_path)
 
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
