@@ -269,9 +269,8 @@ class RDFReader(object):
 
     # TODO check mandatory attrs
     def parse_document(self, doc_uri):
-        rdf_doc = Document
         doc_attrs = {}
-        for attr in rdf_doc.rdf_map_items:
+        for attr in Document.rdf_map_items:
             elems = list(self.graph.objects(subject=doc_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 doc_attrs[attr[0]] = []
@@ -286,9 +285,8 @@ class RDFReader(object):
 
     # TODO section subclass conversion
     def parse_section(self, sec_uri):
-        rdf_sec = Section
         sec_attrs = {}
-        for attr in rdf_sec.rdf_map_items:
+        for attr in Section.rdf_map_items:
             elems = list(self.graph.objects(subject=sec_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 sec_attrs[attr[0]] = []
@@ -307,9 +305,8 @@ class RDFReader(object):
         return sec_attrs
 
     def parse_property(self, prop_uri):
-        rdf_prop = Property
         prop_attrs = {}
-        for attr in rdf_prop.rdf_map_items:
+        for attr in Property.rdf_map_items:
             elems = list(self.graph.objects(subject=prop_uri, predicate=attr[1]))
             if attr[0] == "value" and elems:
                 prop_attrs[attr[0]] = []
