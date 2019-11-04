@@ -21,7 +21,7 @@ try:
 except NameError:
     unicode = str
 
-odmlns = Format.namespace()
+ODML_NS = Format.namespace()
 
 
 def load_rdf_subclasses():
@@ -64,128 +64,128 @@ class RDFWriter(object):
         """
         self.docs = odml_documents if not isinstance(odml_documents, BaseDocument) else [odml_documents]
         self.hub_root = None
-        self.g = Graph()
-        self.g.bind("odml", odmlns)
+        self.graph = Graph()
+        self.graph.bind("odml", ODML_NS)
 
         self.section_subclasses = load_rdf_subclasses()
 
     def convert_to_rdf(self):
-        self.hub_root = URIRef(odmlns.Hub)
+        self.hub_root = URIRef(ODML_NS.Hub)
         if self.docs:
             for doc in self.docs:
                 self.save_element(doc)
-        return self.g
+        return self.graph
 
-    def save_element(self, e, node=None):
+    def save_element(self, odml_elem, node=None):
         """
         Save the current element to the RDF graph
-        :param e: current element
+        :param odml_elem: current element
         :param node: A node to pass the earlier created node to inner elements
         :return: the RDF graph
         """
-        fmt = e.format()
+        fmt = odml_elem.format()
 
         if not node:
-            curr_node = URIRef(odmlns + unicode(e.id))
+            curr_node = URIRef(ODML_NS + unicode(odml_elem.id))
         else:
             curr_node = node
 
         if fmt.name == "section":
-            s = self._get_section_subclass(e)
-            u = s if s else fmt.rdf_type
-            self.g.add((curr_node, RDF.type, URIRef(u)))
+            sub_sec = self._get_section_subclass(odml_elem)
+            sec_type = sub_sec if sub_sec else fmt.rdf_type
+            self.graph.add((curr_node, RDF.type, URIRef(sec_type)))
         else:
-            self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+            self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
 
         # adding doc to the hub
         if isinstance(fmt, Document.__class__):
-            self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
+            self.graph.add((self.hub_root, ODML_NS.hasDocument, curr_node))
 
             # If available add the documents filename to the document node
             # so we can identify where the data came from.
-            if hasattr(e, "_origin_file_name"):
-                self.g.add((curr_node, odmlns.hasFileName, Literal(e._origin_file_name)))
+            if hasattr(odml_elem, "_origin_file_name"):
+                self.graph.add((curr_node, ODML_NS.hasFileName, Literal(odml_elem._origin_file_name)))
 
         for k in fmt.rdf_map_keys:
             if k == 'id':
                 continue
             elif (isinstance(fmt, Document.__class__) or
                     isinstance(fmt, Section.__class__)) and k == "repository":
-                terminology_url = getattr(e, k)
+                terminology_url = getattr(odml_elem, k)
                 if terminology_url is None or not terminology_url:
                     continue
                 terminology_node = self._get_terminology_by_value(terminology_url)
                 if terminology_node:
-                    self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
+                    self.graph.add((curr_node, fmt.rdf_map(k), terminology_node))
                 else:
                     # adding terminology to the hub and to link with the doc
-                    node = URIRef(odmlns + unicode(uuid.uuid4()))
-                    self.g.add((node, RDF.type, URIRef(terminology_url)))
-                    self.g.add((self.hub_root, odmlns.hasTerminology, node))
-                    self.g.add((curr_node, fmt.rdf_map(k), node))
+                    node = URIRef(ODML_NS + unicode(uuid.uuid4()))
+                    self.graph.add((node, RDF.type, URIRef(terminology_url)))
+                    self.graph.add((self.hub_root, ODML_NS.hasTerminology, node))
+                    self.graph.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, Document.__class__) or
                     isinstance(fmt, Section.__class__)) and \
-                    k == 'sections' and getattr(e, k):
-                sections = getattr(e, k)
-                for s in sections:
-                    node = URIRef(odmlns + unicode(s.id))
-                    self.g.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(s, node)
+                    k == 'sections' and getattr(odml_elem, k):
+                sections = getattr(odml_elem, k)
+                for curr_sec in sections:
+                    node = URIRef(ODML_NS + unicode(curr_sec.id))
+                    self.graph.add((curr_node, fmt.rdf_map(k), node))
+                    self.save_element(curr_sec, node)
             elif isinstance(fmt, Section.__class__) and \
-                    k == 'properties' and getattr(e, k):
-                properties = getattr(e, k)
-                for p in properties:
-                    node = URIRef(odmlns + unicode(p.id))
-                    self.g.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(p, node)
+                    k == 'properties' and getattr(odml_elem, k):
+                properties = getattr(odml_elem, k)
+                for curr_prop in properties:
+                    node = URIRef(ODML_NS + unicode(curr_prop.id))
+                    self.graph.add((curr_node, fmt.rdf_map(k), node))
+                    self.save_element(curr_prop, node)
             elif isinstance(fmt, Property.__class__) and \
-                    k == 'value' and getattr(e, fmt.map(k)):
+                    k == 'value' and getattr(odml_elem, fmt.map(k)):
                 # "value" needs to be mapped to its appropriate
                 # Property library attribute.
-                values = getattr(e, fmt.map(k))
-                seq = URIRef(odmlns + unicode(uuid.uuid4()))
-                self.g.add((seq, RDF.type, RDF.Seq))
-                self.g.add((curr_node, fmt.rdf_map(k), seq))
+                values = getattr(odml_elem, fmt.map(k))
+                seq = URIRef(ODML_NS + unicode(uuid.uuid4()))
+                self.graph.add((seq, RDF.type, RDF.Seq))
+                self.graph.add((curr_node, fmt.rdf_map(k), seq))
+
                 # rdflib so far does not respect RDF:li item order
                 # in RDF:Seq on loading so we have to use custom
                 # numbered Node elements for now. Once rdflib upgrades
                 # this should be reversed to RDF:li again!
                 # see https://github.com/RDFLib/rdflib/issues/280
                 # -- keep until supported
-                # bag = URIRef(odmlns + unicode(uuid.uuid4()))
-                # self.g.add((bag, RDF.type, RDF.Bag))
-                # self.g.add((curr_node, fmt.rdf_map(k), bag))
-                # for v in values:
-                #     self.g.add((bag, RDF.li, Literal(v)))
-
+                # bag = URIRef(ODML_NS + unicode(uuid.uuid4()))
+                # self.graph.add((bag, RDF.type, RDF.Bag))
+                # self.graph.add((curr_node, fmt.rdf_map(k), bag))
+                # for curr_val in values:
+                #     self.graph.add((bag, RDF.li, Literal(curr_val)))
                 counter = 1
-                for v in values:
+                for curr_val in values:
                     pred = "%s_%s" % (unicode(RDF), counter)
-                    self.g.add((seq, URIRef(pred), Literal(v)))
+                    self.graph.add((seq, URIRef(pred), Literal(curr_val)))
                     counter = counter + 1
 
             # adding entities' properties
             else:
-                val = getattr(e, k)
+                val = getattr(odml_elem, k)
                 if val is None or not val:
                     continue
                 elif k == 'date':
-                    self.g.add((curr_node, fmt.rdf_map(k), Literal(val, datatype=XSD.date)))
+                    self.graph.add((curr_node, fmt.rdf_map(k), Literal(val, datatype=XSD.date)))
                 else:
-                    self.g.add((curr_node, fmt.rdf_map(k), Literal(val)))
-        return self.g
+                    self.graph.add((curr_node, fmt.rdf_map(k), Literal(val)))
+        return self.graph
 
     def _get_terminology_by_value(self, url):
-        return self.g.value(predicate=RDF.type, object=URIRef(url))
+        return self.graph.value(predicate=RDF.type, object=URIRef(url))
 
-    def _get_section_subclass(self, e):
+    def _get_section_subclass(self, elem):
         """
         :return: RDF identifier of section subclass type if present in section_subclasses dict
         """
-        sec_type = getattr(e, "type")
+        sec_type = getattr(elem, "type")
         if sec_type and sec_type in self.section_subclasses:
-            return odmlns[self.section_subclasses[sec_type]]
+            return ODML_NS[self.section_subclasses[sec_type]]
         else:
             return None
 
@@ -214,8 +214,9 @@ class RDFWriter(object):
         filename_ext = filename
         if filename.find(RDFConversionFormats.get(rdf_format)) < 0:
             filename_ext += RDFConversionFormats.get(rdf_format)
-        with open(filename_ext, "w") as wFile:
-            wFile.write(data)
+
+        with open(filename_ext, "w") as out_file:
+            out_file.write(data)
 
 
 class RDFReader(object):
@@ -231,14 +232,14 @@ class RDFReader(object):
     def __init__(self, filename=None, doc_format=None):
         self.docs = []  # list of parsed odml docs
         if filename and doc_format:
-            self.g = Graph().parse(source=filename, format=doc_format)
+            self.graph = Graph().parse(source=filename, format=doc_format)
 
     def to_odml(self):
         """
         :return: list of converter odml documents
         """
-        docs_uris = list(self.g.objects(subject=URIRef(odmlns.Hub),
-                                        predicate=odmlns.hasDocument))
+        docs_uris = list(self.graph.objects(subject=URIRef(ODML_NS.Hub),
+                                            predicate=ODML_NS.hasDocument))
         for doc in docs_uris:
             par = self.parse_document(doc)
             par_doc = DictReader().to_odml(par)
@@ -247,15 +248,15 @@ class RDFReader(object):
         return self.docs
 
     def from_file(self, filename, doc_format):
-        self.g = Graph().parse(source=filename, format=doc_format)
+        self.graph = Graph().parse(source=filename, format=doc_format)
         docs = self.to_odml()
-        for d in docs:
+        for curr_doc in docs:
             # Provide original file name via the document
-            d._origin_file_name = os.path.basename(filename)
+            curr_doc._origin_file_name = os.path.basename(filename)
         return docs
 
     def from_string(self, file, doc_format):
-        self.g = Graph().parse(source=StringIO(file), format=doc_format)
+        self.graph = Graph().parse(source=StringIO(file), format=doc_format)
         return self.to_odml()
 
     # TODO check mandatory attrs
@@ -263,11 +264,11 @@ class RDFReader(object):
         rdf_doc = Document
         doc_attrs = {}
         for attr in rdf_doc.rdf_map_items:
-            elems = list(self.g.objects(subject=doc_uri, predicate=attr[1]))
+            elems = list(self.graph.objects(subject=doc_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 doc_attrs[attr[0]] = []
-                for s in elems:
-                    doc_attrs[attr[0]].append(self.parse_section(s))
+                for sec in elems:
+                    doc_attrs[attr[0]].append(self.parse_section(sec))
             elif attr[0] == "id":
                 doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
             elif elems:
@@ -280,15 +281,15 @@ class RDFReader(object):
         rdf_sec = Section
         sec_attrs = {}
         for attr in rdf_sec.rdf_map_items:
-            elems = list(self.g.objects(subject=sec_uri, predicate=attr[1]))
+            elems = list(self.graph.objects(subject=sec_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 sec_attrs[attr[0]] = []
-                for s in elems:
-                    sec_attrs[attr[0]].append(self.parse_section(s))
+                for sec in elems:
+                    sec_attrs[attr[0]].append(self.parse_section(sec))
             elif attr[0] == "properties":
                 sec_attrs[attr[0]] = []
-                for p in elems:
-                    sec_attrs[attr[0]].append(self.parse_property(p))
+                for prop in elems:
+                    sec_attrs[attr[0]].append(self.parse_property(prop))
             elif attr[0] == "id":
                 sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
             elif elems:
@@ -301,20 +302,20 @@ class RDFReader(object):
         rdf_prop = Property
         prop_attrs = {}
         for attr in rdf_prop.rdf_map_items:
-            elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
+            elems = list(self.graph.objects(subject=prop_uri, predicate=attr[1]))
             if attr[0] == "value" and elems:
                 prop_attrs[attr[0]] = []
 
                 # rdflib does not respect order with RDF.li items yet, see comment above
                 # support both RDF.li and rdf:_nnn for now.
                 # Remove rdf:_nnn once rdflib respects RDF.li order in an RDF.Seq obj.
-                values = list(self.g.objects(subject=elems[0], predicate=RDF.li))
+                values = list(self.graph.objects(subject=elems[0], predicate=RDF.li))
                 if values:
-                    for v in values:
-                        prop_attrs[attr[0]].append(v.toPython())
+                    for curr_val in values:
+                        prop_attrs[attr[0]].append(curr_val.toPython())
                 else:
                     # rdf:__nnn part
-                    valseq = Seq(graph=self.g, subject=elems[0])
+                    valseq = Seq(graph=self.graph, subject=elems[0])
                     for seqitem in valseq:
                         prop_attrs[attr[0]].append(seqitem.toPython())
 
