@@ -90,6 +90,10 @@ class RDFWriter(object):
         """
         fmt = odml_elem.format()
 
+        is_doc = isinstance(fmt, Document.__class__)
+        is_sec = isinstance(fmt, Section.__class__)
+        is_prop = isinstance(fmt, Property.__class__)
+
         if not node:
             curr_node = URIRef(ODML_NS + unicode(odml_elem.id))
         else:
@@ -103,7 +107,7 @@ class RDFWriter(object):
             self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
 
         # adding doc to the hub
-        if isinstance(fmt, Document.__class__):
+        if is_doc:
             self.graph.add((self.hub_root, ODML_NS.hasDocument, curr_node))
 
             # If available add the documents filename to the document node
@@ -114,8 +118,7 @@ class RDFWriter(object):
         for k in fmt.rdf_map_keys:
             if k == 'id':
                 continue
-            elif (isinstance(fmt, Document.__class__) or
-                    isinstance(fmt, Section.__class__)) and k == "repository":
+            elif (is_doc or is_sec) and k == "repository":
                 terminology_url = getattr(odml_elem, k)
                 if terminology_url is None or not terminology_url:
                     continue
@@ -129,23 +132,19 @@ class RDFWriter(object):
                     self.graph.add((self.hub_root, ODML_NS.hasTerminology, node))
                     self.graph.add((curr_node, fmt.rdf_map(k), node))
             # generating nodes for entities: sections, properties and bags of values
-            elif (isinstance(fmt, Document.__class__) or
-                    isinstance(fmt, Section.__class__)) and \
-                    k == 'sections' and getattr(odml_elem, k):
+            elif (is_doc or is_sec) and k == 'sections' and getattr(odml_elem, k):
                 sections = getattr(odml_elem, k)
                 for curr_sec in sections:
                     node = URIRef(ODML_NS + unicode(curr_sec.id))
                     self.graph.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(curr_sec, node)
-            elif isinstance(fmt, Section.__class__) and \
-                    k == 'properties' and getattr(odml_elem, k):
+            elif is_sec and k == 'properties' and getattr(odml_elem, k):
                 properties = getattr(odml_elem, k)
                 for curr_prop in properties:
                     node = URIRef(ODML_NS + unicode(curr_prop.id))
                     self.graph.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(curr_prop, node)
-            elif isinstance(fmt, Property.__class__) and \
-                    k == 'value' and getattr(odml_elem, fmt.map(k)):
+            elif is_prop and k == 'value' and getattr(odml_elem, fmt.map(k)):
                 # "value" needs to be mapped to its appropriate
                 # Property library attribute.
                 values = getattr(odml_elem, fmt.map(k))
@@ -191,8 +190,8 @@ class RDFWriter(object):
         sec_type = getattr(elem, "type")
         if sec_type and sec_type in self.section_subclasses:
             return ODML_NS[self.section_subclasses[sec_type]]
-        else:
-            return None
+
+        return None
 
     def __str__(self):
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
