@@ -132,7 +132,7 @@ class TestRDFWriter(unittest.TestCase):
                                                object=Literal("val")))), 3)
 
     def test_section_subclass(self):
-        p = os.path.join(dirname(dirname(abspath(__file__))), 'doc', 'section_subclasses.yaml')
+        p = os.path.join(odml.__path__[0], 'resources', 'section_subclasses.yaml')
         with open(p, "r") as f:
             subclass = yaml.load(f)
 
