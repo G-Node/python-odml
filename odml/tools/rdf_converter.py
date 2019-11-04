@@ -141,19 +141,10 @@ class RDFWriter(object):
         for k in fmt.rdf_map_keys:
             if k == 'id':
                 continue
-            elif (is_doc or is_sec) and k == "repository":
-                terminology_url = getattr(odml_elem, k)
-                if terminology_url is None or not terminology_url:
-                    continue
-                terminology_node = self._get_terminology_by_value(terminology_url)
-                if terminology_node:
-                    self.graph.add((curr_node, fmt.rdf_map(k), terminology_node))
-                else:
-                    # adding terminology to the hub and to link with the doc
-                    node = URIRef(ODML_NS + unicode(uuid.uuid4()))
-                    self.graph.add((node, RDF.type, URIRef(terminology_url)))
-                    self.graph.add((self.hub_root, ODML_NS.hasTerminology, node))
-                    self.graph.add((curr_node, fmt.rdf_map(k), node))
+            elif (is_doc or is_sec) and k == "repository" and getattr(odml_elem, k):
+                self.save_repository_node(curr_node, fmt.rdf_map(k),
+                                          getattr(odml_elem, k))
+
             # generating nodes for entities: sections, properties and bags of values
             elif (is_doc or is_sec) and k == 'sections' and getattr(odml_elem, k):
                 sections = getattr(odml_elem, k)
@@ -202,9 +193,6 @@ class RDFWriter(object):
                 else:
                     self.graph.add((curr_node, fmt.rdf_map(k), Literal(val)))
         return self.graph
-
-    def _get_terminology_by_value(self, url):
-        return self.graph.value(predicate=RDF.type, object=URIRef(url))
 
     def _get_section_subclass(self, elem):
         """
