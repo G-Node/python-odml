@@ -113,7 +113,8 @@ class RDFWriter(object):
             # If available add the documents filename to the document node
             # so we can identify where the data came from.
             if hasattr(odml_elem, "_origin_file_name"):
-                self.graph.add((curr_node, ODML_NS.hasFileName, Literal(odml_elem._origin_file_name)))
+                curr_lit = Literal(odml_elem._origin_file_name)
+                self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
 
         for k in fmt.rdf_map_keys:
             if k == 'id':
@@ -152,10 +153,9 @@ class RDFWriter(object):
                 self.graph.add((seq, RDF.type, RDF.Seq))
                 self.graph.add((curr_node, fmt.rdf_map(k), seq))
 
-                # rdflib so far does not respect RDF:li item order
-                # in RDF:Seq on loading so we have to use custom
-                # numbered Node elements for now. Once rdflib upgrades
-                # this should be reversed to RDF:li again!
+                # rdflib so far does not respect RDF:li item order in RDF:Seq on
+                # loading so we have to use custom numbered Node elements for now.
+                # Once rdflib upgrades this should be reversed to RDF:li again!
                 # see https://github.com/RDFLib/rdflib/issues/280
                 # -- keep until supported
                 # bag = URIRef(ODML_NS + unicode(uuid.uuid4()))
@@ -175,7 +175,8 @@ class RDFWriter(object):
                 if val is None or not val:
                     continue
                 elif k == 'date':
-                    self.graph.add((curr_node, fmt.rdf_map(k), Literal(val, datatype=XSD.date)))
+                    curr_lit = Literal(val, datatype=XSD.date)
+                    self.graph.add((curr_node, fmt.rdf_map(k), curr_lit))
                 else:
                     self.graph.add((curr_node, fmt.rdf_map(k), Literal(val)))
         return self.graph
@@ -185,7 +186,8 @@ class RDFWriter(object):
 
     def _get_section_subclass(self, elem):
         """
-        :return: RDF identifier of section subclass type if present in section_subclasses dict
+        :return: RDF identifier of section subclass type if present
+                 in section_subclasses dict.
         """
         sec_type = getattr(elem, "type")
         if sec_type and sec_type in self.section_subclasses:
@@ -202,15 +204,17 @@ class RDFWriter(object):
     def get_rdf_str(self, rdf_format="turtle"):
         """
         Get converted into one of the supported formats data
-        :param rdf_format: possible formats: 'xml', 'n3', 'turtle',
-                                             'nt', 'pretty-xml', 'trix',
-                                             'trig', 'nquads', 'json-ld'.
+
+        :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 'nt', 'pretty-xml',
+                                             'trix', 'trig', 'nquads', 'json-ld'.
                Full lists see in utils.RDFConversionFormats
         :return: string object
         """
         if rdf_format not in RDFConversionFormats:
-            raise ValueError("odml.RDFWriter.get_rdf_str: Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(list(RDFConversionFormats)))
+            msg = "odml.RDFWriter.get_rdf_str: Format for output files is incorrect."
+            msg = "%s Please choose from the list: %s" % (msg, list(RDFConversionFormats))
+            raise ValueError(msg)
+
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
     def write_file(self, filename, rdf_format="turtle"):
@@ -319,9 +323,9 @@ class RDFReader(object):
                         prop_attrs[attr[0]].append(curr_val.toPython())
                 else:
                     # rdf:__nnn part
-                    valseq = Seq(graph=self.graph, subject=elems[0])
-                    for seqitem in valseq:
-                        prop_attrs[attr[0]].append(seqitem.toPython())
+                    val_seq = Seq(graph=self.graph, subject=elems[0])
+                    for seq_item in val_seq:
+                        prop_attrs[attr[0]].append(seq_item.toPython())
 
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
@@ -333,7 +337,8 @@ class RDFReader(object):
 
     def _check_mandatory_attrs(self, attrs):
         if "name" not in attrs:
+            msg = "Entity missing required 'name' attribute"
             if "id" in attrs:
-                raise ParserException("Entity with id: %s does not have required \"name\" attribute" % attrs["id"])
-            else:
-                raise ParserException("Some entities does not have required \"name\" attribute")
+                msg = "%s id:'%s'" % (msg, attrs["id"])
+
+            raise ParserException(msg)
