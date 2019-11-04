@@ -10,8 +10,7 @@ import yaml
 
 from ..doc import BaseDocument
 from ..format import Format, Document, Section, Property
-from ..info import FORMAT_VERSION
-from ..resources import RDF_SUBCLASS_FILE
+from ..info import FORMAT_VERSION, INSTALL_PATH
 from .dict_parser import DictReader
 from .parser_utils import ParserException
 from .utils import RDFConversionFormats
@@ -34,11 +33,13 @@ def load_rdf_subclasses():
     """
     section_subclasses = {}
 
-    if not os.path.isfile(RDF_SUBCLASS_FILE):
-        print("[Warning] Could not find subclass file '%s'" % RDF_SUBCLASS_FILE)
+    subclass_file = os.path.join(INSTALL_PATH, "resources", "section_subclasses.yaml")
+
+    if not os.path.isfile(subclass_file):
+        print("[Warning] Could not find subclass file '%s'" % subclass_file)
         return section_subclasses
 
-    with open(RDF_SUBCLASS_FILE, "r") as yaml_file:
+    with open(subclass_file, "r") as yaml_file:
         try:
             section_subclasses = yaml.load(yaml_file)
         except yaml.parser.ParserError as err:
