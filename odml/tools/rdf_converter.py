@@ -62,7 +62,10 @@ class RDFWriter(object):
         """
         :param odml_documents: list of odml documents
         """
-        self.docs = odml_documents if not isinstance(odml_documents, BaseDocument) else [odml_documents]
+        if not isinstance(odml_documents, list):
+            odml_documents = [odml_documents]
+
+        self.docs = odml_documents
         self.hub_root = None
         self.graph = Graph()
         self.graph.bind("odml", ODML_NS)
@@ -73,7 +76,9 @@ class RDFWriter(object):
         self.hub_root = URIRef(ODML_NS.Hub)
         if self.docs:
             for doc in self.docs:
-                self.save_element(doc)
+                if isinstance(doc, BaseDocument):
+                    self.save_element(doc)
+
         return self.graph
 
     def save_element(self, odml_elem, node=None):
