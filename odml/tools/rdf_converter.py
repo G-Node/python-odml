@@ -7,11 +7,11 @@ from rdflib.graph import Seq
 from rdflib.namespace import XSD, RDF
 
 import yaml
-import odml
 
 from ..doc import BaseDocument
 from ..format import Format, Document, Section, Property
 from ..info import FORMAT_VERSION
+from ..resources import RDF_SUBCLASS_FILE
 from .dict_parser import DictReader
 from .parser_utils import ParserException
 from .utils import RDFConversionFormats
@@ -34,13 +34,11 @@ def load_rdf_subclasses():
     """
     section_subclasses = {}
 
-    subclass_file = os.path.join(odml.__path__[0], 'resources', 'section_subclasses.yaml')
-
-    if not os.path.isfile(subclass_file):
-        print("[Warning] Could not find subclass file '%s'" % subclass_file)
+    if not os.path.isfile(RDF_SUBCLASS_FILE):
+        print("[Warning] Could not find subclass file '%s'" % RDF_SUBCLASS_FILE)
         return section_subclasses
 
-    with open(subclass_file, "r") as yaml_file:
+    with open(RDF_SUBCLASS_FILE, "r") as yaml_file:
         try:
             section_subclasses = yaml.load(yaml_file)
         except yaml.parser.ParserError as err:
@@ -188,9 +186,11 @@ class RDFWriter(object):
                 self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
 
         for k in fmt.rdf_map_keys:
-            if k == "id" or \
-                    (k == "value" and not getattr(odml_elem, fmt.map(k))) or \
-                    (not getattr(odml_elem, k)):
+            # Ignore "id" and empty values, but make sure the content of "value"
+            # is only accessed via its non deprecated property "values".
+            if k == "id" or k == "value" and not getattr(odml_elem, fmt.map(k)):
+                continue
+            elif k != "value" and not getattr(odml_elem, k):
                 continue
 
             if (is_doc or is_sec) and k == "repository":
@@ -207,9 +207,11 @@ class RDFWriter(object):
                 # 'value' needs to be mapped to its appropriate odml Property attribute.
                 self.save_odml_values(curr_node, fmt.rdf_map(k),
                                       getattr(odml_elem, fmt.map(k)))
+
             elif k == "date":
                 curr_lit = Literal(getattr(odml_elem, k), datatype=XSD.date)
                 self.graph.add((curr_node, fmt.rdf_map(k), curr_lit))
+
             else:
                 curr_lit = Literal(getattr(odml_elem, k))
                 self.graph.add((curr_node, fmt.rdf_map(k), curr_lit))
