@@ -126,21 +126,21 @@ class RDFWriter(object):
             # generating nodes for entities: sections, properties and bags of values
             elif (isinstance(fmt, Document.__class__) or
                     isinstance(fmt, Section.__class__)) and \
-                    k == 'sections' and len(getattr(e, k)) > 0:
+                    k == 'sections' and getattr(e, k):
                 sections = getattr(e, k)
                 for s in sections:
                     node = URIRef(odmlns + unicode(s.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(s, node)
             elif isinstance(fmt, Section.__class__) and \
-                    k == 'properties' and len(getattr(e, k)) > 0:
+                    k == 'properties' and getattr(e, k):
                 properties = getattr(e, k)
                 for p in properties:
                     node = URIRef(odmlns + unicode(p.id))
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, Property.__class__) and \
-                    k == 'value' and len(getattr(e, fmt.map(k))) > 0:
+                    k == 'value' and getattr(e, fmt.map(k)):
                 # "value" needs to be mapped to its appropriate
                 # Property library attribute.
                 values = getattr(e, fmt.map(k))
@@ -271,7 +271,7 @@ class RDFReader(object):
             elif attr[0] == "id":
                 doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
             else:
-                if len(elems) > 0:
+                if elems:
                     doc_attrs[attr[0]] = unicode(elems[0].toPython())
 
         return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
@@ -293,7 +293,7 @@ class RDFReader(object):
             elif attr[0] == "id":
                 sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
             else:
-                if len(elems) > 0:
+                if elems:
                     sec_attrs[attr[0]] = unicode(elems[0].toPython())
         self._check_mandatory_attrs(sec_attrs)
         return sec_attrs
@@ -303,14 +303,14 @@ class RDFReader(object):
         prop_attrs = {}
         for attr in rdf_prop.rdf_map_items:
             elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
-            if attr[0] == "value" and len(elems) > 0:
+            if attr[0] == "value" and elems:
                 prop_attrs[attr[0]] = []
 
                 # rdflib does not respect order with RDF.li items yet, see comment above
                 # support both RDF.li and rdf:_nnn for now.
                 # Remove rdf:_nnn once rdflib respects RDF.li order in an RDF.Seq obj.
                 values = list(self.g.objects(subject=elems[0], predicate=RDF.li))
-                if len(values) > 0:
+                if values:
                     for v in values:
                         prop_attrs[attr[0]].append(v.toPython())
                 else:
@@ -322,7 +322,7 @@ class RDFReader(object):
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
             else:
-                if len(elems) > 0:
+                if elems:
                     prop_attrs[attr[0]] = unicode(elems[0].toPython())
         self._check_mandatory_attrs(prop_attrs)
         return prop_attrs
