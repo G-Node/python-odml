@@ -81,6 +81,28 @@ class RDFWriter(object):
 
         return self.graph
 
+    def save_repository_node(self, curr_node, rdf_predicate, leaf_value):
+        """
+        Save repository adds a node with a given repository url to the
+        current graphs terminology node. If the current graph does not
+        yet contain a terminology node, it creates one and attaches
+        the current node to it.
+
+        :param curr_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate that us used to add the terminology.
+                              to the current node.
+        :param leaf_value: Value that will be added to the RDF graph.
+        """
+        terminology_node = self.graph.value(predicate=RDF.type, object=URIRef(leaf_value))
+        if not terminology_node:
+            # adding terminology url value to the graph and linking it
+            # to the current RDF node.
+            terminology_node = URIRef(ODML_NS + unicode(uuid.uuid4()))
+            self.graph.add((terminology_node, RDF.type, URIRef(leaf_value)))
+            self.graph.add((self.hub_root, ODML_NS.hasTerminology, terminology_node))
+
+        self.graph.add((curr_node, rdf_predicate, terminology_node))
+
     def save_element(self, odml_elem, node=None):
         """
         Save the current element to the RDF graph
