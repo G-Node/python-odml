@@ -335,7 +335,8 @@ class RDFReader(object):
         self._check_mandatory_attrs(prop_attrs)
         return prop_attrs
 
-    def _check_mandatory_attrs(self, attrs):
+    @staticmethod
+    def _check_mandatory_attrs(attrs):
         if "name" not in attrs:
             msg = "Entity missing required 'name' attribute"
             if "id" in attrs:
