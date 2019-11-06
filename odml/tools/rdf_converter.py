@@ -18,8 +18,7 @@ import odml
 from ..format import Format, Document, Section, Property
 from ..info import FORMAT_VERSION, INSTALL_PATH
 from .dict_parser import DictReader
-from .parser_utils import ParserException
-from .utils import RDFConversionFormats
+from .parser_utils import ParserException, RDF_CONVERSION_FORMATS
 
 try:
     unicode = unicode
@@ -303,15 +302,15 @@ class RDFWriter(object):
         Convert the current odML content of the parser to a common RDF graph
         and return the graph as a string object in the specified RDF format.
 
-        :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 'nt', 'pretty-xml',
-                                             'trix', 'trig', 'nquads', 'json-ld'.
-               Full lists see in utils.RDFConversionFormats
+        :param rdf_format: RDF output format. Default format is 'turtle'.
+                           Available formats: 'xml', 'n3', 'turtle', 'nt',
+                           'pretty-xml', 'trix', 'trig', 'nquads', 'json-ld'.
 
         :return: string object
         """
-        if rdf_format not in RDFConversionFormats:
+        if rdf_format not in RDF_CONVERSION_FORMATS:
             msg = "odml.RDFWriter.get_rdf_str: Format for output files is incorrect."
-            msg = "%s Please choose from the list: %s" % (msg, list(RDFConversionFormats))
+            msg = "%s Please choose from the list: %s" % (msg, list(RDF_CONVERSION_FORMATS))
             raise ValueError(msg)
 
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
@@ -323,14 +322,14 @@ class RDFWriter(object):
         RDF output format.
 
         :param filename:
-        :param rdf_format: Possible RDF output format. See utils.RDFConversionFormats
-                           for a full list of supported formats.
-                           Default format is 'turtle'.
+        :param rdf_format: RDF output format. Default format is 'turtle'.
+                           Available formats: 'xml', 'n3', 'turtle', 'nt',
+                           'pretty-xml', 'trix', 'trig', 'nquads', 'json-ld'.
         """
         data = self.get_rdf_str(rdf_format)
         filename_ext = filename
-        if filename.find(RDFConversionFormats.get(rdf_format)) < 0:
-            filename_ext += RDFConversionFormats.get(rdf_format)
+        if filename.find(RDF_CONVERSION_FORMATS.get(rdf_format)) < 0:
+            filename_ext += RDF_CONVERSION_FORMATS.get(rdf_format)
 
         with open(filename_ext, "w") as out_file:
             out_file.write(data)
