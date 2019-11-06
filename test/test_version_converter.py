@@ -13,7 +13,7 @@ except ImportError:
 from contextlib import contextmanager
 from lxml import etree as ET
 from odml.terminology import REPOSITORY_BASE
-from odml.tools.version_converter import VersionConverter
+from odml.tools.converters.version_converter import VersionConverter
 
 try:
     unicode = unicode

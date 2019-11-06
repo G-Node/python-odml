@@ -5,9 +5,10 @@ import sys
 import yaml
 
 from lxml import etree as ET
-from .. import format
-from ..info import FORMAT_VERSION
-from ..terminology import Terminologies, REPOSITORY_BASE
+
+from ... import format
+from ...info import FORMAT_VERSION
+from ...terminology import Terminologies, REPOSITORY_BASE
 
 import uuid
 

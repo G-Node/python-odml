@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 from odml import load
-from odml.tools.version_converter import VersionConverter as VC
+from odml.tools.converters.version_converter import VersionConverter as VC
 
 
 class TestVersionConverterIntegration(unittest.TestCase):

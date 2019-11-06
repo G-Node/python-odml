@@ -4,9 +4,9 @@ import re
 import sys
 
 import odml
-from .rdf_converter import RDFWriter
+from ..rdf_converter import RDFWriter
 from .version_converter import VersionConverter
-from .utils import ConversionFormats
+from ..utils import ConversionFormats
 
 try:
     unicode = unicode
@@ -21,13 +21,13 @@ class FormatConverter(object):
         """
         Enable usage of the argparse for calling convert_dir(...)
         Example:
-            1) >> python format_converter.py ./..path../input_dir v1_1 -out ./..path../output_dir -r
+            1) >> python -m odml.tools.converters.format_converter ./..path../input_dir v1_1 -out ./..path../output_dir -r
             
                Convert files from the path <./..path../input_dir> to .xml odml version 1.1,
                writes them into <./..path../output_dir> including subdirectories 
                and its files from the input path.
             
-            2) >> python format_converter.py ./..path../input_dir odml
+            2) >> python -m odml.tools.converters.format_converter ./..path../input_dir odml
             
                Converts files from path <./..path../input_dir> to .odml,
                writes them into <./..path../input_dir_odml> not including subdirectories.

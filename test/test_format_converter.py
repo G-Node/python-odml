@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from contextlib import contextmanager
 
-from odml.tools.format_converter import FormatConverter
+from odml.tools.converters.format_converter import FormatConverter
 
 FC = FormatConverter
 
