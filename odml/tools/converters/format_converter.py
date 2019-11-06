@@ -4,8 +4,9 @@ import re
 import sys
 
 import odml
-from ..rdf_converter import RDFWriter
-from .version_converter import VersionConverter
+
+from .. import RDFWriter
+from . import VersionConverter
 from ..utils import ConversionFormats
 
 try:
