@@ -1,4 +1,4 @@
-from odml.tools.query_creator import QueryCreator, QueryParser, QueryParserFuzzy
+from .query_creator import QueryCreator, QueryParser, QueryParserFuzzy
 
 
 class FuzzyFinder(object):
