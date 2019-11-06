@@ -13,7 +13,8 @@ from rdflib.namespace import XSD, RDF
 
 import yaml
 
-from ..doc import BaseDocument
+import odml
+
 from ..format import Format, Document, Section, Property
 from ..info import FORMAT_VERSION, INSTALL_PATH
 from .dict_parser import DictReader
@@ -87,8 +88,7 @@ class RDFWriter(object):
         self.hub_root = URIRef(ODML_NS.Hub)
         if self.docs:
             for doc in self.docs:
-                if isinstance(doc, BaseDocument):
-                    # make sure links and includes are resolved before conversion
+                if isinstance(doc, odml.doc.BaseDocument):
                     doc.finalize()
                     self.save_document(doc)
 
