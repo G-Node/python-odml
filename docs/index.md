@@ -135,7 +135,8 @@ its identifier RRID:SCR_001376 and/or the reference:
 
 ### Referenced By
 
-- Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169)
+- Sprenger et al (2019) [doi:10.3389/fninf.2019.00062](https://doi.org/10.3389/fninf.2019.00062)
+- Dragly et al (2018) [doi:10.3389/fninf.2018.00016](https://doi.org/10.3389/fninf.2018.00016)
 - Brochier et al (2018) [doi:10.1038/sdata.2018.55](https://doi.org/10.1038/sdata.2018.55)
 - Moucek et al (2017) [doi:10.1038/sdata.2016.121](https://doi.org/10.1038/sdata.2016.121)
 - Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024)
