@@ -43,8 +43,8 @@ class RDFWriter(object):
 
         self.section_subclasses = {}
 
-        subclass_path = os.path.join(dirname(dirname(dirname(abspath(__file__)))),
-                         'doc', 'section_subclasses.yaml')
+        subclass_path = os.path.join(odml.__path__[0], 'resources',
+                                     'section_subclasses.yaml')
 
         if os.path.isfile(subclass_path):
             with open(subclass_path, "r") as f:
@@ -53,6 +53,8 @@ class RDFWriter(object):
                 except yaml.parser.ParserError as err:
                     print(err)
                     return
+        else:
+            print("[Warning] Could not find subclass file '%s'" % subclass_path)
 
     def convert_to_rdf(self):
         self.hub_root = URIRef(odmlns.Hub)
@@ -125,8 +127,10 @@ class RDFWriter(object):
                     self.g.add((curr_node, fmt.rdf_map(k), node))
                     self.save_element(p, node)
             elif isinstance(fmt, Property.__class__) and \
-                    k == 'value' and len(getattr(e, k)) > 0:
-                values = getattr(e, k)
+                    k == 'value' and len(getattr(e, fmt.map(k))) > 0:
+                # "value" needs to be mapped to its appropriate
+                # Property library attribute.
+                values = getattr(e, fmt.map(k))
                 seq = URIRef(odmlns + unicode(uuid.uuid4()))
                 self.g.add((seq, RDF.type, RDF.Seq))
                 self.g.add((curr_node, fmt.rdf_map(k), seq))

@@ -5,6 +5,9 @@ until the next release.
 
 # Latest changes in master
 
+## Minor changes, updates and fixes
+- The `section_subclasses.yaml` file is moved from the `doc` folder to the new `odml/resources` folder. This allows usage of the file with all install options. See issue #212 for details.
+
 # Version 1.4.3
 
 ## Introduction of odML templates support and update in odML terminology handling
