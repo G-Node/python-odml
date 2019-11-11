@@ -88,6 +88,8 @@ class RDFWriter(object):
         if self.docs:
             for doc in self.docs:
                 if isinstance(doc, BaseDocument):
+                    # make sure links and includes are resolved before conversion
+                    doc.finalize()
                     self.save_element(doc)
 
         return self.graph
