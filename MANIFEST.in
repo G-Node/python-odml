@@ -2,3 +2,4 @@ include LICENSE
 include README.rst
 include odml/info.json
 include odml/resources/section_subclasses.yaml
+include odml/resources/odml-ontology.ttl
