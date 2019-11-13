@@ -124,15 +124,15 @@ class RDFWriter(object):
             self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
             counter = counter + 1
 
-    def save_odml_list(self, odml_list, parent_node, rdf_predicate):
+    def save_odml_list(self, parent_node, rdf_predicate, odml_list):
         """
         save_odml_list adds all odml elements in a list to the current
         parent node and handles all child items via save_element.
 
-        :param odml_list: list of odml entities.
         :param parent_node: current parent node in the RDF graph.
         :param rdf_predicate: RDF predicate used to add all odml entities
                               to the parent node.
+        :param odml_list: list of odml entities.
         """
         for curr_item in odml_list:
             node = URIRef(ODML_NS + unicode(curr_item.id))
@@ -200,7 +200,7 @@ class RDFWriter(object):
                 self.save_repository_node(curr_node, curr_pred, curr_val)
             elif k == "sections":
                 # generating nodes for child sections
-                self.save_odml_list(curr_val, curr_node, curr_pred)
+                self.save_odml_list(curr_node, curr_pred, curr_val)
             elif k == "date":
                 curr_lit = Literal(curr_val, datatype=XSD.date)
                 self.graph.add((curr_node, curr_pred, curr_lit))
@@ -239,7 +239,7 @@ class RDFWriter(object):
 
             # generating nodes for sections and properties
             elif k in ["sections", "properties"]:
-                self.save_odml_list(curr_val, curr_node, curr_pred)
+                self.save_odml_list(curr_node, curr_pred, curr_val)
             else:
                 curr_lit = Literal(curr_val)
                 self.graph.add((curr_node, curr_pred, curr_lit))
