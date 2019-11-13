@@ -239,6 +239,39 @@ class RDFWriter(object):
                 curr_lit = Literal(curr_val)
                 self.graph.add((curr_node, curr_pred, curr_lit))
 
+    def save_property(self, prop, curr_node):
+        """
+        Add the current odML Property to the RDF graph and handle all child
+        elements.
+
+        :param prop: An odml Section that should be added to the RDF graph.
+        :param curr_node: An RDF node that is used to append the current odml element
+                          to the current RDF graph.
+        """
+        fmt = prop.format()
+
+        self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+
+        for k in fmt.rdf_map_keys:
+            curr_pred = fmt.rdf_map(k)
+            # Make sure the content of "value" is only accessed via its
+            # non deprecated property "values".
+            if k == "value":
+                curr_val = getattr(prop, fmt.map(k))
+            else:
+                curr_val = getattr(prop, k)
+
+            # Ignore "id" and empty values, but make sure the content of "value"
+            # is only accessed via its non deprecated property "values".
+            if k == "id" or not curr_val:
+                continue
+            elif k == "value":
+                # generating nodes for Property values
+                self.save_odml_values(curr_node, curr_pred, curr_val)
+            else:
+                curr_lit = Literal(curr_val)
+                self.graph.add((curr_node, curr_pred, curr_lit))
+
     def save_element(self, odml_elem, node=None):
         """
         Save the current odml element to the RDF graph and handle all child
