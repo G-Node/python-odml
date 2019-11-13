@@ -161,11 +161,52 @@ class RDFWriter(object):
 
         self.graph.add((parent_node, rdf_predicate, terminology_node))
 
+    def save_document(self, doc, curr_node=None):
+        """
+        Add the current odML Document to the RDF graph and handle all child
+        elements recursively.
+
+        :param doc: An odml Document that should be added to the RDF graph.
+        :param curr_node: An RDF node that is used to append the current odml element
+                          to the Hub node of the current RDF graph.
+        """
+        fmt = doc.format()
+
+        if not curr_node:
+            curr_node = URIRef(ODML_NS + unicode(doc.id))
+
+        self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+        self.graph.add((self.hub_root, ODML_NS.hasDocument, curr_node))
+
+        # If available, add the documents' filename to the document node
+        # so we can identify where the data came from.
+        if hasattr(doc, "_origin_file_name"):
+            curr_lit = Literal(doc._origin_file_name)
+            self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
+
+        for k in fmt.rdf_map_keys:
+            curr_pred = fmt.rdf_map(k)
+            curr_val = getattr(doc, k)
+
+            # Ignore an "id" entry, it has already been used to create the node itself.
+            if k == "id" or not curr_val:
+                continue
+            elif k == "repository":
+                self.save_repository_node(curr_node, curr_pred, curr_val)
+            elif k == "sections":
+                # generating nodes for child sections
+                self.save_odml_list(curr_val, curr_node, curr_pred)
+            elif k == "date":
+                curr_lit = Literal(curr_val, datatype=XSD.date)
+                self.graph.add((curr_node, curr_pred, curr_lit))
+            else:
+                curr_lit = Literal(curr_val)
+                self.graph.add((curr_node, curr_pred, curr_lit))
+
     def save_element(self, odml_elem, node=None):
         """
         Save the current odml element to the RDF graph and handle all child
         elements of the current odml element recursively.
-
         :param odml_elem: An odml element that should be added to the RDF graph.
         :param node: An RDF node that is used to append the current odml element
                      to the RDF graph. If None, a new node will be created and
