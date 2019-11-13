@@ -203,6 +203,42 @@ class RDFWriter(object):
                 curr_lit = Literal(curr_val)
                 self.graph.add((curr_node, curr_pred, curr_lit))
 
+    def save_section(self, sec, curr_node):
+        """
+        Add the current odML Section to the RDF graph and handle all child
+        elements recursively.
+
+        :param sec: An odml Section that should be added to the RDF graph.
+        :param curr_node: An RDF node that is used to append the current odml element
+                          to the current RDF graph.
+        """
+        fmt = sec.format()
+
+        # Add type of current node to the RDF graph
+        curr_type = fmt.rdf_type
+        # Handle section subclass types
+        sub_sec = self._get_section_subclass(sec)
+        if sub_sec:
+            curr_type = sub_sec
+        self.graph.add((curr_node, RDF.type, URIRef(curr_type)))
+
+        for k in fmt.rdf_map_keys:
+            curr_pred = fmt.rdf_map(k)
+            curr_val = getattr(sec, k)
+
+            # Ignore an "id" entry, it has already been used to create the node itself.
+            if k == "id" or not curr_val:
+                continue
+            elif k == "repository":
+                self.save_repository_node(curr_node, curr_pred, curr_val)
+
+            # generating nodes for sections and properties
+            elif k in ["sections", "properties"]:
+                self.save_odml_list(curr_val, curr_node, curr_pred)
+            else:
+                curr_lit = Literal(curr_val)
+                self.graph.add((curr_node, curr_pred, curr_lit))
+
     def save_element(self, odml_elem, node=None):
         """
         Save the current odml element to the RDF graph and handle all child
