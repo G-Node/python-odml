@@ -1,9 +1,9 @@
 import os
 import json
 
-here = os.path.dirname(__file__)
+INSTALL_PATH = os.path.dirname(__file__)
 
-with open(os.path.join(here, "info.json")) as infofile:
+with open(os.path.join(INSTALL_PATH, "info.json")) as infofile:
     infodict = json.load(infofile)
 
 VERSION = infodict["VERSION"]

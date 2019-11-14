@@ -1,18 +1,23 @@
+"""
+The RDF converter module provides conversion of odML documents to RDF and
+the conversion of odML flavored RDF to odML documents.
+"""
+
 import os
 import uuid
-import yaml
 
 from io import StringIO
-from os.path import dirname, abspath
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
 from rdflib.namespace import XSD, RDF
 
-import odml
+import yaml
+
+from ..doc import BaseDocument
 from ..format import Format, Document, Section, Property
+from ..info import FORMAT_VERSION, INSTALL_PATH
 from .dict_parser import DictReader
 from .parser_utils import ParserException
-from ..info import FORMAT_VERSION
 from .utils import RDFConversionFormats
 
 try:
@@ -20,7 +25,32 @@ try:
 except NameError:
     unicode = str
 
-odmlns = Format.namespace()
+ODML_NS = Format.namespace()
+
+
+def load_rdf_subclasses():
+    """
+    load_rdf_subclasses loads odml section types to RDF Section subclass types
+    mappings from a file and returns the mapping as a dictionary.
+    Will return an empty dictionary, if the Subclasses file cannot be loaded.
+
+    :return: Dictionary of the form {'Section type': 'RDF class type'}
+    """
+    section_subclasses = {}
+
+    subclass_file = os.path.join(INSTALL_PATH, "resources", "section_subclasses.yaml")
+
+    if not os.path.isfile(subclass_file):
+        print("[Warning] Could not find subclass file '%s'" % subclass_file)
+        return section_subclasses
+
+    with open(subclass_file, "r") as yaml_file:
+        try:
+            section_subclasses = yaml.load(yaml_file)
+        except yaml.parser.ParserError as err:
+            print("[Error] Loading RDF subclass file: %s" % err)
+
+    return section_subclasses
 
 
 class RDFWriter(object):
@@ -34,147 +64,233 @@ class RDFWriter(object):
 
     def __init__(self, odml_documents):
         """
-        :param odml_documents: list of odml documents
+        :param odml_documents: list of odML documents
         """
-        self.docs = odml_documents if not isinstance(odml_documents, odml.doc.BaseDocument) else [odml_documents]
+        if not isinstance(odml_documents, list):
+            odml_documents = [odml_documents]
+
+        self.docs = odml_documents
         self.hub_root = None
-        self.g = Graph()
-        self.g.bind("odml", odmlns)
+        self.graph = Graph()
+        self.graph.bind("odml", ODML_NS)
 
-        self.section_subclasses = {}
-
-        subclass_path = os.path.join(odml.__path__[0], 'resources',
-                                     'section_subclasses.yaml')
-
-        if os.path.isfile(subclass_path):
-            with open(subclass_path, "r") as f:
-                try:
-                    self.section_subclasses = yaml.load(f)
-                except yaml.parser.ParserError as err:
-                    print(err)
-                    return
-        else:
-            print("[Warning] Could not find subclass file '%s'" % subclass_path)
+        self.section_subclasses = load_rdf_subclasses()
 
     def convert_to_rdf(self):
-        self.hub_root = URIRef(odmlns.Hub)
+        """
+        convert_to_rdf converts all odML documents to RDF,
+        connects them via a common "Hub" RDF node and
+        returns the created RDF graph.
+
+        :return: An RDF graph.
+        """
+        self.hub_root = URIRef(ODML_NS.Hub)
         if self.docs:
             for doc in self.docs:
-                self.save_element(doc)
-        return self.g
+                if isinstance(doc, BaseDocument):
+                    # make sure links and includes are resolved before conversion
+                    doc.finalize()
+                    self.save_document(doc)
 
-    def save_element(self, e, node=None):
+        return self.graph
+
+    def save_odml_values(self, parent_node, rdf_predicate, values):
         """
-        Save the current element to the RDF graph
-        :param e: current element
-        :param node: A node to pass the earlier created node to inner elements
-        :return: the RDF graph
+        save_odml_values adds an RDF seq node to the parent RDF node
+        and creates a value leaf node for every odml value.
+
+        :param parent_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate used to add the Seq node
+                              to the current parent node.
+        :param values: list of odml values.
         """
-        fmt = e.format()
+        seq = URIRef(ODML_NS + unicode(uuid.uuid4()))
+        self.graph.add((seq, RDF.type, RDF.Seq))
+        self.graph.add((parent_node, rdf_predicate, seq))
 
-        if not node:
-            curr_node = URIRef(odmlns + unicode(e.id))
-        else:
-            curr_node = node
+        # rdflib so far does not respect RDF:li item order in RDF:Seq on
+        # loading so we have to use custom numbered Node elements for now.
+        # Once rdflib upgrades this should be reversed to RDF:li again!
+        # see https://github.com/RDFLib/rdflib/issues/280
+        # -- keep until supported
+        # bag = URIRef(ODML_NS + unicode(uuid.uuid4()))
+        # self.graph.add((bag, RDF.type, RDF.Bag))
+        # self.graph.add((curr_node, fmt.rdf_map(k), bag))
+        # for curr_val in values:
+        #     self.graph.add((bag, RDF.li, Literal(curr_val)))
+        counter = 1
+        for curr_val in values:
+            custom_predicate = "%s_%s" % (unicode(RDF), counter)
+            self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
+            counter = counter + 1
 
-        if fmt.name == "section":
-            s = self._get_section_subclass(e)
-            u = s if s else fmt.rdf_type
-            self.g.add((curr_node, RDF.type, URIRef(u)))
-        else:
-            self.g.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+    def save_odml_list(self, parent_node, rdf_predicate, odml_list):
+        """
+        save_odml_list adds all odml elements in a list to the current
+        parent node and handles all child items via save_element.
 
-        # adding doc to the hub
-        if isinstance(fmt, Document.__class__):
-            self.g.add((self.hub_root, odmlns.hasDocument, curr_node))
+        :param parent_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate used to add all odml entities
+                              to the parent node.
+        :param odml_list: list of odml entities.
+        """
+        for curr_item in odml_list:
+            node = URIRef(ODML_NS + unicode(curr_item.id))
+            self.graph.add((parent_node, rdf_predicate, node))
 
-            # If available add the documents filename to the document node
-            # so we can identify where the data came from.
-            if hasattr(e, "_origin_file_name"):
-                self.g.add((curr_node, odmlns.hasFileName, Literal(e._origin_file_name)))
+            fmt = curr_item.format()
+            if fmt.name == Section.name:
+                self.save_section(curr_item, node)
+            elif fmt.name == Property.name:
+                self.save_property(curr_item, node)
+
+    def save_repository_node(self, parent_node, rdf_predicate, leaf_value):
+        """
+        save_repository_node adds a node with a given repository url to
+        the current graphs terminology node. If the current graph does
+        not yet contain a terminology node, it creates one and attaches
+        the current node to it.
+
+        :param parent_node: current parent node in the RDF graph.
+        :param rdf_predicate: RDF predicate used to add the terminology
+                              to the parent node.
+        :param leaf_value: Value that will be added to the RDF graph.
+        """
+        terminology_node = self.graph.value(predicate=RDF.type, object=URIRef(leaf_value))
+        if not terminology_node:
+            # adding terminology url value to the graph and linking it
+            # to the current RDF node.
+            terminology_node = URIRef(ODML_NS + unicode(uuid.uuid4()))
+            self.graph.add((terminology_node, RDF.type, URIRef(leaf_value)))
+            self.graph.add((self.hub_root, ODML_NS.hasTerminology, terminology_node))
+
+        self.graph.add((parent_node, rdf_predicate, terminology_node))
+
+    def save_document(self, doc, curr_node=None):
+        """
+        Add the current odML Document to the RDF graph and handle all child
+        elements recursively.
+
+        :param doc: An odml Document that should be added to the RDF graph.
+        :param curr_node: An RDF node that is used to append the current odml element
+                          to the Hub node of the current RDF graph.
+        """
+        fmt = doc.format()
+
+        if not curr_node:
+            curr_node = URIRef(ODML_NS + unicode(doc.id))
+
+        self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+        self.graph.add((self.hub_root, ODML_NS.hasDocument, curr_node))
+
+        # If available, add the documents' filename to the document node
+        # so we can identify where the data came from.
+        if hasattr(doc, "_origin_file_name"):
+            curr_lit = Literal(doc._origin_file_name)
+            self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
 
         for k in fmt.rdf_map_keys:
-            if k == 'id':
+            curr_pred = fmt.rdf_map(k)
+            curr_val = getattr(doc, k)
+
+            # Ignore an "id" entry, it has already been used to create the node itself.
+            if k == "id" or not curr_val:
                 continue
-            elif (isinstance(fmt, Document.__class__) or
-                    isinstance(fmt, Section.__class__)) and k == "repository":
-                terminology_url = getattr(e, k)
-                if terminology_url is None or not terminology_url:
-                    continue
-                terminology_node = self._get_terminology_by_value(terminology_url)
-                if terminology_node:
-                    self.g.add((curr_node, fmt.rdf_map(k), terminology_node))
-                else:
-                    # adding terminology to the hub and to link with the doc
-                    node = URIRef(odmlns + unicode(uuid.uuid4()))
-                    self.g.add((node, RDF.type, URIRef(terminology_url)))
-                    self.g.add((self.hub_root, odmlns.hasTerminology, node))
-                    self.g.add((curr_node, fmt.rdf_map(k), node))
-            # generating nodes for entities: sections, properties and bags of values
-            elif (isinstance(fmt, Document.__class__) or
-                    isinstance(fmt, Section.__class__)) and \
-                    k == 'sections' and len(getattr(e, k)) > 0:
-                sections = getattr(e, k)
-                for s in sections:
-                    node = URIRef(odmlns + unicode(s.id))
-                    self.g.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(s, node)
-            elif isinstance(fmt, Section.__class__) and \
-                    k == 'properties' and len(getattr(e, k)) > 0:
-                properties = getattr(e, k)
-                for p in properties:
-                    node = URIRef(odmlns + unicode(p.id))
-                    self.g.add((curr_node, fmt.rdf_map(k), node))
-                    self.save_element(p, node)
-            elif isinstance(fmt, Property.__class__) and \
-                    k == 'value' and len(getattr(e, fmt.map(k))) > 0:
-                # "value" needs to be mapped to its appropriate
-                # Property library attribute.
-                values = getattr(e, fmt.map(k))
-                seq = URIRef(odmlns + unicode(uuid.uuid4()))
-                self.g.add((seq, RDF.type, RDF.Seq))
-                self.g.add((curr_node, fmt.rdf_map(k), seq))
-                # rdflib so far does not respect RDF:li item order
-                # in RDF:Seq on loading so we have to use custom
-                # numbered Node elements for now. Once rdflib upgrades
-                # this should be reversed to RDF:li again!
-                # see https://github.com/RDFLib/rdflib/issues/280
-                # -- keep until supported
-                # bag = URIRef(odmlns + unicode(uuid.uuid4()))
-                # self.g.add((bag, RDF.type, RDF.Bag))
-                # self.g.add((curr_node, fmt.rdf_map(k), bag))
-                # for v in values:
-                #     self.g.add((bag, RDF.li, Literal(v)))
-
-                counter = 1
-                for v in values:
-                    pred = "%s_%s" % (unicode(RDF), counter)
-                    self.g.add((seq, URIRef(pred), Literal(v)))
-                    counter = counter + 1
-
-            # adding entities' properties
+            elif k == "repository":
+                self.save_repository_node(curr_node, curr_pred, curr_val)
+            elif k == "sections":
+                # generating nodes for child sections
+                self.save_odml_list(curr_node, curr_pred, curr_val)
+            elif k == "date":
+                curr_lit = Literal(curr_val, datatype=XSD.date)
+                self.graph.add((curr_node, curr_pred, curr_lit))
             else:
-                val = getattr(e, k)
-                if val is None or not val:
-                    continue
-                elif k == 'date':
-                    self.g.add((curr_node, fmt.rdf_map(k), Literal(val, datatype=XSD.date)))
-                else:
-                    self.g.add((curr_node, fmt.rdf_map(k), Literal(val)))
-        return self.g
+                curr_lit = Literal(curr_val)
+                self.graph.add((curr_node, curr_pred, curr_lit))
 
-    def _get_terminology_by_value(self, url):
-        return self.g.value(predicate=RDF.type, object=URIRef(url))
+    def save_section(self, sec, curr_node):
+        """
+        Add the current odML Section to the RDF graph and handle all child
+        elements recursively.
 
-    def _get_section_subclass(self, e):
+        :param sec: An odml Section that should be added to the RDF graph.
+        :param curr_node: An RDF node that is used to append the current odml element
+                          to the current RDF graph.
         """
-        :return: RDF identifier of section subclass type if present in section_subclasses dict
+        fmt = sec.format()
+
+        # Add type of current node to the RDF graph
+        curr_type = fmt.rdf_type
+        # Handle section subclass types
+        sub_sec = self._get_section_subclass(sec)
+        if sub_sec:
+            curr_type = sub_sec
+        self.graph.add((curr_node, RDF.type, URIRef(curr_type)))
+
+        for k in fmt.rdf_map_keys:
+            curr_pred = fmt.rdf_map(k)
+            curr_val = getattr(sec, k)
+
+            # Ignore an "id" entry, it has already been used to create the node itself.
+            if k == "id" or not curr_val:
+                continue
+            elif k == "repository":
+                self.save_repository_node(curr_node, curr_pred, curr_val)
+
+            # generating nodes for sections and properties
+            elif k in ["sections", "properties"]:
+                self.save_odml_list(curr_node, curr_pred, curr_val)
+            else:
+                curr_lit = Literal(curr_val)
+                self.graph.add((curr_node, curr_pred, curr_lit))
+
+    def save_property(self, prop, curr_node):
         """
-        sec_type = getattr(e, "type")
+        Add the current odML Property to the RDF graph and handle all child
+        elements.
+
+        :param prop: An odml Section that should be added to the RDF graph.
+        :param curr_node: An RDF node that is used to append the current odml element
+                          to the current RDF graph.
+        """
+        fmt = prop.format()
+
+        self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
+
+        for k in fmt.rdf_map_keys:
+            curr_pred = fmt.rdf_map(k)
+            # Make sure the content of "value" is only accessed via its
+            # non deprecated property "values".
+            if k == "value":
+                curr_val = getattr(prop, fmt.map(k))
+            else:
+                curr_val = getattr(prop, k)
+
+            # Ignore "id" and empty values, but make sure the content of "value"
+            # is only accessed via its non deprecated property "values".
+            if k == "id" or not curr_val:
+                continue
+            elif k == "value":
+                # generating nodes for Property values
+                self.save_odml_values(curr_node, curr_pred, curr_val)
+            else:
+                curr_lit = Literal(curr_val)
+                self.graph.add((curr_node, curr_pred, curr_lit))
+
+    def _get_section_subclass(self, elem):
+        """
+        _get_section_subclass checks whether the current odML element
+        is of a type that can be converted into an RDF subclass of
+        class Section.
+
+        :return: RDF identifier of section subclass type if present
+                 in the section_subclasses dict.
+        """
+        sec_type = getattr(elem, "type")
         if sec_type and sec_type in self.section_subclasses:
-            return odmlns[self.section_subclasses[sec_type]]
-        else:
-            return None
+            return ODML_NS[self.section_subclasses[sec_type]]
+
+        return None
 
     def __str__(self):
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
@@ -184,30 +300,45 @@ class RDFWriter(object):
 
     def get_rdf_str(self, rdf_format="turtle"):
         """
-        Get converted into one of the supported formats data
-        :param rdf_format: possible formats: 'xml', 'n3', 'turtle',
-                                             'nt', 'pretty-xml', 'trix',
-                                             'trig', 'nquads', 'json-ld'.
+        Convert the current odML content of the parser to a common RDF graph
+        and return the graph as a string object in the specified RDF format.
+
+        :param rdf_format: possible formats: 'xml', 'n3', 'turtle', 'nt', 'pretty-xml',
+                                             'trix', 'trig', 'nquads', 'json-ld'.
                Full lists see in utils.RDFConversionFormats
+
         :return: string object
         """
         if rdf_format not in RDFConversionFormats:
-            raise ValueError("odml.RDFWriter.get_rdf_str: Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(list(RDFConversionFormats)))
+            msg = "odml.RDFWriter.get_rdf_str: Format for output files is incorrect."
+            msg = "%s Please choose from the list: %s" % (msg, list(RDFConversionFormats))
+            raise ValueError(msg)
+
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
     def write_file(self, filename, rdf_format="turtle"):
+        """
+        Convert the current odML content of the parser to a common RDF graph
+        and write the resulting graph to an output file using the provided
+        RDF output format.
+
+        :param filename:
+        :param rdf_format: Possible RDF output format. See utils.RDFConversionFormats
+                           for a full list of supported formats.
+                           Default format is 'turtle'.
+        """
         data = self.get_rdf_str(rdf_format)
         filename_ext = filename
         if filename.find(RDFConversionFormats.get(rdf_format)) < 0:
             filename_ext += RDFConversionFormats.get(rdf_format)
-        with open(filename_ext, "w") as wFile:
-            wFile.write(data)
+
+        with open(filename_ext, "w") as out_file:
+            out_file.write(data)
 
 
 class RDFReader(object):
     """
-    A reader to parse odML RDF files or strings into odml documents.
+    A reader to parse odML RDF files or strings into odML documents.
 
     Usage:
         file = RDFReader().from_file("/path_to_input_rdf", "rdf_format")
@@ -216,16 +347,23 @@ class RDFReader(object):
     """
 
     def __init__(self, filename=None, doc_format=None):
+        """
+        :param filename: Path of the input odML RDF file.
+        :param doc_format: RDF format of the input odML RDF file.
+        """
         self.docs = []  # list of parsed odml docs
         if filename and doc_format:
-            self.g = Graph().parse(source=filename, format=doc_format)
+            self.graph = Graph().parse(source=filename, format=doc_format)
 
     def to_odml(self):
         """
-        :return: list of converter odml documents
+        to_odml converts all odML documents from a common RDF graph
+        into individual odML documents.
+
+        :return: list of converted odML documents
         """
-        docs_uris = list(self.g.objects(subject=URIRef(odmlns.Hub),
-                                        predicate=odmlns.hasDocument))
+        docs_uris = list(self.graph.objects(subject=URIRef(ODML_NS.Hub),
+                                            predicate=ODML_NS.hasDocument))
         for doc in docs_uris:
             par = self.parse_document(doc)
             par_doc = DictReader().to_odml(par)
@@ -234,89 +372,126 @@ class RDFReader(object):
         return self.docs
 
     def from_file(self, filename, doc_format):
-        self.g = Graph().parse(source=filename, format=doc_format)
+        """
+        from_file loads an odML RDF file and converts all odML documents
+        from this RDF graph into individual odML documents.
+
+        :param filename: Path of the input odML RDF file.
+        :param doc_format: RDF format of the input odML RDF file.
+        :return: list of converted odML documents
+        """
+        self.graph = Graph().parse(source=filename, format=doc_format)
         docs = self.to_odml()
-        for d in docs:
+        for curr_doc in docs:
             # Provide original file name via the document
-            d._origin_file_name = os.path.basename(filename)
+            curr_doc._origin_file_name = os.path.basename(filename)
+
         return docs
 
     def from_string(self, file, doc_format):
-        self.g = Graph().parse(source=StringIO(file), format=doc_format)
+        """
+        from_string loads an odML RDF file or string object and converts all
+        odML documents from this RDF graph into individual odML documents.
+
+        :param file: Path of the input odML RDF file or an RDF graph string object.
+        :param doc_format: RDF format of the input odML RDF graph.
+        :return: list of converted odML documents
+        """
+        self.graph = Graph().parse(source=StringIO(file), format=doc_format)
         return self.to_odml()
 
-    # TODO check mandatory attrs
     def parse_document(self, doc_uri):
-        rdf_doc = Document
+        """
+        parse_document parses an odML RDF Document node into an odML Document.
+
+        :param doc_uri: RDF URI of an odML Document node within an RDF graph.
+        :return: dict containing an odML Document
+        """
         doc_attrs = {}
-        for attr in rdf_doc.rdf_map_items:
-            elems = list(self.g.objects(subject=doc_uri, predicate=attr[1]))
+        for attr in Document.rdf_map_items:
+            elems = list(self.graph.objects(subject=doc_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 doc_attrs[attr[0]] = []
-                for s in elems:
-                    doc_attrs[attr[0]].append(self.parse_section(s))
+                for sec in elems:
+                    doc_attrs[attr[0]].append(self.parse_section(sec))
             elif attr[0] == "id":
                 doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
-            else:
-                if len(elems) > 0:
-                    doc_attrs[attr[0]] = unicode(elems[0].toPython())
+            elif elems:
+                doc_attrs[attr[0]] = unicode(elems[0].toPython())
 
         return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
 
-    # TODO section subclass conversion
     def parse_section(self, sec_uri):
-        rdf_sec = Section
+        """
+        parse_section parses an odML RDF Section node into an odML Section.
+
+        :param sec_uri: RDF URI of an odML Section node within an RDF graph.
+        :return: dict containing an odML Section
+        """
         sec_attrs = {}
-        for attr in rdf_sec.rdf_map_items:
-            elems = list(self.g.objects(subject=sec_uri, predicate=attr[1]))
+        for attr in Section.rdf_map_items:
+            elems = list(self.graph.objects(subject=sec_uri, predicate=attr[1]))
             if attr[0] == "sections":
                 sec_attrs[attr[0]] = []
-                for s in elems:
-                    sec_attrs[attr[0]].append(self.parse_section(s))
+                for sec in elems:
+                    sec_attrs[attr[0]].append(self.parse_section(sec))
             elif attr[0] == "properties":
                 sec_attrs[attr[0]] = []
-                for p in elems:
-                    sec_attrs[attr[0]].append(self.parse_property(p))
+                for prop in elems:
+                    sec_attrs[attr[0]].append(self.parse_property(prop))
             elif attr[0] == "id":
                 sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
-            else:
-                if len(elems) > 0:
-                    sec_attrs[attr[0]] = unicode(elems[0].toPython())
+            elif elems:
+                sec_attrs[attr[0]] = unicode(elems[0].toPython())
+
         self._check_mandatory_attrs(sec_attrs)
         return sec_attrs
 
     def parse_property(self, prop_uri):
-        rdf_prop = Property
+        """
+        parse_property parses an odML RDF Property node into an odML Property.
+
+        :param prop_uri: RDF URI of an odML Property node within an RDF graph.
+        :return: dict containing an odML Property
+        """
         prop_attrs = {}
-        for attr in rdf_prop.rdf_map_items:
-            elems = list(self.g.objects(subject=prop_uri, predicate=attr[1]))
-            if attr[0] == "value" and len(elems) > 0:
+        for attr in Property.rdf_map_items:
+            elems = list(self.graph.objects(subject=prop_uri, predicate=attr[1]))
+            if attr[0] == "value" and elems:
                 prop_attrs[attr[0]] = []
 
                 # rdflib does not respect order with RDF.li items yet, see comment above
                 # support both RDF.li and rdf:_nnn for now.
                 # Remove rdf:_nnn once rdflib respects RDF.li order in an RDF.Seq obj.
-                values = list(self.g.objects(subject=elems[0], predicate=RDF.li))
-                if len(values) > 0:
-                    for v in values:
-                        prop_attrs[attr[0]].append(v.toPython())
+                values = list(self.graph.objects(subject=elems[0], predicate=RDF.li))
+                if values:
+                    for curr_val in values:
+                        prop_attrs[attr[0]].append(curr_val.toPython())
                 else:
                     # rdf:__nnn part
-                    valseq = Seq(graph=self.g, subject=elems[0])
-                    for seqitem in valseq:
-                        prop_attrs[attr[0]].append(seqitem.toPython())
+                    val_seq = Seq(graph=self.graph, subject=elems[0])
+                    for seq_item in val_seq:
+                        prop_attrs[attr[0]].append(seq_item.toPython())
 
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
-            else:
-                if len(elems) > 0:
-                    prop_attrs[attr[0]] = unicode(elems[0].toPython())
+            elif elems:
+                prop_attrs[attr[0]] = unicode(elems[0].toPython())
+
         self._check_mandatory_attrs(prop_attrs)
         return prop_attrs
 
-    def _check_mandatory_attrs(self, attrs):
-        if "name" not in attrs:
-            if "id" in attrs:
-                raise ParserException("Entity with id: %s does not have required \"name\" attribute" % attrs["id"])
-            else:
-                raise ParserException("Some entities does not have required \"name\" attribute")
+    @staticmethod
+    def _check_mandatory_attrs(odml_entity):
+        """
+        _check_mandatory_attrs checks whether a passed odML entity contains
+        the required "name" attribute and raises a ParserException otherwise.
+
+        :param odml_entity: dict containing an odmL entity
+        """
+        if "name" not in odml_entity:
+            msg = "Entity missing required 'name' attribute"
+            if "id" in odml_entity:
+                msg = "%s id:'%s'" % (msg, odml_entity["id"])
+
+            raise ParserException(msg)
