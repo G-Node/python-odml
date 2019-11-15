@@ -18,7 +18,7 @@ q1 = prepareQuery("""SELECT *
                ?p odml:hasUnit "%" .
                ?v rdf:type rdf:Bag .
                ?v rdf:li "20.0" .
-            }""", initNs={"odml": Namespace("https://g-node.org/projects/odml-rdf#"),
+            }""", initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
                           "rdf": RDF})
 
 g = Graph()
@@ -46,7 +46,7 @@ q2 = prepareQuery("""SELECT *
                    ?p1 odml:hasName "CellType" .
                    ?p1 odml:hasValue ?v1 .   
                    ?v1 rdf:li "P-unit" .                      
-                }""", initNs={"odml": Namespace("https://g-node.org/projects/odml-rdf#"),
+                }""", initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
                               "rdf": RDF})
 
 # select d.* from dataset d, CellProperties s, EOD Frequency c where c.unit = 'Hz'
@@ -64,7 +64,7 @@ q3 = prepareQuery("""SELECT *
                    ?p odml:hasUnit "Hz" .    
                    ?v rdf:type rdf:Bag .
                    ?v rdf:li ?value .                      
-                }""", initNs={"odml": Namespace("https://g-node.org/projects/odml-rdf#"),
+                }""", initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
                               "rdf": RDF})
 
 print("q1")

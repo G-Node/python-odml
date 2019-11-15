@@ -1,12 +1,12 @@
-@prefix : <https://g-node.org/projects/odml-rdf#> .
+@prefix : <https://g-node.org/odml-rdf#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <https://g-node.org/projects/odml-rdf> .
+@base <https://g-node.org/odml-rdf> .
 
-<https://g-node.org/projects/odml-rdf> rdf:type owl:Ontology .
+<https://g-node.org/odml-rdf> rdf:type owl:Ontology .
 
 #################################################################
 #    Datatypes
@@ -20,26 +20,26 @@ xsd:date rdf:type rdfs:Datatype ;
 #    Object Properties
 #################################################################
 
-###  https://g-node.org/projects/odml-rdf#hasDocument
+###  https://g-node.org/odml-rdf#hasDocument
 :hasDocument rdf:type owl:ObjectProperty ;
              rdfs:domain :Hub ;
              rdfs:range :Document ;
              rdfs:label "hasDocument"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasProperty
+###  https://g-node.org/odml-rdf#hasProperty
 :hasProperty rdf:type owl:ObjectProperty ;
              rdfs:domain :Section ;
              rdfs:range :Property ;
              rdfs:label "hasProperty"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasSection
+###  https://g-node.org/odml-rdf#hasSection
 :hasSection rdf:type owl:ObjectProperty ;
             rdfs:domain :Document ,
                         :Section ;
             rdfs:range :Section ;
             rdfs:label "hasSection"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasTerminology
+###  https://g-node.org/odml-rdf#hasTerminology
 :hasTerminology rdf:type owl:ObjectProperty ;
                 rdfs:domain :Document ,
                             :Hub ,
@@ -48,32 +48,32 @@ xsd:date rdf:type rdfs:Datatype ;
                 rdfs:range :Terminology ;
                 rdfs:label "hasTerminology"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasValue
+###  https://g-node.org/odml-rdf#hasValue
 :hasValue rdf:type owl:ObjectProperty ;
           rdfs:domain :Property ;
           rdfs:range rdf:Seq ;
           rdfs:label "hasValue"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#isDocumentOf
+###  https://g-node.org/odml-rdf#isDocumentOf
 :isDocumentOf rdf:type owl:ObjectProperty ;
               rdfs:domain :Document ;
               rdfs:range :Hub ;
               rdfs:label "isDocumentOf"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#isPropertyOf
+###  https://g-node.org/odml-rdf#isPropertyOf
 :isPropertyOf rdf:type owl:ObjectProperty ;
               rdfs:domain :Property ;
               rdfs:range :Section ;
               rdfs:label "isPropertyOf"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#isSectionOf
+###  https://g-node.org/odml-rdf#isSectionOf
 :isSectionOf rdf:type owl:ObjectProperty ;
              rdfs:domain :Section ;
              rdfs:range :Document ,
                         :Section ;
              rdfs:label "isSectionOf"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#isTerminologyOf
+###  https://g-node.org/odml-rdf#isTerminologyOf
 :isTerminologyOf rdf:type owl:ObjectProperty ;
                  rdfs:domain :Terminology ;
                  rdfs:range :Document ,
@@ -82,7 +82,7 @@ xsd:date rdf:type rdfs:Datatype ;
                             :Terminology ;
                  rdfs:label "isTerminologyOf"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#isValueOf
+###  https://g-node.org/odml-rdf#isValueOf
 :isValueOf rdf:type owl:ObjectProperty ;
            rdfs:domain rdf:Seq ;
            rdfs:range :Property ;
@@ -92,44 +92,44 @@ xsd:date rdf:type rdfs:Datatype ;
 #    Data properties
 #################################################################
 
-###  https://g-node.org/projects/odml-rdf#hasAuthor
+###  https://g-node.org/odml-rdf#hasAuthor
 :hasAuthor rdf:type owl:DatatypeProperty ;
            rdfs:domain :Document ;
            rdfs:range xsd:string ;
            rdfs:label "hasAuthor"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasDate
+###  https://g-node.org/odml-rdf#hasDate
 :hasDate rdf:type owl:DatatypeProperty ;
          rdfs:domain :Document ;
          rdfs:range xsd:date ;
          rdfs:label "hasDate"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasDefinition
+###  https://g-node.org/odml-rdf#hasDefinition
 :hasDefinition rdf:type owl:DatatypeProperty ;
                rdfs:domain :Property ,
                            :Section ;
                rdfs:range xsd:string ;
                rdfs:label "hasDefinition"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasDocVersion
+###  https://g-node.org/odml-rdf#hasDocVersion
 :hasDocVersion rdf:type owl:DatatypeProperty ;
                rdfs:domain :Document ;
                rdfs:range xsd:float ;
                rdfs:label "hasDocVersion"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasDtype
+###  https://g-node.org/odml-rdf#hasDtype
 :hasDtype rdf:type owl:DatatypeProperty ;
           rdfs:domain :Property ;
           rdfs:range xsd:string ;
           rdfs:label "hasDtype"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasExternalTerminology
+###  https://g-node.org/odml-rdf#hasExternalTerminology
 :hasExternalTerminology rdf:type owl:DatatypeProperty ;
                         rdfs:domain :Terminology ;
                         rdfs:range rdfs:Literal ;
                         rdfs:label "hasExternalTerminology"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasId
+###  https://g-node.org/odml-rdf#hasId
 :hasId rdf:type owl:DatatypeProperty ,
                 owl:FunctionalProperty ;
        rdfs:domain :Document ,
@@ -138,45 +138,45 @@ xsd:date rdf:type rdfs:Datatype ;
        rdfs:range rdfs:Literal ;
        rdfs:label "hasId"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasName
+###  https://g-node.org/odml-rdf#hasName
 :hasName rdf:type owl:DatatypeProperty ;
          rdfs:domain :Property ,
                      :Section ;
          rdfs:range xsd:string ;
          rdfs:label "hasName"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasReference
+###  https://g-node.org/odml-rdf#hasReference
 :hasReference rdf:type owl:DatatypeProperty ;
               rdfs:domain :Property ,
                           :Section ;
               rdfs:range rdfs:Literal ;
               rdfs:label "hasReference"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasType
+###  https://g-node.org/odml-rdf#hasType
 :hasType rdf:type owl:DatatypeProperty ;
          rdfs:domain :Section ;
          rdfs:range xsd:string ;
          rdfs:label "hasType"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasUncertainty
+###  https://g-node.org/odml-rdf#hasUncertainty
 :hasUncertainty rdf:type owl:DatatypeProperty ;
                 rdfs:domain :Property ;
                 rdfs:range xsd:float ;
                 rdfs:label "hasUncertainty"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasUnit
+###  https://g-node.org/odml-rdf#hasUnit
 :hasUnit rdf:type owl:DatatypeProperty ;
          rdfs:domain :Property ;
          rdfs:range xsd:string ;
          rdfs:label "hasUnit"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#hasValueOrigin
+###  https://g-node.org/odml-rdf#hasValueOrigin
 :hasValueOrigin rdf:type owl:DatatypeProperty ;
                 rdfs:domain :Property ;
                 rdfs:range xsd:string ;
                 rdfs:label "hasValueOrigin" .
 
-###  https://g-node.org/projects/odml-rdf#hasVersion
+###  https://g-node.org/odml-rdf#hasVersion
 :hasVersion rdf:type owl:DatatypeProperty ;
             rdfs:domain :Document ;
             rdfs:range xsd:float ;
@@ -196,7 +196,7 @@ rdf:Seq rdf:type owl:Class ;
         rdfs:isDefinedBy rdf: ;
         rdfs:label "Seq" .
 
-###  https://g-node.org/projects/odml-rdf#Document
+###  https://g-node.org/odml-rdf#Document
 :Document rdf:type owl:Class ;
           rdfs:subClassOf owl:Thing ,
                           [ rdf:type owl:Restriction ;
@@ -235,7 +235,7 @@ rdf:Seq rdf:type owl:Class ;
           rdfs:label "Document" ;
           rdfs:seeAlso "Link to the doc description of site"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#Hub
+###  https://g-node.org/odml-rdf#Hub
 :Hub rdf:type owl:Class ;
      rdfs:subClassOf owl:Thing ,
                      [ rdf:type owl:Restriction ;
@@ -250,7 +250,7 @@ rdf:Seq rdf:type owl:Class ;
      rdfs:label "Hub" ;
      rdfs:seeAlso "Link to the Hub remote description"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#Property
+###  https://g-node.org/odml-rdf#Property
 :Property rdf:type owl:Class ;
           rdfs:subClassOf owl:Thing ,
                           [ rdf:type owl:Restriction ;
@@ -297,7 +297,7 @@ rdf:Seq rdf:type owl:Class ;
           rdfs:label "Property" ;
           rdfs:seeAlso "Link to the description on the site"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#Section
+###  https://g-node.org/odml-rdf#Section
 :Section rdf:type owl:Class ;
          rdfs:subClassOf owl:Thing ,
                          [ rdf:type owl:Restriction ;
@@ -344,7 +344,7 @@ rdf:Seq rdf:type owl:Class ;
          rdfs:label "Section" ;
          rdfs:seeAlso "Link to the doc description of site"^^xsd:string .
 
-###  https://g-node.org/projects/odml-rdf#Terminology
+###  https://g-node.org/odml-rdf#Terminology
 :Terminology rdf:type owl:Class ;
              rdfs:subClassOf owl:Thing ,
                              [ rdf:type owl:Restriction ;
@@ -388,480 +388,480 @@ rdf:Seq rdf:type owl:Class ;
 #    ODML Sub Classes
 #################################################################
 
-###  https://g-node.org/projects/odml-rdf#Affiliation
+###  https://g-node.org/odml-rdf#Affiliation
 :Affiliation rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "Affiliation" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#AlternateIdentifier
+###  https://g-node.org/odml-rdf#AlternateIdentifier
 :AlternateIdentifier rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "AlternateIdentifier" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Amplifier
+###  https://g-node.org/odml-rdf#Amplifier
 :Amplifier rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "Amplifier" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/amplifier.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Analysis
+###  https://g-node.org/odml-rdf#Analysis
 :Analysis rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "Analysis" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/analysis/analysis.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Attenuator
+###  https://g-node.org/odml-rdf#Attenuator
 :Attenuator rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "Attenuator" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/attenuator.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Behavior
+###  https://g-node.org/odml-rdf#Behavior
 :Behavior rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Behavior" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/experiment/behavior.xml> .
 
-###  https://g-node.org/projects/odml-rdf#CameraObjective
+###  https://g-node.org/odml-rdf#CameraObjective
 :CameraObjective rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "CameraObjective" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/camera_objective.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Cell
+###  https://g-node.org/odml-rdf#Cell
 :Cell rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "Cell" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/cell/cell.xml> .
 
-###  https://g-node.org/projects/odml-rdf#CellProperties
+###  https://g-node.org/odml-rdf#CellProperties
 :CellProperties rdf:type owl:Class ;
                 rdfs:subClassOf :Section ;
                 rdfs:comment "Description"^^xsd:string ;
                 rdfs:label "CellProperties" .
 
-###  https://g-node.org/projects/odml-rdf#Contributer
+###  https://g-node.org/odml-rdf#Contributer
 :Contributer rdf:type owl:Class ;
                 rdfs:subClassOf :Section ;
                 rdfs:comment "Description"^^xsd:string ;
                 rdfs:label "Contributer" .
                 rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Creator
+###  https://g-node.org/odml-rdf#Creator
 :Creator rdf:type owl:Class ;
                 rdfs:subClassOf :Section ;
                 rdfs:comment "Description"^^xsd:string ;
                 rdfs:label "Creator" .
                 rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#DataAcquisition
+###  https://g-node.org/odml-rdf#DataAcquisition
 :DataAcquisition rdf:type owl:Class ;
                  rdfs:subClassOf :Section ;
                  rdfs:comment "Description"^^xsd:string ;
                  rdfs:label "DataAcquisition" ;
                  rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/daq.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Dataset
+###  https://g-node.org/odml-rdf#Dataset
 :Dataset rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Dataset" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/dataset/dataset.xml> .
 
-###  https://g-node.org/projects/odml-rdf#DataReference
+###  https://g-node.org/odml-rdf#DataReference
 :DataReference rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "DataReference" .
 
-###  https://g-node.org/projects/odml-rdf#Date
+###  https://g-node.org/odml-rdf#Date
 :Date rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Date" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#DC
+###  https://g-node.org/odml-rdf#DC
 :DC rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "DC" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/dc.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Description
+###  https://g-node.org/odml-rdf#Description
 :Description rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Description" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Electrode
+###  https://g-node.org/odml-rdf#Electrode
 :Electrode rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Electrode" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/electrode/electrode.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Electrophysiology
+###  https://g-node.org/odml-rdf#Electrophysiology
 :Electrophysiology rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Electrophysiology" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/experiment/electrophysiology.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Event
+###  https://g-node.org/odml-rdf#Event
 :Event rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Event" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/event/event.xml> .
 
-###  https://g-node.org/projects/odml-rdf#EventList
+###  https://g-node.org/odml-rdf#EventList
 :EventList rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "EventList" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/collection/event_list.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Experiment
+###  https://g-node.org/odml-rdf#Experiment
 :Experiment rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Experiment" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/experiment/experiment.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Eyetracker
+###  https://g-node.org/odml-rdf#Eyetracker
 :Eyetracker rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Eyetracker" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/eyetracker.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Gabor
+###  https://g-node.org/odml-rdf#Gabor
 :Gabor rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Gabor" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/gabor.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Grating
+###  https://g-node.org/odml-rdf#Grating
 :Grating rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Grating" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/grating.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Filter
+###  https://g-node.org/odml-rdf#Filter
 :Filter rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Filter" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/filter.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Filterset
+###  https://g-node.org/odml-rdf#Filterset
 :Filterset rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Filterset" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/filter_set.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Format
+###  https://g-node.org/odml-rdf#Format
 :Format rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Format" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#FundingReference
+###  https://g-node.org/odml-rdf#FundingReference
 :FundingReference rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "FundingReference" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#GeoLocation
+###  https://g-node.org/odml-rdf#GeoLocation
 :GeoLocation rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "GeoLocation" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Hardware
+###  https://g-node.org/odml-rdf#Hardware
 :Hardware rdf:type owl:Class ;
           rdfs:subClassOf :Section ;
           rdfs:comment "Description"^^xsd:string ;
           rdfs:label "Hardware" ;
           rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/hardware.xml> .
 
-###  https://g-node.org/projects/odml-rdf#HardwareProperties
+###  https://g-node.org/odml-rdf#HardwareProperties
 :HardwareProperties rdf:type owl:Class ;
                   rdfs:subClassOf :Section ;
                   rdfs:comment "Description"^^xsd:string ;
                   rdfs:label "HardwareProperties" ;
                   rdfs:seeAlso <https://terminologies.g-node.org/v1.1/collection/hardware_properties.xml> .
 
-###  https://g-node.org/projects/odml-rdf#HardwareSettings
+###  https://g-node.org/odml-rdf#HardwareSettings
 :HardwareSettings rdf:type owl:Class ;
                   rdfs:subClassOf :Section ;
                   rdfs:comment "Description"^^xsd:string ;
                   rdfs:label "HardwareSettings" ;
                   rdfs:seeAlso <https://terminologies.g-node.org/v1.1/collection/hardware_settings.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Identifier
+###  https://g-node.org/odml-rdf#Identifier
 :Identifier rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Identifier" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#ImageAcquisition
+###  https://g-node.org/odml-rdf#ImageAcquisition
 :ImageAcquisition rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "ImageAcquisition" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/iaq.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Imaging
+###  https://g-node.org/odml-rdf#Imaging
 :Imaging rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Imaging" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/experiment/imaging.xml> .
 
-###  https://g-node.org/projects/odml-rdf#LeakyIntegrateAndFire
+###  https://g-node.org/odml-rdf#LeakyIntegrateAndFire
 :LeakyIntegrateAndFire rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "LeakyIntegrateAndFire" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/model/lif.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Lightsource
+###  https://g-node.org/odml-rdf#Lightsource
 :Lightsource rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Lightsource" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/light_source.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Microscope
+###  https://g-node.org/odml-rdf#Microscope
 :Microscope rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Microscope" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/microscope.xml> .
 
-###  https://g-node.org/projects/odml-rdf#MicroscopeObjective
+###  https://g-node.org/odml-rdf#MicroscopeObjective
 :MicroscopeObjective rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "MicroscopeObjective" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/microscope_objective.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Movie
+###  https://g-node.org/odml-rdf#Movie
 :Movie rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Movie" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/movie.xml> .
 
-###  https://g-node.org/projects/odml-rdf#MultiCompartmentModel
+###  https://g-node.org/odml-rdf#MultiCompartmentModel
 :MultiCompartmentModel rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "MultiCompartmentModel" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/model/multi_compartment.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Scanner
+###  https://g-node.org/odml-rdf#Scanner
 :Scanner rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Scanner" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/scanner.xml> .
 
-###  https://g-node.org/projects/odml-rdf#StimulusIsolator
+###  https://g-node.org/odml-rdf#StimulusIsolator
 :StimulusIsolator rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "StimulusIsolator" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/hardware/stimulus_isolator.xml> .
 
-###  https://g-node.org/projects/odml-rdf#NamedIdentifier
+###  https://g-node.org/odml-rdf#NamedIdentifier
 :NamedIdentifier rdf:type owl:Class ;
       rdfs:subClassOf :Section ;
       rdfs:comment "Description"^^xsd:string ;
       rdfs:label "NamedIdentifier" ;
       rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#PerfectIntegrateAndFire
+###  https://g-node.org/odml-rdf#PerfectIntegrateAndFire
 :PerfectIntegrateAndFire rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "PerfectIntegrateAndFire" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/model/pif.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Person
+###  https://g-node.org/odml-rdf#Person
 :Person rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Person" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/person/person.xml> .
 
-###  https://g-node.org/projects/odml-rdf#PowerSpectrum
+###  https://g-node.org/odml-rdf#PowerSpectrum
 :PowerSpectrum rdf:type owl:Class ;
              rdfs:subClassOf :Section ;
              rdfs:comment "Description"^^xsd:string ;
              rdfs:label "PowerSpectrum" ;
              rdfs:seeAlso <https://terminologies.g-node.org/v1.1/analysis/power_spectrum.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Preparation
+###  https://g-node.org/odml-rdf#Preparation
 :Preparation rdf:type owl:Class ;
              rdfs:subClassOf :Section ;
              rdfs:comment "Description"^^xsd:string ;
              rdfs:label "Preparation" ;
              rdfs:seeAlso <https://terminologies.g-node.org/v1.1/preparation/preparation.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Project
+###  https://g-node.org/odml-rdf#Project
 :Project rdf:type owl:Class ;
              rdfs:subClassOf :Section ;
              rdfs:comment "Description"^^xsd:string ;
              rdfs:label "Project" ;
              rdfs:seeAlso <https://terminologies.g-node.org/v1.1/project/project.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Protocol
+###  https://g-node.org/odml-rdf#Protocol
 :Protocol rdf:type owl:Class ;
              rdfs:subClassOf :Section ;
              rdfs:comment "Description"^^xsd:string ;
              rdfs:label "Protocol" ;
              rdfs:seeAlso <https://terminologies.g-node.org/v1.1/protocol/protocol.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Psychophysics
+###  https://g-node.org/odml-rdf#Psychophysics
 :Psychophysics rdf:type owl:Class ;
              rdfs:subClassOf :Section ;
              rdfs:comment "Description"^^xsd:string ;
              rdfs:label "Psychophysics" ;
              rdfs:seeAlso <https://terminologies.g-node.org/v1.1/experiment/psychophysics.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Pulse
+###  https://g-node.org/odml-rdf#Pulse
 :Pulse rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Pulse" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/pulse.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Ramp
+###  https://g-node.org/odml-rdf#Ramp
 :Ramp rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Ramp" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/ramp.xml> .
 
-###  https://g-node.org/projects/odml-rdf#RandomDot
+###  https://g-node.org/odml-rdf#RandomDot
 :RandomDot rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "RandomDot" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/random_dot.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Recording
+###  https://g-node.org/odml-rdf#Recording
 :Recording rdf:type owl:Class ;
            rdfs:subClassOf :Section ;
            rdfs:comment "Description"^^xsd:string ;
            rdfs:label "Recording" ;
            rdfs:seeAlso <https://terminologies.g-node.org/v1.1/recording/recording.xml> .
 
-###  https://g-node.org/projects/odml-rdf#RelatedIdentifier
+###  https://g-node.org/odml-rdf#RelatedIdentifier
 :RelatedIdentifier rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "RelatedIdentifier" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#ResourceType
+###  https://g-node.org/odml-rdf#ResourceType
 :ResourceType rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "ResourceType" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Rights
+###  https://g-node.org/odml-rdf#Rights
 :Rights rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Rights" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Sawtooth
+###  https://g-node.org/odml-rdf#Sawtooth
 :Sawtooth rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Sawtooth" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/sawtooth.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Settings
+###  https://g-node.org/odml-rdf#Settings
 :Settings rdf:type owl:Class ;
           rdfs:subClassOf :Section ;
           rdfs:comment "Description"^^xsd:string ;
           rdfs:label "Settings" .
 
-###  https://g-node.org/projects/odml-rdf#Setup
+###  https://g-node.org/odml-rdf#Setup
 :Setup rdf:type owl:Class ;
        rdfs:subClassOf :Section ;
        rdfs:comment "Description"^^xsd:string ;
        rdfs:label "Setup" ;
        rdfs:seeAlso <https://terminologies.g-node.org/v1.1/setup/setup.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Sinewave
+###  https://g-node.org/odml-rdf#Sinewave
 :Sinewave rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Sinewave" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/sine_wave.xml> .
 
-###  https://g-node.org/projects/odml-rdf#SingleCompartmentModel
+###  https://g-node.org/odml-rdf#SingleCompartmentModel
 :SingleCompartmentModel rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "SingleCompartmentModel" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/model/single_compartment.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Size
+###  https://g-node.org/odml-rdf#Size
 :Size rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Size" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Sinewave
+###  https://g-node.org/odml-rdf#Sinewave
 :Sinewave rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Sinewave" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/sine_wave.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Squarewave
+###  https://g-node.org/odml-rdf#Squarewave
 :Squarewave rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Squarewave" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/square_wave.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Stimulus
+###  https://g-node.org/odml-rdf#Stimulus
 :Stimulus rdf:type owl:Class ;
           rdfs:subClassOf :Section ;
           rdfs:comment "Description of the Stimulus."^^xsd:string ;
           rdfs:label "Stimulus" ;
           rdfs:seeAlso <https://terminologies.g-node.org/v1.1/stimulus/stimulus.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Subject
+###  https://g-node.org/odml-rdf#Subject
 :Subject rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
@@ -869,14 +869,14 @@ rdf:Seq rdf:type owl:Class ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/subject/subject.xml> ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Title
+###  https://g-node.org/odml-rdf#Title
 :Title rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
          rdfs:label "Title" ;
          rdfs:seeAlso <https://terminologies.g-node.org/v1.1/datareference/datacite.xml> .
 
-###  https://g-node.org/projects/odml-rdf#Whitenoise
+###  https://g-node.org/odml-rdf#Whitenoise
 :Whitenoise rdf:type owl:Class ;
          rdfs:subClassOf :Section ;
          rdfs:comment "Description"^^xsd:string ;
