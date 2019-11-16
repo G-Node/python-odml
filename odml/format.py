@@ -17,7 +17,7 @@ class Format(object):
     _rev_map = None
     _rdf_map = {}
     _rdf_type = None
-    _ns = Namespace("https://g-node.org/projects/odml-rdf#")
+    _ns = Namespace("https://g-node.org/odml-rdf#")
 
     @property
     def name(self):

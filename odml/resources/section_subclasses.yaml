@@ -1,6 +1,6 @@
 analysis: Analysis
-analysis/psth: PSTH
 analysis/power_spectrum: PowerSpectrum
+analysis/psth: PSTH
 cell: Cell
 datacite/alternate_identifier: AlternateIdentifier
 datacite/contributor: Contributer
@@ -31,7 +31,7 @@ experiment: Experiment
 experiment/behavior: Behavior
 experiment/electrophysiology: Electrophysiology
 experiment/imaging: Imaging
-experiment/pschophysics: Psychophysics
+experiment/psychophysics: Psychophysics
 hardware_properties: HardwareProperties
 hardware_settings: HardwareSettings
 hardware: Hardware
@@ -48,14 +48,14 @@ hardware/microscope: Microscope
 hardware/microscope_objective: MicroscopeObjective
 hardware/scanner: Scanner
 hardware/stimulus_isolator: StimulusIsolator
-model/lif: Leaky integrate and fire
-model/pif: perfect integrate and fire
-model/multi_compartment: Multi compartment model
-model/single_compartment: One compartment model
+model/lif: LeakyIntegrateAndFire
+model/pif: PerfectIntegrateAndFire
+model/multi_compartment: MultiCompartmentModel
+model/single_compartment: SingleCompartmentModel
 person: Person
 preparation: Preparation
 project: Project
-protocol: protocol
+protocol: Protocol
 recording: Recording
 setup: Setup
 stimulus: Stimulus
@@ -71,4 +71,3 @@ stimulus/sine_wave: Sinewave
 stimulus/square_wave: Squarewave
 stimulus/white_noise: Whitenoise
 subject: Subject
-carmen_mini: CarmenMini

@@ -223,7 +223,7 @@ class QueryCreator(BaseQueryCreator):
                 raise AttributeError("Please fulfill q_parser param (query parser)")
             self.q_dict = q_parser.parse_query_string(q_str)
         self._prepare_query()
-        return prepareQuery(self.query, initNs={"odml": Namespace("https://g-node.org/projects/odml-rdf#"),
+        return prepareQuery(self.query, initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
                                                 "rdf": RDF})
 
     def _prepare_query(self):
@@ -232,7 +232,7 @@ class QueryCreator(BaseQueryCreator):
         :return: string representing rdflib query.
         """
 
-        odml_uri = "https://g-node.org/projects/odml-rdf#"
+        odml_uri = "https://g-node.org/odml-rdf#"
         self.query = 'SELECT * WHERE {\n'
 
         if 'Doc' in self.q_dict.keys():

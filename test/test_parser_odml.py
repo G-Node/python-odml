@@ -182,20 +182,20 @@ class TestOdmlParser(unittest.TestCase):
         sec_name = "section name"
         sec_type = "section type"
         rdf_doc = u"""
-        @prefix odml: <https://g-node.org/projects/odml-rdf#> .
+        @prefix odml: <https://g-node.org/odml-rdf#> .
         @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
         @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
         @prefix xml: <http://www.w3.org/XML/1998/namespace> .
         @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
         
-        odml:Hub odml:hasDocument <https://g-node.org/projects/odml-rdf#1c9ca24a-1d2c-40b6-a096-5a48efbd77d0> .
+        odml:Hub odml:hasDocument <https://g-node.org/odml-rdf#1c9ca24a-1d2c-40b6-a096-5a48efbd77d0> .
         
-        <https://g-node.org/projects/odml-rdf#1c9ca24a-1d2c-40b6-a096-5a48efbd77d0> a odml:Document ;
+        <https://g-node.org/odml-rdf#1c9ca24a-1d2c-40b6-a096-5a48efbd77d0> a odml:Document ;
             odml:hasAuthor "%s" ;
             odml:hasDate "%s"^^xsd:date ;
-            odml:hasSection <https://g-node.org/projects/odml-rdf#2abc6711-34e1-4102-8e3a-297fa4a3d19a> .
+            odml:hasSection <https://g-node.org/odml-rdf#2abc6711-34e1-4102-8e3a-297fa4a3d19a> .
         
-        <https://g-node.org/projects/odml-rdf#2abc6711-34e1-4102-8e3a-297fa4a3d19a> a odml:Section ;
+        <https://g-node.org/odml-rdf#2abc6711-34e1-4102-8e3a-297fa4a3d19a> a odml:Section ;
             odml:hasName "%s" ;
             odml:hasType "%s" .
         """ % (author, date, sec_name, sec_type)
