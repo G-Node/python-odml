@@ -1,21 +1,32 @@
+version: 1.4.{build}
+
+image: Visual Studio 2017
+
 environment:
   matrix:
     - PYTHON: "C:\\Python27"
-      PYVER: "2.7"
-    - PYTHON: "C:\\Python35"
-      PYVER: "3.5"
+      PYVER: 2
+      BITS: 32
     - PYTHON: "C:\\Python36"
-      PYVER: "3.6"
+      PYVER: 3
+      BITS: 32
     - PYTHON: "C:\\Python37"
-      PYVER: "3.7"
+      PYVER: 3
+      BITS: 32
     - PYTHON: "C:\\Python27-x64"
-      PYVER: "2.7"
-    - PYTHON: "C:\\Python35-x64"
-      PYVER: "3.5"
+      PYVER: 2
+      BITS: 64
     - PYTHON: "C:\\Python36-x64"
-      PYVER: "3.6"
+      PYVER: 3
+      BITS: 64
     - PYTHON: "C:\\Python37-x64"
-      PYVER: "3.7"
+      PYVER: 3
+      BITS: 64
+
+init:
+  - "ECHO %PYTHON% %vcvars% (%bits%)"
+  - ps: $env:PATH = "$env:PYTHON;$env:PATH;"
+  - python -c "import sys;print('Python version is {}'.format(sys.version))"
 
 build: false
 

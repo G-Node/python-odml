@@ -37,7 +37,7 @@ except ImportError:
 import odml
 
 from odml.tools.odmlparser import ODMLReader, ODMLWriter
-from odml.tools.version_converter import VersionConverter as VerConf
+from odml.tools.converters import VersionConverter as VerConf
 
 try:
     unicode = unicode

@@ -1,17 +1,26 @@
 import argparse
+import copy
 import os
 import re
 import sys
 
 import odml
-from .rdf_converter import RDFWriter
-from .version_converter import VersionConverter
-from .utils import ConversionFormats
+
+from .. import RDFWriter
+from . import VersionConverter
+from ..parser_utils import RDF_CONVERSION_FORMATS
 
 try:
     unicode = unicode
 except NameError:
     unicode = str
+
+
+CONVERSION_FORMATS = copy.deepcopy(RDF_CONVERSION_FORMATS)
+CONVERSION_FORMATS.update({
+    'v1_1': '.xml',
+    'odml': '.odml'
+})
 
 
 class FormatConverter(object):
@@ -21,20 +30,20 @@ class FormatConverter(object):
         """
         Enable usage of the argparse for calling convert_dir(...)
         Example:
-            1) >> python format_converter.py ./..path../input_dir v1_1 -out ./..path../output_dir -r
+            1) >> python -m odml.tools.converters.format_converter ./..path../input_dir v1_1 -out ./..path../output_dir -r
             
                Convert files from the path <./..path../input_dir> to .xml odml version 1.1,
                writes them into <./..path../output_dir> including subdirectories 
                and its files from the input path.
             
-            2) >> python format_converter.py ./..path../input_dir odml
+            2) >> python -m odml.tools.converters.format_converter ./..path../input_dir odml
             
                Converts files from path <./..path../input_dir> to .odml,
                writes them into <./..path../input_dir_odml> not including subdirectories.
         """
         parser = argparse.ArgumentParser(description="Convert directory with odml files to another format")
         parser.add_argument("input_dir", help="Path to input directory")
-        parser.add_argument("result_format", choices=list(ConversionFormats),
+        parser.add_argument("result_format", choices=list(CONVERSION_FORMATS),
                             help="Format of output files")
         parser.add_argument("-out", "--output_dir", help="Path for output directory")
         parser.add_argument("-r", "--recursive", action="store_true",
@@ -54,11 +63,11 @@ class FormatConverter(object):
                            Possible choices: "v1_1" (converts to version 1.1 from version 1 xml)
                                              "odml" (converts to .odml from version 1.1 .xml files)
                                              "turtle", "nt" etc. (converts to rdf formats from version 1.1 .odml files)
-                                             (see full list of rdf serializers in utils.ConversionFormats)
+                                             (see full list of rdf serializers in CONVERSION_FORMATS)
         """
-        if res_format not in ConversionFormats:
+        if res_format not in CONVERSION_FORMATS:
             raise ValueError("Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(list(ConversionFormats)))
+                             "Please choose from the list: {}".format(list(CONVERSION_FORMATS)))
 
         cls._check_input_output_directory(input_dir, output_dir)
         input_dir = os.path.join(input_dir, '')
@@ -98,14 +107,14 @@ class FormatConverter(object):
                 p, _ = os.path.splitext(output_path)
                 output_path = p + ".odml"
             odml.save(odml.load(input_path), output_path)
-        elif res_format in ConversionFormats:
-            if not output_path.endswith(ConversionFormats[res_format]):
+        elif res_format in CONVERSION_FORMATS:
+            if not output_path.endswith(CONVERSION_FORMATS[res_format]):
                 p, _ = os.path.splitext(output_path)
-                output_path = p + ConversionFormats[res_format]
+                output_path = p + CONVERSION_FORMATS[res_format]
             RDFWriter(odml.load(input_path)).write_file(output_path, res_format)
         else:
             raise ValueError("Format for output files is incorrect. "
-                             "Please choose from the list: {}".format(list(ConversionFormats)))
+                             "Please choose from the list: {}".format(list(CONVERSION_FORMATS)))
 
     @staticmethod
     def _create_sub_directory(dir_path):

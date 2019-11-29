@@ -21,8 +21,10 @@ CLASSIFIERS = infodict["CLASSIFIERS"]
 
 packages = [
     'odml',
+    'odml.rdf',
+    'odml.scripts',
     'odml.tools',
-    'odml.scripts'
+    'odml.tools.converters'
 ]
 
 with open('README.md') as f:

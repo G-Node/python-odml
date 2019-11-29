@@ -14,9 +14,23 @@ Tools
 =====
 Several tools are provided with the :py:mod:`odml.tools` package.
 
+DictParser
+----------
+.. automodule:: odml.tools.dict_parser
+   :members:
+   :inherited-members:
+   :undoc-members:
+
 ODMLParser
 ----------
 .. automodule:: odml.tools.odmlparser
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+RDFConverter
+----------------
+.. automodule:: odml.tools.rdf_converter
    :members:
    :inherited-members:
    :undoc-members:
@@ -28,30 +42,22 @@ XMLParser
    :inherited-members:
    :undoc-members:
 
-DictParser
-----------
-.. automodule:: odml.tools.dict_parser
-   :members:
-   :inherited-members:
-   :undoc-members:
+.. _converters:
+
+Convenience converters
+======================
+Several convenience converters are provided with the :py:mod:`odml.tools.converters` package.
 
 FormatConverter
 ----------------
-.. automodule:: odml.tools.format_converter
+.. automodule:: odml.tools.converters.format_converter
    :members:
    :inherited-members:
    :undoc-members:
 
 VersionConverter
 ----------------
-.. automodule:: odml.tools.version_converter
-   :members:
-   :inherited-members:
-   :undoc-members:
-
-RDFConverter
-----------------
-.. automodule:: odml.tools.rdf_converter
+.. automodule:: odml.tools.converters.version_converter
    :members:
    :inherited-members:
    :undoc-members:
