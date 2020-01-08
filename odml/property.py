@@ -662,3 +662,19 @@ class BaseProperty(base.BaseObject):
         else:
             print(("{}{} {}: {}".format(property_spaces, prefix, self.name,
                                         value_string)))
+
+    def export_leaf(self):
+        """
+        Export leaf, start at property.
+        """
+        orig = self.parent
+        child = self.clone(keep_id=True)
+        par = child
+
+        while orig is not None:
+            par = orig.clone(children=False, keep_id=True)
+            par.append(child)
+            child = par
+            orig = orig.parent
+
+        return par
