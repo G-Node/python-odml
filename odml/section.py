@@ -1,6 +1,7 @@
 # -*- coding: utf-8
 import collections
 import uuid
+from copy import deepcopy
 
 from . import base
 from . import format
@@ -638,3 +639,23 @@ class BaseSection(base.Sectionable):
                 print("{} {} [{}]\n{}[...]".format(child_sec_indent,
                                                    s.name, s.type,
                                                    more_indent))
+
+    def export_leaf(self):
+        """
+        Export leaf, start at section. Includes section properties, not subsections.
+        """
+        curr = self.parent
+        child = self.clone(children=False, keep_id=True)
+
+        for prop in self.properties:
+            child.append(prop.clone(keep_id=True))
+
+        par = child
+
+        while curr is not None:
+            par = curr.clone(children=False, keep_id=True)
+            par.append(child)
+            child = par
+            curr = curr.parent
+
+        return par
