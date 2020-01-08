@@ -943,6 +943,41 @@ class TestSection(unittest.TestCase):
         prop = root.create_property(name, dtype=dtype)
         self.assertIsNone(prop.dtype)
 
+    def test_export_leaf(self):
+        doc = Document()
+        first = doc.create_section("first")
+        second = first.create_section("second")
+        third = first.create_section("third")
+
+        name = "prop1"
+        values = [1.3]
+        first.create_property(name, value=values)
+
+        name = "prop2"
+        values = ["words"]
+        first.create_property(name, value=values)
+
+        name = "prop3"
+        values = ["a", "b"]
+        second.create_property(name, value=values)
+
+        ex1 = first.export_leaf()
+        self.assertEqual(len(ex1.sections), 1)
+        self.assertEqual(len(ex1['first'].properties), 2)
+        self.assertEqual(len(ex1['first'].sections), 0)
+
+        ex2 = second.export_leaf()
+        self.assertEqual(len(ex2.sections), 1)
+        self.assertEqual(len(ex2['first'].properties), 0)
+        self.assertEqual(len(ex2['first'].sections), 1)
+        self.assertEqual(len(ex2['first']['second'].properties), 1)
+
+        ex3 = third.export_leaf()
+        self.assertEqual(len(ex3.sections), 1)
+        self.assertEqual(len(ex3['first'].properties), 0)
+        self.assertEqual(len(ex3['first'].sections), 1)
+        self.assertEqual(len(ex3['first']['third']), 0)
+
     def test_link(self):
         pass
 
