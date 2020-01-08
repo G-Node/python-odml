@@ -733,6 +733,34 @@ class TestProperty(unittest.TestCase):
         prop_b.name = 'newPropertyName'
         self.assertNotEqual(prop_a, prop_b)
 
+    def test_export_leaf(self):
+        doc = Document()
+        first = doc.create_section("first")
+        second = first.create_section("second")
+        first.create_section("third")
+
+        name = "prop1"
+        values = [1.3]
+        first.create_property(name, value=values)
+
+        name = "prop2"
+        values = ["words"]
+        second.create_property(name, value=values)
+
+        name = "prop3"
+        values = ["a", "b"]
+        second.create_property(name, value=values)
+
+        name = "prop4"
+        values = [3]
+        second.create_property(name, value=values)
+
+        ex = second.properties["prop2"].export_leaf()
+        self.assertEqual(len(ex.sections), 1)
+        self.assertEqual(len(ex['first'].properties), 0)
+        self.assertEqual(len(ex['first'].sections), 1)
+        self.assertEqual(len(ex['first']['second'].properties), 1)
+
 
 if __name__ == "__main__":
     print("TestProperty")
