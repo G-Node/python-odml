@@ -1,5 +1,7 @@
 import unittest
 
+import datetime
+
 from odml import Property, Section, Document, DType
 from odml.property import BaseProperty
 from odml.section import BaseSection
@@ -114,6 +116,19 @@ class TestProperty(unittest.TestCase):
         p5 = Property('myprop', value=0)
         self.assertEqual(p5.value, [0])
         self.assertEqual(p5.values, [0])
+
+        with self.assertRaises(ValueError):
+            Property(name="dateprop", dtype=DType.time, value=['20190707'])
+
+        with self.assertRaises(ValueError):
+            Property(name="timeprop", dtype=DType.time, value=['11.11.11'])
+
+        with self.assertRaises(ValueError):
+            Property(name="datetimeprop", dtype=DType.datetime, value=['20190707'])
+
+        with self.assertRaises(ValueError):
+            Property(name="intprop", dtype=DType.int, value=[2, "Hello!", 4])
+
 
     def test_value_append(self):
         # Test append w/o Property value or dtype
