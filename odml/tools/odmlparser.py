@@ -133,7 +133,7 @@ class ODMLReader:
         elif self.parser == 'YAML':
             with open(file) as yaml_data:
                 try:
-                    self.parsed_doc = yaml.load(yaml_data, Loader=yaml.Loader)
+                    self.parsed_doc = yaml.load(yaml_data, Loader=yaml.SafeLoader)
                 except yaml.parser.ParserError as err:
                     print(err)
                     return
