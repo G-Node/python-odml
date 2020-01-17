@@ -1,7 +1,6 @@
 # -*- coding: utf-8
 import collections
 import uuid
-from copy import deepcopy
 
 from . import base
 from . import format
