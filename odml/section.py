@@ -641,7 +641,8 @@ class BaseSection(base.Sectionable):
 
     def export_leaf(self):
         """
-        Export leaf, start at section. Includes section properties, not subsections.
+        Export only the path from this section to the root.
+        Include all properties for all sections, but no other subsections.
         """
         curr = self
         par = self
