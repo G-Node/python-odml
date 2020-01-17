@@ -666,7 +666,8 @@ class BaseProperty(base.BaseObject):
 
     def export_leaf(self):
         """
-        Export leaf, start at property.
+        Export only the path from this property to the root.
+        Include all properties of parent sections.
         """
         curr = self.parent
         par = self.parent
