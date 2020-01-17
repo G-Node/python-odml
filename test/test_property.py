@@ -770,11 +770,19 @@ class TestProperty(unittest.TestCase):
         values = [3]
         second.create_property(name, value=values)
 
-        ex = second.properties["prop2"].export_leaf()
-        self.assertEqual(len(ex.sections), 1)
-        self.assertEqual(len(ex['first'].properties), 0)
-        self.assertEqual(len(ex['first'].sections), 1)
-        self.assertEqual(len(ex['first']['second'].properties), 1)
+        name = "prop5"
+        values = ["abc"]
+        first.create_property(name, value=values)
+
+        ex1 = first.properties["prop1"].export_leaf()
+        self.assertEqual(len(ex1['first'].properties), 1)
+        self.assertEqual(len(ex1['first'].sections), 0)
+
+        ex2 = second.properties["prop2"].export_leaf()
+        self.assertEqual(len(ex2.sections), 1)
+        self.assertEqual(len(ex2['first'].properties), 2)
+        self.assertEqual(len(ex2['first'].sections), 1)
+        self.assertEqual(len(ex2['first']['second'].properties), 1)
 
 
 if __name__ == "__main__":
