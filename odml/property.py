@@ -668,14 +668,21 @@ class BaseProperty(base.BaseObject):
         """
         Export leaf, start at property.
         """
-        orig = self.parent
-        child = self.clone(keep_id=True)
-        par = child
+        curr = self.parent
+        par = self.parent
+        child = self.parent
 
-        while orig is not None:
-            par = orig.clone(children=False, keep_id=True)
-            par.append(child)
+        while curr is not None:
+            par = curr.clone(children=False, keep_id=True)
+            if curr != self.parent:
+                par.append(child)
+            if hasattr(curr, 'properties'):
+                if curr == self.parent:
+                    par.append(self.clone(keep_id=True))
+                else:
+                    for prop in curr.properties:
+                        par.append(prop.clone(keep_id=True))
             child = par
-            orig = orig.parent
+            curr = curr.parent
 
         return par
