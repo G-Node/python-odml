@@ -968,13 +968,13 @@ class TestSection(unittest.TestCase):
 
         ex2 = second.export_leaf()
         self.assertEqual(len(ex2.sections), 1)
-        self.assertEqual(len(ex2['first'].properties), 0)
+        self.assertEqual(len(ex2['first'].properties), 2)
         self.assertEqual(len(ex2['first'].sections), 1)
         self.assertEqual(len(ex2['first']['second'].properties), 1)
 
         ex3 = third.export_leaf()
         self.assertEqual(len(ex3.sections), 1)
-        self.assertEqual(len(ex3['first'].properties), 0)
+        self.assertEqual(len(ex3['first'].properties), 2)
         self.assertEqual(len(ex3['first'].sections), 1)
         self.assertEqual(len(ex3['first']['third']), 0)
 
