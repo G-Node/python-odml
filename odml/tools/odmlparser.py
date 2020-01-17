@@ -77,6 +77,7 @@ class ODMLWriter:
                            'odml-version': FORMAT_VERSION}
 
             if self.parser == 'YAML':
+                yaml.add_representer(datetime.time, YAMLTimeSerializer)
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4,
@@ -86,6 +87,11 @@ class ODMLWriter:
             string_doc = string_doc.encode("utf-8")
 
         return string_doc
+
+
+# Required to serialize datetime.time as string objects
+def YAMLTimeSerializer(dumper, data):
+    return dumper.represent_scalar('tag:yaml.org,2002:str', str(data))
 
 
 # Required to serialize datetime values with JSON.
@@ -133,7 +139,10 @@ class ODMLReader:
         elif self.parser == 'YAML':
             with open(file) as yaml_data:
                 try:
-                    self.parsed_doc = yaml.load(yaml_data)
+                    yaml.SafeLoader.add_constructor(
+                                            "tag:yaml.org,2002:python/unicode",
+                                            UnicodeLoaderConstructor)
+                    self.parsed_doc = yaml.safe_load(yaml_data)
                 except yaml.parser.ParserError as err:
                     print(err)
                     return
@@ -173,7 +182,7 @@ class ODMLReader:
 
         elif self.parser == 'YAML':
             try:
-                self.parsed_doc = yaml.load(string)
+                self.parsed_doc = yaml.safe_load(string)
             except yaml.parser.ParserError as err:
                 print(err)
                 return
@@ -197,3 +206,9 @@ class ODMLReader:
 
             self.doc = RDFReader().from_string(string, doc_format)
             return self.doc
+
+
+# Constructor for PyYAML to load unicode characters
+# Needed only for < Python 3
+def UnicodeLoaderConstructor(loader, node):
+    return node.value
