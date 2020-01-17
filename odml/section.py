@@ -644,17 +644,17 @@ class BaseSection(base.Sectionable):
         """
         Export leaf, start at section. Includes section properties, not subsections.
         """
-        curr = self.parent
-        child = self.clone(children=False, keep_id=True)
-
-        for prop in self.properties:
-            child.append(prop.clone(keep_id=True))
-
-        par = child
+        curr = self
+        par = self
+        child = self
 
         while curr is not None:
             par = curr.clone(children=False, keep_id=True)
-            par.append(child)
+            if curr != self:
+                par.append(child)
+            if hasattr(curr, 'properties'):
+                for prop in curr.properties:
+                    par.append(prop.clone(keep_id=True))
             child = par
             curr = curr.parent
 
