@@ -130,9 +130,25 @@ class XMLWriter:
     def __unicode__(self):
         return ET.tounicode(self.save_element(self.doc), pretty_print=True)
 
-    def write_file(self, filename, local_style=False, custom_template=False):
-        # calculate the data before opening the file in case we get any
-        # exception
+    def write_file(self, filename, local_style=False, custom_template=None):
+        """
+        write_file saves the XMLWriters odML document to an XML file.
+        :param filename: location and name where the file will be written to.
+        :param local_style: Optional boolean. By default an odML XML document is saved
+                            with a default header containing an external stylesheet for
+                            viewing with a local or remote server. Set up for local
+                            viewing with the 'odmlview' command line script.
+                            When set to True, the saved XML file will contain a default
+                            XSL stylesheet to render the XML file in a web-browser.
+                            Note that Chrome requires the '.odml' extension to be
+                            registered as "application/xml" in the Mime-type database.
+        :param custom_template: Optional string. Provide a custom XSL template to render
+                                the odML XML file in a web-browser.
+                                Please note, that the custom XSL template must not be a
+                                full XSL stylesheet, but has to start and end with the
+                                tag: '<xsl:template match="odML">[custom]</xsl:template>'.
+        """
+        # calculate the data before opening the file in case we get any exception
         if sys.version_info < (3,):
             data = unicode(self).encode('utf-8')
         else:
