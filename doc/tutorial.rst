@@ -888,6 +888,46 @@ format option when loading the document:
 Advanced odML-Features
 ======================
 
+View odML documents in a web browser
+------------------------------------
+
+By default all odML files are saved in the XML format without the capability to view
+the plain files in a browser. By default you can use the command line tool ``odmlview``
+to view saved odML files locally. Since this requires the start of a local server,
+there is another option to view odML XML files in a web browser.
+
+You can use an additional feature of the ``odml.tools.XMLWriter`` to save an odML
+document with an embedded default stylesheet for local viewing:
+
+    >>> import odml
+    >>> from odml.tools import XMLWriter
+    >>> doc = odml.Document() # minimal example document
+    >>> filename = "viewable_document.xml"
+    >>> XMLWriter(doc).write_file(filename, local_style=True)
+
+Now you can open the resulting file 'viewable_document.xml' in any current web-browser
+and it will render the content of the odML file.
+
+If you want to use a custom style sheet to render an odML document instead of the default
+one, you can provide it as a string to the XML writer. Please note, that it cannot be a
+full XSL stylesheet, the outermost tag of the XSL code has to be
+``<xsl:template match="odML"> [your custom style here] </xsl:template>``:
+
+    >>> import odml
+    >>> from odml.tools import XMLWriter
+    >>> doc = odml.Document() # minimal example document
+    >>> filename = "viewable_document.xml"
+    >>> own_template = """<xsl:template match="odML"> [your custom style here] </xsl:template>"""
+    >>> XMLWriter(doc).write_file(filename, custom_template=own_template)
+
+Please note that if the file is saved using the '.odml' extension and you are using
+Chrome, you will need to map the '.odml' extension to the browsers Mime-type database as
+'application/xml'.
+
+Also note that any style that is saved with an odML document will be lost, when this
+document is loaded again and changes to the content are added. In this case the required
+style needs to be specified again when saving the changed file as described above.
+
 Advanced knowledge on Values
 ----------------------------
 

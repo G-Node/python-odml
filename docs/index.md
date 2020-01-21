@@ -79,13 +79,21 @@ The Python installation features multiple convenience commandline scripts.
 
 - `odmlconvert`: Converts odML files of previous file versions into the current one.
 - `odmltordf`: Converts odML files to the supported RDF version of odML.
-- `odmlview`: Render and browse local XML odML files in the webbrowser.
+- `odmlview`: Render and browse local XML odML files without stylesheet in the webbrowser.
 
 All scripts provide detailed usage descriptions by adding the `help` flag to the command.
 
     odmlconvert -h
     odmltordf -h
     odmlview -h
+
+### Browsing odML files
+
+odML XML files can be saved with an included XSL stylesheet for convenient local 
+viewing via a web browser. To use this option, save odML documents using the `XMLWriter`
+instead of `odml.save()`:
+
+    XMLWriter(doc).write_file("filename.xml", local_style=True)
 
 ### odML - NIX conversion script
 
