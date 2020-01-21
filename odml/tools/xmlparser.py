@@ -140,7 +140,7 @@ class XMLWriter:
 
         with open(filename, "w") as file:
             file.write("%s\n" % XML_HEADER)
-            if not local_style:
+            if not local_style and not custom_template:
                 file.write("%s\n" % EXTERNAL_STYLE_HEADER)
             else:
                 file.write("%s\n" % INFILE_STYLE_HEADER)
