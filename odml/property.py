@@ -247,9 +247,6 @@ class BaseProperty(base.BaseObject):
             try:
                 dtypes.get(v, self.dtype)
             except Exception:
-                raise ValueError("odml.Property.values: passed value \'%s\' are not of "
-                                 "consistent type \'%s\'! Format should be \'%s\'." %
-                                 (v, self._dtype, dtypes.default_values(self._dtype)))
                 return False
         return True
 
@@ -330,7 +327,14 @@ class BaseProperty(base.BaseObject):
         if self._dtype is None:
             self._dtype = dtypes.infer_dtype(new_value[0])
 
-        self._validate_values(new_value)
+        if not self._validate_values(new_value):
+            if self._dtype in ("date", "time", "datetime"):
+                raise ValueError("odml.Property.values: passed values are not of "
+                                "consistent type \'%s\'! Format should be \'%s\'." %
+                                 (self._dtype, dtypes.default_values(self._dtype)))
+            else:
+                raise ValueError("odml.Property.values: passed values are not of "
+                                "consistent type!")
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
