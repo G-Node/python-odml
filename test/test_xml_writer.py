@@ -38,12 +38,27 @@ class TestXMLWriter(unittest.TestCase):
         doc = odml.load(self.outfile)
         self.assertEqual(doc, self.doc)
 
+        # test style content in saved file
+        with open(self.outfile) as test_file:
+            content = test_file.read()
+
+        self.assertIn(XML_HEADER, content)
+        self.assertIn(EXTERNAL_STYLE_HEADER, content)
+
     def test_write_style_default(self):
         self.writer.write_file(self.outfile, local_style=True)
 
         # make sure the file can be read again without errors
         doc = odml.load(self.outfile)
         self.assertEqual(doc, self.doc)
+
+        # test style content in saved file
+        with open(self.outfile) as test_file:
+            content = test_file.read()
+
+        self.assertIn(XML_HEADER, content)
+        self.assertIn(INFILE_STYLE_HEADER, content)
+        self.assertIn(INFILE_STYLE_TEMPLATE, content)
 
     def test_write_style_custom(self):
         # template stub just to see if its written properly; will not render anything
@@ -55,9 +70,27 @@ class TestXMLWriter(unittest.TestCase):
         doc = odml.load(self.outfile)
         self.assertEqual(doc, self.doc)
 
-        # test second possible way to save
+        # test style content in saved file
+        with open(self.outfile) as test_file:
+            content = test_file.read()
+
+        self.assertIn(XML_HEADER, content)
+        self.assertIn(INFILE_STYLE_HEADER, content)
+        self.assertNotIn(INFILE_STYLE_TEMPLATE, content)
+        self.assertIn(cust_tmpl, content)
+
+        # --- test second possible way to save
         self.writer.write_file(self.outfile, local_style=False, custom_template=cust_tmpl)
 
         # make sure the file can be read again without errors
         doc = odml.load(self.outfile)
         self.assertEqual(doc, self.doc)
+
+        # test style content in saved file
+        with open(self.outfile) as test_file:
+            content = test_file.read()
+
+        self.assertIn(XML_HEADER, content)
+        self.assertIn(INFILE_STYLE_HEADER, content)
+        self.assertNotIn(INFILE_STYLE_TEMPLATE, content)
+        self.assertIn(cust_tmpl, content)
