@@ -75,9 +75,7 @@ class XMLWriter:
     """
     Creates XML nodes storing the information of an odML Document
     """
-    header = """<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet  type="text/xsl" href="odmlDocument.xsl"?>
-"""
+    header = "%s\n%s\n" % (XML_HEADER, EXTERNAL_STYLE_HEADER)
 
     def __init__(self, odml_document):
         self.doc = odml_document
