@@ -118,7 +118,7 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(p5.values, [0])
 
         with self.assertRaises(ValueError):
-            Property(name="dateprop", dtype=DType.time, value=['20190707'])
+            Property(name="dateprop", dtype=DType.date, value=['20190707'])
 
         with self.assertRaises(ValueError):
             Property(name="timeprop", dtype=DType.time, value=['11.11.11'])
