@@ -1,14 +1,13 @@
 {
-  "VERSION": "1.4.3",
+  "VERSION": "1.4.4",
   "FORMAT_VERSION": "1.1",
   "AUTHOR": "Hagen Fritsch, Jan Grewe, Christian Kellner, Achilleas Koutsou, Michael Sonntag, Lyuba Zehl",
-  "COPYRIGHT": "(c) 2011-2019, German Neuroinformatics Node",
+  "COPYRIGHT": "(c) 2011-2020, German Neuroinformatics Node",
   "CONTACT": "dev@g-node.org",
   "HOMEPAGE": "https://github.com/G-Node/python-odml",
   "CLASSIFIERS": [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
