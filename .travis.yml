@@ -63,7 +63,7 @@ install:
       export PIPCMD=pip;
     fi;
 
-  - $PIPCMD install lxml enum34 pyyaml==4.2b4 rdflib
+  - $PIPCMD install lxml enum34 pyyaml rdflib
 
 script:
   - which $PYCMD
