@@ -1,5 +1,7 @@
 import unittest
 
+import datetime
+
 from odml import Property, Section, Document, DType
 from odml.property import BaseProperty
 from odml.section import BaseSection
@@ -114,6 +116,19 @@ class TestProperty(unittest.TestCase):
         p5 = Property('myprop', value=0)
         self.assertEqual(p5.value, [0])
         self.assertEqual(p5.values, [0])
+
+        with self.assertRaises(ValueError):
+            Property(name="dateprop", dtype=DType.date, value=['20190707'])
+
+        with self.assertRaises(ValueError):
+            Property(name="timeprop", dtype=DType.time, value=['11.11.11'])
+
+        with self.assertRaises(ValueError):
+            Property(name="datetimeprop", dtype=DType.datetime, value=['20190707'])
+
+        with self.assertRaises(ValueError):
+            Property(name="intprop", dtype=DType.int, value=[2, "Hello!", 4])
+
 
     def test_value_append(self):
         # Test append w/o Property value or dtype
@@ -732,6 +747,42 @@ class TestProperty(unittest.TestCase):
 
         prop_b.name = 'newPropertyName'
         self.assertNotEqual(prop_a, prop_b)
+
+    def test_export_leaf(self):
+        doc = Document()
+        first = doc.create_section("first")
+        second = first.create_section("second")
+        first.create_section("third")
+
+        name = "prop1"
+        values = [1.3]
+        first.create_property(name, value=values)
+
+        name = "prop2"
+        values = ["words"]
+        second.create_property(name, value=values)
+
+        name = "prop3"
+        values = ["a", "b"]
+        second.create_property(name, value=values)
+
+        name = "prop4"
+        values = [3]
+        second.create_property(name, value=values)
+
+        name = "prop5"
+        values = ["abc"]
+        first.create_property(name, value=values)
+
+        ex1 = first.properties["prop1"].export_leaf()
+        self.assertEqual(len(ex1['first'].properties), 1)
+        self.assertEqual(len(ex1['first'].sections), 0)
+
+        ex2 = second.properties["prop2"].export_leaf()
+        self.assertEqual(len(ex2.sections), 1)
+        self.assertEqual(len(ex2['first'].properties), 2)
+        self.assertEqual(len(ex2['first'].sections), 1)
+        self.assertEqual(len(ex2['first']['second'].properties), 1)
 
 
 if __name__ == "__main__":

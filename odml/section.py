@@ -638,3 +638,24 @@ class BaseSection(base.Sectionable):
                 print("{} {} [{}]\n{}[...]".format(child_sec_indent,
                                                    s.name, s.type,
                                                    more_indent))
+
+    def export_leaf(self):
+        """
+        Export only the path from this section to the root.
+        Include all properties for all sections, but no other subsections.
+        """
+        curr = self
+        par = self
+        child = self
+
+        while curr is not None:
+            par = curr.clone(children=False, keep_id=True)
+            if curr != self:
+                par.append(child)
+            if hasattr(curr, 'properties'):
+                for prop in curr.properties:
+                    par.append(prop.clone(keep_id=True))
+            child = par
+            curr = curr.parent
+
+        return par

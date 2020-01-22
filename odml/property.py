@@ -328,8 +328,13 @@ class BaseProperty(base.BaseObject):
             self._dtype = dtypes.infer_dtype(new_value[0])
 
         if not self._validate_values(new_value):
-            raise ValueError("odml.Property.values: passed values are not of "
-                             "consistent type!")
+            if self._dtype in ("date", "time", "datetime"):
+                raise ValueError("odml.Property.values: passed values are not of "
+                                "consistent type \'%s\'! Format should be \'%s\'." %
+                                 (self._dtype, dtypes.default_values(self._dtype)))
+            else:
+                raise ValueError("odml.Property.values: passed values are not of "
+                                "consistent type!")
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
@@ -662,3 +667,27 @@ class BaseProperty(base.BaseObject):
         else:
             print(("{}{} {}: {}".format(property_spaces, prefix, self.name,
                                         value_string)))
+
+    def export_leaf(self):
+        """
+        Export only the path from this property to the root.
+        Include all properties of parent sections.
+        """
+        curr = self.parent
+        par = self.parent
+        child = self.parent
+
+        while curr is not None:
+            par = curr.clone(children=False, keep_id=True)
+            if curr != self.parent:
+                par.append(child)
+            if hasattr(curr, 'properties'):
+                if curr == self.parent:
+                    par.append(self.clone(keep_id=True))
+                else:
+                    for prop in curr.properties:
+                        par.append(prop.clone(keep_id=True))
+            child = par
+            curr = curr.parent
+
+        return par
