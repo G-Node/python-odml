@@ -3,10 +3,53 @@
 Used to document all changes from previous releases and collect changes 
 until the next release.
 
-# Latest changes in master
+# Version 1.4.4
+
+## Introduction of inline style sheet
+
+The `XMLWriter` can now be used to save an XML odML document with an inline XSL stylesheet for rendered viewing via a web browser.
+The document can be saved with the current default G-Node odML document style or with a custom style. When a document containing such a stylesheet is loaded, the style is lost and needs to be provided again as described above. See issue #331 for details.
+
+## Export leaf feature
+
+Subsets of odML documents can now be exported using the introduced `export_leaf` features for `Section` and `Property`.
+When invoked on a `Section` or a `Property`, the method will return all direct ancestor `Sections` including all their direct `Properties` up to the root of the document and return a new, cloned document containing only this particular direct branch. See issue #340 for details.
+
+## Major pyyaml dependency fix
+
+Since issue #291 the odml package had its pyyaml dependency fixed to version `4.2b4`.
+This release fixes the original problem with the pyyaml distribution and removes the fix to pyyaml version `4.2b4`.
+See issue #343 and pull request #344 for details. 
+
+## odML package structure changes to reduce import cycles
+
+The package structure was changed to reduce the number of import cycles and make various parser classes more easily available via the `__init__` files. See issues #317 and #333 for details.
+
+The changes to the package structure should not affect any of the main parsers and how they were previously imported nor affect any of the command line scripts provided with this package.
+
+The following changes have been introduced to the package structure:
+- a new subdirectory `odml.tools.converters` is added.
+- `format_converter` and `version_converter` are moved into this directory.
+- since [odml-ui](https://github.com/G-Node/odml-ui) depends on the `version_converter`, a dummy file is left at its original location. It imports the `VersionConverter` class from its new location and prints a deprecation warning.
+- the dict `RDFConversionFormats` from file `tools.utils` has been moved to `RDF_CONVERSION_FORMATS` in file `tools.parser_utils` and all usages have been switched to the new dict.
+- the dict `ConversionFormats` from file `tools.utils` has been moved to the only file its using it, `tools.converters.format_converter`.
+- the now unused file `tools.utils` has been removed.
+- a new subdirectory `odml.rdf` was added and the files `fuzzy_finder` and `query_creator` were moved into this directory. Both files provide convenience and additional functions for odML specific RDF and are fairly independent from the rest of the library. Conceptually they are best kept separate from other convenience tools and parsers.
 
 ## Minor changes, updates and fixes
+
 - The `section_subclasses.yaml` file is moved from the `doc` folder to the new `odml/resources` folder. This allows usage of the file with all install options. See issue #212 for details.
+- The RDF subclasses now also support DataCite Section types.
+- The `rdf_converter` now features a new `load_rdf_subclasses` function, that either provides the content of the `resources/subclasses.yml` file or, if it cannot be accessed, deals with it without breaking the `RDFWriter`.
+- Fixes calling the deprecated `odml.Property.value` attribute in the `rdf_converter`.
+- The `RDFWriter` will now call every odml documents `finalize` method to ensure that all `links` and `includes` are resolved before exporting to RDF.
+- The OWL odml ontology file is moved from `doc/root-ontology.ttl` to `odml/resources/odml-ontology.ttl` and included in `Manifest.in`.
+- The RDF namespace is changed from https://g-node.org/projects/odml-rdf# to https://g-node.org/odml-rdf#. This step is taken since the odml-rdf ontology OWL file will be available under this URL. This change includes changes in all code and documentation occurrences in the project.
+- Typos and minor inconsistencies where fixed in the odml - RDF subclasses mapping file `resources/section_subclasses.yaml`.
+- The OWL odml ontology file `resources/odml-ontology.ttl` has been restructured:
+  - all available subclasses where moved to their own file section.
+  - all subclasses that are created via the `resources/section_subclasses.yaml` file have been added to the ontology file as well.
+- Value errors concerning `date`, `time` and `datetime` now contain a message providing the required format. See issue #341 for details.
 
 # Version 1.4.3
 
