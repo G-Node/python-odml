@@ -46,7 +46,7 @@ def load_rdf_subclasses():
 
     with open(subclass_file, "r") as yaml_file:
         try:
-            section_subclasses = yaml.load(yaml_file)
+            section_subclasses = yaml.safe_load(yaml_file)
         except yaml.parser.ParserError as err:
             print("[Error] Loading RDF subclass file: %s" % err)
 
