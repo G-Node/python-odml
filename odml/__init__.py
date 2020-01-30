@@ -1,3 +1,7 @@
+import warnings
+
+from sys import version_info
+
 _property = property
 
 from . import doc
@@ -7,6 +11,11 @@ from .dtypes import DType
 from .fileio import load, save, display
 from .info import VERSION
 from .tools.parser_utils import SUPPORTED_PARSERS as PARSERS
+
+if version_info.major < 3 or version_info.major == 3 and version_info.minor < 6:
+    msg = "The '%s' package is not tested with your Python version. " % __name__
+    msg += "Please consider upgrading to the latest Python distribution."
+    warnings.warn(msg)
 
 __version__ = VERSION
 
