@@ -2,15 +2,14 @@ import io
 import json
 import os
 import sys
+import uuid
 import yaml
 
 from lxml import etree as ET
 
-from ... import format
+from ...format import Document, Section, Property
 from ...info import FORMAT_VERSION
 from ...terminology import Terminologies, REPOSITORY_BASE
-
-import uuid
 
 try:
     unicode = unicode
@@ -174,28 +173,28 @@ class VersionConverter(object):
         # Exclude unsupported Section attributes, ignore comments, handle repositories.
         for sec in root.iter("section"):
             sec_name = sec.find("name").text
-            for e in sec:
-                if e.tag not in format.Section.arguments_keys and isinstance(e.tag, str):
+            for elem in sec:
+                if elem.tag not in Section.arguments_keys and isinstance(elem.tag, str):
                     self._log("[Info] Omitted non-Section attribute "
-                              "'%s: %s/%s'" % (sec_name, e.tag, e.text))
-                    sec.remove(e)
+                              "'%s: %s/%s'" % (sec_name, elem.tag, elem.text))
+                    sec.remove(elem)
                     continue
 
-                if e.tag == "repository":
-                    self._handle_repository(e)
-                elif e.tag == "include":
-                    self._handle_include(e)
+                if elem.tag == "repository":
+                    self._handle_repository(elem)
+                elif elem.tag == "include":
+                    self._handle_include(elem)
 
         # Exclude unsupported Document attributes, ignore comments, handle repositories.
-        for e in root:
-            if e.tag not in format.Document.arguments_keys and isinstance(e.tag, str):
+        for elem in root:
+            if elem.tag not in Document.arguments_keys and isinstance(elem.tag, str):
                 self._log("[Info] Omitted non-Document "
-                          "attribute '%s/%s'" % (e.tag, e.text))
-                root.remove(e)
+                          "attribute '%s/%s'" % (elem.tag, elem.text))
+                root.remove(elem)
                 continue
 
-            if e.tag == "repository":
-                self._handle_repository(e)
+            if elem.tag == "repository":
+                self._handle_repository(elem)
 
         tree = self._check_add_ids(tree)
 
@@ -315,7 +314,7 @@ class VersionConverter(object):
                 if elem.tag == "dependency_value":
                     elem.tag = "dependencyvalue"
 
-                if (elem.tag not in format.Property.arguments_keys and
+                if (elem.tag not in Property.arguments_keys and
                         isinstance(elem.tag, str)):
                     self._log("[Info] Omitted non-Property attribute "
                               "'%s: %s/%s'" % (prop_id, elem.tag, elem.text))
@@ -348,7 +347,7 @@ class VersionConverter(object):
                                      check_export.text, val_elem.text))
 
                 # Include only supported Property attributes
-                elif val_elem.tag in format.Property.arguments_keys:
+                elif val_elem.tag in Property.arguments_keys:
                     new_elem = ET.Element(val_elem.tag)
                     new_elem.text = val_elem.text
 
@@ -445,8 +444,8 @@ class VersionConverter(object):
             try:
                 if oid.text is not None:
                     new_id.text = str(uuid.UUID(oid.text))
-            except ValueError as e:
-                print(e)
+            except ValueError as exc:
+                print(exc)
             element.remove(oid)
         element.append(new_id)
 
