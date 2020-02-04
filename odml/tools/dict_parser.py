@@ -133,10 +133,11 @@ class DictReader:
         if 'Document' not in self.parsed_doc:
             msg = "Missing root element 'Document'"
             raise ParserException(msg)
-        elif 'odml-version' not in self.parsed_doc:
+
+        if 'odml-version' not in self.parsed_doc:
             raise ParserException("Invalid odML document: Could not find odml-version.")
 
-        elif self.parsed_doc.get('odml-version') != FORMAT_VERSION:
+        if self.parsed_doc.get('odml-version') != FORMAT_VERSION:
             msg = ("Cannot parse odML document with format version '%s'. \n"
                    "\tUse the 'VersionConverter' from 'odml.tools.converters' "
                    "to import previous odML formats."
