@@ -2,7 +2,7 @@
 import uuid
 
 from . import base
-from . import format
+from . import format as fmt
 from . import terminology
 from .doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
@@ -24,7 +24,7 @@ class BaseSection(base.Sectionable):
     _include = None
     _merged = None
 
-    _format = format.Section
+    _format = fmt.Section
 
     def __init__(self, name=None, type=None, parent=None,
                  definition=None, reference=None,
@@ -39,8 +39,8 @@ class BaseSection(base.Sectionable):
                 self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
-        except ValueError as e:
-            print(e)
+        except ValueError as exc:
+            print(exc)
             self._id = str(uuid.uuid4())
 
         # Use id if no name was provided.
@@ -210,10 +210,7 @@ class BaseSection(base.Sectionable):
     @property
     def definition(self):
         """ Name Definition of the section """
-        if hasattr(self, "_definition"):
-            return self._definition
-        else:
-            return None
+        return self._definition
 
     @definition.setter
     def definition(self, new_value):
@@ -277,8 +274,7 @@ class BaseSection(base.Sectionable):
                 "\nodml.Document or odml.Section expected")
 
     def _validate_parent(self, new_parent):
-        if isinstance(new_parent, BaseDocument) or \
-           isinstance(new_parent, BaseSection):
+        if isinstance(new_parent, (BaseDocument, BaseSection)):
             return True
         return False
 
@@ -421,8 +417,8 @@ class BaseSection(base.Sectionable):
 
         obj._props = base.SmartList(BaseProperty)
         if children:
-            for p in self._props:
-                obj.append(p.clone(keep_id))
+            for prop in self._props:
+                obj.append(prop.clone(keep_id))
 
         return obj
 
@@ -547,8 +543,8 @@ class BaseSection(base.Sectionable):
         # however this does not reflect changes happening while the section
         # is unmerged
         if self._link is not None:
-            # TODO get_absolute_path, # TODO don't change if the section can
-            # still be reached using the old link
+            # TODO get_absolute_path
+            # TODO don't change if the section can still be reached using the old link
             self._link = self.get_relative_path(section)
 
         self._merged = None
@@ -571,17 +567,17 @@ class BaseSection(base.Sectionable):
         return self._link is not None or self._include is not None
 
     def _reorder(self, childlist, new_index):
-        l = childlist
-        old_index = l.index(self)
+        lst = childlist
+        old_index = lst.index(self)
 
         # 2 cases: insert after old_index / insert before
         if new_index > old_index:
             new_index += 1
-        l.insert(new_index, self)
+        lst.insert(new_index, self)
         if new_index < old_index:
-            del l[old_index + 1]
+            del lst[old_index + 1]
         else:
-            del l[old_index]
+            del lst[old_index]
         return old_index
 
     def reorder(self, new_index):
@@ -620,6 +616,7 @@ class BaseSection(base.Sectionable):
         Pretty print method to visualize Section-Property trees.
 
         :param indent: number of leading spaces for every child Section or Property.
+        :param max_depth: number of maximum child section layers to traverse and print.
         :param max_length: maximum number of characters printed in one line.
         :param current_depth: number of hierarchical levels printed from the
                               starting Section.
@@ -627,20 +624,20 @@ class BaseSection(base.Sectionable):
         spaces = " " * (current_depth * indent)
         sec_str = "{} {} [{}]".format(spaces, self.name, self.type)
         print(sec_str)
-        for p in self.props:
-            p.pprint(current_depth=current_depth, indent=indent,
-                     max_length=max_length)
+        for prop in self.props:
+            prop.pprint(current_depth=current_depth, indent=indent,
+                        max_length=max_length)
+
         if max_depth == -1 or current_depth < max_depth:
-            for s in self.sections:
-                s.pprint(current_depth=current_depth+1, max_depth=max_depth,
-                         indent=indent, max_length=max_length)
+            for sec in self.sections:
+                sec.pprint(current_depth=current_depth+1, max_depth=max_depth,
+                           indent=indent, max_length=max_length)
         elif max_depth == current_depth:
             child_sec_indent = spaces + " " * indent
             more_indent = spaces + " " * (current_depth + 2 * indent)
-            for s in self.sections:
-                print("{} {} [{}]\n{}[...]".format(child_sec_indent,
-                                                   s.name, s.type,
-                                                   more_indent))
+            for sec in self.sections:
+                print("{} {} [{}]\n{}[...]".format(child_sec_indent, sec.name,
+                                                   sec.type, more_indent))
 
     def export_leaf(self):
         """
