@@ -56,8 +56,8 @@ class BaseProperty(base.BaseObject):
                 self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
-        except ValueError as e:
-            print(e)
+        except ValueError as exc:
+            print(exc)
             self._id = str(uuid.uuid4())
 
         # Use id if no name was provided.
@@ -82,7 +82,7 @@ class BaseProperty(base.BaseObject):
 
         self._values = []
         self.values = values
-        if not values and (value or isinstance(value, bool) or isinstance(value, int)):
+        if not values and (value or isinstance(value, (bool, int))):
             self.values = value
 
         self.parent = parent
@@ -243,9 +243,9 @@ class BaseProperty(base.BaseObject):
 
         :param values: an iterable that contains the values.
         """
-        for v in values:
+        for val in values:
             try:
-                dtypes.get(v, self.dtype)
+                dtypes.get(val, self.dtype)
             except Exception:
                 return False
         return True
@@ -329,12 +329,13 @@ class BaseProperty(base.BaseObject):
 
         if not self._validate_values(new_value):
             if self._dtype in ("date", "time", "datetime"):
-                raise ValueError("odml.Property.values: passed values are not of "
-                                "consistent type \'%s\'! Format should be \'%s\'." %
-                                 (self._dtype, dtypes.default_values(self._dtype)))
+                req_format = dtypes.default_values(self._dtype)
+                msg = "odml.Property.values: passed values are not of consistent type "
+                msg += "\'%s\'! Format should be \'%s\'." % (self._dtype, req_format)
+                raise ValueError(msg)
             else:
-                raise ValueError("odml.Property.values: passed values are not of "
-                                "consistent type!")
+                msg = "odml.Property.values: passed values are not of consistent type!"
+                raise ValueError(msg)
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
@@ -592,11 +593,15 @@ class BaseProperty(base.BaseObject):
             return
 
         new_value = self._convert_value_input(obj)
-        if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
+        if len(new_value) > 0 and strict and \
+                dtypes.infer_dtype(new_value[0]) != self.dtype:
 
-            if not (dtypes.infer_dtype(new_value[0]) == "string" and self.dtype in dtypes.special_dtypes):
-                raise ValueError("odml.Property.extend: passed value data type found (\"%s\") "
-                                 "does not match expected dtype \"%s\"!" % (dtypes.infer_dtype(new_value[0]), self._dtype))
+            type_check = dtypes.infer_dtype(new_value[0])
+            if not (type_check == "string" and self.dtype in dtypes.special_dtypes):
+                msg = "odml.Property.extend: passed value data type found "
+                msg += "(\"%s\") does not match expected dtype \"%s\"!" % (type_check,
+                                                                           self._dtype)
+                raise ValueError(msg)
 
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.extend: passed value(s) cannot be converted "
@@ -624,11 +629,15 @@ class BaseProperty(base.BaseObject):
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
 
-        if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
+        if len(new_value) > 0 and strict and \
+                dtypes.infer_dtype(new_value[0]) != self.dtype:
 
-            if not (dtypes.infer_dtype(new_value[0]) == "string" and self.dtype in dtypes.special_dtypes):
-                raise ValueError("odml.Property.append: passed value data type found (\"%s\") "
-                                 "does not match expected dtype \"%s\"!" % (dtypes.infer_dtype(new_value[0]), self._dtype))
+            type_check = dtypes.infer_dtype(new_value[0])
+            if not (type_check == "string" and self.dtype in dtypes.special_dtypes):
+                msg = "odml.Property.append: passed value data type found "
+                msg += "(\"%s\") does not match expected dtype \"%s\"!" % (type_check,
+                                                                           self._dtype)
+                raise ValueError(msg)
 
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted "
