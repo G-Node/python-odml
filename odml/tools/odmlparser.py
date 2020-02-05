@@ -8,9 +8,10 @@ Parses odML files and documents.
 import datetime
 import json
 import sys
-import yaml
 
 from os.path import basename
+
+import yaml
 
 from . import xmlparser
 from .dict_parser import DictWriter, DictReader
@@ -77,7 +78,7 @@ class ODMLWriter:
                            'odml-version': FORMAT_VERSION}
 
             if self.parser == 'YAML':
-                yaml.add_representer(datetime.time, YAMLTimeSerializer)
+                yaml.add_representer(datetime.time, yaml_time_serializer)
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4,
@@ -90,7 +91,7 @@ class ODMLWriter:
 
 
 # Required to serialize datetime.time as string objects
-def YAMLTimeSerializer(dumper, data):
+def yaml_time_serializer(dumper, data):
     return dumper.represent_scalar('tag:yaml.org,2002:str', str(data))
 
 
@@ -139,13 +140,12 @@ class ODMLReader:
         elif self.parser == 'YAML':
             with open(file) as yaml_data:
                 try:
-                    yaml.SafeLoader.add_constructor(
-                                            "tag:yaml.org,2002:python/unicode",
-                                            UnicodeLoaderConstructor)
+                    yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/unicode",
+                                                    unicode_loader_constructor)
                     self.parsed_doc = yaml.safe_load(yaml_data)
                 except yaml.parser.ParserError as err:
                     print(err)
-                    return
+                    return None
 
             par = DictReader(show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
@@ -159,7 +159,7 @@ class ODMLReader:
                     self.parsed_doc = json.load(json_data)
                 except ValueError as err:  # Python 2 does not support JSONDecodeError
                     print("JSON Decoder Error: %s" % err)
-                    return
+                    return None
 
             par = DictReader(show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
@@ -210,5 +210,5 @@ class ODMLReader:
 
 # Constructor for PyYAML to load unicode characters
 # Needed only for < Python 3
-def UnicodeLoaderConstructor(loader, node):
+def unicode_loader_constructor(_, node):
     return node.value
