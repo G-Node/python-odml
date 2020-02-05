@@ -160,9 +160,9 @@ class SmartList(list):
         """
         Find obj in list
         """
-        for i, e in enumerate(self):
-            if e is obj:
-                return i
+        for idx, val in enumerate(self):
+            if val is obj:
+                return idx
         raise ValueError("remove: %s not in list" % repr(obj))
 
     def remove(self, obj):
@@ -213,11 +213,11 @@ class Sectionable(BaseObject):
         Returns the parent-most node (if its a document instance) or None
         """
         from odml.doc import BaseDocument
-        p = self
-        while p.parent:
-            p = p.parent
-        if isinstance(p, BaseDocument):
-            return p
+        par = self
+        while par.parent:
+            par = par.parent
+        if isinstance(par, BaseDocument):
+            return par
 
     @property
     def sections(self):
@@ -463,12 +463,12 @@ class Sectionable(BaseObject):
         if type:
             type = type.lower()
 
-        for s in self._sections:
-            if self._matches(s, key, type, include_subtype=include_subtype):
+        for sec in self._sections:
+            if self._matches(sec, key, type, include_subtype=include_subtype):
                 if findAll:
-                    ret.append(s)
+                    ret.append(sec)
                 else:
-                    return s
+                    return sec
         if ret:
             return ret
 
@@ -543,24 +543,24 @@ class Sectionable(BaseObject):
         return "/" + "/".join(path)
 
     @staticmethod
-    def _get_relative_path(a, b):
+    def _get_relative_path(path_a, path_b):
         """
-        Returns a relative path for navigation from dir *a* to dir *b*
+        Returns a relative path for navigation from *path_a* to *path_b*
 
         If the common parent of both is "/", return an absolute path
         """
-        a += "/"
-        b += "/"
-        parent = posixpath.dirname(posixpath.commonprefix([a, b]))
+        path_a += "/"
+        path_b += "/"
+        parent = posixpath.dirname(posixpath.commonprefix([path_a, path_b]))
         if parent == "/":
-            return b[:-1]
+            return path_b[:-1]
 
-        a = posixpath.relpath(a, parent)
-        b = posixpath.relpath(b, parent)
-        if a == ".":
-            return b
+        path_a = posixpath.relpath(path_a, parent)
+        path_b = posixpath.relpath(path_b, parent)
+        if path_a == ".":
+            return path_b
 
-        return posixpath.normpath("../" * (a.count("/") + 1) + b)
+        return posixpath.normpath("../" * (path_a.count("/") + 1) + path_b)
 
     def get_relative_path(self, section):
         """
@@ -570,9 +570,9 @@ class Sectionable(BaseObject):
         If the common parent of both sections is the document (i.e. /),
         return an absolute path
         """
-        a = self.get_path()
-        b = section.get_path()
-        return self._get_relative_path(a, b)
+        path_a = self.get_path()
+        path_b = section.get_path()
+        return self._get_relative_path(path_a, path_b)
 
     def clean(self):
         """
@@ -594,8 +594,8 @@ class Sectionable(BaseObject):
         obj._parent = None
         obj._sections = SmartList(BaseSection)
         if children:
-            for s in self._sections:
-                obj.append(s.clone(keep_id=keep_id))
+            for sec in self._sections:
+                obj.append(sec.clone(keep_id=keep_id))
 
         return obj
 
