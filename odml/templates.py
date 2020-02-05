@@ -61,7 +61,8 @@ def cache_load(url):
 
     cache_file = os.path.join(cache_dir, filename)
 
-    if not os.path.exists(cache_file) or dati.fromtimestamp(os.path.getmtime(cache_file)) < (dati.now() - CACHE_AGE):
+    if not os.path.exists(cache_file) or \
+            dati.fromtimestamp(os.path.getmtime(cache_file)) < (dati.now() - CACHE_AGE):
         try:
             data = urllib2.urlopen(url).read()
             if sys.version_info.major > 2:

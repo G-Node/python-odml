@@ -46,12 +46,14 @@ def cache_load(url):
             data = urllib2.urlopen(url).read()
             if sys.version_info.major > 2:
                 data = data.decode("utf-8")
-        except Exception as e:
-            print("failed loading '%s': %s" % (url, e))
+        except Exception as exc:
+            print("failed loading '%s': %s" % (url, exc))
             return
-        fp = open(cache_file, "w")
-        fp.write(str(data))
-        fp.close()
+
+        file_obj = open(cache_file, "w")
+        file_obj.write(str(data))
+        file_obj.close()
+
     return open(cache_file)
 
 
@@ -75,18 +77,16 @@ class Terminologies(dict):
         return self._load(url)
 
     def _load(self, url):
-        # TODO also cache the data locally on disk
-        # if url.startswith("http"): return None
-        fp = cache_load(url)
-        if fp is None:
+        file_obj = cache_load(url)
+        if file_obj is None:
             print("did not successfully load '%s'" % url)
             return
         try:
-            term = XMLReader(filename=url, ignore_errors=True).from_file(fp)
+            term = XMLReader(filename=url, ignore_errors=True).from_file(file_obj)
             term.finalize()
-        except ParserException as e:
+        except ParserException as exc:
             print("Failed to load %s due to parser errors" % url)
-            print(' "%s"' % e)
+            print(' "%s"' % exc)
             term = None
         self[url] = term
         return term
@@ -107,4 +107,4 @@ deferred_load = terminologies.deferred_load
 
 
 if __name__ == "__main__":
-    f = cache_load(REPOSITORY)
+    FILE_OBJECT = cache_load(REPOSITORY)
