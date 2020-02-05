@@ -380,4 +380,4 @@ if __name__ == '__main__':
     if len(args) < 1:
         parser.print_help()
     else:
-        dumper.dumpDoc(load(args[0]))
+        dumper.dump_doc(load(args[0]))
