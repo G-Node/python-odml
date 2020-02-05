@@ -6,18 +6,19 @@ Parses odML files. Can be invoked standalone:
 """
 import csv
 import sys
+
+from os.path import basename
+
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
-from os.path import basename
-
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
-from .. import format
+from .. import format as ofmt
 from ..info import FORMAT_VERSION
 from .parser_utils import InvalidVersionException, ParserException
 
@@ -81,38 +82,38 @@ class XMLWriter:
         self.doc = odml_document
 
     @staticmethod
-    def save_element(e):
+    def save_element(curr_el):
         """
         returns an xml node for the odML object e
         """
-        fmt = e.format()
+        fmt = curr_el.format()
         cur = E(fmt.name)
 
         # generate attributes
-        if isinstance(fmt, format.Document.__class__):
+        if isinstance(fmt, ofmt.Document.__class__):
             cur.attrib['version'] = FORMAT_VERSION
 
         # generate elements
         for k in fmt.arguments_keys:
-            if not hasattr(e, fmt.map(k)):
+            if not hasattr(curr_el, fmt.map(k)):
                 continue
 
-            val = getattr(e, fmt.map(k))
+            val = getattr(curr_el, fmt.map(k))
             if val is None:
                 continue
-            if isinstance(fmt, format.Property.__class__) and k == "value":
+            if isinstance(fmt, ofmt.Property.__class__) and k == "value":
                 # Custom odML tuples require special handling for save loading from file.
-                if e.dtype and e.dtype.endswith("-tuple") and len(val) > 0:
+                if curr_el.dtype and curr_el.dtype.endswith("-tuple") and len(val) > 0:
                     ele = E(k, "(%s)" % ";".join(val[0]))
                 else:
                     ele = E(k, to_csv(val))
                 cur.append(ele)
             else:
                 if isinstance(val, list):
-                    for v in val:
-                        if v is None:
+                    for curr_val in val:
+                        if curr_val is None:
                             continue
-                        ele = XMLWriter.save_element(v)
+                        ele = XMLWriter.save_element(curr_val)
                         cur.append(ele)
                 else:
                     if sys.version_info < (3,):
@@ -196,7 +197,7 @@ class XMLReader(object):
         :param filename: Path to an odml file.
         """
         self.parser = ET.XMLParser(remove_comments=True)
-        self.tags = dict([(obj.name, obj) for obj in format.__all__])
+        self.tags = dict([(obj.name, obj) for obj in ofmt.__all__])
         self.ignore_errors = ignore_errors
         self.show_warnings = show_warnings
         self.filename = filename
@@ -232,8 +233,8 @@ class XMLReader(object):
             root = ET.parse(xml_file, self.parser).getroot()
             if hasattr(xml_file, "close"):
                 xml_file.close()
-        except ET.XMLSyntaxError as e:
-            raise ParserException(e.msg)
+        except ET.XMLSyntaxError as exc:
+            raise ParserException(exc.msg)
 
         self._handle_version(root)
         doc = self.parse_element(root)
@@ -246,20 +247,20 @@ class XMLReader(object):
     def from_string(self, string):
         try:
             root = ET.XML(string, self.parser)
-        except ET.XMLSyntaxError as e:
-            raise ParserException(e.msg)
+        except ET.XMLSyntaxError as exc:
+            raise ParserException(exc.msg)
 
         self._handle_version(root)
         return self.parse_element(root)
 
-    def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
-        for k, v in ArgClass.arguments:
-            if v != 0 and not ArgClass.map(k) in data:
+    def check_mandatory_arguments(self, data, arg_class, tag_name, node):
+        for k, val in arg_class.arguments:
+            if val != 0 and not arg_class.map(k) in data:
                 self.error("missing element <%s> within <%s> tag\n" %
                            (k, tag_name) + repr(data), node)
 
-    def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
-        if tag_name not in ArgClass.arguments_keys:
+    def is_valid_argument(self, tag_name, arg_class, parent_node, child=None):
+        if tag_name not in arg_class.arguments_keys:
             self.error("Invalid element <%s> inside <%s> tag\n" %
                        (tag_name, parent_node.tag),
                        parent_node if child is None else child)
@@ -303,14 +304,14 @@ class XMLReader(object):
         extra_args = {}
         children = []
 
-        for k, v in root.attrib.iteritems():
+        for k, val in root.attrib.iteritems():
             k = k.lower()
             # 'version' is currently the only supported XML attribute.
             if k == 'version' and root.tag == 'odML':
                 continue
 
             # We currently do not support XML attributes.
-            self.error("Attribute not supported, ignoring '%s=%s' " % (k, v), root)
+            self.error("Attribute not supported, ignoring '%s=%s' " % (k, val), root)
 
         for node in root:
             node.tag = node.tag.lower()
@@ -350,8 +351,8 @@ class XMLReader(object):
         obj = fmt.create()
         try:
             obj = fmt.create(**arguments)
-        except Exception as e:
-            self.error(str(e), root)
+        except Exception as exc:
+            self.error(str(exc), root)
 
         if insert_children:
             for child in children:
@@ -359,6 +360,8 @@ class XMLReader(object):
 
         return obj
 
+    # function 'parse_element' requires the captialisation of 'parse_odML'
+    # to properly parse the root of an odML document.
     def parse_odML(self, root, fmt):
         doc = self.parse_tag(root, fmt)
         return doc
