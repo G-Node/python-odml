@@ -1,13 +1,13 @@
+"""
+A module providing general format information and mappings of
+xml-attributes to their python class equivalents
+"""
+
 import sys
 
 from rdflib import Namespace
 
 import odml
-
-"""
-A module providing general format information
-and mappings of xml-attributes to their python class equivalents
-"""
 
 
 class Format(object):
@@ -73,11 +73,11 @@ class Format(object):
             # create the reverse map only if requested
             self._rev_map = {}
             if sys.version_info < (3, 0):
-                for k, v in self._map.iteritems():
-                    self._rev_map[v] = k
+                for k, val in self._map.iteritems():
+                    self._rev_map[val] = k
             else:
-                for k, v in self._map.items():
-                    self._rev_map[v] = k
+                for k, val in self._map.items():
+                    self._rev_map[val] = k
         return self._rev_map.get(name, name)
 
     def __iter__(self):
