@@ -1,6 +1,6 @@
 """
-Dict parser converts the content of a dictionary
-into a proper and verified odML document.
+The dict_parser module provides access to the DictWriter and DictReader class.
+Both handle the conversion of odML documents from and to Python dictionary objects.
 """
 
 from .. import format as odmlfmt
@@ -10,13 +10,20 @@ from .parser_utils import InvalidVersionException, ParserException
 
 class DictWriter:
     """
-    A writer to parse an odML document to a Python dictionary object equivalent.
+    A writer to parse an odml.Document to a Python dictionary object equivalent.
     """
 
     def __init__(self):
         self.doc = None  # odML document
 
     def to_dict(self, odml_document):
+        """
+        Parses a full odml.Document to a Python dict object. Will also parse any
+        contained odml.Sections, their subsections and odml.Properties.
+
+        :param odml_document: an odml.Document.
+        :return: parsed odml.Document as a Python dict object.
+        """
         self.doc = odml_document
         parsed_doc = {}
 
@@ -39,6 +46,13 @@ class DictWriter:
         return parsed_doc
 
     def get_sections(self, section_list):
+        """
+        Parses a list of odml.Sections to a Python dict object. Will also parse any
+        contained subsections and odml.Properties.
+
+        :param section_list: list of odml.Sections.
+        :return: list of parsed odml.Sections as a single Python dict object.
+        """
         section_seq = []
 
         for section in section_list:
@@ -70,6 +84,12 @@ class DictWriter:
 
     @staticmethod
     def get_properties(props_list):
+        """
+        Parses a list of odml.Properties to a Python dict object.
+
+        :param props_list: list of odml.Properties.
+        :return: list of parsed odml.Properties as a single Python dict object.
+        """
         props_seq = []
 
         for prop in props_list:
@@ -100,7 +120,7 @@ class DictWriter:
 
 class DictReader:
     """
-    A reader to parse dictionaries with odML content into a proper odML document.
+    A reader to parse dictionaries with odML content into an odml.Document.
     """
 
     def __init__(self, show_warnings=True):
@@ -114,6 +134,16 @@ class DictReader:
         self.warnings = []
 
     def is_valid_attribute(self, attr, fmt):
+        """
+        Checks whether a provided attribute is valid for a provided odml class
+        (Document, Section, Property).
+
+        :param attr: Python dictionary tag that will be checked if it is a valid
+                     attribute for the provided format class.
+        :param fmt: required odml format class format.Document, format.Section or
+                    format.Property against which the attribute is checked.
+        :returns: the attribute if the attribute is valid, None otherwise.
+        """
         if attr in fmt.arguments_keys:
             return attr
 
@@ -124,9 +154,19 @@ class DictReader:
         self.warnings.append(msg)
         if self.show_warnings:
             print(msg)
+
         return None
 
     def to_odml(self, parsed_doc):
+        """
+        Parses a Python dictionary object containing an odML document to an odml.Document.
+        Will raise a ParserException if the Python dictionary does not contain a valid
+        odML document. Also raises an InvalidVersionException if the odML document
+        is of a previous odML format version.
+
+        :param parsed_doc: Python dictionary object containing an odML document.
+        :returns: parsed odml.Document.
+        """
         self.parsed_doc = parsed_doc
 
         # Parse only odML documents of supported format versions.
@@ -164,6 +204,13 @@ class DictReader:
         return doc
 
     def parse_sections(self, section_list):
+        """
+        Parses a list of Python dictionary objects containing odML sections to the
+        odml.Section equivalents including any subsections and properties.
+
+        :param section_list: list of Python dictionary objects containing odML sections.
+        :returns: list of parsed odml.Sections
+        """
         odml_sections = []
 
         for section in section_list:
@@ -193,6 +240,13 @@ class DictReader:
         return odml_sections
 
     def parse_properties(self, props_list):
+        """
+        Parses a list of Python dictionary objects containing odML properties to the
+        odml.Property equivalents.
+
+        :param props_list: list of Python dictionary objects containing odML properties.
+        :returns: list of parsed odml.Properties
+        """
         odml_props = []
 
         for _property in props_list:
