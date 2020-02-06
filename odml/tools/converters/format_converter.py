@@ -1,3 +1,26 @@
+"""
+The FormatConverter can be used from the command line and within scripts
+to convert between the different odML formats and update previous file format
+versions to the most recent one.
+
+A full list of the available odML output formats is available via the
+CONVERSION_FORMATS constant.
+
+Command line usage:
+python -m <in_dir> <odml_out_format> [-out <out_dir>] [-r]
+
+Examples:
+1) >> python -m odml.tools.converters.format_converter <in_dir> v1_1 -out <out_dir> -r
+
+    Convert files from the path <in_dir> to .xml odml version 1.1, writes them
+    to <out_dir> including subdirectories and its files from the input path.
+
+2) >> python -m odml.tools.converters.format_converter <in_dir> odml
+
+    Converts files from path <in_dir> to .odml and writes them
+    to <in_dir_odml> not including subdirectories.
+"""
+
 import argparse
 import copy
 import os
@@ -24,18 +47,28 @@ CONVERSION_FORMATS.update({
 
 
 class FormatConverter(object):
+    """
+    Class for converting between the different odML file formats.
+    """
 
     @classmethod
     def convert(cls, args=None):
         """
         Enable usage of the argparse for calling convert_dir(...)
+
+        Usage:
+        python -m <in_dir> <odml_out_format> [-out <out_dir>] [-r]
+
         Examples:
           1) >> python -m odml.tools.converters.format_converter <in_dir> v1_1 -out <out_dir> -r
             Convert files from the path <in_dir> to .xml odml version 1.1, writes them
             to <out_dir> including subdirectories and its files from the input path.
+
           2) >> python -m odml.tools.converters.format_converter <in_dir> odml
             Converts files from path <in_dir> to .odml and writes them
             to <in_dir_odml> not including subdirectories.
+
+        :param args: Command line arguments. See usage for details.
         """
         desc = "Convert directory with odml files to another format"
         parser = argparse.ArgumentParser(description=desc)
@@ -53,6 +86,7 @@ class FormatConverter(object):
     def convert_dir(cls, input_dir, output_dir, parse_subdirs, res_format):
         """
         Convert files from given input directory to the specified res_format.
+
         :param input_dir: Path to input directory
         :param output_dir: Path for output directory.
                            If None, new directory will be created on the same level as input
@@ -86,7 +120,7 @@ class FormatConverter(object):
                     cls._convert_file(os.path.join(input_dir, file_name),
                                       os.path.join(output_dir, file_name), res_format)
         else:
-            for dir_path, dir_names, file_names in os.walk(input_dir):
+            for dir_path, _, file_names in os.walk(input_dir):
                 for file_name in file_names:
                     in_file_path = os.path.join(dir_path, file_name)
                     out_dir = re.sub(r"" + input_dir, r"" + output_dir, dir_path)
@@ -97,7 +131,15 @@ class FormatConverter(object):
     @classmethod
     def _convert_file(cls, input_path, output_path, res_format):
         """
-        Convert a file from given input_path to res_format.
+        Convert a file from given input_path to res_format. Will raise a ValueError
+        if the provided output format (res_format) is not supported.
+
+        :param input_path: full path including file name of the file to be converted.
+        :param output_path: full path including file name of the output file.
+                            If required the file extension will be adjusted to the
+                            output format.
+        :param res_format: Format the input file will be converted to. Only formats
+                           listed in constant CONVERSION_FORMATS are supported.
         """
         if res_format == "v1_1":
             VersionConverter(input_path).write_to_file(output_path)
@@ -118,7 +160,9 @@ class FormatConverter(object):
     @staticmethod
     def _create_sub_directory(dir_path):
         """
-        Creates the new directory to store the converted file.
+        Creates a new directory if it does not yet exist.
+
+        :param dir_path: path of the required directory.
         """
         if not os.path.isdir(dir_path):
             os.makedirs(dir_path)
@@ -126,7 +170,11 @@ class FormatConverter(object):
     @staticmethod
     def _check_input_output_directory(input_dir, output_dir):
         """
-        Checks if the directories are valid.
+        Checks if the provided directories are valid. Will raise a ValueError
+        if the directories do not exist.
+
+        :param input_dir: input file directory.
+        :param output_dir: output file directory. Can be None.
         """
         if not input_dir or not os.path.isdir(input_dir):
             raise ValueError("The path to input directory is not a valid path")
