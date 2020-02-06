@@ -1,10 +1,19 @@
 """
-Dumps odML-Structures
+The dumper module provides functions to dump odML objects;
+Document, Section, Property; to the command line.
 """
 from .xmlparser import to_csv
 
 
 def get_props(obj, props):
+    """
+    get_props retrieves the values of a list of provided properties
+    from an object and returns all values as a concatenated string.
+
+    :param obj: odml object from which to retrieve specific property values.
+    :param props: list of properties
+    :returns: the obj property values as a concatenated string
+    """
     out = []
     for prop in props:
         if hasattr(obj, prop):
@@ -19,6 +28,12 @@ def get_props(obj, props):
 
 
 def dump_property(prop, indent=1):
+    """
+    dump_property prints the content of an odml.Property.
+
+    :param prop: odml.Property
+    :param indent: number of prepended whitespaces. Default is 1.
+    """
     prop_list = ["definition", "values", "uncertainty", "unit", "dtype",
                  "value_reference", "dependency", "dependencyValue"]
     prop_string = get_props(prop, prop_list)
@@ -26,6 +41,13 @@ def dump_property(prop, indent=1):
 
 
 def dump_section(section, indent=1):
+    """
+    dump_section prints the content of an odml.Section including any subsections
+    and odml.Properties.
+
+    :param section: odml.Section
+    :param indent: number of prepended whitespaces. Default is 1.
+    """
     if section is None:
         return
 
@@ -41,5 +63,11 @@ def dump_section(section, indent=1):
 
 
 def dump_doc(doc):
+    """
+    dump_doc prints the content of an odml.Document including any subsections
+    and odml.Properties.
+
+    :param doc: odml.Section
+    """
     for sec in doc:
         dump_section(sec)
