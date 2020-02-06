@@ -1,3 +1,8 @@
+"""
+This module provides backwards compatibility for the VersionConverter class.
+It is deprecated and will be removed in future versions.
+"""
+
 from .converters import VersionConverter
 
 print("[DEPRECATION WARNING] The VersionConverter file has been moved to "
