@@ -1,5 +1,4 @@
 # -*- coding: utf-8
-import collections
 import uuid
 
 from . import base
@@ -11,6 +10,10 @@ from .property import BaseProperty
 # it MUST however not be used to create any Property objects
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 
 @allow_inherit_docstring
 class BaseSection(base.Sectionable):
@@ -322,7 +325,7 @@ class BaseSection(base.Sectionable):
         elif isinstance(obj, BaseProperty):
             self._props.append(obj)
             obj._parent = self
-        elif isinstance(obj, collections.Iterable) and not isinstance(obj, str):
+        elif isinstance(obj, Iterable) and not isinstance(obj, str):
             raise ValueError("odml.Section.append: "
                              "Use extend to add a list of Sections or Properties.")
         else:
@@ -336,7 +339,7 @@ class BaseSection(base.Sectionable):
 
         :param obj_list: Iterable containing Section and Property entries.
         """
-        if not isinstance(obj_list, collections.Iterable):
+        if not isinstance(obj_list, Iterable):
             raise TypeError("'%s' object is not iterable" % type(obj_list).__name__)
 
         # Make sure only Sections and Properties with unique names will be added.
