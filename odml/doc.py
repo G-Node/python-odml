@@ -1,4 +1,7 @@
 # -*- coding: utf-8
+"""
+This module provides the Base Document class.
+"""
 import uuid
 
 from . import base
