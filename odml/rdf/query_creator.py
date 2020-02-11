@@ -1,3 +1,10 @@
+"""
+The module provides access to QueryParser and QueryCreator classes.
+QueryParsers parse search strings to odml query dictionaries that can be
+consumed by QueryCreators. QueryCreators create RDF queries from
+provided odml query dictionaries.
+"""
+
 import re
 from abc import ABCMeta, abstractmethod
 
@@ -10,6 +17,9 @@ from ..format import Section
 
 
 class BaseQueryCreator:
+    """
+    An abstract base class for odml specific QueryCreators.
+    """
 
     __metaclass__ = ABCMeta
 
@@ -28,6 +38,13 @@ class BaseQueryCreator:
 
     @abstractmethod
     def get_query(self, q_str, q_parser):
+        """
+        Construct a SPARQL query from an input string.
+
+        :param q_str: input string.
+        :param q_parser: parser to use on the input string.
+        :return SPARQL query.
+        """
         pass
 
     @abstractmethod
@@ -36,6 +53,9 @@ class BaseQueryCreator:
 
 
 class BaseQueryParser:
+    """
+    An abstract base class for QueryParsers.
+    """
 
     __metaclass__ = ABCMeta
 
@@ -44,10 +64,19 @@ class BaseQueryParser:
 
     @abstractmethod
     def parse_query_string(self, q_str):
+        """
+        Parse an input string and return a dictionary consumable by a QueryCreator.
+        """
         pass
 
 
 class QueryParserFuzzy(BaseQueryParser):
+    """
+    This class parses an odml specific input string and uses
+    heuristics to approximate which Section or Property attributes
+    should be matched against multiple search parameters and constructs
+    an odml specific SPARQL query.
+    """
 
     def __init__(self):
         super(QueryParserFuzzy, self).__init__()
@@ -55,6 +84,7 @@ class QueryParserFuzzy(BaseQueryParser):
     def parse_query_string(self, q_str):
         """
         Parse query string and returns dict object with parameters.
+
         :param q_str: query string.
                       Example: FIND sec(name, type) prop(type) HAVING Stimulus, Contrast
         :return: dict object.
@@ -143,6 +173,9 @@ class QueryParserFuzzy(BaseQueryParser):
 
 
 class QueryParser(BaseQueryParser):
+    """
+    This class parses an odml specific input string into an odml specific SPARQL query.
+    """
 
     def __init__(self):
         super(QueryParser, self).__init__()
@@ -228,7 +261,7 @@ class QueryCreator(BaseQueryCreator):
         :param q_parser: one of possible query parsers.
         :param q_str: doc(author:D. N. Adams) section(name:Stimulus)
                       prop(name:Contrast, value:20, unit:%)
-        :return rdflib prepare query.
+        :return rdflib prepared query.
         """
         if not self.q_dict:
             if not q_str:
@@ -244,6 +277,7 @@ class QueryCreator(BaseQueryCreator):
     def _prepare_query(self):
         """
         Creates rdflib query using parameters from self.q_dict.
+
         :return: string representing rdflib query.
         """
 
