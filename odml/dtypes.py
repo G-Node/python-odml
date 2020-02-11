@@ -1,3 +1,7 @@
+"""
+Provides functionality for validation of the data-types specified for odML
+"""
+
 import datetime as dt
 import re
 import sys
@@ -5,10 +9,6 @@ import sys
 from enum import Enum
 
 self = sys.modules[__name__].__dict__
-
-"""
-Provides functionality for validation of the data-types specified for odML
-"""
 
 try:
     unicode = unicode
@@ -21,6 +21,9 @@ FORMAT_TIME = "%H:%M:%S"
 
 
 class DType(str, Enum):
+    """
+    The DType class enumerates all data types supported by odML.
+    """
     string = 'string'
     text = 'text'
     int = 'int'
@@ -37,6 +40,12 @@ class DType(str, Enum):
 
 
 def default_values(dtype):
+    """
+    Returns the default value for a provided odml data type.
+
+    :param dtype: odml.DType or string corresponding to an odml data type.
+    :returns: default value for an identified odml data type or empty string.
+    """
     dtype = dtype.lower()
     default_dtype_value = {
         'string': '',
@@ -66,6 +75,12 @@ special_dtypes = ["url", "person", "text"]
 
 
 def infer_dtype(value):
+    """
+    Tries to identify the odml data type for a provided value.
+
+    :param value: single value to infer the odml datatype from.
+    :returns: The identified dtype name. If it cannot be identified, "string" is returned.
+    """
     dtype = (type(value)).__name__
     if dtype in _dtype_map:
         dtype = _dtype_map[dtype]
@@ -75,13 +90,15 @@ def infer_dtype(value):
             dtype = 'text'
         return dtype
 
-    # If unable to infer a dtype of given value, return default as *string*
     return 'string'
 
 
 def valid_type(dtype):
     """
     Checks if *dtype* is a valid odML value data type.
+
+    :param dtype: odml.DType or string corresponding to an odml data type.
+    :returns: Boolean.
     """
     if dtype is None:
         return True
@@ -106,7 +123,14 @@ def valid_type(dtype):
 
 def get(string, dtype=None):
     """
-    Convert *string* to the corresponding *dtype*
+    Convert *string* to the corresponding *dtype*.
+    The appropriate function is derived from the provided dtype.
+    If no dtype is provided, the string conversion function is used by default.
+
+    :param string: string to be converted into an odml specific value.
+    :param dtype: odml.DType or string corresponding to an odml data type.
+                  If provided it is used to identify the appropriate conversion function.
+    :returns: value converted to the appropriate data type.
     """
     if not dtype:
         return str_get(string)
@@ -118,7 +142,13 @@ def get(string, dtype=None):
 
 def set(value, dtype=None):
     """
-    Serialize a *value* of type *dtype* to a unicode string
+    Serialize a *value* of type *dtype* to a unicode string.
+    The appropriate function is derived from the provided dtype.
+
+    :param value: odml specific value to be converted into a string.
+    :param dtype: odml.DType or string corresponding to an odml data type.
+                  If provided it is used to identify the appropriate conversion function.
+    :returns: value converted to an appropriately formatted string.
     """
     if not dtype:
         return str_set(value)
@@ -134,6 +164,13 @@ def set(value, dtype=None):
 
 
 def int_get(string):
+    """
+    Converts an input string to an integer value. If *string* is empty
+    the default value for int is returned.
+
+    :param string: string value to convert to int.
+    :return: Integer value.
+    """
     if string is None or string == "":
         return default_values("int")
 
@@ -145,6 +182,13 @@ def int_get(string):
 
 
 def float_get(string):
+    """
+    Converts an input string to a float value. If *string* is empty
+    the default value for float is returned.
+
+    :param string: string value to convert to int.
+    :return: Float value.
+    """
     if string is None or string == "":
         return default_values("float")
 
@@ -152,6 +196,12 @@ def float_get(string):
 
 
 def str_get(string):
+    """
+    Handles an input string value and escapes None and empty collections.
+
+    :param string: value to check for None value or empty collections.
+    :return: string value.
+    """
     # Do not stringify empty list or dict but make sure boolean False gets through.
     if string in [None, "", [], {}]:
         return default_values("string")
@@ -170,6 +220,14 @@ string_set = str_get
 
 
 def time_get(string):
+    """
+    Checks an input string against the required time format and converts it to
+    a time object with the default format. If *string* is empty the default
+    value for time is returned.
+
+    :param string: string value to convert to time.
+    :return: time object.
+    """
     if string is None or string == "":
         return default_values("time")
 
@@ -183,6 +241,14 @@ time_set = time_get
 
 
 def date_get(string):
+    """
+    Checks an input string against the required date format and converts it to
+    a date object with the default format. If *string* is empty the default
+    value for date is returned.
+
+    :param string: string value to convert to date.
+    :return: date object.
+    """
     if string is None or string == "":
         return default_values("date")
 
@@ -196,6 +262,14 @@ date_set = date_get
 
 
 def datetime_get(string):
+    """
+    Checks an input string against the required datetime format and converts
+    it to a datetime object with the default format. If *string* is empty the
+    default value for datetime is returned.
+
+    :param string: string value to convert to datetime.
+    :return: datetime object.
+    """
     if string is None or string == "":
         return default_values("datetime")
 
@@ -209,6 +283,16 @@ datetime_set = datetime_get
 
 
 def boolean_get(string):
+    """
+    Handles an input string value and escapes None and empty collections and
+    provides the default boolean value in these cases. String values
+    "true", "1", True, "t" are interpreted as boolean True, string values
+    "false", "0", False, "f" are interpreted as boolean False.
+    A ValueError is raised if the input value cannot be interpreted as boolean.
+
+    :param string: value to convert to boolean.
+    :return: boolean value.
+    """
     if string in [None, "", [], {}]:
         return default_values("boolean")
 
@@ -236,7 +320,11 @@ bool_set = boolean_set
 
 def tuple_get(string, count=None):
     """
-    Parse a tuple string like "(1024;768)" and return strings of the elements
+    Parse a tuple string like "(1024;768)" and return a list of strings with the
+    individual tuple elements.
+
+    :param string: string to be parsed into odML style tuples.
+    :param count: list of strings.
     """
     if not string:
         return None
@@ -250,6 +338,12 @@ def tuple_get(string, count=None):
 
 
 def tuple_set(value):
+    """
+    Serialize odml style tuples to a string representation.
+
+    :param value: odml style tuple values.
+    :return: string.
+    """
     if not value:
         return None
     return "(%s)" % ";".join(value)
