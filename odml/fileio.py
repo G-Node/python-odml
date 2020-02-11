@@ -1,3 +1,7 @@
+"""
+This module provides convenience functions for saving and loading of odML files.
+"""
+
 import os
 from .tools.odmlparser import ODMLReader, ODMLWriter
 
