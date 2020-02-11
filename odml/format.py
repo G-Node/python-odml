@@ -1,6 +1,6 @@
 """
-A module providing general format information and mappings of
-xml-attributes to their python class equivalents
+The module provides general format information and mappings of
+XML and RDF attributes to their Python class equivalents.
 """
 
 import sys
@@ -11,6 +11,10 @@ import odml
 
 
 class Format(object):
+    """
+    Base format class for all odML object formats. The formats are required
+    when the corresponding odML objects are serialized to or loaded from files.
+    """
     _name = ""
     _args = {}
     _map = {}
@@ -86,10 +90,19 @@ class Format(object):
             yield self.map(k)
 
     def create(self, *args, **kargs):
+        """
+        This method will call the init method of the odML class implementation
+        corresponding to the specific format odML class and return the initialised
+        class instance. e.g. format.Document.create() will return an initialised
+        odml.Document instance.
+        """
         return getattr(odml, self.__class__.__name__)(*args, **kargs)
 
 
 class Property(Format):
+    """
+    The format class for the odml Property class.
+    """
     _name = "property"
     _ns = Format._ns
     _rdf_type = _ns.Property
@@ -126,6 +139,9 @@ class Property(Format):
 
 
 class Section(Format):
+    """
+    The format class for the odml Section class.
+    """
     _name = "section"
     _ns = Format._ns
     _rdf_type = _ns.Section
@@ -159,6 +175,9 @@ class Section(Format):
 
 
 class Document(Format):
+    """
+    The format class for the odml Document class.
+    """
     _name = "odML"
     _ns = Format._ns
     _rdf_type = _ns.Document
@@ -178,7 +197,7 @@ class Document(Format):
         'id': _ns.hasId,
         'author': _ns.hasAuthor,
         'date': _ns.hasDate,
-        'version': _ns.hasDocVersion,    # discuss about the changes to the data model
+        'version': _ns.hasDocVersion,
         'repository': _ns.hasTerminology,
         'sections': _ns.hasSection
     }
