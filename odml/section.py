@@ -1,4 +1,7 @@
 # -*- coding: utf-8
+"""
+This module provides the Base Section class.
+"""
 import uuid
 
 try:
@@ -18,7 +21,25 @@ from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 @allow_inherit_docstring
 class BaseSection(base.Sectionable):
-    """ An odML Section """
+    """
+    An odML Section.
+
+    :param name: string providing the name of the Section. If the name is not
+                 provided, the uuid of the Property is assigned as its name.
+    :param type: String providing a grouping description for similar Sections.
+    :param parent: the parent object of the new Section. If the object is not
+                   an odml.Section or an odml.Document, a ValueError is raised.
+    :param definition: String describing the definition of the Section.
+    :param reference: A reference (e.g. an URL) to an external definition
+                      of the Section.
+    :param repository: URL to a repository where this Section can be found.
+    :param link: Specifies a soft link, i.e. a path within the document.
+    :param include: Specifies an arbitrary URL. Can only be used if *link* is not set.
+    :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
+               an id will be generated and assigned. An id has to be unique
+               within an odML Document.
+    """
+
     type = None
     reference = None  # the *import* property
     _link = None
@@ -69,7 +90,7 @@ class BaseSection(base.Sectionable):
 
     def __iter__(self):
         """
-        Iterate over each section and property contained in this section
+        Iterate over each Section and Property contained in this Section.
         """
         for section in self._sections:
             yield section
@@ -78,14 +99,14 @@ class BaseSection(base.Sectionable):
 
     def __len__(self):
         """
-        Number of children (sections AND properties)
+        Number of children (Sections AND Properties).
         """
         return len(self._sections) + len(self._props)
 
     @property
     def oid(self):
         """
-        The uuid for the section. Required for entity creation and comparison,
+        The uuid for the Section. Required for entity creation and comparison,
         saving and loading.
         """
         return self.id
@@ -102,6 +123,7 @@ class BaseSection(base.Sectionable):
         new_id sets the id of the current object to a RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
+
         :param oid: UUID string as specified in RFC 4122.
         """
         if oid is not None:
@@ -111,6 +133,9 @@ class BaseSection(base.Sectionable):
 
     @property
     def name(self):
+        """
+        Returns the name of the Section.
+        """
         return self._name
 
     @name.setter
@@ -129,7 +154,7 @@ class BaseSection(base.Sectionable):
         """
         The same as :py:attr:`odml.section.BaseSection.link`, except that
         include specifies an arbitrary url instead of a local path within
-        the same document
+        the same document.
         """
         return self._include
 
@@ -170,7 +195,7 @@ class BaseSection(base.Sectionable):
     @property
     def link(self):
         """
-        Specifies a softlink, i.e. a path within the document
+        Specifies a softlink, i.e. a path within the document.
         When the merge()-method is called, the link will be resolved creating
         according copies of the section referenced by the link attribute.
         When the unmerge() method is called (happens when running clean())
@@ -210,7 +235,9 @@ class BaseSection(base.Sectionable):
 
     @property
     def definition(self):
-        """ Name Definition of the section """
+        """
+        Returns the definition of the Section.
+        """
         return self._definition
 
     @definition.setter
@@ -225,6 +252,10 @@ class BaseSection(base.Sectionable):
 
     @property
     def reference(self):
+        """
+        A reference (e.g. an URL) to an external definition of the Section.
+        :returns: The reference of the Section.
+        """
         return self._reference
 
     @reference.setter
@@ -238,23 +269,31 @@ class BaseSection(base.Sectionable):
     #  properties
     @property
     def properties(self):
-        """ The list of all properties contained in this section """
+        """
+        The list of all properties contained in this Section,
+        """
         return self._props
 
     @property
     def props(self):
-        """ The list of all properties contained in this section;
-            NIXpy format style alias for 'properties'."""
+        """
+        The list of all properties contained in this Section;
+        NIXpy format style alias for 'properties'.
+        """
         return self._props
 
     @property
     def sections(self):
-        """ The list of all child-sections of this section """
+        """
+        The list of all child-sections of this Section.
+        """
         return self._sections
 
     @property
     def parent(self):
-        """ The parent section, the parent document or None """
+        """
+        Returns the parent Section, Document or None.
+        """
         return self._parent
 
     @parent.setter
@@ -275,15 +314,21 @@ class BaseSection(base.Sectionable):
                 "\nodml.Document or odml.Section expected")
 
     def _validate_parent(self, new_parent):
+        """
+        Checks whether a provided object is a valid odml.Section or odml.Document..
+
+        :param new_parent: object to check whether it is an odml.Section or odml.Document.
+        :returns: Boolean whether the object is an odml.Section, odml.Document or not.
+        """
         if isinstance(new_parent, (BaseDocument, BaseSection)):
             return True
         return False
 
     def get_repository(self):
         """
-        Returns the repository responsible for this section,
+        Returns the repository responsible for this Section,
         which might not be the *repository* attribute, but may
-        be inherited from a parent section / the document
+        be inherited from a parent Section / the Document.
         """
         if self._repository is None and self.parent is not None:
             return self.parent.get_repository()
@@ -305,7 +350,7 @@ class BaseSection(base.Sectionable):
 
     def get_merged_equivalent(self):
         """
-        Return the merged object or None
+        Return the merged object or None.
         """
         return self._merged
 
@@ -540,9 +585,9 @@ class BaseSection(base.Sectionable):
         for obj in removals:
             self.remove(obj)
 
-        # The path may not be valid anymore, so make sure to update it
-        # however this does not reflect changes happening while the section
-        # is unmerged
+        # The path may not be valid anymore, so make sure to update it.
+        # However this does not reflect changes happening while the section
+        # is unmerged.
         if self._link is not None:
             # TODO get_absolute_path
             # TODO don't change if the section can still be reached using the old link
@@ -644,6 +689,8 @@ class BaseSection(base.Sectionable):
         """
         Export only the path from this section to the root.
         Include all properties for all sections, but no other subsections.
+
+        :returns: cloned odml tree to the root of the current document.
         """
         curr = self
         par = self
