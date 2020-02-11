@@ -2,12 +2,15 @@
 """
 Collects common base functionality
 """
-import collections
 import posixpath
 
 from . import terminology
 from .tools.doc_inherit import allow_inherit_docstring
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 
 class BaseObject(object):
     _format = None
@@ -249,7 +252,7 @@ class Sectionable(BaseObject):
         if isinstance(section, BaseSection):
             self._sections.append(section)
             section._parent = self
-        elif isinstance(section, collections.Iterable) and not isinstance(section, str):
+        elif isinstance(section, Iterable) and not isinstance(section, str):
             raise ValueError("Use extend to add a list of Sections.")
         else:
             raise ValueError("Can only append objects of type Section.")
@@ -261,7 +264,7 @@ class Sectionable(BaseObject):
         :param sec_list: Iterable containing odML Section entries.
         """
         from odml.section import BaseSection
-        if not isinstance(sec_list, collections.Iterable):
+        if not isinstance(sec_list, Iterable):
             raise TypeError("'%s' object is not iterable" % type(sec_list).__name__)
 
         # Make sure only Sections with unique names will be added.
