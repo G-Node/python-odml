@@ -1,3 +1,7 @@
+"""
+This module provides the FuzzyFinder class that enables querying
+an odML RDF graph using abstract parameters.
+"""
 from .query_creator import QueryCreator, QueryParser, QueryParserFuzzy
 
 
