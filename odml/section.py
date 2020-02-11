@@ -1,6 +1,11 @@
 # -*- coding: utf-8
 import uuid
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
+
 from . import base
 from . import format as fmt
 from . import terminology
@@ -10,10 +15,6 @@ from .property import BaseProperty
 # it MUST however not be used to create any Property objects
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
-try:
-    from collections.abc import Iterable
-except ImportError:
-    from collections import Iterable
 
 @allow_inherit_docstring
 class BaseSection(base.Sectionable):

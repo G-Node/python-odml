@@ -4,13 +4,14 @@ This module provides base classes for functionality common to odML objects.
 """
 import posixpath
 
-from . import terminology
-from .tools.doc_inherit import allow_inherit_docstring
-
 try:
     from collections.abc import Iterable
 except ImportError:
     from collections import Iterable
+
+from . import terminology
+from .tools.doc_inherit import allow_inherit_docstring
+
 
 class BaseObject(object):
     """
