@@ -13,6 +13,9 @@ environment:
     - PYTHON: "C:\\Python37"
       PYVER: 3
       BITS: 32
+    - PYTHON: "C:\\Python38"
+      PYVER: 3
+      BITS: 32
     - PYTHON: "C:\\Python27-x64"
       PYVER: 2
       BITS: 64
@@ -20,6 +23,9 @@ environment:
       PYVER: 3
       BITS: 64
     - PYTHON: "C:\\Python37-x64"
+      PYVER: 3
+      BITS: 64
+    - PYTHON: "C:\\Python38-x64"
       PYVER: 3
       BITS: 64
 
