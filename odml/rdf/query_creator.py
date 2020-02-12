@@ -39,7 +39,7 @@ class BaseQueryCreator:
     @abstractmethod
     def get_query(self, q_str, q_parser):
         """
-        Construct a SPARQL query from an input string.
+        Constructs a SPARQL query from an input string.
 
         :param q_str: input string.
         :param q_parser: parser to use on the input string.
@@ -65,7 +65,7 @@ class BaseQueryParser:
     @abstractmethod
     def parse_query_string(self, q_str):
         """
-        Parse an input string and return a dictionary consumable by a QueryCreator.
+        Parses an input string and return a dictionary consumable by a QueryCreator.
         """
         pass
 

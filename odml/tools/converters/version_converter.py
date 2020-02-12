@@ -276,7 +276,7 @@ class VersionConverter(object):
 
     def _handle_properties(self, root):
         """
-        Method removes all property elements w/o name attribute, converts Value
+        Removes all property elements without name attribute, converts Value
         elements from v1.0 to v1.1 style and removes unsupported Property elements.
 
         :param root: lxml.ElementTree containing a v1.0 odML property list.

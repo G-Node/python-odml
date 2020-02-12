@@ -42,7 +42,7 @@ INFILE_STYLE_TEMPLATE = """<xsl:template match="odML"><xsl:variable name="reposi
 
 def to_csv(val):
     """
-    to_csv modifies odML values for serialization to strings and files.
+    Modifies odML values for serialization to strings and files.
 
     :param val: odML value.
     :return: modified value string.
@@ -63,7 +63,7 @@ def to_csv(val):
 
 def from_csv(value_string):
     """
-    from_csv reads a string containing odML values and parses them into a list.
+    Reads a string containing odML values and parses them into a list.
 
     :param value_string: string of odML values.
     :return: list of values.
@@ -226,7 +226,7 @@ class XMLReader(object):
     @staticmethod
     def _handle_version(root):
         """
-        Check if the odML version of a handed in parsed lxml.etree is supported
+        Checks if the odML version of a handed in parsed lxml.etree is supported
         by the current library and raise a ParserException otherwise. If the
         lxml.etree contains an XML file of a previous odML format version,
         an InvalidVersionException is raised.
@@ -249,7 +249,7 @@ class XMLReader(object):
 
     def from_file(self, xml_file):
         """
-        Parse the datastream from a file like object and return an odML data structure.
+        Parses the datastream from a file like object and return an odML data structure.
         If the file cannot be parsed, a ParserException is raised.
 
         :param xml_file: file path to an XML input file or file like object.
@@ -272,7 +272,7 @@ class XMLReader(object):
 
     def from_string(self, string):
         """
-        Parse an XML string and return an odML data structure.
+        Parses an XML string and return an odML data structure.
         If the string cannot be parsed, a ParserException is raised.
 
         :param string: XML string.

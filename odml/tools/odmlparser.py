@@ -47,7 +47,7 @@ class ODMLWriter:
 
     def write_file(self, odml_document, filename):
         """
-        write_file writes an odml.Document to a file using the format
+        Writes an odml.Document to a file using the format
         defined in the ODMLWriter.parser property. Supported formats are
         JSON, XML, YAML and RDF.
         Will raise a ParserException if the odml.Document is not valid.
@@ -75,7 +75,7 @@ class ODMLWriter:
 
     def to_string(self, odml_document):
         """
-        to_string parses an odml.Document to a string in the file format
+        Parses an odml.Document to a string in the file format
         defined in the ODMLWriter.parser property. Supported formats are
         JSON, XML, YAML and RDF.
 

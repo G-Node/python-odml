@@ -195,7 +195,7 @@ class BaseProperty(base.BaseObject):
     @property
     def parent(self):
         """
-        Returns the Section containing this Property.
+        The Section containing this Property.
         """
         return self._parent
 

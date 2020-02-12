@@ -26,7 +26,7 @@ CACHE_AGE = datetime.timedelta(days=1)
 
 def cache_load(url):
     """
-    Load the url and store it in a temporary cache directory
+    Loads the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version.
 
     :param url: URL from where to load an odML terminology file from.
@@ -67,7 +67,7 @@ class Terminologies(dict):
 
     def load(self, url):
         """
-        Load and cache an odML XML file from a URL.
+        Loads and caches an odML XML file from a URL.
 
         :param url: location of an odML XML file.
         :return: The odML document loaded from url.
@@ -108,7 +108,7 @@ class Terminologies(dict):
 
     def deferred_load(self, url):
         """
-        Start a background thread to load an odML XML file from a URL.
+        Starts a background thread to load an odML XML file from a URL.
 
         :param url: location of an odML XML file.
         """

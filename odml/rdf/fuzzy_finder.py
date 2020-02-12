@@ -19,7 +19,7 @@ class FuzzyFinder(object):
 
     def find(self, mode="fuzzy", graph=None, q_str=None, q_params=None):
         """
-        Apply set of queries to the graph and returns info
+        Applies set of queries to the graph and returns info
         that was retrieved from queries.
 
         :param mode:     define the type of parser which will be used for parsing

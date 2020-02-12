@@ -60,7 +60,7 @@ class Validation(object):
     @staticmethod
     def register_handler(klass, handler):
         """
-        Add a validation handler for an odml class. The handler is called in the
+        Adds a validation handler for an odml class. The handler is called in the
         validation process for each corresponding object.
         The *handler* is assumed to be a generator function yielding
         all ValidationErrors it finds.
@@ -86,7 +86,7 @@ class Validation(object):
 
     def validate(self, obj):
         """
-        Run all registered handlers that are applicable to a provided odml class instance.
+        Runs all registered handlers that are applicable to a provided odml class instance.
         Occurring validation errors will be collected in the Validation.error attribute.
 
         :param obj: odml class instance.
@@ -98,7 +98,7 @@ class Validation(object):
 
     def error(self, validation_error):
         """
-        Register an error found during the validation process.
+        Registers an error found during the validation process.
         """
         self.errors.append(validation_error)
 
@@ -118,7 +118,7 @@ class Validation(object):
 
 def section_type_must_be_defined(sec):
     """
-    Test that no Section has an undefined type.
+    Tests that no Section has an undefined type.
 
     :param sec: odml.Section.
     """
@@ -201,7 +201,7 @@ def section_unique_ids(parent, id_map=None):
 
 def property_unique_ids(section, id_map=None):
     """
-    Check whether all ids assigned to the odML Properties of an odML Section are unique.
+    Checks whether all ids assigned to the odML Properties of an odML Section are unique.
 
     A "id":"odML object / path" dictionary of additional 'to-be-excluded' ids may be
     handed in via the *id_map* attribute.
@@ -229,7 +229,7 @@ Validation.register_handler('odML', document_unique_ids)
 def object_unique_names(obj, children, attr=lambda x: x.name,
                         msg="Object names must be unique"):
     """
-    Test that object names within one Section are unique.
+    Tests that object names within one Section are unique.
 
     :param obj: odml class instance the validation is applied on.
     :param children: a function that returns the children to be considered.
@@ -249,7 +249,7 @@ def object_unique_names(obj, children, attr=lambda x: x.name,
 
 def section_unique_name_type(obj):
     """
-    Test that the values of names and types within the scope of a Section are unique.
+    Tests that the values of names and types within the scope of a Section are unique.
 
     :param obj: odml class instance the validation is applied on.
     """
@@ -263,7 +263,7 @@ def section_unique_name_type(obj):
 
 def property_unique_names(obj):
     """
-    Test that the values of Property names within the scope of a Section are unique.
+    Tests that the values of Property names within the scope of a Section are unique.
 
     :param obj: odml class instance the validation is applied on.
     """
@@ -297,7 +297,7 @@ Validation.register_handler('property', property_terminology_check)
 
 def property_dependency_check(prop):
     """
-    Warn, if the dependency attribute refers to a non-existent attribute
+    Produces a warning if the dependency attribute refers to a non-existent attribute
     or the dependency_value does not match.
     """
     dep = prop.dependency

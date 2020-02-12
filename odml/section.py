@@ -134,7 +134,7 @@ class BaseSection(base.Sectionable):
     @property
     def name(self):
         """
-        Returns the name of the Section.
+        The name of the Section.
         """
         return self._name
 
@@ -195,7 +195,7 @@ class BaseSection(base.Sectionable):
     @property
     def link(self):
         """
-        Specifies a softlink, i.e. a path within the document.
+        A softlink, i.e. a path within the document.
         When the merge()-method is called, the link will be resolved creating
         according copies of the section referenced by the link attribute.
         When the unmerge() method is called (happens when running clean())
@@ -236,7 +236,7 @@ class BaseSection(base.Sectionable):
     @property
     def definition(self):
         """
-        Returns the definition of the Section.
+        The definition of the Section.
         """
         return self._definition
 
@@ -292,7 +292,7 @@ class BaseSection(base.Sectionable):
     @property
     def parent(self):
         """
-        Returns the parent Section, Document or None.
+        The parent Section, Document or None.
         """
         return self._parent
 
@@ -350,7 +350,7 @@ class BaseSection(base.Sectionable):
 
     def get_merged_equivalent(self):
         """
-        Return the merged object or None.
+        Returns the merged object or None.
         """
         return self._merged
 
@@ -659,7 +659,7 @@ class BaseSection(base.Sectionable):
 
     def pprint(self, indent=2, max_depth=1, max_length=80, current_depth=0):
         """
-        Pretty print method to visualize Section-Property trees.
+        Pretty prints Section-Property trees for nicer visualization.
 
         :param indent: number of leading spaces for every child Section or Property.
         :param max_depth: number of maximum child section layers to traverse and print.
@@ -687,7 +687,7 @@ class BaseSection(base.Sectionable):
 
     def export_leaf(self):
         """
-        Export only the path from this section to the root.
+        Exports only the path from this section to the root.
         Include all properties for all sections, but no other subsections.
 
         :returns: cloned odml tree to the root of the current document.

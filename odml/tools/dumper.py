@@ -7,7 +7,7 @@ from .xmlparser import to_csv
 
 def get_props(obj, props):
     """
-    get_props retrieves the values of a list of provided properties
+    Retrieves the values of a list of provided properties
     from an object and returns all values as a concatenated string.
 
     :param obj: odml object from which to retrieve specific property values.
@@ -29,7 +29,7 @@ def get_props(obj, props):
 
 def dump_property(prop, indent=1):
     """
-    dump_property prints the content of an odml.Property.
+    Prints the content of an odml.Property.
 
     :param prop: odml.Property
     :param indent: number of prepended whitespaces. Default is 1.
@@ -42,7 +42,7 @@ def dump_property(prop, indent=1):
 
 def dump_section(section, indent=1):
     """
-    dump_section prints the content of an odml.Section including any subsections
+    Prints the content of an odml.Section including any subsections
     and odml.Properties.
 
     :param section: odml.Section
@@ -64,7 +64,7 @@ def dump_section(section, indent=1):
 
 def dump_doc(doc):
     """
-    dump_doc prints the content of an odml.Document including any subsections
+    Prints the content of an odml.Document including any subsections
     and odml.Properties.
 
     :param doc: odml.Section

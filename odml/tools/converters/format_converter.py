@@ -54,7 +54,7 @@ class FormatConverter(object):
     @classmethod
     def convert(cls, args=None):
         """
-        Enable usage of the argparse for calling convert_dir(...)
+        Enables usage of the argparse for calling convert_dir(...)
 
         Usage:
         python -m <in_dir> <odml_out_format> [-out <out_dir>] [-r]
@@ -131,7 +131,7 @@ class FormatConverter(object):
     @classmethod
     def _convert_file(cls, input_path, output_path, res_format):
         """
-        Convert a file from given input_path to res_format. Will raise a ValueError
+        Converts a file from given input_path to res_format. Will raise a ValueError
         if the provided output format (res_format) is not supported.
 
         :param input_path: full path including file name of the file to be converted.

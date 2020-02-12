@@ -484,7 +484,7 @@ class Sectionable(BaseObject):
 
     def find(self, key=None, type=None, findAll=False, include_subtype=False):
         """
-        Return the first subsection named *key* of type *type*.
+        Returns the first subsection named *key* of type *type*.
 
         :param key: string to search against an odML objects name.
         :param type: type of an odML object.
@@ -619,7 +619,7 @@ class Sectionable(BaseObject):
 
     def clone(self, children=True, keep_id=False):
         """
-        Clone this object recursively allowing to copy it independently
+        Clones this object recursively allowing to copy it independently
         to another document.
         """
         from odml.section import BaseSection

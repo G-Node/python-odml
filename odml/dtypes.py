@@ -123,7 +123,7 @@ def valid_type(dtype):
 
 def get(string, dtype=None):
     """
-    Convert *string* to the corresponding *dtype*.
+    Converts *string* to the corresponding *dtype*.
     The appropriate function is derived from the provided dtype.
     If no dtype is provided, the string conversion function is used by default.
 
@@ -142,7 +142,7 @@ def get(string, dtype=None):
 
 def set(value, dtype=None):
     """
-    Serialize a *value* of type *dtype* to a unicode string.
+    Serializes a *value* of type *dtype* to a unicode string.
     The appropriate function is derived from the provided dtype.
 
     :param value: odml specific value to be converted into a string.
@@ -320,7 +320,7 @@ bool_set = boolean_set
 
 def tuple_get(string, count=None):
     """
-    Parse a tuple string like "(1024;768)" and return a list of strings with the
+    Parses a tuple string like "(1024;768)" and return a list of strings with the
     individual tuple elements.
 
     :param string: string to be parsed into odML style tuples.
@@ -339,7 +339,7 @@ def tuple_get(string, count=None):
 
 def tuple_set(value):
     """
-    Serialize odml style tuples to a string representation.
+    Serializes odml style tuples to a string representation.
 
     :param value: odml style tuple values.
     :return: string.
