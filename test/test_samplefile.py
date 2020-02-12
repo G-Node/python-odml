@@ -104,7 +104,7 @@ class SampleFileCreatorTest(unittest.TestCase):
 
     def test_samplefile(self):
         doc = SampleFileCreator().create_document()
-        # dumper.dumpDoc(doc)
+        # dumper.dump_doc(doc)
 
 
 class SampleFileOperationTest(unittest.TestCase):
@@ -181,10 +181,10 @@ class SampleFileOperationTest(unittest.TestCase):
 #            self.assertEqual(a, b)
 #        print "A ---------------------------------"
 #        for sec in doc.sections:
-#            xmlparser.dumpSection(sec)
+#            xmlparser.dump_section(sec)
 #        print "B ---------------------------------"
 #        for sec in self.doc.sections:
-#            xmlparser.dumpSection(sec)
+#            xmlparser.dump_section(sec)
 #        print "-----------------------------------"
 
 

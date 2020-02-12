@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 """
-A generic odML parsing module.
-
-Parses odML files and documents.
+A generic odML parsing module. It parses odML files and documents.
+All supported formats can be found in parser_utils.SUPPORTED_PARSERS.
 """
 
 import datetime
 import json
 import sys
-import yaml
 
 from os.path import basename
+
+import yaml
 
 from . import xmlparser
 from .dict_parser import DictWriter, DictReader
@@ -28,7 +28,8 @@ except NameError:
 
 class ODMLWriter:
     """
-        A generic odML document writer, for XML, YAML and JSON.
+        A generic odML document writer for JSON, XML, YAML and RDF.
+        The output format is specified on init.
 
         Usage:
             xml_writer = ODMLWriter(parser='XML')
@@ -45,6 +46,16 @@ class ODMLWriter:
         self.parser = parser
 
     def write_file(self, odml_document, filename):
+        """
+        Writes an odml.Document to a file using the format
+        defined in the ODMLWriter.parser property. Supported formats are
+        JSON, XML, YAML and RDF.
+        Will raise a ParserException if the odml.Document is not valid.
+
+        :param odml_document: odml.Document.
+        :param filename: path and filename of the output file.
+        """
+
         # Write document only if it does not contain validation errors.
         validation = Validation(odml_document)
         msg = ""
@@ -63,12 +74,21 @@ class ODMLWriter:
             file.write(self.to_string(odml_document))
 
     def to_string(self, odml_document):
+        """
+        Parses an odml.Document to a string in the file format
+        defined in the ODMLWriter.parser property. Supported formats are
+        JSON, XML, YAML and RDF.
+
+        :param odml_document: odml.Document.
+        :return: string containing the content of the odml.Document in the
+                 specified format.
+        """
         string_doc = ''
 
         if self.parser == 'XML':
             string_doc = unicode(xmlparser.XMLWriter(odml_document))
         elif self.parser == "RDF":
-            # Use turtle as default output format for now.
+            # Use XML as default output format for now.
             string_doc = RDFWriter(odml_document).get_rdf_str("xml")
         else:
             self.parsed_doc = DictWriter().to_dict(odml_document)
@@ -77,7 +97,7 @@ class ODMLWriter:
                            'odml-version': FORMAT_VERSION}
 
             if self.parser == 'YAML':
-                yaml.add_representer(datetime.time, YAMLTimeSerializer)
+                yaml.add_representer(datetime.time, yaml_time_serializer)
                 string_doc = yaml.dump(odml_output, default_flow_style=False)
             elif self.parser == 'JSON':
                 string_doc = json.dumps(odml_output, indent=4,
@@ -89,13 +109,19 @@ class ODMLWriter:
         return string_doc
 
 
-# Required to serialize datetime.time as string objects
-def YAMLTimeSerializer(dumper, data):
+def yaml_time_serializer(dumper, data):
+    """
+    This function is required to serialize datetime.time as string objects
+    when working with YAML as output format.
+    """
     return dumper.represent_scalar('tag:yaml.org,2002:str', str(data))
 
 
-# Required to serialize datetime values with JSON.
 class JSONDateTimeSerializer(json.JSONEncoder):
+    """
+    Required to serialize datetime objects as string objects when working with JSON
+    as output format.
+    """
     def default(self, o):
         if isinstance(o, (datetime.datetime, datetime.date, datetime.time)):
             return str(o)
@@ -128,7 +154,18 @@ class ODMLReader:
         self.warnings = []
 
     def from_file(self, file, doc_format=None):
+        """
+        Loads an odML document from a file. The ODMLReader.parser specifies the
+        input file format. If the input file is an RDF file, the specific RDF format
+        has to be provided as well.
+        Available RDF formats: 'xml', 'n3', 'turtle', 'nt', 'pretty-xml',
+        'trix', 'trig', 'nquads'.
 
+        :param file: file path to load an odML document from.
+        :param doc_format: Required for RDF files only and provides the specific format
+                           of an RDF file.
+        :return: parsed odml.Document
+        """
         if self.parser == 'XML':
             par = xmlparser.XMLReader(ignore_errors=True,
                                       show_warnings=self.show_warnings)
@@ -139,13 +176,12 @@ class ODMLReader:
         elif self.parser == 'YAML':
             with open(file) as yaml_data:
                 try:
-                    yaml.SafeLoader.add_constructor(
-                                            "tag:yaml.org,2002:python/unicode",
-                                            UnicodeLoaderConstructor)
+                    yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/unicode",
+                                                    unicode_loader_constructor)
                     self.parsed_doc = yaml.safe_load(yaml_data)
                 except yaml.parser.ParserError as err:
                     print(err)
-                    return
+                    return None
 
             par = DictReader(show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
@@ -159,7 +195,7 @@ class ODMLReader:
                     self.parsed_doc = json.load(json_data)
                 except ValueError as err:  # Python 2 does not support JSONDecodeError
                     print("JSON Decoder Error: %s" % err)
-                    return
+                    return None
 
             par = DictReader(show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
@@ -175,6 +211,18 @@ class ODMLReader:
             return self.doc
 
     def from_string(self, string, doc_format=None):
+        """
+        Loads an odML document from a string object. The ODMLReader.parser specifies the
+        input file format. If the input string contains an RDF format,
+        the specific RDF format has to be provided as well.
+        Available RDF formats: 'xml', 'n3', 'turtle', 'nt', 'pretty-xml',
+        'trix', 'trig', 'nquads'.
+
+        :param string: file path to load an odML document from.
+        :param doc_format: Required for RDF files only and provides the specific format
+                           of an RDF file.
+        :return: parsed odml.Document
+        """
 
         if self.parser == 'XML':
             self.doc = xmlparser.XMLReader().from_string(string)
@@ -208,7 +256,9 @@ class ODMLReader:
             return self.doc
 
 
-# Constructor for PyYAML to load unicode characters
 # Needed only for < Python 3
-def UnicodeLoaderConstructor(loader, node):
+def unicode_loader_constructor(_, node):
+    """
+    Constructor for PyYAML to load unicode characters
+    """
     return node.value

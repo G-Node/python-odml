@@ -1,16 +1,20 @@
+"""
+This module provides the class VersionConverter to convert
+odML XML files from version 1.0 to 1.1.
+"""
+
 import io
 import json
 import os
 import sys
+import uuid
 import yaml
 
 from lxml import etree as ET
 
-from ... import format
+from ...format import Document, Section, Property
 from ...info import FORMAT_VERSION
 from ...terminology import Terminologies, REPOSITORY_BASE
-
-import uuid
 
 try:
     unicode = unicode
@@ -20,7 +24,7 @@ except NameError:
 
 class VersionConverter(object):
     """
-    Class for converting odml xml files from version 1.0 to 1.1
+    Class for converting odML XML files from version 1.0 to 1.1.
     """
     _version_map = {
         'filename': 'value_origin',
@@ -35,6 +39,7 @@ class VersionConverter(object):
         """
         _parse_xml checks whether the provided file object can be parsed
         and returns the parsed lxml tree.
+
         :return: ElementTree
         """
         # Make pretty print available by resetting format
@@ -69,6 +74,7 @@ class VersionConverter(object):
         _parse_dict_document parses a python dictionary containing a valid
         v1.0 odML document into an lxml.ElementTree XML equivalent and returns
         the resulting lxml ElementTree.
+
         :param parsed_doc: python dictionary containing a valid v1.0 odML document.
         :return: lxml ElementTree
         """
@@ -92,6 +98,7 @@ class VersionConverter(object):
         _parse_dict_sections parses a list containing python dictionaries of v1.0 odML
         style sections into lxml.Element XML equivalents and appends the parsed Sections
         to the provided lxml.Element parent.
+
         :param parent_element: lxml.Element to which parsed sections will be appended.
         :param section_list: list of python dictionaries containing valid v1.0 odML
                              Sections.
@@ -116,6 +123,7 @@ class VersionConverter(object):
         _parse_dict_properties parses a list containing python dictionaries of v1.0 odML
         style properties into lxml.Element XML equivalents and appends the parsed
         Properties to the provided lxml.Element parent.
+
         :param parent_element: lxml.Element to which parsed properties will be appended.
         :param props_list: list of python dictionaries containing valid v1.0 odML
                            Properties.
@@ -138,6 +146,7 @@ class VersionConverter(object):
         _parse_dict_values parses a list containing python dictionaries of v1.0 odML
         style values into lxml.Element XML equivalents and appends the parsed
         Values to the provided lxml.Element parent.
+
         :param parent_element: lxml.Element to which parsed values will be appended.
         :param value_list: list of python dictionaries containing valid v1.0 odML Values.
         """
@@ -160,6 +169,8 @@ class VersionConverter(object):
         Unites multiple value objects and moves all supported Value elements to
         its parent Property. Exports only Document, Section and Property elements,
         that are supported by odML v1.1.
+
+        :param tree: lxml.ElementTree containing a v1.0 odML document.
         """
         # Reset status messages
         self.conversion_log = []
@@ -174,28 +185,28 @@ class VersionConverter(object):
         # Exclude unsupported Section attributes, ignore comments, handle repositories.
         for sec in root.iter("section"):
             sec_name = sec.find("name").text
-            for e in sec:
-                if e.tag not in format.Section.arguments_keys and isinstance(e.tag, str):
+            for elem in sec:
+                if elem.tag not in Section.arguments_keys and isinstance(elem.tag, str):
                     self._log("[Info] Omitted non-Section attribute "
-                              "'%s: %s/%s'" % (sec_name, e.tag, e.text))
-                    sec.remove(e)
+                              "'%s: %s/%s'" % (sec_name, elem.tag, elem.text))
+                    sec.remove(elem)
                     continue
 
-                if e.tag == "repository":
-                    self._handle_repository(e)
-                elif e.tag == "include":
-                    self._handle_include(e)
+                if elem.tag == "repository":
+                    self._handle_repository(elem)
+                elif elem.tag == "include":
+                    self._handle_include(elem)
 
         # Exclude unsupported Document attributes, ignore comments, handle repositories.
-        for e in root:
-            if e.tag not in format.Document.arguments_keys and isinstance(e.tag, str):
+        for elem in root:
+            if elem.tag not in Document.arguments_keys and isinstance(elem.tag, str):
                 self._log("[Info] Omitted non-Document "
-                          "attribute '%s/%s'" % (e.tag, e.text))
-                root.remove(e)
+                          "attribute '%s/%s'" % (elem.tag, elem.text))
+                root.remove(elem)
                 continue
 
-            if e.tag == "repository":
-                self._handle_repository(e)
+            if elem.tag == "repository":
+                self._handle_repository(elem)
 
         tree = self._check_add_ids(tree)
 
@@ -205,6 +216,7 @@ class VersionConverter(object):
         """
         _handle_include checks whether a provided include element is
         v1.1 compatible and logs a warning message otherwise.
+
         :param element: lxml element containing the provided include link.
         """
         content = element.text
@@ -235,6 +247,7 @@ class VersionConverter(object):
     def _handle_repository(self, element):
         """
         The method handles provided odML repositories.
+
         :param element: lxml element containing the provided odML repository link.
         """
         content = element.text
@@ -263,9 +276,10 @@ class VersionConverter(object):
 
     def _handle_properties(self, root):
         """
-        Method removes all property elements w/o name attribute, converts Value
+        Removes all property elements without name attribute, converts Value
         elements from v1.0 to v1.1 style and removes unsupported Property elements.
-        :param root:
+
+        :param root: lxml.ElementTree containing a v1.0 odML property list.
         """
         for prop in root.iter("property"):
             main_val = ET.Element("value")
@@ -315,7 +329,7 @@ class VersionConverter(object):
                 if elem.tag == "dependency_value":
                     elem.tag = "dependencyvalue"
 
-                if (elem.tag not in format.Property.arguments_keys and
+                if (elem.tag not in Property.arguments_keys and
                         isinstance(elem.tag, str)):
                     self._log("[Info] Omitted non-Property attribute "
                               "'%s: %s/%s'" % (prop_id, elem.tag, elem.text))
@@ -326,6 +340,7 @@ class VersionConverter(object):
         Values changed from odML v1.0 to v1.1. This function moves all supported
         odML Property elements from a v1.0 Value element to the parent Property element.
         Adds a log entry for every non-exported element.
+
         :param value: etree element containing the v1.0 Value.
         :param log_id: String containing Section and Property name and type to log
                        omitted elements and value contents.
@@ -348,7 +363,7 @@ class VersionConverter(object):
                                      check_export.text, val_elem.text))
 
                 # Include only supported Property attributes
-                elif val_elem.tag in format.Property.arguments_keys:
+                elif val_elem.tag in Property.arguments_keys:
                     new_elem = ET.Element(val_elem.tag)
                     new_elem.text = val_elem.text
 
@@ -377,6 +392,7 @@ class VersionConverter(object):
         """
         Changes same section names in the doc by adding <-{index}>
         to the next section occurrences.
+
         :param tree: ElementTree of the doc
         :return: ElementTree
         """
@@ -404,6 +420,7 @@ class VersionConverter(object):
         """
         Adds numbering to identical element names where their odml.Section
         or odml.Property parents reside on the same level in the tree.
+
         :param tree: The element tree containing the 'name' element.
         :param elem_map: lxml path to occurrence maps of named Sections or Properties.
         :param name: lxml element containing the name text of a Section or Property.
@@ -419,6 +436,7 @@ class VersionConverter(object):
         """
         Checks, whether elements (properties) possess an UUID
         and adds one in case of absence.
+
         :param tree: ElementTree of the doc
         :return: ElementTree
         """
@@ -436,6 +454,7 @@ class VersionConverter(object):
         """
         Checks, whether an element possesses an ID. If yes, make sure it has
         the right format. Otherwise a new UUID is created.
+
         :param element: lxml element.
         """
         oid = element.find("id")
@@ -445,8 +464,8 @@ class VersionConverter(object):
             try:
                 if oid.text is not None:
                     new_id.text = str(uuid.UUID(oid.text))
-            except ValueError as e:
-                print(e)
+            except ValueError as exc:
+                print(exc)
             element.remove(oid)
         element.append(new_id)
 
@@ -454,6 +473,9 @@ class VersionConverter(object):
         """
         Adds the passed message to the conversion_log attribute and
         prints the message to the command line.
+
+        :param msg: string that is appended to the conversion log and
+                    printed to the command line.
         """
         self.conversion_log.append(msg)
         print(msg)
@@ -471,6 +493,11 @@ class VersionConverter(object):
         This method returns the content of the provided file object converted
         to odML version 1.1 as a string object which is directly consumable
         by the odml.tools.ODMLReader.
+        Will raise an Exception, if the backend format is not supported.
+
+        :param backend: File format of the source file. 'JSON', 'YAML' and 'XML' are
+                        supported. Default backend is 'XML'.
+        :returns an odML v1.1 document as an XML string
         """
         if backend.upper() == "JSON":
             old_tree = self._parse_json()
@@ -488,6 +515,7 @@ class VersionConverter(object):
         """
         This method converts the content of the provided converter file object
         to odML version 1.1 and writes the results to `filename`.
+
         :param filename: Output file.
         :param backend: Format of the source file, default is XML.
         """

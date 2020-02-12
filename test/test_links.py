@@ -6,7 +6,7 @@ class TestLinks(unittest.TestCase):
 
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        # for s in self.doc: xmlparser.dumpSection(s)
+        # for s in self.doc: xmlparser.dump_section(s)
 
     def test_link_creation(self):
         obj = self.doc.sections[0].sections[0]
@@ -28,14 +28,14 @@ class TestLinks(unittest.TestCase):
         obj = self.doc.sections[0].sections[0]
         dst = self.doc.sections[0]
 
-        samplefile.dumper.dumpSection(dst)
+        samplefile.dumper.dump_section(dst)
 
         obj.link = "/sec 0"
         # self.assertEqual(obj.sections, dst.sections) # this will FAIL
         # self.assertEqual(obj.properties, dst.properties)
         obj.clean()
 
-        samplefile.dumper.dumpSection(dst)
+        samplefile.dumper.dump_section(dst)
 
     def test_merge(self):
         obj = self.doc.sections[0].sections[0]  # must be an empty section

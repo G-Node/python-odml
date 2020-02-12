@@ -1,8 +1,16 @@
 # -*- coding: utf-8
+"""
+This module provides the Base Section class.
+"""
 import uuid
 
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
+
 from . import base
-from . import format
+from . import format as fmt
 from . import terminology
 from .doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
@@ -10,21 +18,35 @@ from .property import BaseProperty
 # it MUST however not be used to create any Property objects
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
-try:
-    from collections.abc import Iterable
-except ImportError:
-    from collections import Iterable
 
 @allow_inherit_docstring
 class BaseSection(base.Sectionable):
-    """ An odML Section """
+    """
+    An odML Section.
+
+    :param name: string providing the name of the Section. If the name is not
+                 provided, the uuid of the Property is assigned as its name.
+    :param type: String providing a grouping description for similar Sections.
+    :param parent: the parent object of the new Section. If the object is not
+                   an odml.Section or an odml.Document, a ValueError is raised.
+    :param definition: String describing the definition of the Section.
+    :param reference: A reference (e.g. an URL) to an external definition
+                      of the Section.
+    :param repository: URL to a repository where this Section can be found.
+    :param link: Specifies a soft link, i.e. a path within the document.
+    :param include: Specifies an arbitrary URL. Can only be used if *link* is not set.
+    :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
+               an id will be generated and assigned. An id has to be unique
+               within an odML Document.
+    """
+
     type = None
     reference = None  # the *import* property
     _link = None
     _include = None
     _merged = None
 
-    _format = format.Section
+    _format = fmt.Section
 
     def __init__(self, name=None, type=None, parent=None,
                  definition=None, reference=None,
@@ -39,8 +61,8 @@ class BaseSection(base.Sectionable):
                 self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
-        except ValueError as e:
-            print(e)
+        except ValueError as exc:
+            print(exc)
             self._id = str(uuid.uuid4())
 
         # Use id if no name was provided.
@@ -68,7 +90,7 @@ class BaseSection(base.Sectionable):
 
     def __iter__(self):
         """
-        Iterate over each section and property contained in this section
+        Iterate over each Section and Property contained in this Section.
         """
         for section in self._sections:
             yield section
@@ -77,14 +99,14 @@ class BaseSection(base.Sectionable):
 
     def __len__(self):
         """
-        Number of children (sections AND properties)
+        Number of children (Sections AND Properties).
         """
         return len(self._sections) + len(self._props)
 
     @property
     def oid(self):
         """
-        The uuid for the section. Required for entity creation and comparison,
+        The uuid for the Section. Required for entity creation and comparison,
         saving and loading.
         """
         return self.id
@@ -101,6 +123,7 @@ class BaseSection(base.Sectionable):
         new_id sets the id of the current object to a RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
+
         :param oid: UUID string as specified in RFC 4122.
         """
         if oid is not None:
@@ -110,6 +133,9 @@ class BaseSection(base.Sectionable):
 
     @property
     def name(self):
+        """
+        The name of the Section.
+        """
         return self._name
 
     @name.setter
@@ -128,7 +154,7 @@ class BaseSection(base.Sectionable):
         """
         The same as :py:attr:`odml.section.BaseSection.link`, except that
         include specifies an arbitrary url instead of a local path within
-        the same document
+        the same document.
         """
         return self._include
 
@@ -169,7 +195,7 @@ class BaseSection(base.Sectionable):
     @property
     def link(self):
         """
-        Specifies a softlink, i.e. a path within the document
+        A softlink, i.e. a path within the document.
         When the merge()-method is called, the link will be resolved creating
         according copies of the section referenced by the link attribute.
         When the unmerge() method is called (happens when running clean())
@@ -209,11 +235,10 @@ class BaseSection(base.Sectionable):
 
     @property
     def definition(self):
-        """ Name Definition of the section """
-        if hasattr(self, "_definition"):
-            return self._definition
-        else:
-            return None
+        """
+        The definition of the Section.
+        """
+        return self._definition
 
     @definition.setter
     def definition(self, new_value):
@@ -227,6 +252,10 @@ class BaseSection(base.Sectionable):
 
     @property
     def reference(self):
+        """
+        A reference (e.g. an URL) to an external definition of the Section.
+        :returns: The reference of the Section.
+        """
         return self._reference
 
     @reference.setter
@@ -240,23 +269,31 @@ class BaseSection(base.Sectionable):
     #  properties
     @property
     def properties(self):
-        """ The list of all properties contained in this section """
+        """
+        The list of all properties contained in this Section,
+        """
         return self._props
 
     @property
     def props(self):
-        """ The list of all properties contained in this section;
-            NIXpy format style alias for 'properties'."""
+        """
+        The list of all properties contained in this Section;
+        NIXpy format style alias for 'properties'.
+        """
         return self._props
 
     @property
     def sections(self):
-        """ The list of all child-sections of this section """
+        """
+        The list of all child-sections of this Section.
+        """
         return self._sections
 
     @property
     def parent(self):
-        """ The parent section, the parent document or None """
+        """
+        The parent Section, Document or None.
+        """
         return self._parent
 
     @parent.setter
@@ -277,16 +314,21 @@ class BaseSection(base.Sectionable):
                 "\nodml.Document or odml.Section expected")
 
     def _validate_parent(self, new_parent):
-        if isinstance(new_parent, BaseDocument) or \
-           isinstance(new_parent, BaseSection):
+        """
+        Checks whether a provided object is a valid odml.Section or odml.Document..
+
+        :param new_parent: object to check whether it is an odml.Section or odml.Document.
+        :returns: Boolean whether the object is an odml.Section, odml.Document or not.
+        """
+        if isinstance(new_parent, (BaseDocument, BaseSection)):
             return True
         return False
 
     def get_repository(self):
         """
-        Returns the repository responsible for this section,
+        Returns the repository responsible for this Section,
         which might not be the *repository* attribute, but may
-        be inherited from a parent section / the document
+        be inherited from a parent Section / the Document.
         """
         if self._repository is None and self.parent is not None:
             return self.parent.get_repository()
@@ -308,7 +350,7 @@ class BaseSection(base.Sectionable):
 
     def get_merged_equivalent(self):
         """
-        Return the merged object or None
+        Returns the merged object or None.
         """
         return self._merged
 
@@ -421,8 +463,8 @@ class BaseSection(base.Sectionable):
 
         obj._props = base.SmartList(BaseProperty)
         if children:
-            for p in self._props:
-                obj.append(p.clone(keep_id))
+            for prop in self._props:
+                obj.append(prop.clone(keep_id))
 
         return obj
 
@@ -543,12 +585,12 @@ class BaseSection(base.Sectionable):
         for obj in removals:
             self.remove(obj)
 
-        # The path may not be valid anymore, so make sure to update it
-        # however this does not reflect changes happening while the section
-        # is unmerged
+        # The path may not be valid anymore, so make sure to update it.
+        # However this does not reflect changes happening while the section
+        # is unmerged.
         if self._link is not None:
-            # TODO get_absolute_path, # TODO don't change if the section can
-            # still be reached using the old link
+            # TODO get_absolute_path
+            # TODO don't change if the section can still be reached using the old link
             self._link = self.get_relative_path(section)
 
         self._merged = None
@@ -571,17 +613,17 @@ class BaseSection(base.Sectionable):
         return self._link is not None or self._include is not None
 
     def _reorder(self, childlist, new_index):
-        l = childlist
-        old_index = l.index(self)
+        lst = childlist
+        old_index = lst.index(self)
 
         # 2 cases: insert after old_index / insert before
         if new_index > old_index:
             new_index += 1
-        l.insert(new_index, self)
+        lst.insert(new_index, self)
         if new_index < old_index:
-            del l[old_index + 1]
+            del lst[old_index + 1]
         else:
-            del l[old_index]
+            del lst[old_index]
         return old_index
 
     def reorder(self, new_index):
@@ -617,9 +659,10 @@ class BaseSection(base.Sectionable):
 
     def pprint(self, indent=2, max_depth=1, max_length=80, current_depth=0):
         """
-        Pretty print method to visualize Section-Property trees.
+        Pretty prints Section-Property trees for nicer visualization.
 
         :param indent: number of leading spaces for every child Section or Property.
+        :param max_depth: number of maximum child section layers to traverse and print.
         :param max_length: maximum number of characters printed in one line.
         :param current_depth: number of hierarchical levels printed from the
                               starting Section.
@@ -627,25 +670,27 @@ class BaseSection(base.Sectionable):
         spaces = " " * (current_depth * indent)
         sec_str = "{} {} [{}]".format(spaces, self.name, self.type)
         print(sec_str)
-        for p in self.props:
-            p.pprint(current_depth=current_depth, indent=indent,
-                     max_length=max_length)
+        for prop in self.props:
+            prop.pprint(current_depth=current_depth, indent=indent,
+                        max_length=max_length)
+
         if max_depth == -1 or current_depth < max_depth:
-            for s in self.sections:
-                s.pprint(current_depth=current_depth+1, max_depth=max_depth,
-                         indent=indent, max_length=max_length)
+            for sec in self.sections:
+                sec.pprint(current_depth=current_depth+1, max_depth=max_depth,
+                           indent=indent, max_length=max_length)
         elif max_depth == current_depth:
             child_sec_indent = spaces + " " * indent
             more_indent = spaces + " " * (current_depth + 2 * indent)
-            for s in self.sections:
-                print("{} {} [{}]\n{}[...]".format(child_sec_indent,
-                                                   s.name, s.type,
-                                                   more_indent))
+            for sec in self.sections:
+                print("{} {} [{}]\n{}[...]".format(child_sec_indent, sec.name,
+                                                   sec.type, more_indent))
 
     def export_leaf(self):
         """
-        Export only the path from this section to the root.
+        Exports only the path from this section to the root.
         Include all properties for all sections, but no other subsections.
+
+        :returns: cloned odml tree to the root of the current document.
         """
         curr = self
         par = self

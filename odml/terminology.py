@@ -1,6 +1,5 @@
 """
-Handles (deferred) loading of terminology data and access to it
-for odML documents
+Handles (deferred) loading of terminology data and access to it for odML documents.
 """
 
 import datetime
@@ -27,8 +26,10 @@ CACHE_AGE = datetime.timedelta(days=1)
 
 def cache_load(url):
     """
-    Load the url and store it in a temporary cache directory
-    subsequent requests for this url will use the cached version
+    Loads the url and store it in a temporary cache directory
+    subsequent requests for this url will use the cached version.
+
+    :param url: URL from where to load an odML terminology file from.
     """
     filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
     cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
@@ -46,23 +47,30 @@ def cache_load(url):
             data = urllib2.urlopen(url).read()
             if sys.version_info.major > 2:
                 data = data.decode("utf-8")
-        except Exception as e:
-            print("failed loading '%s': %s" % (url, e))
+        except Exception as exc:
+            print("failed loading '%s': %s" % (url, exc))
             return
-        fp = open(cache_file, "w")
-        fp.write(str(data))
-        fp.close()
+
+        file_obj = open(cache_file, "w")
+        file_obj.write(str(data))
+        file_obj.close()
+
     return open(cache_file)
 
 
 class Terminologies(dict):
+    """
+    Terminologies facilitates synchronous and deferred loading, caching,
+    browsing and importing of full or partial odML terminologies.
+    """
     loading = {}
 
     def load(self, url):
         """
-        Load and cache a terminology-url
+        Loads and caches an odML XML file from a URL.
 
-        Returns the odml-document for the url
+        :param url: location of an odML XML file.
+        :return: The odML document loaded from url.
         """
         if url in self:
             return self[url]
@@ -75,25 +83,34 @@ class Terminologies(dict):
         return self._load(url)
 
     def _load(self, url):
-        # TODO also cache the data locally on disk
-        # if url.startswith("http"): return None
-        fp = cache_load(url)
-        if fp is None:
+        """
+        Cache loads an odML XML file from a URL and returns
+        the result as a parsed odML document.
+
+        :param url: location of an odML XML file.
+        :return: The odML document loaded from url.
+                 It will silently return None, if any exceptions
+                 occur to enable loading of nested odML files.
+        """
+        file_obj = cache_load(url)
+        if file_obj is None:
             print("did not successfully load '%s'" % url)
             return
         try:
-            term = XMLReader(filename=url, ignore_errors=True).from_file(fp)
+            term = XMLReader(filename=url, ignore_errors=True).from_file(file_obj)
             term.finalize()
-        except ParserException as e:
+        except ParserException as exc:
             print("Failed to load %s due to parser errors" % url)
-            print(' "%s"' % e)
+            print(' "%s"' % exc)
             term = None
         self[url] = term
         return term
 
     def deferred_load(self, url):
         """
-        Start a thread to load the terminology in background
+        Starts a background thread to load an odML XML file from a URL.
+
+        :param url: location of an odML XML file.
         """
         if url in self or url in self.loading:
             return
@@ -107,4 +124,4 @@ deferred_load = terminologies.deferred_load
 
 
 if __name__ == "__main__":
-    f = cache_load(REPOSITORY)
+    FILE_OBJECT = cache_load(REPOSITORY)

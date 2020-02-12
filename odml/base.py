@@ -1,18 +1,22 @@
 # -*- coding: utf-8
 """
-Collects common base functionality
+This module provides base classes for functionality common to odML objects.
 """
 import posixpath
-
-from . import terminology
-from .tools.doc_inherit import allow_inherit_docstring
 
 try:
     from collections.abc import Iterable
 except ImportError:
     from collections import Iterable
 
+from . import terminology
+from .tools.doc_inherit import allow_inherit_docstring
+
+
 class BaseObject(object):
+    """
+    Base class for all odML objects.
+    """
     _format = None
 
     def __hash__(self):
@@ -41,16 +45,21 @@ class BaseObject(object):
 
     def __ne__(self, obj):
         """
-        Use the __eq__ function to determine if both objects are equal
+        Use the __eq__ function to determine if both objects are equal.
         """
         return not self == obj
 
     def format(self):
+        """
+        Returns the format class of the current object.
+        """
         return self._format
 
     @property
     def document(self):
-        """ Returns the Document object in which this object is contained """
+        """
+        Returns the Document object in which this object is contained.
+        """
         if self.parent is None:
             return None
         return self.parent.document
@@ -64,7 +73,7 @@ class BaseObject(object):
 
     def clean(self):
         """
-        Stub that doesn't do anything for this class
+        Stub that doesn't do anything for this class.
         """
         pass
 
@@ -72,7 +81,10 @@ class BaseObject(object):
         """
         Clone this object recursively (if children is True) allowing to copy it
         independently to another document. If children is False, this acts as
-        a template cloner, creating a copy of the object without any children
+        a template cloner, creating a copy of the object without any children.
+
+        :param children: True by default. Is used in the classes that inherit
+                         from this class.
         """
         # TODO don't we need some recursion / deepcopy here?
         import copy
@@ -81,6 +93,9 @@ class BaseObject(object):
 
 
 class SmartList(list):
+    """
+    List class that can hold odml.Sections and odml.Properties.
+    """
 
     def __init__(self, content_type):
         """
@@ -108,7 +123,7 @@ class SmartList(list):
     def __setitem__(self, key, value):
         """
         Replaces item at list[*key*] with *value*.
-        :param key: index position
+        :param key: index position.
         :param value: object that replaces item at *key* position.
                       value has to be of the same content type as the list.
                       In this context usually a Section or a Property.
@@ -152,17 +167,17 @@ class SmartList(list):
 
     def __ne__(self, obj):
         """
-        Use the __eq__ function to determine if both objects are equal
+        Use the __eq__ function to determine if both objects are equal.
         """
         return not self == obj
 
     def index(self, obj):
         """
-        Find obj in list
+        Find obj in list.
         """
-        for i, e in enumerate(self):
-            if e is obj:
-                return i
+        for idx, val in enumerate(self):
+            if val is obj:
+                return idx
         raise ValueError("remove: %s not in list" % repr(obj))
 
     def remove(self, obj):
@@ -193,6 +208,9 @@ class SmartList(list):
 
 @allow_inherit_docstring
 class Sectionable(BaseObject):
+    """
+    Base class for all odML objects that can store odml.Sections.
+    """
     def __init__(self):
         from odml.section import BaseSection
         self._sections = SmartList(BaseSection)
@@ -210,18 +228,20 @@ class Sectionable(BaseObject):
     @property
     def document(self):
         """
-        Returns the parent-most node (if its a document instance) or None
+        Returns the parent-most node (if its a document instance) or None.
         """
         from odml.doc import BaseDocument
-        p = self
-        while p.parent:
-            p = p.parent
-        if isinstance(p, BaseDocument):
-            return p
+        par = self
+        while par.parent:
+            par = par.parent
+        if isinstance(par, BaseDocument):
+            return par
 
     @property
     def sections(self):
-        """ The list of sections contained in this section/document """
+        """
+        The list of sections contained in this section/document.
+        """
         return self._sections
 
     def insert(self, position, section):
@@ -301,6 +321,7 @@ class Sectionable(BaseObject):
         :param filter_func: accepts a function that will be applied to each
                             iterable. Yields iterable if function returns True
         :type filter_func: function
+        :param max_depth: number of layers in the document tree to include in the search.
         """
         stack = []
         # Below: never yield self if self is a Document
@@ -422,6 +443,10 @@ class Sectionable(BaseObject):
         """
         Searches for a key match within a given iterable.
         Raises ValueError if not found.
+
+        :param iterable: list of odML objects.
+        :param key: string to search an objects name against.
+        :returns: odML object that matched the key.
         """
         for obj in iterable:
             if self._matches(obj, key):
@@ -458,17 +483,25 @@ class Sectionable(BaseObject):
             return self._match_iterable(self.sections, pathlist[0])
 
     def find(self, key=None, type=None, findAll=False, include_subtype=False):
-        """ Return the first subsection named *key* of type *type* """
+        """
+        Returns the first subsection named *key* of type *type*.
+
+        :param key: string to search against an odML objects name.
+        :param type: type of an odML object.
+        :param findAll: include further matches after the first one in the result.
+        :param include_subtype: splits an objects type at '/' and matches the parts
+                                against the provided type.
+        """
         ret = []
         if type:
             type = type.lower()
 
-        for s in self._sections:
-            if self._matches(s, key, type, include_subtype=include_subtype):
+        for sec in self._sections:
+            if self._matches(sec, key, type, include_subtype=include_subtype):
                 if findAll:
-                    ret.append(s)
+                    ret.append(sec)
                 else:
-                    return s
+                    return sec
         if ret:
             return ret
 
@@ -533,7 +566,7 @@ class Sectionable(BaseObject):
 
     def get_path(self):
         """
-        Returns the absolute path of this section
+        Returns the absolute path of this section.
         """
         node = self
         path = []
@@ -543,24 +576,24 @@ class Sectionable(BaseObject):
         return "/" + "/".join(path)
 
     @staticmethod
-    def _get_relative_path(a, b):
+    def _get_relative_path(path_a, path_b):
         """
-        Returns a relative path for navigation from dir *a* to dir *b*
+        Returns a relative path for navigation from *path_a* to *path_b*.
 
-        If the common parent of both is "/", return an absolute path
+        If the common parent of both is "/", return an absolute path.
         """
-        a += "/"
-        b += "/"
-        parent = posixpath.dirname(posixpath.commonprefix([a, b]))
+        path_a += "/"
+        path_b += "/"
+        parent = posixpath.dirname(posixpath.commonprefix([path_a, path_b]))
         if parent == "/":
-            return b[:-1]
+            return path_b[:-1]
 
-        a = posixpath.relpath(a, parent)
-        b = posixpath.relpath(b, parent)
-        if a == ".":
-            return b
+        path_a = posixpath.relpath(path_a, parent)
+        path_b = posixpath.relpath(path_b, parent)
+        if path_a == ".":
+            return path_b
 
-        return posixpath.normpath("../" * (a.count("/") + 1) + b)
+        return posixpath.normpath("../" * (path_a.count("/") + 1) + path_b)
 
     def get_relative_path(self, section):
         """
@@ -568,11 +601,11 @@ class Sectionable(BaseObject):
         like (e.g. ../other_section)
 
         If the common parent of both sections is the document (i.e. /),
-        return an absolute path
+        return an absolute path.
         """
-        a = self.get_path()
-        b = section.get_path()
-        return self._get_relative_path(a, b)
+        path_a = self.get_path()
+        path_b = section.get_path()
+        return self._get_relative_path(path_a, path_b)
 
     def clean(self):
         """
@@ -586,22 +619,24 @@ class Sectionable(BaseObject):
 
     def clone(self, children=True, keep_id=False):
         """
-        Clone this object recursively allowing to copy it independently
-        to another document
+        Clones this object recursively allowing to copy it independently
+        to another document.
         """
         from odml.section import BaseSection
         obj = super(Sectionable, self).clone(children)
         obj._parent = None
         obj._sections = SmartList(BaseSection)
         if children:
-            for s in self._sections:
-                obj.append(s.clone(keep_id=keep_id))
+            for sec in self._sections:
+                obj.append(sec.clone(keep_id=keep_id))
 
         return obj
 
     @property
     def repository(self):
-        """ A URL to a terminology. """
+        """
+        A URL to a terminology.
+        """
         return self._repository
 
     @repository.setter

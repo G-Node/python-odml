@@ -1,23 +1,26 @@
 #!/usr/bin/env python
 """
-The XML parsing module.
-Parses odML files. Can be invoked standalone:
+The xmlparser module provides access to the XMLWriter and XMLReader classes.
+Both handle the conversion of odML documents from and to XML files and strings.
+
+The parser can be invoked standalone:
     python -m odml.tools.xmlparser file.odml
 """
 import csv
 import sys
+
+from os.path import basename
+
 from lxml import etree as ET
 from lxml.builder import E
 # this is needed for py2exe to include lxml completely
 from lxml import _elementpath as _dummy
-from os.path import basename
-
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
-from .. import format
+from .. import format as ofmt
 from ..info import FORMAT_VERSION
 from .parser_utils import InvalidVersionException, ParserException
 
@@ -38,6 +41,12 @@ INFILE_STYLE_TEMPLATE = """<xsl:template match="odML"><xsl:variable name="reposi
 
 
 def to_csv(val):
+    """
+    Modifies odML values for serialization to strings and files.
+
+    :param val: odML value.
+    :return: modified value string.
+    """
     # Make sure all individual values do not contain
     # leading or trailing whitespaces.
     unicode_values = list(map(unicode.strip, map(unicode, val)))
@@ -53,6 +62,12 @@ def to_csv(val):
 
 
 def from_csv(value_string):
+    """
+    Reads a string containing odML values and parses them into a list.
+
+    :param value_string: string of odML values.
+    :return: list of values.
+    """
     if not value_string:
         return []
     if value_string[0] == "[" and value_string[-1] == "]":
@@ -73,7 +88,7 @@ def from_csv(value_string):
 
 class XMLWriter:
     """
-    Creates XML nodes storing the information of an odML Document
+    Creates XML nodes storing the information of an odML Document.
     """
     header = "%s\n%s\n" % (XML_HEADER, EXTERNAL_STYLE_HEADER)
 
@@ -81,38 +96,42 @@ class XMLWriter:
         self.doc = odml_document
 
     @staticmethod
-    def save_element(e):
+    def save_element(curr_el):
         """
-        returns an xml node for the odML object e
+        Returns an XML node for the odML object curr_el.
+
+        :param curr_el: odML object. Supported objects are odml.Document, odml.Section,
+                        odml.Property.
+        :returns: parsed XML Node.
         """
-        fmt = e.format()
+        fmt = curr_el.format()
         cur = E(fmt.name)
 
         # generate attributes
-        if isinstance(fmt, format.Document.__class__):
+        if isinstance(fmt, ofmt.Document.__class__):
             cur.attrib['version'] = FORMAT_VERSION
 
         # generate elements
         for k in fmt.arguments_keys:
-            if not hasattr(e, fmt.map(k)):
+            if not hasattr(curr_el, fmt.map(k)):
                 continue
 
-            val = getattr(e, fmt.map(k))
+            val = getattr(curr_el, fmt.map(k))
             if val is None:
                 continue
-            if isinstance(fmt, format.Property.__class__) and k == "value":
+            if isinstance(fmt, ofmt.Property.__class__) and k == "value":
                 # Custom odML tuples require special handling for save loading from file.
-                if e.dtype and e.dtype.endswith("-tuple") and len(val) > 0:
+                if curr_el.dtype and curr_el.dtype.endswith("-tuple") and len(val) > 0:
                     ele = E(k, "(%s)" % ";".join(val[0]))
                 else:
                     ele = E(k, to_csv(val))
                 cur.append(ele)
             else:
                 if isinstance(val, list):
-                    for v in val:
-                        if v is None:
+                    for curr_val in val:
+                        if curr_val is None:
                             continue
-                        ele = XMLWriter.save_element(v)
+                        ele = XMLWriter.save_element(curr_val)
                         cur.append(ele)
                 else:
                     if sys.version_info < (3,):
@@ -131,6 +150,7 @@ class XMLWriter:
     def write_file(self, filename, local_style=False, custom_template=None):
         """
         write_file saves the XMLWriters odML document to an XML file.
+
         :param filename: location and name where the file will be written to.
         :param local_style: Optional boolean. By default an odML XML document is saved
                             with a default header containing an external stylesheet for
@@ -172,14 +192,15 @@ class XMLWriter:
 
 def load(filename):
     """
-    shortcut function for XMLReader().from_file(filename)
+    Shortcut function for XMLReader().from_file(filename).
     """
     return XMLReader().from_file(filename)
 
 
 class XMLReader(object):
     """
-    A reader to parse xml-files or strings into odml data structures
+    A reader to parse XML files or strings into odML data structures.
+
     Usage:
         >>> doc = XMLReader().from_file("file.odml")
     """
@@ -196,7 +217,7 @@ class XMLReader(object):
         :param filename: Path to an odml file.
         """
         self.parser = ET.XMLParser(remove_comments=True)
-        self.tags = dict([(obj.name, obj) for obj in format.__all__])
+        self.tags = dict([(obj.name, obj) for obj in ofmt.__all__])
         self.ignore_errors = ignore_errors
         self.show_warnings = show_warnings
         self.filename = filename
@@ -205,8 +226,11 @@ class XMLReader(object):
     @staticmethod
     def _handle_version(root):
         """
-        Check if the odML version of a handed in parsed lxml.etree is supported
-        by the current library and raise an Exception otherwise.
+        Checks if the odML version of a handed in parsed lxml.etree is supported
+        by the current library and raise a ParserException otherwise. If the
+        lxml.etree contains an XML file of a previous odML format version,
+        an InvalidVersionException is raised.
+
         :param root: Root node of a parsed lxml.etree. The root tag has to
                      contain a supported odML version number, otherwise it is not
                      accepted as a valid odML file.
@@ -225,15 +249,18 @@ class XMLReader(object):
 
     def from_file(self, xml_file):
         """
-        parse the datastream from a file like object *xml_file*
-        and return an odml data structure
+        Parses the datastream from a file like object and return an odML data structure.
+        If the file cannot be parsed, a ParserException is raised.
+
+        :param xml_file: file path to an XML input file or file like object.
+        :returns: a parsed odml.Document.
         """
         try:
             root = ET.parse(xml_file, self.parser).getroot()
             if hasattr(xml_file, "close"):
                 xml_file.close()
-        except ET.XMLSyntaxError as e:
-            raise ParserException(e.msg)
+        except ET.XMLSyntaxError as exc:
+            raise ParserException(exc.msg)
 
         self._handle_version(root)
         doc = self.parse_element(root)
@@ -244,27 +271,61 @@ class XMLReader(object):
         return doc
 
     def from_string(self, string):
+        """
+        Parses an XML string and return an odML data structure.
+        If the string cannot be parsed, a ParserException is raised.
+
+        :param string: XML string.
+        :returns: a parsed odml.Document.
+        """
         try:
             root = ET.XML(string, self.parser)
-        except ET.XMLSyntaxError as e:
-            raise ParserException(e.msg)
+        except ET.XMLSyntaxError as exc:
+            raise ParserException(exc.msg)
 
         self._handle_version(root)
         return self.parse_element(root)
 
-    def check_mandatory_arguments(self, data, ArgClass, tag_name, node):
-        for k, v in ArgClass.arguments:
-            if v != 0 and not ArgClass.map(k) in data:
+    def check_mandatory_arguments(self, data, arg_class, tag_name, node):
+        """
+        Checks if a passed attribute is required for a specific odML class.
+        If the attribute is required and not present in the data, the
+        parsers error method is called.
+
+        :param data: list of mandatory arguments.
+        :param arg_class: odML class corresponding to the content of the parent node.
+        :param tag_name: name of the current XML node.
+        :param node: XML node.
+        """
+        for k, val in arg_class.arguments:
+            if val != 0 and not arg_class.map(k) in data:
                 self.error("missing element <%s> within <%s> tag\n" %
                            (k, tag_name) + repr(data), node)
 
-    def is_valid_argument(self, tag_name, ArgClass, parent_node, child=None):
-        if tag_name not in ArgClass.arguments_keys:
+    def is_valid_argument(self, tag_name, arg_class, parent_node, child=None):
+        """
+        Checks if an argument is valid in the scope of a specific odML class.
+        If the attribute is not valid, the parsers error method is called.
+
+        :param tag_name: string containing the name of the current XML node.
+        :param arg_class: odML class corresponding to the content of the parent node.
+        :param parent_node: the parent XML node.
+        :param child: current XML node.
+        """
+        if tag_name not in arg_class.arguments_keys:
             self.error("Invalid element <%s> inside <%s> tag\n" %
                        (tag_name, parent_node.tag),
                        parent_node if child is None else child)
 
     def error(self, msg, elem):
+        """
+        If the parsers ignore_errors property is set to False, a ParserException
+        will be raised. Otherwise the message is passed to the parsers warning
+        method.
+
+        :param msg: Error message.
+        :param elem: XML node corresponding to the error.
+        """
         if elem is not None:
             msg += " (line %d)" % elem.sourceline
         if self.ignore_errors:
@@ -272,6 +333,14 @@ class XMLReader(object):
         raise ParserException(msg)
 
     def warn(self, msg, elem):
+        """
+        Adds a message to the parsers warnings property. If the parsers show_warnings
+        property is set to True, an additional error message will be written
+        to sys.stderr.
+
+        :param msg: Warning message.
+        :param elem: XML node corresponding to the warning.
+        """
         if elem is not None:
             msg = "warning[%s:%d:<%s>]: %s\n" % (
                 self.filename, elem.sourceline, elem.tag, msg)
@@ -283,6 +352,14 @@ class XMLReader(object):
             sys.stderr.write(msg)
 
     def parse_element(self, node):
+        """
+        Identifies the odML object corresponding to the current XML node e.g.
+        odml.Document, odml.Section or odml.Property. It will call the
+        parsers method corresponding to the identified odML object e.g. parse_odML,
+        parse_section, parse_property and return the results.
+
+        :param node: XML node.
+        """
         if node.tag not in self.tags:
             self.error("Invalid element <%s> " % node.tag, node)
             return None  # won't be able to parse this one
@@ -303,14 +380,14 @@ class XMLReader(object):
         extra_args = {}
         children = []
 
-        for k, v in root.attrib.iteritems():
+        for k, val in root.attrib.iteritems():
             k = k.lower()
             # 'version' is currently the only supported XML attribute.
             if k == 'version' and root.tag == 'odML':
                 continue
 
             # We currently do not support XML attributes.
-            self.error("Attribute not supported, ignoring '%s=%s' " % (k, v), root)
+            self.error("Attribute not supported, ignoring '%s=%s' " % (k, val), root)
 
         for node in root:
             node.tag = node.tag.lower()
@@ -350,8 +427,8 @@ class XMLReader(object):
         obj = fmt.create()
         try:
             obj = fmt.create(**arguments)
-        except Exception as e:
-            self.error(str(e), root)
+        except Exception as exc:
+            self.error(str(exc), root)
 
         if insert_children:
             for child in children:
@@ -359,14 +436,39 @@ class XMLReader(object):
 
         return obj
 
+    # function 'parse_element' requires the captialisation of 'parse_odML'
+    # to properly parse the root of an odML document.
     def parse_odML(self, root, fmt):
+        """
+        Parses the content of an XML node into an odml.Document including all
+        subsections and odml.Properties.
+
+        :param root: XML node
+        :param fmt: odML class corresponding to the content of the XML node.
+        :return: parsed odml.Document
+        """
         doc = self.parse_tag(root, fmt)
         return doc
 
     def parse_section(self, root, fmt):
+        """
+        Parses the content of an XML node into an odml.Section including all subsections
+        and odml.Properties.
+
+        :param root: XML node
+        :param fmt: odML class corresponding to the content of the XML node.
+        :return: parsed odml.Section
+        """
         return self.parse_tag(root, fmt)
 
     def parse_property(self, root, fmt):
+        """
+        Parses the content of an XML node into an odml.Property.
+
+        :param root: XML node
+        :param fmt: odML class corresponding to the content of the XML node.
+        :return: parsed odml.Property
+        """
         return self.parse_tag(root, fmt, insert_children=False)
 
 
@@ -380,4 +482,4 @@ if __name__ == '__main__':
     if len(args) < 1:
         parser.print_help()
     else:
-        dumper.dumpDoc(load(args[0]))
+        dumper.dump_doc(load(args[0]))

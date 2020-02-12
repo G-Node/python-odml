@@ -1,9 +1,12 @@
 # -*- coding: utf-8
+"""
+This module provides the Base Document class.
+"""
 import uuid
 
 from . import base
 from . import dtypes
-from . import format
+from . import format as fmt
 from . import terminology
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
@@ -17,7 +20,7 @@ class BaseDocument(base.Sectionable):
     properties.
     """
 
-    _format = format.Document
+    _format = fmt.Document
 
     def __init__(self, author=None, date=None, version=None, repository=None, oid=None):
         super(BaseDocument, self).__init__()
@@ -26,8 +29,8 @@ class BaseDocument(base.Sectionable):
                 self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
-        except ValueError as e:
-            print(e)
+        except ValueError as exc:
+            print(exc)
             self._id = str(uuid.uuid4())
         self._author = author
         self._version = version
@@ -153,10 +156,12 @@ class BaseDocument(base.Sectionable):
         :param current_depth: number of hierarchical levels printed from the
                               starting Section.
         """
-        doc_str = "[{} [{}] {}, sections: {}, repository: {}]".format(self.author, self.version,
-                                                                      self.date, len(self._sections), self.repository)
+        annotation = "{} [{}] {}".format(self.author, self.version, self.date)
+        sec_num = "sections: {}".format(len(self._sections))
+        repo = "repository: {}".format(self.repository)
+        doc_str = "[{}, {}, {}]".format(annotation, sec_num, repo)
         print(doc_str)
 
-        for s in self._sections:
-            s.pprint(current_depth=current_depth+1, max_depth=max_depth,
-                     indent=indent, max_length=max_length)
+        for sec in self._sections:
+            sec.pprint(current_depth=current_depth+1, max_depth=max_depth,
+                       indent=indent, max_length=max_length)

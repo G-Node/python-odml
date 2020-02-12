@@ -12,6 +12,14 @@ it finds.
 
 
 def allow_inherit_docstring(cls):
+    """
+    The base classes of a provided class will be used to copy and inherit the first
+    docstring it finds.
+
+    :param cls: class the decorator function will be used on to inherit the docstring
+                from its base classes.
+    :returns: class with the inherited docstring.
+    """
     bases = cls.__bases__
     for attr, attribute in cls.__dict__.items():
         if hasattr(attribute, "inherit_docstring"):
@@ -27,5 +35,9 @@ def allow_inherit_docstring(cls):
 
 
 def inherit_docstring(obj):
+    """
+    Sets the inherit_docstring attribute of an object to True and returns the object.
+    """
     obj.inherit_docstring = True
+
     return obj

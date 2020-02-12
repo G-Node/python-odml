@@ -38,7 +38,7 @@ class TestTypes(unittest.TestCase):
     def test_dump_doc(self):
         # This test dumps the whole document and checks it word by word.
         # If possible, maybe some better way of testing this ?
-        odml.tools.dumper.dumpDoc(self.doc)
+        odml.tools.dumper.dump_doc(self.doc)
         output = [x.strip() for x in self.captured_stdout.getvalue().split('\n') if x]
         expected_output = []
         expected_output.append("*Cell ()")

@@ -1,5 +1,7 @@
 # -*- coding: utf-8
-
+"""
+This module provides the Base Property class.
+"""
 import uuid
 
 from . import base
@@ -10,54 +12,61 @@ from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 @allow_inherit_docstring
 class BaseProperty(base.BaseObject):
-    """An odML Property"""
+    """
+    An odML Property.
+
+    If a value without an explicitly stated dtype has been provided, dtype will
+    be inferred from the value.
+
+    Example:
+    >>> p = Property("property1", "a string")
+    >>> p.dtype
+    >>> str
+    >>> p = Property("property1", 2)
+    >>> p.dtype
+    >>> int
+    >>> p = Property("prop", [2, 3, 4])
+    >>> p.dtype
+    >>> int
+
+    :param name: The name of the Property.
+    :param values: Some data value, it can be a single value or
+                   a list of homogeneous values.
+    :param parent: the parent object of the new Property. If the object is not an
+                   odml.Section a ValueError is raised.
+    :param unit: The unit of the stored data.
+    :param uncertainty: The uncertainty (e.g. the standard deviation)
+                        associated with a measure value.
+    :param reference: A reference (e.g. an URL) to an external definition
+                      of the value.
+    :param definition: The definition of the Property.
+    :param dependency: Another Property this Property depends on.
+    :param dependency_value: Dependency on a certain value.
+    :param dtype: The data type of the values stored in the property,
+                  if dtype is not given, the type is deduced from the values.
+                  Check odml.DType for supported data types.
+    :param value_origin: Reference where the value originated from e.g. a file name.
+    :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
+               an id will be generated and assigned. An id has to be unique
+               within an odML Document.
+    :param value: Legacy code to the 'values' attribute. If 'values' is provided,
+                  any data provided via 'value' will be ignored.
+    """
+
     _format = frmt.Property
 
     def __init__(self, name=None, values=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None,
                  value_origin=None, oid=None, value=None):
-        """
-        Create a new Property. If a value without an explicitly stated dtype
-        has been provided, the method will try to infer the value's dtype.
-        Example:
-        >>> p = Property("property1", "a string")
-        >>> p.dtype
-        >>> str
-        >>> p = Property("property1", 2)
-        >>> p.dtype
-        >>> int
-        >>> p = Property("prop", [2, 3, 4])
-        >>> p.dtype
-        >>> int
-        :param name: The name of the property.
-        :param values: Some data value, it can be a single value or
-                       a list of homogeneous values.
-        :param unit: The unit of the stored data.
-        :param uncertainty: The uncertainty (e.g. the standard deviation)
-                            associated with a measure value.
-        :param reference: A reference (e.g. an URL) to an external definition
-                          of the value.
-        :param definition: The definition of the property.
-        :param dependency: Another property this property depends on.
-        :param dependency_value: Dependency on a certain value.
-        :param dtype: The data type of the values stored in the property,
-                      if dtype is not given, the type is deduced from the values.
-                      Check odml.DType for supported data types.
-        :param value_origin: Reference where the value originated from e.g. a file name.
-        :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
-                   an id will be generated and assigned. An id has to be unique
-                   within an odML Document.
-        :param value: Legacy code to the 'values' attribute. If 'values' is provided,
-                      any data provided via 'value' will be ignored.
-        """
+
         try:
             if oid is not None:
                 self._id = str(uuid.UUID(oid))
             else:
                 self._id = str(uuid.uuid4())
-        except ValueError as e:
-            print(e)
+        except ValueError as exc:
+            print(exc)
             self._id = str(uuid.uuid4())
 
         # Use id if no name was provided.
@@ -82,7 +91,7 @@ class BaseProperty(base.BaseObject):
 
         self._values = []
         self.values = values
-        if not values and (value or isinstance(value, bool) or isinstance(value, int)):
+        if not values and (value or isinstance(value, (bool, int))):
             self.values = value
 
         self.parent = parent
@@ -110,7 +119,7 @@ class BaseProperty(base.BaseObject):
     @property
     def oid(self):
         """
-        The uuid for the property. Required for entity creation and comparison,
+        The uuid of the Property. Required for entity creation and comparison,
         saving and loading.
         """
         return self.id
@@ -118,7 +127,7 @@ class BaseProperty(base.BaseObject):
     @property
     def id(self):
         """
-        The uuid for the property.
+        The uuid of the Property.
         """
         return self._id
 
@@ -127,6 +136,7 @@ class BaseProperty(base.BaseObject):
         new_id sets the object id of the current object to an RFC 4122 compliant UUID.
         If an id was provided, it is assigned if it is RFC 4122 UUID format compliant.
         If no id was provided, a new UUID is generated and assigned.
+
         :param oid: UUID string as specified in RFC 4122.
         """
         if oid is not None:
@@ -136,6 +146,9 @@ class BaseProperty(base.BaseObject):
 
     @property
     def name(self):
+        """
+        The name of the Property.
+        """
         return self._name
 
     @name.setter
@@ -182,7 +195,7 @@ class BaseProperty(base.BaseObject):
     @property
     def parent(self):
         """
-        The section containing this property.
+        The Section containing this Property.
         """
         return self._parent
 
@@ -205,6 +218,12 @@ class BaseProperty(base.BaseObject):
 
     @staticmethod
     def _validate_parent(new_parent):
+        """
+        Checks whether a provided object is a valid odml.Section.
+
+        :param new_parent: object to check whether it is an odml.Section.
+        :returns: Boolean whether the object is an odml.Section or not.
+        """
         from odml.section import BaseSection
         if isinstance(new_parent, BaseSection):
             return True
@@ -243,9 +262,9 @@ class BaseProperty(base.BaseObject):
 
         :param values: an iterable that contains the values.
         """
-        for v in values:
+        for val in values:
             try:
-                dtypes.get(v, self.dtype)
+                dtypes.get(val, self.dtype)
             except Exception:
                 return False
         return True
@@ -329,16 +348,21 @@ class BaseProperty(base.BaseObject):
 
         if not self._validate_values(new_value):
             if self._dtype in ("date", "time", "datetime"):
-                raise ValueError("odml.Property.values: passed values are not of "
-                                "consistent type \'%s\'! Format should be \'%s\'." %
-                                 (self._dtype, dtypes.default_values(self._dtype)))
+                req_format = dtypes.default_values(self._dtype)
+                msg = "odml.Property.values: passed values are not of consistent type "
+                msg += "\'%s\'! Format should be \'%s\'." % (self._dtype, req_format)
+                raise ValueError(msg)
             else:
-                raise ValueError("odml.Property.values: passed values are not of "
-                                "consistent type!")
+                msg = "odml.Property.values: passed values are not of consistent type!"
+                raise ValueError(msg)
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
     @property
     def value_origin(self):
+        """
+        Reference where the value originated from e.g. a file name.
+        :returns: the value_origin of the Property.
+        """
         return self._value_origin
 
     @value_origin.setter
@@ -349,6 +373,11 @@ class BaseProperty(base.BaseObject):
 
     @property
     def uncertainty(self):
+        """
+        The uncertainty (e.g. the standard deviation) associated with
+        the values of the Property.
+        :returns: the uncertainty of the Property.
+        """
         return self._uncertainty
 
     @uncertainty.setter
@@ -367,6 +396,10 @@ class BaseProperty(base.BaseObject):
 
     @property
     def unit(self):
+        """
+        The unit associated with the values of the Property.
+        :returns: the unit of the Property.
+        """
         return self._unit
 
     @unit.setter
@@ -377,6 +410,10 @@ class BaseProperty(base.BaseObject):
 
     @property
     def reference(self):
+        """
+        A reference (e.g. an URL) to an external definition of the value.
+        :returns: the reference of the Property.
+        """
         return self._reference
 
     @reference.setter
@@ -387,6 +424,9 @@ class BaseProperty(base.BaseObject):
 
     @property
     def definition(self):
+        """
+        :returns the definition of the Property:
+        """
         return self._definition
 
     @definition.setter
@@ -397,6 +437,10 @@ class BaseProperty(base.BaseObject):
 
     @property
     def dependency(self):
+        """
+        Another Property this Property depends on.
+        :returns: the dependency of the Property.
+        """
         return self._dependency
 
     @dependency.setter
@@ -407,6 +451,10 @@ class BaseProperty(base.BaseObject):
 
     @property
     def dependency_value(self):
+        """
+        Dependency on a certain value in a dependency Property.
+        :returns: the required value to be found in a dependency Property.
+        """
         return self._dependency_value
 
     @dependency_value.setter
@@ -592,11 +640,15 @@ class BaseProperty(base.BaseObject):
             return
 
         new_value = self._convert_value_input(obj)
-        if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
+        if len(new_value) > 0 and strict and \
+                dtypes.infer_dtype(new_value[0]) != self.dtype:
 
-            if not (dtypes.infer_dtype(new_value[0]) == "string" and self.dtype in dtypes.special_dtypes):
-                raise ValueError("odml.Property.extend: passed value data type found (\"%s\") "
-                                 "does not match expected dtype \"%s\"!" % (dtypes.infer_dtype(new_value[0]), self._dtype))
+            type_check = dtypes.infer_dtype(new_value[0])
+            if not (type_check == "string" and self.dtype in dtypes.special_dtypes):
+                msg = "odml.Property.extend: passed value data type found "
+                msg += "(\"%s\") does not match expected dtype \"%s\"!" % (type_check,
+                                                                           self._dtype)
+                raise ValueError(msg)
 
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.extend: passed value(s) cannot be converted "
@@ -624,11 +676,15 @@ class BaseProperty(base.BaseObject):
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
 
-        if len(new_value) > 0 and strict and dtypes.infer_dtype(new_value[0]) != self.dtype:
+        if len(new_value) > 0 and strict and \
+                dtypes.infer_dtype(new_value[0]) != self.dtype:
 
-            if not (dtypes.infer_dtype(new_value[0]) == "string" and self.dtype in dtypes.special_dtypes):
-                raise ValueError("odml.Property.append: passed value data type found (\"%s\") "
-                                 "does not match expected dtype \"%s\"!" % (dtypes.infer_dtype(new_value[0]), self._dtype))
+            type_check = dtypes.infer_dtype(new_value[0])
+            if not (type_check == "string" and self.dtype in dtypes.special_dtypes):
+                msg = "odml.Property.append: passed value data type found "
+                msg += "(\"%s\") does not match expected dtype \"%s\"!" % (type_check,
+                                                                           self._dtype)
+                raise ValueError(msg)
 
         if not self._validate_values(new_value):
             raise ValueError("odml.Property.append: passed value(s) cannot be converted "
@@ -672,6 +728,8 @@ class BaseProperty(base.BaseObject):
         """
         Export only the path from this property to the root.
         Include all properties of parent sections.
+
+        :returns: cloned odml tree to the root of the current document.
         """
         curr = self.parent
         par = self.parent
