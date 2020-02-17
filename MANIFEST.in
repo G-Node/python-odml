@@ -1,5 +1,4 @@
-include LICENSE
-include README.rst
+include LICENSE README.md CHANGELOG.md
 include odml/info.json
-include odml/resources/section_subclasses.yaml
-include odml/resources/odml-ontology.ttl
+recursive-include odml/resources *
+recursive-include test/resources *
