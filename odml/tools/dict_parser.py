@@ -5,7 +5,7 @@ Both handle the conversion of odML documents from and to Python dictionary objec
 
 from .. import format as odmlfmt
 from ..info import FORMAT_VERSION
-from .parser_utils import InvalidVersionException, ParserException
+from .parser_utils import InvalidVersionException, ParserException, odml_tuple_export
 
 
 class DictWriter:
@@ -107,8 +107,8 @@ class DictWriter:
                     elif (tag == []) or tag:  # Even if 'values' is empty, allow '[]'
                         # Custom odML tuples require special handling.
                         if attr == "values" and prop.dtype and \
-                                prop.dtype.endswith("-tuple") and len(prop.values) > 0:
-                            prop_dict["value"] = "(%s)" % ";".join(prop.values[0])
+                                prop.dtype.endswith("-tuple") and prop.values:
+                            prop_dict["value"] = odml_tuple_export(prop.values)
                         else:
                             # Always use the arguments key attribute name when saving
                             prop_dict[i] = tag
