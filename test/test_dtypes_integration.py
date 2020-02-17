@@ -324,34 +324,84 @@ class TestTypesIntegration(unittest.TestCase):
         self.assertEqual(self.doc, ydoc)
 
     def test_tuple(self):
+        # test single tuple value
         val_type = "3-tuple"
         val_in = "(1; 1; 1)"
-        val_odml = ["1", "1", "1"]
+        val_odml = [["1", "1", "1"]]
 
         parent_sec = self.doc.sections[0]
-        _ = odml.Property(name="tuple test single", dtype=val_type,
-                          value=val_in, parent=parent_sec)
+        sec_name = parent_sec.name
+        prop_name = "tuple_test_single"
+        _ = odml.Property(name=prop_name, dtype=val_type,
+                          values=val_in, parent=parent_sec)
 
         # Test correct json save and load.
         odml.save(self.doc, self.json_file, "JSON")
         jdoc = odml.load(self.json_file, "JSON")
 
-        self.assertEqual(jdoc.sections[0].properties[0].dtype, val_type)
-        self.assertEqual(jdoc.sections[0].properties[0].values, [val_odml])
+        self.assertEqual(jdoc.sections[sec_name].properties[prop_name].dtype, val_type)
+        self.assertEqual(jdoc.sections[sec_name].properties[prop_name].values, val_odml)
+        self.assertEqual(jdoc.sections[sec_name].properties[prop_name].values,
+                         self.doc.sections[sec_name].properties[prop_name].values)
         self.assertEqual(self.doc, jdoc)
 
         # Test correct xml save and load.
         odml.save(self.doc, self.xml_file)
         xdoc = odml.load(self.xml_file)
 
-        self.assertEqual(xdoc.sections[0].properties[0].dtype, val_type)
-        self.assertEqual(xdoc.sections[0].properties[0].values, [val_odml])
+        self.assertEqual(xdoc.sections[sec_name].properties[prop_name].dtype, val_type)
+        self.assertEqual(xdoc.sections[sec_name].properties[prop_name].values, val_odml)
+        self.assertEqual(xdoc.sections[sec_name].properties[prop_name].values,
+                         self.doc.sections[sec_name].properties[prop_name].values)
         self.assertEqual(self.doc, xdoc)
 
         # Test correct yaml save and load.
         odml.save(self.doc, self.yaml_file, "YAML")
         ydoc = odml.load(self.yaml_file, "YAML")
 
-        self.assertEqual(ydoc.sections[0].properties[0].dtype, val_type)
-        self.assertEqual(ydoc.sections[0].properties[0].values, [val_odml])
+        self.assertEqual(ydoc.sections[sec_name].properties[prop_name].dtype, val_type)
+        self.assertEqual(ydoc.sections[sec_name].properties[prop_name].values, val_odml)
+        self.assertEqual(ydoc.sections[sec_name].properties[prop_name].values,
+                         self.doc.sections[sec_name].properties[prop_name].values)
+        self.assertEqual(self.doc, ydoc)
+
+        # test multiple tuple values
+        val_type = "3-tuple"
+        val_in = ["(1; 1; 1)", "(2; 2; 2)", "(3; 3; 3)"]
+        val_odml = [["1", "1", "1"], ["2", "2", "2"], ["3", "3", "3"]]
+
+        parent_sec = self.doc.sections[0]
+        sec_name = parent_sec.name
+        prop_name = "tuple_test_multiple"
+        _ = odml.Property(name=prop_name, dtype=val_type,
+                          values=val_in, parent=parent_sec)
+
+        # Test correct json save and load.
+        odml.save(self.doc, self.json_file, "JSON")
+        jdoc = odml.load(self.json_file, "JSON")
+
+        self.assertEqual(jdoc.sections[sec_name].properties[prop_name].dtype, val_type)
+        self.assertEqual(jdoc.sections[sec_name].properties[prop_name].values, val_odml)
+        self.assertEqual(jdoc.sections[sec_name].properties[prop_name].values,
+                         self.doc.sections[sec_name].properties[prop_name].values)
+        self.assertEqual(self.doc, jdoc)
+
+        # Test correct xml save and load.
+        odml.save(self.doc, self.xml_file)
+        xdoc = odml.load(self.xml_file)
+
+        self.assertEqual(xdoc.sections[sec_name].properties[prop_name].dtype, val_type)
+        self.assertEqual(xdoc.sections[sec_name].properties[prop_name].values, val_odml)
+        self.assertEqual(xdoc.sections[sec_name].properties[prop_name].values,
+                         self.doc.sections[sec_name].properties[prop_name].values)
+        self.assertEqual(self.doc, xdoc)
+
+        # Test correct yaml save and load.
+        odml.save(self.doc, self.yaml_file, "YAML")
+        ydoc = odml.load(self.yaml_file, "YAML")
+
+        self.assertEqual(ydoc.sections[sec_name].properties[prop_name].dtype, val_type)
+        self.assertEqual(ydoc.sections[sec_name].properties[prop_name].values, val_odml)
+        self.assertEqual(ydoc.sections[sec_name].properties[prop_name].values,
+                         self.doc.sections[sec_name].properties[prop_name].values)
         self.assertEqual(self.doc, ydoc)

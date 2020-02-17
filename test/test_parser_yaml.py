@@ -19,7 +19,7 @@ class TestYAMLParser(unittest.TestCase):
         message = "Missing root element"
 
         with open(os.path.join(self.basepath, filename)) as raw_data:
-            parsed_doc = yaml.load(raw_data)
+            parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(ParserException) as exc:
             _ = self.yaml_reader.to_odml(parsed_doc)
@@ -31,7 +31,7 @@ class TestYAMLParser(unittest.TestCase):
         message = "Could not find odml-version"
 
         with open(os.path.join(self.basepath, filename)) as raw_data:
-            parsed_doc = yaml.load(raw_data)
+            parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(ParserException) as exc:
             _ = self.yaml_reader.to_odml(parsed_doc)
@@ -42,7 +42,7 @@ class TestYAMLParser(unittest.TestCase):
         filename = "invalid_version.yaml"
 
         with open(os.path.join(self.basepath, filename)) as raw_data:
-            parsed_doc = yaml.load(raw_data)
+            parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(InvalidVersionException):
             _ = self.yaml_reader.to_odml(parsed_doc)

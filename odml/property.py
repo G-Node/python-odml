@@ -10,6 +10,38 @@ from . import format as frmt
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
+def odml_tuple_import(t_count, new_value):
+    """
+    Checks via a heuristic if the values in a string fit the general
+    odml style tuple format and the individual items match the
+    required number of tuple values.
+    Legacy Python2 code required to parse unicode strings to a list
+    of odml style tuples.
+
+    :param t_count: integer, required values within a single odml style tuple.
+    :param new_value: string containing an odml style tuple list.
+    :return: list of odml style tuples.
+    """
+    try:
+        unicode = unicode
+    except NameError:
+        unicode = str
+
+    if len(new_value) != 1 and not isinstance(new_value[0], unicode):
+        return new_value
+
+    cln = new_value[0].strip()
+    l_check = cln.startswith("[") and cln.endswith("]")
+    br_check = cln.count("(") == cln.count(")")
+    com_check = cln.count("(") == (cln.count(",") + 1)
+    sep_check = t_count == 1 or cln.count("(") == (cln.count(";") / (t_count - 1))
+
+    if l_check and br_check and com_check and sep_check:
+        new_value = cln[1:-1].split(",")
+
+    return new_value
+
+
 @allow_inherit_docstring
 class BaseProperty(base.BaseObject):
     """
@@ -345,6 +377,12 @@ class BaseProperty(base.BaseObject):
 
         if self._dtype is None:
             self._dtype = dtypes.infer_dtype(new_value[0])
+
+        # Python2 legacy code for loading odml style tuples from YAML or JSON.
+        # Works from Python 3 onwards.
+        if self._dtype.endswith("-tuple") and not self._validate_values(new_value):
+            t_count = int(self._dtype.split("-")[0])
+            new_value = odml_tuple_import(t_count, new_value)
 
         if not self._validate_values(new_value):
             if self._dtype in ("date", "time", "datetime"):

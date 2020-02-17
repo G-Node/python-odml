@@ -64,7 +64,7 @@ class VersionConverter(object):
 
     def _parse_yaml(self):
         with open(self.filename) as file:
-            parsed_doc = yaml.load(file)
+            parsed_doc = yaml.safe_load(file)
 
         return self._parse_dict_document(parsed_doc)
 

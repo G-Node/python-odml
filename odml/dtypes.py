@@ -328,12 +328,18 @@ def tuple_get(string, count=None):
     """
     if not string:
         return None
+
     string = string.strip()
-    assert string.startswith("(") and string.endswith(")")
+    if not (string.startswith("(") and string.endswith(")")):
+        msg = "Tuple value misses brackets: '%s'" % string
+        raise ValueError(msg)
+
     string = string[1:-1]
     res = [x.strip() for x in string.split(";")]
-    if count is not None:  # be strict
-        assert len(res) == count
+    if count is not None and not len(res) == count:
+        msg = "%s-tuple value does not match required item length" % count
+        raise ValueError(msg)
+
     return res
 
 

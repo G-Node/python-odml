@@ -22,7 +22,7 @@ except ImportError:
 
 from .. import format as ofmt
 from ..info import FORMAT_VERSION
-from .parser_utils import InvalidVersionException, ParserException
+from .parser_utils import InvalidVersionException, ParserException, odml_tuple_export
 
 try:
     unicode = unicode
@@ -121,8 +121,8 @@ class XMLWriter:
                 continue
             if isinstance(fmt, ofmt.Property.__class__) and k == "value":
                 # Custom odML tuples require special handling for save loading from file.
-                if curr_el.dtype and curr_el.dtype.endswith("-tuple") and len(val) > 0:
-                    ele = E(k, "(%s)" % ";".join(val[0]))
+                if curr_el.dtype and curr_el.dtype.endswith("-tuple") and val:
+                    ele = E(k, odml_tuple_export(val))
                 else:
                     ele = E(k, to_csv(val))
                 cur.append(ele)

@@ -1,10 +1,24 @@
 import datetime
 import unittest
 
+from sys import version_info
+
 import odml.dtypes as typ
 
 
 class TestTypes(unittest.TestCase):
+
+    def assertLocalRegExp(self, text, regular_expression):
+        """
+        Python 2 is dead and assertRegexpMatches is deprecated and
+        will be removed, but keep compatibility until py 2 support is
+        fully dropped.
+        """
+
+        if version_info.major < 3:
+            self.assertRegexpMatches(text, regular_expression)
+        else:
+            self.assertRegex(text, regular_expression)
 
     def setUp(self):
         pass
@@ -36,8 +50,8 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.date_get(""), datetime.date)
 
         re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])$"
-        self.assertRegexpMatches(typ.date_get(None).strftime(typ.FORMAT_DATE), re)
-        self.assertRegexpMatches(typ.date_get("").strftime(typ.FORMAT_DATE), re)
+        self.assertLocalRegExp(typ.date_get(None).strftime(typ.FORMAT_DATE), re)
+        self.assertLocalRegExp(typ.date_get("").strftime(typ.FORMAT_DATE), re)
 
         date = datetime.date(2011, 12, 1)
         date_string = '2011-12-01'
@@ -68,8 +82,8 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.time_get(""), datetime.time)
 
         re = "^[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assertRegexpMatches(typ.time_get(None).strftime(typ.FORMAT_TIME), re)
-        self.assertRegexpMatches(typ.time_get("").strftime(typ.FORMAT_TIME), re)
+        self.assertLocalRegExp(typ.time_get(None).strftime(typ.FORMAT_TIME), re)
+        self.assertLocalRegExp(typ.time_get("").strftime(typ.FORMAT_TIME), re)
 
         time = datetime.time(12, 34, 56)
         time_string = '12:34:56'
@@ -101,8 +115,8 @@ class TestTypes(unittest.TestCase):
 
         re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) " \
              "[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assertRegexpMatches(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), re)
-        self.assertRegexpMatches(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), re)
+        self.assertLocalRegExp(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), re)
+        self.assertLocalRegExp(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), re)
 
         date = datetime.datetime(2011, 12, 1, 12, 34, 56)
         date_string = '2011-12-01 12:34:56'
@@ -199,10 +213,10 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(typ.tuple_get("(39.12; 67.19)"), ["39.12", "67.19"])
 
         # Test fail on missing parenthesis.
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             _ = typ.tuple_get("fail")
         # Test fail on mismatching element count and count number.
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             _ = typ.tuple_get("(1; 2; 3)", 2)
 
     def test_dtype_none(self):
