@@ -213,10 +213,10 @@ class TestTypes(unittest.TestCase):
         self.assertEqual(typ.tuple_get("(39.12; 67.19)"), ["39.12", "67.19"])
 
         # Test fail on missing parenthesis.
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             _ = typ.tuple_get("fail")
         # Test fail on mismatching element count and count number.
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             _ = typ.tuple_get("(1; 2; 3)", 2)
 
     def test_dtype_none(self):
