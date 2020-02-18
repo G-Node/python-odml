@@ -93,7 +93,7 @@ release notes](https://github.com/G-Node/python-odml/releases).
 
 ## Previous Python versions
 
-Python 2 has reached end of life. We will not keep any future versions of odml Python 2 compatible and also advertise using a Python version >= 3.6. If a Python version < 3.6 is a requirement, the following dependency needs to be installed as well:
+Python 2 has reached end of life. We will not keep any future versions of odml Python 2 compatible and also recommend using a Python version >= 3.6. If a Python version < 3.6 is a requirement, the following dependency needs to be installed as well:
 
 * pip install
   * enum34 (version 0.4.4)
