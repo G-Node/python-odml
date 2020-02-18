@@ -3,6 +3,15 @@
 Used to document all changes from previous releases and collect changes 
 until the next release.
 
+# Version 1.4.5
+
+## Minor changes, updates and fixes.
+- all usages of the unsafe `yaml.load` calls are replaced with `yaml.save_load`. This also prepares for Python 3.9 compatibility. See also issue #350 and pull request #356 for details.
+- dtype tests now use both `assertRegexpMatches` and `assertRegex` depending on the Python version used to prepare for Python 3.9 compatibility while still keeping the Python 2 tests running.
+- odml style tuple handling is refactored. Now lists of odml style tuples are properly saved to file and can be loaded again. If an invalid format is used to add an odml style tuple, more detailed exception messages are available. Also adds more odml style tuples tests. See issues #250, #353 and #354 for details.
+- a deprecation warning is displayed when importing the odml module if a Python version <3.6 is used.
+- introduces minor PEP8 fixes to all files and completes docstrings for full documentation.
+
 # Version 1.4.4
 
 ## Introduction of inline style sheet
