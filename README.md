@@ -69,19 +69,17 @@ release notes](https://github.com/G-Node/python-odml/releases).
 
 # Dependencies
 
-* Python 2.7 or 3.5
+* Python 3.6+
 * Python packages:
 
-  * enum (version 0.4.4)
   * lxml (version 3.7.2)
-  * yaml (version 3.12)
+  * yaml (version >= 5.1)
   * rdflib (version >=4.2.2)
 
 * These packages will be downloaded and installed automatically if the ```pip```
   method is used to install odML. Alternatively, they can be installed from the OS
   package manager. On Ubuntu, they are available as:
 
-  * python-enum
   * python-lxml
   * python-yaml
   * python-rdflib
@@ -93,6 +91,14 @@ release notes](https://github.com/G-Node/python-odml/releases).
   * libxslt1-dev
   * lib32z1-dev
 
+## Previous Python versions
+
+Python 2 has reached end of life. We will not keep any future versions of odml Python 2 compatible and also recommend using a Python version >= 3.6. If a Python version < 3.6 is a requirement, the following dependency needs to be installed as well:
+
+* pip install
+  * enum34 (version 0.4.4)
+* apt install
+  * python-enum
 
 # Building from source
 
