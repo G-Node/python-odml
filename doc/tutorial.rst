@@ -311,7 +311,6 @@ following command::
 As expected from the Document printout our example contains two Sections. The
 printout and attributes of a Section are explained in the next chapter.
 
-
 The Sections
 ------------
 
@@ -553,6 +552,18 @@ returned list will have no affect on the actual Property values. If you want to
 make changes to a Property value, either use the ``append``, ``extend`` and ``remove``
 methods or assign a new value list to the property.
 
+Printing overviews to navigate the contents of an odML document
+---------------------------------------------------------------
+
+The odML entities ``Property``, ``Section`` and ``Document`` feature
+a method that allows to print a tree-like representation of
+all child entities to get an overview of the file structure.
+
+    >>> MYodML.pprint()
+    >>> sec = MYodML['TheCrew']
+    >>> sec.pprint()
+    >>> prop = odmlEX['TheCrew'].properties['NameCrewMembers']
+    >>> prop.pprint()
 
 -------------------------------------------------------------------------------
 
