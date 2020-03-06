@@ -118,6 +118,26 @@ class Validation(object):
 # ------------------------------------------------
 # validation rules
 
+def object_args_must_be_defined(obj):
+    """
+    Tests that no Object has undefined attributes, given in format.
+
+    :param obj: document, section or property.
+    """
+
+    args = obj.format().arguments
+    for arg in args:
+        if arg[1] == 1:
+            obj_arg = getattr(obj, arg[0])
+            if obj_arg is None or obj_arg == '' or obj_arg == 'undefined':
+                yield ValidationError(obj, obj.format().name.capitalize() + ' ' + arg[0] + ' undefined', LABEL_WARNING)
+
+
+Validation.register_handler('odML', object_args_must_be_defined)
+Validation.register_handler('section', object_args_must_be_defined)
+Validation.register_handler('property', object_args_must_be_defined)
+
+
 def section_type_must_be_defined(sec):
     """
     Tests that no Section has an undefined type.
