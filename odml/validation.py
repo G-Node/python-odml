@@ -3,6 +3,8 @@
 Generic odML validation framework.
 """
 
+from . import dtypes
+
 LABEL_ERROR = 'error'
 LABEL_WARNING = 'warning'
 
@@ -317,3 +319,28 @@ def property_dependency_check(prop):
 
 
 Validation.register_handler('property', property_dependency_check)
+
+
+def property_values_check(prop):
+    """
+    PROTOTYPE
+
+    Tests that the values are of consistent dtype.
+    If dtype is not given, infer from first item in list.
+
+    :param prop: property the validation is applied on.
+    """
+
+    if prop.dtype is not None and prop.dtype is not "":
+        dtype = prop.dtype
+    elif len(prop.values) != 0:
+        dtype = dtypes.infer_dtype(prop.values[0])
+    else:
+        return
+
+    for val in prop.values:
+        try:
+            dtypes.get(val, dtype)
+        except Exception:
+            msg = "Property values not of consistent dtype!"
+            yield ValidationError(prop, msg, LABEL_ERROR)
