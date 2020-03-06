@@ -6,6 +6,7 @@ import uuid
 
 from . import base
 from . import dtypes
+from . import validation
 from . import format as frmt
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
@@ -127,6 +128,8 @@ class BaseProperty(base.BaseObject):
             self.values = value
 
         self.parent = parent
+
+        validation.Validation(self)
 
     def __len__(self):
         return len(self._values)
