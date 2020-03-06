@@ -137,3 +137,11 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property("prop", parent=sec_one, values=[1, 2])
 
         validate(sec_one)
+
+    def test_standalone_property(self):
+        """
+        Test if standalone property is validated right.
+        """
+
+        prop = odml.Property("prop", dtype="int", values=[1, 2])
+        validate(prop)
