@@ -126,3 +126,14 @@ class TestValidation(unittest.TestCase):
 
         res = validate(doc)
         self.assertError(res, "Duplicate id in Section")
+
+    def test_standalone_section(self):
+        """
+        Test if standalone section is validated right.
+        """
+
+        sec_one = odml.Section("sec1")
+        sec_two = odml.Section("sec2", parent=sec_one)
+        prop = odml.Property("prop", parent=sec_one, values=[1, 2])
+
+        validate(sec_one)
