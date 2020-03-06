@@ -76,12 +76,17 @@ class Validation(object):
         """
         Validation._handlers.setdefault(klass, set()).add(handler)
 
-    def __init__(self, doc):
-        self.doc = doc  # may also be a section
+    def __init__(self, obj):
+        self.doc = obj  # may also be a section
         self.errors = []
-        self.validate(doc)
 
-        for sec in doc.itersections(recursive=True):
+        if obj.format().name == "property":
+            self.validate(obj)
+            return
+
+        self.validate(obj)
+
+        for sec in obj.itersections(recursive=True):
             self.validate(sec)
             for prop in sec.properties:
                 self.validate(prop)
@@ -303,6 +308,9 @@ def property_terminology_check(prop):
     2. warn, if there are multiple values with different units or the unit does
        not match the one in the terminology.
     """
+    if not prop.parent:
+        return
+
     tsec = prop.parent.get_terminology_equivalent()
     if tsec is None:
         return
@@ -321,6 +329,9 @@ def property_dependency_check(prop):
     Produces a warning if the dependency attribute refers to a non-existent attribute
     or the dependency_value does not match.
     """
+    if not prop.parent:
+        return
+
     dep = prop.dependency
     if dep is None:
         return
