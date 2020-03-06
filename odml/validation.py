@@ -140,15 +140,14 @@ Validation.register_handler('property', object_args_must_be_defined)
 
 def section_type_must_be_defined(sec):
     """
+    DEPRECATED
+
     Tests that no Section has an undefined type.
 
     :param sec: odml.Section.
     """
     if sec.type is None or sec.type == '' or sec.type == 'undefined':
         yield ValidationError(sec, 'Section type undefined', LABEL_WARNING)
-
-
-Validation.register_handler('section', section_type_must_be_defined)
 
 
 def section_repository_present(sec):
