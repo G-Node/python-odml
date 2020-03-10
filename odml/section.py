@@ -82,7 +82,9 @@ class BaseSection(base.Sectionable):
         self.type = type
         self.parent = parent
 
-        validation.Validation(self)
+        for err in validation.Validation(self).errors:
+            if err.rank == "error":
+                print("ERROR", err.obj, err.msg)
 
     def __repr__(self):
         return "Section[%d|%d] {name = %s, type = %s, id = %s}" % (len(self._sections),
