@@ -122,7 +122,7 @@ class Validation(object):
 # ------------------------------------------------
 # validation rules
 
-def object_args_must_be_defined(obj):
+def object_required_attributes(obj):
     """
     Tests that no Object has undefined attributes, given in format.
 
@@ -132,14 +132,18 @@ def object_args_must_be_defined(obj):
     args = obj.format().arguments
     for arg in args:
         if arg[1] == 1:
+            if not hasattr(obj, arg[0]):
+                msg = "%s has no attribute %s" % (obj.format().name.capitalize(), arg[0])
+                yield AttributeError(obj, msg, LABEL_WARNING)
             obj_arg = getattr(obj, arg[0])
-            if obj_arg is None or obj_arg == '' or obj_arg == 'undefined':
-                yield ValidationError(obj, obj.format().name.capitalize() + ' ' + arg[0] + ' undefined', LABEL_WARNING)
+            if not obj_arg and not isinstance(obj_arg, bool):
+                msg = "%s %s undefined" % (obj.format().name.capitalize(), arg[0])
+                yield ValidationError(obj, msg, LABEL_WARNING)
 
 
-Validation.register_handler('odML', object_args_must_be_defined)
-Validation.register_handler('section', object_args_must_be_defined)
-Validation.register_handler('property', object_args_must_be_defined)
+Validation.register_handler('odML', object_required_attributes)
+Validation.register_handler('section', object_required_attributes)
+Validation.register_handler('property', object_required_attributes)
 
 
 def section_type_must_be_defined(sec):
