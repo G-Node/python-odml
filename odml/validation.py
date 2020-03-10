@@ -367,7 +367,7 @@ def property_values_check(prop):
 
     if prop.dtype is not None and prop.dtype is not "":
         dtype = prop.dtype
-    elif len(prop.values) != 0:
+    elif prop.values:
         dtype = dtypes.infer_dtype(prop.values[0])
     else:
         return
@@ -375,6 +375,6 @@ def property_values_check(prop):
     for val in prop.values:
         try:
             dtypes.get(val, dtype)
-        except Exception:
+        except ValueError:
             msg = "Property values not of consistent dtype!"
             yield ValidationError(prop, msg, LABEL_ERROR)
