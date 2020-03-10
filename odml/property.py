@@ -129,7 +129,9 @@ class BaseProperty(base.BaseObject):
 
         self.parent = parent
 
-        validation.Validation(self)
+        for err in validation.Validation(self).errors:
+            if err.rank == "error":
+                print("ERROR", err.obj, err.msg)
 
     def __len__(self):
         return len(self._values)
