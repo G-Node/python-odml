@@ -129,14 +129,15 @@ class TestValidation(unittest.TestCase):
 
     def test_standalone_section(self):
         """
-        Test if standalone section is validated right.
+        Test if standalone section does not return errors.
         """
 
         sec_one = odml.Section("sec1")
-        sec_two = odml.Section("sec2", parent=sec_one)
-        prop = odml.Property("prop", parent=sec_one, values=[1, 2])
+        odml.Section("sec2", parent=sec_one)
+        odml.Property("prop", parent=sec_one, values=[1, 2])
 
-        validate(sec_one)
+        for err in validate(sec_one).errors:
+            assert("error" not in err.rank)
 
     def test_standalone_property(self):
         """
