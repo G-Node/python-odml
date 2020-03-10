@@ -80,11 +80,10 @@ class Validation(object):
         self.doc = obj  # may also be a section
         self.errors = []
 
-        if obj.format().name == "property":
-            self.validate(obj)
-            return
-
         self.validate(obj)
+
+        if obj.format().name == "property":
+            return
 
         for sec in obj.itersections(recursive=True):
             self.validate(sec)
