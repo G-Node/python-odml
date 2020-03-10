@@ -141,8 +141,10 @@ class TestValidation(unittest.TestCase):
 
     def test_standalone_property(self):
         """
-        Test if standalone property is validated right.
+        Test if standalone property does not return errors.
         """
 
         prop = odml.Property("prop", dtype="int", values=[1, 2])
-        validate(prop)
+
+        for err in validate(prop).errors:
+            assert("error" not in err.rank)
