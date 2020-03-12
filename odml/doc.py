@@ -122,6 +122,20 @@ class BaseDocument(base.Sectionable):
         """ The parent of a document is always None. """
         return None
 
+    @property
+    def origin_file_name(self):
+        """
+        If available, the file name from where the document has been loaded.
+        Will not be serialized to file when saving the document.
+        """
+        return self._origin_file_name
+
+    @origin_file_name.setter
+    def origin_file_name(self, new_value):
+        if not new_value:
+            new_value = None
+        self._origin_file_name = new_value
+
     def finalize(self):
         """
         This needs to be called after the document is set up from parsing
