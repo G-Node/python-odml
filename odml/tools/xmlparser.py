@@ -304,7 +304,8 @@ class XMLReader(object):
 
         # Provide original file name via the in memory document
         if isinstance(xml_file, unicode):
-            doc._origin_file_name = basename(xml_file)
+            doc.origin_file_name = basename(xml_file)
+
         return doc
 
     def from_string(self, string):

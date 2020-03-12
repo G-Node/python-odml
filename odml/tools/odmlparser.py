@@ -186,7 +186,7 @@ class ODMLReader:
             par = DictReader(show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
-            self.doc._origin_file_name = basename(file)
+            self.doc.origin_file_name = basename(file)
             return self.doc
 
         elif self.parser == 'JSON':
@@ -200,7 +200,7 @@ class ODMLReader:
             par = DictReader(show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
-            self.doc._origin_file_name = basename(file)
+            self.doc.origin_file_name = basename(file)
             return self.doc
 
         elif self.parser == 'RDF':

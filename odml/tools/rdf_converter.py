@@ -184,8 +184,8 @@ class RDFWriter(object):
 
         # If available, add the documents' filename to the document node
         # so we can identify where the data came from.
-        if hasattr(doc, "_origin_file_name"):
-            curr_lit = Literal(doc._origin_file_name)
+        if hasattr(doc, "origin_file_name"):
+            curr_lit = Literal(doc.origin_file_name)
             self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
 
         for k in fmt.rdf_map_keys:
@@ -383,7 +383,7 @@ class RDFReader(object):
         docs = self.to_odml()
         for curr_doc in docs:
             # Provide original file name via the document
-            curr_doc._origin_file_name = os.path.basename(filename)
+            curr_doc.origin_file_name = os.path.basename(filename)
 
         return docs
 
