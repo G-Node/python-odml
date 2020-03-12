@@ -173,7 +173,7 @@ class ODMLReader:
             self.doc = par.from_file(file)
             return self.doc
 
-        elif self.parser == 'YAML':
+        if self.parser == 'YAML':
             with open(file) as yaml_data:
                 try:
                     yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/unicode",
@@ -189,7 +189,7 @@ class ODMLReader:
             self.doc.origin_file_name = basename(file)
             return self.doc
 
-        elif self.parser == 'JSON':
+        if self.parser == 'JSON':
             with open(file) as json_data:
                 try:
                     self.parsed_doc = json.load(json_data)
@@ -203,7 +203,7 @@ class ODMLReader:
             self.doc.origin_file_name = basename(file)
             return self.doc
 
-        elif self.parser == 'RDF':
+        if self.parser == 'RDF':
             if not doc_format:
                 raise ValueError("Format of the rdf file was not specified")
 
@@ -228,7 +228,7 @@ class ODMLReader:
             self.doc = xmlparser.XMLReader().from_string(string)
             return self.doc
 
-        elif self.parser == 'YAML':
+        if self.parser == 'YAML':
             try:
                 self.parsed_doc = yaml.safe_load(string)
             except yaml.parser.ParserError as err:
@@ -238,7 +238,7 @@ class ODMLReader:
             self.doc = DictReader().to_odml(self.parsed_doc)
             return self.doc
 
-        elif self.parser == 'JSON':
+        if self.parser == 'JSON':
             try:
                 self.parsed_doc = json.loads(string)
             except ValueError as err:  # Python 2 does not support JSONDecodeError
@@ -248,7 +248,7 @@ class ODMLReader:
             self.doc = DictReader().to_odml(self.parsed_doc)
             return self.doc
 
-        elif self.parser == 'RDF':
+        if self.parser == 'RDF':
             if not doc_format:
                 raise ValueError("Format of the rdf file was not specified")
 
