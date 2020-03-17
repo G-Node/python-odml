@@ -135,7 +135,11 @@ class TestValidation(unittest.TestCase):
         sec_one = odml.Section("sec1")
 
         for err in validate(sec_one).errors:
-            assert("error" not in err.rank)
+            assert not err.is_error
+
+        doc = samplefile.parse("""s1[undefined]""")
+        res = validate(doc)
+        self.assertError(res, "Section type undefined")
 
     def test_standalone_property(self):
         """
