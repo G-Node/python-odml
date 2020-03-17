@@ -385,3 +385,6 @@ def property_values_check(prop):
             except ValueError:
                 msg = "Property values not of consistent dtype!"
                 yield ValidationError(prop, msg, LABEL_WARNING)
+
+
+Validation.register_handler('property', property_values_check)
