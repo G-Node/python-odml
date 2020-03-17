@@ -366,7 +366,7 @@ def property_values_check(prop):
     :param prop: property the validation is applied on.
     """
 
-    if prop.dtype is not None and prop.dtype is not "":
+    if prop.dtype is not None and prop.dtype != "":
         dtype = prop.dtype
     elif prop.values:
         dtype = dtypes.infer_dtype(prop.values[0])
