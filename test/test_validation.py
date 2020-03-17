@@ -129,7 +129,8 @@ class TestValidation(unittest.TestCase):
 
     def test_standalone_section(self):
         """
-        Test if standalone section does not return errors.
+        Test if standalone section does not return errors if required attributes are correct.
+        If type is undefined, check error message.
         """
 
         sec_one = odml.Section("sec1")
@@ -143,7 +144,7 @@ class TestValidation(unittest.TestCase):
 
     def test_standalone_property(self):
         """
-        Test if standalone property does not return errors.
+        Test if standalone property does not return errors if required attributes are correct.
         """
 
         prop = odml.Property()
