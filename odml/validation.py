@@ -374,8 +374,14 @@ def property_values_check(prop):
         return
 
     for val in prop.values:
-        try:
-            dtypes.get(val, dtype)
-        except ValueError:
-            msg = "Property values not of consistent dtype!"
-            yield ValidationError(prop, msg, LABEL_WARNING)
+        if dtype.endswith("-tuple"):
+            tuple_len = int(dtype[:-6])
+            if len(val) != tuple_len:
+                msg = "Tuple of length %s not consistent with dtype %s!" % (len(val), dtype)
+                yield ValidationError(prop, msg, LABEL_WARNING)
+        else:
+            try:
+                dtypes.get(val, dtype)
+            except ValueError:
+                msg = "Property values not of consistent dtype!"
+                yield ValidationError(prop, msg, LABEL_WARNING)
