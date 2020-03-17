@@ -133,8 +133,6 @@ class TestValidation(unittest.TestCase):
         """
 
         sec_one = odml.Section("sec1")
-        odml.Section("sec2", parent=sec_one)
-        odml.Property("prop", parent=sec_one, values=[1, 2])
 
         for err in validate(sec_one).errors:
             assert("error" not in err.rank)
