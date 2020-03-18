@@ -358,8 +358,6 @@ Validation.register_handler('property', property_dependency_check)
 
 def property_values_check(prop):
     """
-    PROTOTYPE
-
     Tests that the values are of consistent dtype.
     If dtype is not given, infer from first item in list.
 
