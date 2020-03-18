@@ -139,7 +139,7 @@ def object_required_attributes(obj):
             obj_arg = getattr(obj, arg[0])
             if not obj_arg and not isinstance(obj_arg, bool):
                 msg = "%s %s undefined" % (obj.format().name.capitalize(), arg[0])
-                yield ValidationError(obj, msg, LABEL_WARNING)
+                yield ValidationError(obj, msg, LABEL_ERROR)
 
 
 Validation.register_handler('odML', object_required_attributes)
