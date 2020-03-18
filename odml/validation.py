@@ -134,8 +134,8 @@ def object_required_attributes(obj):
         if arg[1] == 1:
             if not hasattr(obj, arg[0]):
                 msg = "Missing attribute %s for %s" % (obj.format().name.capitalize(), arg[0])
-                yield ValidationError(obj, msg, LABEL_WARNING)
-                return
+                yield ValidationError(obj, msg, LABEL_ERROR)
+                continue
             obj_arg = getattr(obj, arg[0])
             if not obj_arg and not isinstance(obj_arg, bool):
                 msg = "%s %s undefined" % (obj.format().name.capitalize(), arg[0])
