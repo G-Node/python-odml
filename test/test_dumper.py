@@ -16,17 +16,19 @@ class TestTypes(unittest.TestCase):
         self.captured_stdout = StringIO()
         sys.stdout = self.captured_stdout
 
+        s_type = "type"
+
         self.doc = odml.Document(author='Rave', version='1.0')
-        s1 = odml.Section(name='Cell')
+        s1 = odml.Section(name='Cell', type=s_type)
         p1 = odml.Property(name='Type', values='Rechargeable')
         s1.append(p1)
 
-        s2 = odml.Section(name='Electrolyte')
+        s2 = odml.Section(name='Electrolyte', type=s_type)
         p2 = odml.Property(name='Composition', values='Ni-Cd')
         s2.append(p2)
         s1.append(s2)
 
-        s3 = odml.Section(name='Electrode')
+        s3 = odml.Section(name='Electrode', type=s_type)
         p3 = odml.Property(name='Material', values='Nickel')
         p4 = odml.Property(name='Models', values=['AA', 'AAA'])
         s3.append(p3)
@@ -41,11 +43,11 @@ class TestTypes(unittest.TestCase):
         odml.tools.dumper.dump_doc(self.doc)
         output = [x.strip() for x in self.captured_stdout.getvalue().split('\n') if x]
         expected_output = []
-        expected_output.append("*Cell ()")
+        expected_output.append("*Cell (type='type')")
         expected_output.append(":Type (values=Rechargeable, dtype='string')")
-        expected_output.append("*Electrolyte ()")
+        expected_output.append("*Electrolyte (type='type')")
         expected_output.append(":Composition (values=Ni-Cd, dtype='string')")
-        expected_output.append("*Electrode ()")
+        expected_output.append("*Electrode (type='type')")
         expected_output.append(":Material (values=Nickel, dtype='string')")
         expected_output.append(":Models (values=[AA,AAA], dtype='string')")
         self.assertEqual(len(output), len(expected_output))

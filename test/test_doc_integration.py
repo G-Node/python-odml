@@ -104,14 +104,15 @@ class TestDocumentIntegration(unittest.TestCase):
         """
         This test checks the correct saving and loading of Section children of a Document.
         """
+        s_type = "type"
         # Lvl 1 child Sections
-        sec_lvl_11 = odml.Section(name="sec_11", parent=self.doc)
-        _ = odml.Section(name="sec_12", parent=self.doc)
+        sec_lvl_11 = odml.Section(name="sec_11", type=s_type, parent=self.doc)
+        _ = odml.Section(name="sec_12", type=s_type, parent=self.doc)
 
         # Lvl 2 child Sections
-        sec_lvl_21 = odml.Section(name="sec_21", parent=sec_lvl_11)
-        _ = odml.Section(name="sec_22", parent=sec_lvl_11)
-        _ = odml.Section(name="sec_23", parent=sec_lvl_11)
+        sec_lvl_21 = odml.Section(name="sec_21", type=s_type, parent=sec_lvl_11)
+        _ = odml.Section(name="sec_22", type=s_type, parent=sec_lvl_11)
+        _ = odml.Section(name="sec_23", type=s_type, parent=sec_lvl_11)
 
         # Lvl 2 child Properties
         _ = odml.Property(name="prop_21", parent=sec_lvl_11)
@@ -119,10 +120,10 @@ class TestDocumentIntegration(unittest.TestCase):
         _ = odml.Property(name="prop_23", parent=sec_lvl_11)
 
         # Lvl 3 child Sections
-        _ = odml.Section(name="sec_31", parent=sec_lvl_21)
-        _ = odml.Section(name="sec_32", parent=sec_lvl_21)
-        _ = odml.Section(name="sec_33", parent=sec_lvl_21)
-        _ = odml.Section(name="sec_34", parent=sec_lvl_21)
+        _ = odml.Section(name="sec_31", type=s_type, parent=sec_lvl_21)
+        _ = odml.Section(name="sec_32", type=s_type, parent=sec_lvl_21)
+        _ = odml.Section(name="sec_33", type=s_type, parent=sec_lvl_21)
+        _ = odml.Section(name="sec_34", type=s_type, parent=sec_lvl_21)
 
         # Lvl 3 child Properties
         _ = odml.Property(name="prop_31", parent=sec_lvl_21)

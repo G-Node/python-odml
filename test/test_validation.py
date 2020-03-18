@@ -135,8 +135,8 @@ class TestValidation(unittest.TestCase):
 
         sec_one = odml.Section("sec1")
 
-        for err in validate(sec_one).errors:
-            assert not err.is_error
+        res = validate(sec_one)
+        self.assertError(res, "Section type undefined")
 
         doc = samplefile.parse("""s1[undefined]""")
         res = validate(doc)
