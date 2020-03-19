@@ -196,3 +196,31 @@ class TestValidation(unittest.TestCase):
                               values=['(39.12; 89; 67.19)', '(39.12; 78; 67.19)', '(39.12)'])
         self.assertError(validate(prop9),
                          'Dtype of property "Coos" currently is "string", but might fit dtype "3-tuple"!')
+
+    def test_load_xml(self):
+
+        """
+        Test if loading xml document raises validation errors. Errors are:
+
+        - Undefined Section type
+        - Properties with undefined dtypes
+        """
+
+        doc = odml.load("./resources/integration.xml")
+
+        self.assertError(validate(doc), "Section type undefined")
+
+        self.assertError(validate(doc), 'Dtype of property "members" currently is "string", but might fit dtype "int"!')
+        self.assertError(validate(doc),
+                         'Dtype of property "potential" currently is "string", but might fit dtype "float"!')
+        self.assertError(validate(doc), 'Dtype of property "dates" currently is "string", but might fit dtype "date"!')
+        self.assertError(validate(doc),
+                         'Dtype of property "datetimes" currently is "string", but might fit dtype "datetime"!')
+        self.assertError(validate(doc), 'Dtype of property "times" currently is "string", but might fit dtype "time"!')
+        self.assertError(validate(doc),
+                         'Dtype of property "sent" currently is "string", but might fit dtype "boolean"!')
+        self.assertError(validate(doc), 'Dtype of property "texts" currently is "string", but might fit dtype "text"!')
+        self.assertError(validate(doc),
+                         'Dtype of property "Location" currently is "string", but might fit dtype "2-tuple"!')
+        self.assertError(validate(doc),
+                         'Dtype of property "Coos" currently is "string", but might fit dtype "3-tuple"!')
