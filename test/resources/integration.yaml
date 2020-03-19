@@ -1,0 +1,133 @@
+Document:
+  id: b4be7fe5-0a1c-4499-8cf5-b34ef73689e6
+  sections:
+  - id: 859e4f67-d59d-477a-8c12-248e30d8da35
+    name: sec_test_1
+    properties: []
+    sections: []
+  - id: 8b7785dd-cc83-41ab-ae0a-4f10d362a008
+    name: sec_test_2
+    properties: []
+    sections: []
+    type: ""
+  - id: 42721936-f62e-4e40-9152-2fb4c6857e92
+    name: sec1
+    properties:
+    - id: 96f2f6e4-c9f2-426f-a87e-1af2e75f8a27
+      name: members
+      type: string
+      value:
+      - '-13'
+      - '101'
+      - '-11'
+      - '0'
+      - '-8'
+    sections: []
+    type: test
+  - id: afdcef87-82e9-4cbd-a9ff-1cac79928fac
+    name: sec2
+    properties:
+    - id: 685d4de7-47ba-4ffb-8eb1-b948e9204e2e
+      name: potential
+      value:
+      - '-4.8'
+      - '10.0'
+      - '-11.9'
+      - '-10.0'
+      - '18.0'
+    sections: []
+    type: test
+  - id: 182569c1-cf26-4e14-9159-68ddc97c0188
+    name: sec3
+    properties:
+    - id: 777b23ac-4639-49a5-96f4-037390a344d6
+      name: dates
+      type: string
+      value:
+      - '1997-12-14'
+      - 00-12-14
+      - '8'
+    sections: []
+    type: test
+  - id: 3964fad7-12ff-459a-86e2-100f5c986fa6
+    name: sec4
+    properties:
+    - id: 1be11c05-4c5f-4bea-8409-c36bf1fbc0d2
+      name: datetimes
+      type: string
+      value:
+      - 97-12-14 11:11:11
+      - 97-12-14 12:12
+      - 1997-12-14 03:03
+    sections: []
+    type: test
+  - id: 4f4de2c9-7b2d-4210-a280-f7daa823c3b3
+    name: sec5
+    properties:
+    - id: 8404bbb8-6b9f-4a5a-8396-033df7ad6efc
+      name: times
+      type: string
+      value:
+      - '11:11:11'
+      - '12:12:12'
+      - 03:03:03
+      - '8'
+    sections: []
+    type: test
+  - id: c689f7d7-3a84-4747-a8fc-c117d15d781e
+    name: sec6
+    properties:
+    - id: b0e97058-aedf-44cb-927f-172d5971ebbb
+      name: sent
+      type: string
+      value:
+      - 'False'
+      - 'True'
+      - 'TRUE'
+      - '0'
+      - t
+      - '12'
+      - Ft
+    sections: []
+    type: test
+  - id: 10f8eed7-b36a-475a-a392-fd0aa1273a9a
+    name: sec7
+    properties:
+    - id: 99046f03-71ad-4512-a4be-b6241a10186a
+      name: texts
+      type: string
+      value:
+      - "line1\n line2"
+      - "line3\n line4"
+      - '
+
+        line5
+
+        '
+    sections: []
+    type: test
+  - id: 5001ca98-0c97-4ec7-b194-048055d79394
+    name: sec8
+    properties:
+    - id: 98772d32-d917-46e8-8fc5-728d72db1480
+      name: Location
+      type: string
+      value:
+      - (39.12; 67.19)
+      - (39.12; 67.19)
+      - (39.12)
+    sections: []
+    type: test
+  - id: 55c52ce7-1de0-4b1c-a0d6-f63af497a5c9
+    name: sec9
+    properties:
+    - id: 01dfd04b-3c61-48c4-b45b-d754d1645f8b
+      name: Coos
+      type: string
+      value:
+      - (39.12; 89; 67.19)
+      - (39.12; 78; 67.19)
+      - (39.12)
+    sections: []
+    type: test
+odml-version: '1.1'
