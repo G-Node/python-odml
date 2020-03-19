@@ -152,3 +152,47 @@ class TestValidation(unittest.TestCase):
 
         for err in validate(prop).errors:
             assert not err.is_error
+
+    def test_prop_string_values(self):
+
+        """
+        Test if property values set as dtype string but could be of different dtype raise validation warning.
+        """
+
+        prop1 = odml.Property(name='members', dtype="string", values=['-13', '101', '-11', '0', '-8'])
+        self.assertError(validate(prop1),
+                         'Dtype of property "members" currently is "string", but might fit dtype "int"!')
+
+        prop2 = odml.Property(name='potential', dtype="string", values=['-4.8', '10.0', '-11.9', '-10.0', '18.0'])
+        self.assertError(validate(prop2),
+                         'Dtype of property "potential" currently is "string", but might fit dtype "float"!')
+
+        prop3 = odml.Property(name='dates', dtype="string", values=['1997-12-14', '00-12-14', '8'])
+        self.assertError(validate(prop3),
+                         'Dtype of property "dates" currently is "string", but might fit dtype "date"!')
+
+        prop4 = odml.Property(name='datetimes', dtype="string",
+                           values=['97-12-14 11:11:11', '97-12-14 12:12', '1997-12-14 03:03'])
+        self.assertError(validate(prop4),
+                         'Dtype of property "datetimes" currently is "string", but might fit dtype "datetime"!')
+
+        prop5 = odml.Property(name='times', dtype="string", values=['11:11:11', '12:12:12', '03:03:03', '8'])
+        self.assertError(validate(prop5),
+                         'Dtype of property "times" currently is "string", but might fit dtype "time"!')
+
+        prop6 = odml.Property(name='sent', dtype="string", values=['False', True, 'TRUE', '0', 't', '12', 'Ft'])
+        self.assertError(validate(prop6),
+                         'Dtype of property "sent" currently is "string", but might fit dtype "boolean"!')
+
+        prop7 = odml.Property(name='texts', dtype="string", values=['line1\n line2', 'line3\n line4', '\nline5\n'])
+        self.assertError(validate(prop7),
+                         'Dtype of property "texts" currently is "string", but might fit dtype "text"!')
+
+        prop8 = odml.Property(name="Location", dtype='string', values=['(39.12; 67.19)', '(39.12; 67.19)', '(39.12)'])
+        self.assertError(validate(prop8),
+                         'Dtype of property "Location" currently is "string", but might fit dtype "2-tuple"!')
+
+        prop9 = odml.Property(name="Coos", dtype='string',
+                              values=['(39.12; 89; 67.19)', '(39.12; 78; 67.19)', '(39.12)'])
+        self.assertError(validate(prop9),
+                         'Dtype of property "Coos" currently is "string", but might fit dtype "3-tuple"!')
