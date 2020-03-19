@@ -1,5 +1,6 @@
 import unittest
 import odml
+import os
 import odml.validation
 import odml.terminology
 from . import test_samplefile as samplefile
@@ -206,7 +207,9 @@ class TestValidation(unittest.TestCase):
         - Properties with undefined dtypes
         """
 
-        doc = odml.load("./resources/integration.xml")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(dir_path, "resources", "integration.xml")
+        doc = odml.load(path)
 
         sec_test_1_err = False
         sec_test_2_err = False
@@ -244,7 +247,9 @@ class TestValidation(unittest.TestCase):
         - Properties with undefined dtypes
         """
 
-        doc = odml.load("./resources/integration.json", "JSON")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(dir_path, "resources", "integration.json")
+        doc = odml.load(path, "JSON")
 
         sec_test_1_err = False
         sec_test_2_err = False
@@ -282,7 +287,9 @@ class TestValidation(unittest.TestCase):
         - Properties with undefined dtypes
         """
 
-        doc = odml.load("./resources/integration.yaml", "YAML")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(dir_path, "resources", "integration.yaml")
+        doc = odml.load(path, "YAML")
 
         sec_test_1_err = False
         sec_test_2_err = False
