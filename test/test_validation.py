@@ -208,7 +208,17 @@ class TestValidation(unittest.TestCase):
 
         doc = odml.load("./resources/integration.xml")
 
-        self.assertError(validate(doc), "Section type undefined")
+        sec_test_1_err = False
+        sec_test_2_err = False
+
+        for err in validate(doc).errors:
+            if err.msg == "Section type undefined" and err.obj.name == "sec_test_1":
+                sec_test_1_err = True
+            elif err.msg == "Section type undefined" and err.obj.name == "sec_test_2":
+                sec_test_2_err = True
+
+        assert sec_test_1_err
+        assert sec_test_2_err
 
         self.assertError(validate(doc), 'Dtype of property "members" currently is "string", but might fit dtype "int"!')
         self.assertError(validate(doc),
@@ -236,7 +246,17 @@ class TestValidation(unittest.TestCase):
 
         doc = odml.load("./resources/integration.json", "JSON")
 
-        self.assertError(validate(doc), "Section type undefined")
+        sec_test_1_err = False
+        sec_test_2_err = False
+
+        for err in validate(doc).errors:
+            if err.msg == "Section type undefined" and err.obj.name == "sec_test_1":
+                sec_test_1_err = True
+            elif err.msg == "Section type undefined" and err.obj.name == "sec_test_2":
+                sec_test_2_err = True
+
+        assert sec_test_1_err
+        assert sec_test_2_err
 
         self.assertError(validate(doc), 'Dtype of property "members" currently is "string", but might fit dtype "int"!')
         self.assertError(validate(doc),
@@ -264,7 +284,17 @@ class TestValidation(unittest.TestCase):
 
         doc = odml.load("./resources/integration.yaml", "YAML")
 
-        self.assertError(validate(doc), "Section type undefined")
+        sec_test_1_err = False
+        sec_test_2_err = False
+
+        for err in validate(doc).errors:
+            if err.msg == "Section type undefined" and err.obj.name == "sec_test_1":
+                sec_test_1_err = True
+            elif err.msg == "Section type undefined" and err.obj.name == "sec_test_2":
+                sec_test_2_err = True
+
+        assert sec_test_1_err
+        assert sec_test_2_err
 
         self.assertError(validate(doc), 'Dtype of property "members" currently is "string", but might fit dtype "int"!')
         self.assertError(validate(doc),
