@@ -12,6 +12,7 @@ except ImportError:
 from . import base
 from . import format as fmt
 from . import terminology
+from . import validation
 from .doc import BaseDocument
 # this is supposedly ok, as we only use it for an isinstance check
 from .property import BaseProperty
@@ -80,6 +81,11 @@ class BaseSection(base.Sectionable):
         # this may fire a change event, so have the section setup then
         self.type = type
         self.parent = parent
+
+        for err in validation.Validation(self).errors:
+            if err.is_error:
+                msg = "\n\t- %s %s: %s" % (err.obj, err.rank, err.msg)
+                print(msg)
 
     def __repr__(self):
         return "Section[%d|%d] {name = %s, type = %s, id = %s}" % (len(self._sections),

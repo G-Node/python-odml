@@ -51,7 +51,8 @@ class TestSectionIntegration(unittest.TestCase):
     def test_id(self):
         # Test correct save and load of generated id.
         sec_name = "empty_id"
-        sec = odml.Section(name=sec_name, parent=self.doc)
+        sec_type = "type"
+        sec = odml.Section(name=sec_name, type=sec_type, parent=self.doc)
 
         jdoc, xdoc, ydoc = self.save_load()
 
@@ -62,7 +63,7 @@ class TestSectionIntegration(unittest.TestCase):
         # Test correct save and load of assigned id.
         sec_name = "assigned_id"
         assigned_id = "79b613eb-a256-46bf-84f6-207df465b8f7"
-        _ = odml.Section(name=sec_name, oid=assigned_id, parent=self.doc)
+        _ = odml.Section(name=sec_name, oid=assigned_id, type=sec_type, parent=self.doc)
 
         jdoc, xdoc, ydoc = self.save_load()
 
@@ -116,20 +117,21 @@ class TestSectionIntegration(unittest.TestCase):
         This test checks correct writing and loading of Section and Property
         children of a Section.
         """
-        root = odml.Section(name="root", parent=self.doc)
+        s_type = "type"
+        root = odml.Section(name="root", type=s_type, parent=self.doc)
 
         # Lvl 1 child Sections
-        sec_lvl_11 = odml.Section(name="sec_11", parent=root)
-        _ = odml.Section(name="sec_12", parent=root)
+        sec_lvl_11 = odml.Section(name="sec_11", type=s_type, parent=root)
+        _ = odml.Section(name="sec_12", type=s_type, parent=root)
 
         # Lvl 1 child Properties
         _ = odml.Property(name="prop_11", parent=root)
         _ = odml.Property(name="prop_12", parent=root)
 
         # Lvl 2 child Sections
-        sec_lvl_21 = odml.Section(name="sec_21", parent=sec_lvl_11)
-        _ = odml.Section(name="sec_22", parent=sec_lvl_11)
-        _ = odml.Section(name="sec_23", parent=sec_lvl_11)
+        sec_lvl_21 = odml.Section(name="sec_21", type=s_type, parent=sec_lvl_11)
+        _ = odml.Section(name="sec_22", type=s_type, parent=sec_lvl_11)
+        _ = odml.Section(name="sec_23", type=s_type, parent=sec_lvl_11)
 
         # Lvl 2 child Properties
         _ = odml.Property(name="prop_21", parent=sec_lvl_11)
@@ -137,10 +139,10 @@ class TestSectionIntegration(unittest.TestCase):
         _ = odml.Property(name="prop_23", parent=sec_lvl_11)
 
         # Lvl 3 child Sections
-        _ = odml.Section(name="sec_31", parent=sec_lvl_21)
-        _ = odml.Section(name="sec_32", parent=sec_lvl_21)
-        _ = odml.Section(name="sec_33", parent=sec_lvl_21)
-        _ = odml.Section(name="sec_34", parent=sec_lvl_21)
+        _ = odml.Section(name="sec_31", type=s_type, parent=sec_lvl_21)
+        _ = odml.Section(name="sec_32", type=s_type, parent=sec_lvl_21)
+        _ = odml.Section(name="sec_33", type=s_type, parent=sec_lvl_21)
+        _ = odml.Section(name="sec_34", type=s_type, parent=sec_lvl_21)
 
         # Lvl 3 child Properties
         _ = odml.Property(name="prop_31", parent=sec_lvl_21)

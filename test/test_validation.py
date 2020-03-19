@@ -126,3 +126,29 @@ class TestValidation(unittest.TestCase):
 
         res = validate(doc)
         self.assertError(res, "Duplicate id in Section")
+
+    def test_standalone_section(self):
+        """
+        Test if standalone section does not return errors if required attributes are correct.
+        If type is undefined, check error message.
+        """
+
+        sec_one = odml.Section("sec1")
+
+        res = validate(sec_one)
+        self.assertError(res, "Section type undefined")
+
+        doc = samplefile.parse("""s1[undefined]""")
+        res = validate(doc)
+        self.assertError(res, "Section type undefined")
+
+    def test_standalone_property(self):
+        """
+        Test if standalone property does not return errors if required attributes are correct.
+        """
+
+        prop = odml.Property()
+        prop.type = ""
+
+        for err in validate(prop).errors:
+            assert not err.is_error

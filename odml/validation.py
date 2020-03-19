@@ -3,6 +3,8 @@
 Generic odML validation framework.
 """
 
+from . import dtypes
+
 LABEL_ERROR = 'error'
 LABEL_WARNING = 'warning'
 
@@ -74,12 +76,16 @@ class Validation(object):
         """
         Validation._handlers.setdefault(klass, set()).add(handler)
 
-    def __init__(self, doc):
-        self.doc = doc  # may also be a section
+    def __init__(self, obj):
+        self.doc = obj  # may also be a section
         self.errors = []
-        self.validate(doc)
 
-        for sec in doc.itersections(recursive=True):
+        self.validate(obj)
+
+        if obj.format().name == "property":
+            return
+
+        for sec in obj.itersections(recursive=True):
             self.validate(sec)
             for prop in sec.properties:
                 self.validate(prop)
@@ -115,6 +121,31 @@ class Validation(object):
 
 # ------------------------------------------------
 # validation rules
+
+def object_required_attributes(obj):
+    """
+    Tests that no Object has undefined attributes, given in format.
+
+    :param obj: document, section or property.
+    """
+
+    args = obj.format().arguments
+    for arg in args:
+        if arg[1] == 1:
+            if not hasattr(obj, arg[0]):
+                msg = "Missing attribute %s for %s" % (obj.format().name.capitalize(), arg[0])
+                yield ValidationError(obj, msg, LABEL_ERROR)
+                continue
+            obj_arg = getattr(obj, arg[0])
+            if not obj_arg and not isinstance(obj_arg, bool):
+                msg = "%s %s undefined" % (obj.format().name.capitalize(), arg[0])
+                yield ValidationError(obj, msg, LABEL_ERROR)
+
+
+Validation.register_handler('odML', object_required_attributes)
+Validation.register_handler('section', object_required_attributes)
+Validation.register_handler('property', object_required_attributes)
+
 
 def section_type_must_be_defined(sec):
     """
@@ -282,6 +313,9 @@ def property_terminology_check(prop):
     2. warn, if there are multiple values with different units or the unit does
        not match the one in the terminology.
     """
+    if not prop.parent:
+        return
+
     tsec = prop.parent.get_terminology_equivalent()
     if tsec is None:
         return
@@ -300,6 +334,9 @@ def property_dependency_check(prop):
     Produces a warning if the dependency attribute refers to a non-existent attribute
     or the dependency_value does not match.
     """
+    if not prop.parent:
+        return
+
     dep = prop.dependency
     if dep is None:
         return
@@ -317,3 +354,35 @@ def property_dependency_check(prop):
 
 
 Validation.register_handler('property', property_dependency_check)
+
+
+def property_values_check(prop):
+    """
+    Tests that the values are of consistent dtype.
+    If dtype is not given, infer from first item in list.
+
+    :param prop: property the validation is applied on.
+    """
+
+    if prop.dtype is not None and prop.dtype != "":
+        dtype = prop.dtype
+    elif prop.values:
+        dtype = dtypes.infer_dtype(prop.values[0])
+    else:
+        return
+
+    for val in prop.values:
+        if dtype.endswith("-tuple"):
+            tuple_len = int(dtype[:-6])
+            if len(val) != tuple_len:
+                msg = "Tuple of length %s not consistent with dtype %s!" % (len(val), dtype)
+                yield ValidationError(prop, msg, LABEL_WARNING)
+        else:
+            try:
+                dtypes.get(val, dtype)
+            except ValueError:
+                msg = "Property values not of consistent dtype!"
+                yield ValidationError(prop, msg, LABEL_WARNING)
+
+
+Validation.register_handler('property', property_values_check)
