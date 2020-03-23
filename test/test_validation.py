@@ -369,25 +369,28 @@ class TestValidation(unittest.TestCase):
         self.assertError(validate(doc), 'Dtype of property "Coos_mislabelled" currently is '
                                         '"string", but might fit dtype "3-tuple"!')
 
-
-
-
-        - Undefined Section type
-        - Properties with undefined dtypes
+    def test_load_section_yaml(self):
+        """
+        Test if loading yaml document raises validation errors for Sections with undefined type.
         """
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.join(dir_path, "resources", "integration.yaml")
+        path = os.path.join(self.dir_path, "resources", "validation_section.yaml")
         doc = odml.load(path, "YAML")
 
-        sec_test_1_err = False
-        sec_test_2_err = False
+        sec_type_undefined_err = False
+        sec_type_empty_err = False
 
         for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_test_1":
-                sec_test_1_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_test_2":
-                sec_test_2_err = True
+            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
+                sec_type_undefined_err = True
+            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
+                sec_type_empty_err = True
+
+        assert sec_type_undefined_err
+        assert sec_type_empty_err
+
+
+
 
         assert sec_test_1_err
         assert sec_test_2_err
