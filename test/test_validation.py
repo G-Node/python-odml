@@ -161,6 +161,10 @@ class TestValidation(unittest.TestCase):
         raise validation warning.
         """
 
+        prop0 = odml.Property(name='words', dtype="string",
+                              values=['-13', '101', '-11', 'hello'])
+        assert len(validate(prop0).errors) == 0
+
         prop1 = odml.Property(name='members', dtype="string",
                               values=['-13', '101', '-11', '0', '-8'])
         self.assertError(validate(prop1), 'Dtype of property "members" currently is "string",'
