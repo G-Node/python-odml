@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlDocument.xsl"?>
+<odML version="1.1">
+  <id>69585a6e-bdfd-4a49-b227-d4f00e42723e</id>
+  <section>
+    <id>e50cfe1b-1c0b-4f47-b76b-5500508b661a</id>
+    <name>sec_type_undefined</name>
+  </section>
+  <section>
+    <id>d2fd6a82-2568-4ebc-9bd4-93e386a980b7</id>
+    <type></type>
+    <name>sec_type_empty</name>
+  </section>
+</odML>
