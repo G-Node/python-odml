@@ -13,6 +13,7 @@ class TestValidation(unittest.TestCase):
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
         self.maxDiff = None
+        self.dir_path = os.path.dirname(os.path.realpath(__file__))
 
     def filter_repository_errors(self, errors):
         return filter(lambda x: "A section should have an associated "
