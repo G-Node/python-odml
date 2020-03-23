@@ -431,6 +431,9 @@ def property_values_string_check(prop):
 
     res_dtype = max(set(val_dtypes), key=val_dtypes.count)
 
+    if len(set(val_dtypes)) > 1:
+        res_dtype = "string"
+
     if res_dtype != "string":
         msg = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!' % (prop.name, res_dtype)
         yield ValidationError(prop, msg, LABEL_WARNING)
