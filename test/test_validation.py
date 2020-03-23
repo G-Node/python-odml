@@ -389,23 +389,61 @@ class TestValidation(unittest.TestCase):
         assert sec_type_undefined_err
         assert sec_type_empty_err
 
+    def test_load_dtypes_yaml(self):
+        """
+        Test if loading yaml document raises validation errors for Properties with undefined dtypes.
+        """
 
+        path = os.path.join(self.dir_path, "resources", "validation_dtypes.yaml")
+        doc = odml.load(path, "YAML")
 
+        self.assertError(validate(doc), 'Dtype of property "members_no" currently is "string", '
+                                        'but might fit dtype "int"!')
 
-        assert sec_test_1_err
-        assert sec_test_2_err
+        self.assertError(validate(doc), 'Dtype of property "potential_no" currently is "string", '
+                                        'but might fit dtype "float"!')
 
-        self.assertError(validate(doc), 'Dtype of property "members" currently is "string", but might fit dtype "int"!')
-        self.assertError(validate(doc),
-                         'Dtype of property "potential" currently is "string", but might fit dtype "float"!')
-        self.assertError(validate(doc), 'Dtype of property "dates" currently is "string", but might fit dtype "date"!')
-        self.assertError(validate(doc),
-                         'Dtype of property "datetimes" currently is "string", but might fit dtype "datetime"!')
-        self.assertError(validate(doc), 'Dtype of property "times" currently is "string", but might fit dtype "time"!')
-        self.assertError(validate(doc),
-                         'Dtype of property "sent" currently is "string", but might fit dtype "boolean"!')
-        self.assertError(validate(doc), 'Dtype of property "texts" currently is "string", but might fit dtype "text"!')
-        self.assertError(validate(doc),
-                         'Dtype of property "Location" currently is "string", but might fit dtype "2-tuple"!')
-        self.assertError(validate(doc),
-                         'Dtype of property "Coos" currently is "string", but might fit dtype "3-tuple"!')
+        self.assertError(validate(doc), 'Dtype of property "dates_no" currently is "string", '
+                                        'but might fit dtype "date"!')
+
+        self.assertError(validate(doc), 'Dtype of property "datetimes_no" currently is "string", '
+                                        'but might fit dtype "datetime"!')
+
+        self.assertError(validate(doc), 'Dtype of property "times_no" currently is "string", '
+                                        'but might fit dtype "time"!')
+
+        self.assertError(validate(doc), 'Dtype of property "sent_no" currently is "string", '
+                                        'but might fit dtype "boolean"!')
+
+        self.assertError(validate(doc), 'Dtype of property "Location_no" currently is "string", '
+                                        'but might fit dtype "2-tuple"!')
+
+        self.assertError(validate(doc), 'Dtype of property "Coos_no" currently is "string", '
+                                        'but might fit dtype "3-tuple"!')
+
+        self.assertError(validate(doc), 'Dtype of property "members_mislabelled" currently is '
+                                        '"string", but might fit dtype "int"!')
+
+        self.assertError(validate(doc), 'Dtype of property "potential_mislabelled" currently is '
+                                        '"string", but might fit dtype "float"!')
+
+        self.assertError(validate(doc), 'Dtype of property "dates_mislabelled" currently is '
+                                        '"string", but might fit dtype "date"!')
+
+        self.assertError(validate(doc), 'Dtype of property "datetimes_mislabelled" currently is '
+                                        '"string", but might fit dtype "datetime"!')
+
+        self.assertError(validate(doc), 'Dtype of property "times_mislabelled" currently is '
+                                        '"string", but might fit dtype "time"!')
+
+        self.assertError(validate(doc), 'Dtype of property "sent_mislabelled" currently is '
+                                        '"string", but might fit dtype "boolean"!')
+
+        self.assertError(validate(doc), 'Dtype of property "texts_mislabelled" currently is '
+                                        '"string", but might fit dtype "text"!')
+
+        self.assertError(validate(doc), 'Dtype of property "Location_mislabelled" currently is '
+                                        '"string", but might fit dtype "2-tuple"!')
+
+        self.assertError(validate(doc), 'Dtype of property "Coos_mislabelled" currently is '
+                                        '"string", but might fit dtype "3-tuple"!')
