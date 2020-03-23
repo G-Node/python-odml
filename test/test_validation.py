@@ -211,30 +211,25 @@ class TestValidation(unittest.TestCase):
         self.assertError(validate(prop9), 'Dtype of property "Coos" currently is "string", '
                                           'but might fit dtype "3-tuple"!')
 
-    def test_load_xml(self):
-
+    def test_load_section_xml(self):
         """
-        Test if loading xml document raises validation errors. Errors are:
-
-        - Undefined Section type
-        - Properties with undefined dtypes
+        Test if loading xml document raises validation errors for Sections with undefined type.
         """
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.join(dir_path, "resources", "integration.xml")
+        path = os.path.join(self.dir_path, "resources", "validation_section.xml")
         doc = odml.load(path)
 
-        sec_test_1_err = False
-        sec_test_2_err = False
+        sec_type_undefined_err = False
+        sec_type_empty_err = False
 
         for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_test_1":
-                sec_test_1_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_test_2":
-                sec_test_2_err = True
+            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
+                sec_type_undefined_err = True
+            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
+                sec_type_empty_err = True
 
-        assert sec_test_1_err
-        assert sec_test_2_err
+        assert sec_type_undefined_err
+        assert sec_type_empty_err
 
         self.assertError(validate(doc), 'Dtype of property "members" currently is "string", but might fit dtype "int"!')
         self.assertError(validate(doc),
