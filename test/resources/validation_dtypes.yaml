@@ -88,17 +88,6 @@ Document:
         - t
       sections: []
       type: boolean
-    - id: 6a1b6122-5d4f-4618-959e-1955a6c1e26b
-      name: sec_text
-      properties:
-      - id: 717d2d4a-bf44-4329-8967-59348c7b623c
-        name: texts_no
-        value:
-        - "lineA \n lineB"
-        - "lineC\n lineD"
-        - "\nlineE\n lineF"
-      sections: []
-      type: text
     - id: ffe14c58-0ad7-420c-a97f-7805a1ba8bf6
       name: sec_2_tuple
       properties:

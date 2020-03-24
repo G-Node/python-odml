@@ -133,23 +133,6 @@
                         ]
                     },
                     {
-                        "id": "22d0732c-afa2-4448-962b-578dd60e0b37",
-                        "type": "text",
-                        "name": "sec_text",
-                        "sections": [],
-                        "properties": [
-                            {
-                                "id": "3e97d1e2-5ff1-44b1-9498-a488209b326c",
-                                "name": "texts_no",
-                                "value": [
-                                    "lineA \n lineB",
-                                    "lineC\n lineD",
-                                    "\nlineE\n lineF"
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "id": "8c49b24b-0b86-4dd6-a4da-45e1c2c504c6",
                         "type": "2-tuple",
                         "name": "sec_2_tuple",

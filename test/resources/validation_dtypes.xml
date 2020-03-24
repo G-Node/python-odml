@@ -76,19 +76,6 @@
       </property>
     </section>
     <section>
-      <id>dea66a08-82ab-448b-be6a-7ec5927316fa</id>
-      <type>text</type>
-      <name>sec_text</name>
-      <property>
-        <id>9e008df4-29d1-4def-b3c7-ee054ae6cf25</id>
-        <name>texts_no</name>
-        <value>["lineA
- lineB","lineC
- lineD","lineE
- lineF"]</value>
-      </property>
-    </section>
-    <section>
       <id>d5269b4d-5ef9-4e35-986a-9780fa96a5d6</id>
       <type>2-tuple</type>
       <name>sec_2_tuple</name>
