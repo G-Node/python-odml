@@ -20,3 +20,25 @@ class TestRDFReader(unittest.TestCase):
         Property(name="prop1", values=[1.3], parent=sec)
 
         self.doc = doc
+
+    def test_rdf_formats(self):
+        """
+        Test if document gets correctly converted to odml for turtle, xml and n3.
+        """
+        w = RDFWriter(self.doc).get_rdf_str()
+        r = RDFReader().from_string(w, "turtle")
+        self.assertEqual(len(r[0].sections), 1)
+        self.assertEqual(len(r[0].sections[0].sections), 1)
+        self.assertEqual(len(r[0].sections[0].properties), 1)
+
+        w = RDFWriter(self.doc).get_rdf_str("xml")
+        r = RDFReader().from_string(w, "xml")
+        self.assertEqual(len(r[0].sections), 1)
+        self.assertEqual(len(r[0].sections[0].sections), 1)
+        self.assertEqual(len(r[0].sections[0].properties), 1)
+
+        w = RDFWriter(self.doc).get_rdf_str("n3")
+        r = RDFReader().from_string(w, "n3")
+        self.assertEqual(len(r[0].sections), 1)
+        self.assertEqual(len(r[0].sections[0].sections), 1)
+        self.assertEqual(len(r[0].sections[0].properties), 1)
