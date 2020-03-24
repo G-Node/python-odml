@@ -8,12 +8,15 @@ provided odml query dictionaries.
 import re
 from abc import ABCMeta, abstractmethod
 
-from rdflib import Namespace, RDF
+from rdflib import RDF
 from rdflib.plugins.sparql import prepareQuery
 
 from ..format import Document
 from ..format import Property
 from ..format import Section
+from ..format import Format
+
+odmlns = Format.namespace()
 
 
 class BaseQueryCreator:
@@ -271,7 +274,7 @@ class QueryCreator(BaseQueryCreator):
             self.q_dict = q_parser.parse_query_string(q_str)
         self._prepare_query()
 
-        use_ns = {"odml": Namespace("https://g-node.org/odml-rdf#"), "rdf": RDF}
+        use_ns = {"odml": odmlns, "rdf": RDF}
         return prepareQuery(self.query, initNs=use_ns)
 
     def _prepare_query(self):
