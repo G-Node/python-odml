@@ -1,0 +1,246 @@
+Document:
+  id: 2af46ee0-48c3-4874-a67f-5f8b2951cf51
+  sections:
+  - id: ebb1607f-a450-409f-b286-b9a8aef0900f
+    name: no_dtypes
+    properties: []
+    sections:
+    - id: d7f47035-4e49-4438-b61f-227717a8bbe4
+      name: sec_string
+      properties:
+      - id: a211dd69-a2b2-46f1-95f1-6b30d8b96ba0
+        name: words_no
+        value:
+        - hello
+        - -world
+        - '3'
+        - 'True'
+      sections: []
+    - id: efa678af-e8a5-491e-a0ea-29653bcb8c7b
+      name: sec_int
+      properties:
+      - id: f1e31bef-3652-4890-b570-b92c3903a8cf
+        name: members_no
+        value:
+        - '-13'
+        - '101'
+        - '-11'
+        - '0'
+        - '-8'
+      sections: []
+      type: int
+    - id: ba3cd001-033b-4991-a205-9d4fd1138848
+      name: sec_float
+      properties:
+      - id: 06ebdcd1-9635-4afc-bf2c-1ef44946f387
+        name: potential_no
+        value:
+        - '-4.8'
+        - '10.0'
+        - '-11.9'
+        - '-10.0'
+        - '18.0'
+      sections: []
+      type: float
+    - id: e0a47494-1d45-4e9e-a1c9-2d9987cc6625
+      name: sec_date
+      properties:
+      - id: c9d46221-a403-4a48-870c-16f7632b24d7
+        name: dates_no
+        value:
+        - '1997-12-14'
+        - 00-12-14
+        - 89-07-04
+      sections: []
+      type: date
+    - id: 1e06a7d7-076b-45f2-b3e1-8795f9cd71c9
+      name: sec_datetime
+      properties:
+      - id: 7f98fcff-4ac5-4c38-a071-8f0801ca0aa8
+        name: datetimes_no
+        value:
+        - 97-12-14 11:11:11
+        - 97-12-14 12:12
+        - 1997-12-14 03:03
+      sections: []
+      type: datetime
+    - id: a8c624fc-1e0a-4da4-9862-64a0ad84fa0e
+      name: sec_time
+      properties:
+      - id: b2d169dd-1a00-43ad-b481-a85561c4d001
+        name: times_no
+        value:
+        - '11:11:11'
+        - '12:12:12'
+        - 03:03:03
+      sections: []
+      type: time
+    - id: 4aafafb0-4d07-4689-a54c-565b4805f740
+      name: sec_boolean
+      properties:
+      - id: 650e60e1-7647-40cb-8371-9f65e025c51c
+        name: sent_no
+        value:
+        - 'False'
+        - 'True'
+        - 'TRUE'
+        - 'False'
+        - t
+      sections: []
+      type: boolean
+    - id: ffe14c58-0ad7-420c-a97f-7805a1ba8bf6
+      name: sec_2_tuple
+      properties:
+      - id: e52973a8-9186-4739-a789-73286745cf4c
+        name: Location_no
+        value:
+        - (39.12; 67.19)
+        - (39.12; 67.19)
+        - (39.12; 67.18)
+      sections: []
+      type: 2-tuple
+    - id: e47bc5f7-38f6-4575-891a-91bcf64e7872
+      name: sec_3_tuple
+      properties:
+      - id: 443ef8a0-5e6e-480f-83ad-e305398dd828
+        name: Coos_no
+        value:
+        - (39.12; 89; 67.19)
+        - (39.12; 78; 67.19)
+        - (39.12; 56; 67.18)
+      sections: []
+      type: 3-tuple
+    type: no_dtypes
+  - id: cd3e02f7-ff2f-4b12-85d1-cd0a23ca8a83
+    name: mislabelled_dtypes
+    properties: []
+    sections:
+    - id: 2874da49-418d-452d-b4f8-540764d513aa
+      name: sec_string
+      properties:
+      - id: 8a6360e6-dce7-42c3-9477-eca7f9f51926
+        name: words_mislabelled
+        type: string
+        value:
+        - hello
+        - -world
+        - '3'
+        - 'True'
+      sections: []
+      type: string
+    - id: 8c926b02-4d6f-4e8f-aa92-78460eeeec5e
+      name: sec_int
+      properties:
+      - id: f46c9d64-28f8-4cc8-9fcc-31a0e5337ffe
+        name: members_mislabelled
+        type: string
+        value:
+        - '-13'
+        - '101'
+        - '-11'
+        - '0'
+        - '-8'
+      sections: []
+      type: int
+    - id: 0785a91c-e126-41c1-9c64-dabee9750ea8
+      name: sec_float
+      properties:
+      - id: 07f877fc-5190-4f21-a834-0bfea38dc5b0
+        name: potential_mislabelled
+        type: string
+        value:
+        - '-4.8'
+        - '10.0'
+        - '-11.9'
+        - '-10.0'
+        - '18.0'
+      sections: []
+      type: float
+    - id: 7684924a-5875-48f5-838d-509a99274097
+      name: sec_date
+      properties:
+      - id: 36d587fd-0d83-4f71-b2bd-b08628378e03
+        name: dates_mislabelled
+        type: string
+        value:
+        - '1997-12-14'
+        - 00-12-14
+        - 89-07-04
+      sections: []
+      type: date
+    - id: ecc8be3a-e17c-48e5-92a4-07f829713531
+      name: sec_datetime
+      properties:
+      - id: b7d415c1-8c1b-4f94-b425-37c3f6c2f131
+        name: datetimes_mislabelled
+        type: string
+        value:
+        - 97-12-14 11:11:11
+        - 97-12-14 12:12
+        - 1997-12-14 03:03
+      sections: []
+      type: datetime
+    - id: 1a5d94f6-6ebc-4f5e-b621-93cfa2bebb50
+      name: sec_time
+      properties:
+      - id: edc1fa24-f3a4-448f-9f1e-9387383a0fa3
+        name: times_mislabelled
+        type: string
+        value:
+        - '11:11:11'
+        - '12:12:12'
+        - 03:03:03
+      sections: []
+      type: time
+    - id: 75fb464d-9ea5-49a0-a820-343b08cfba2d
+      name: sec_boolean
+      properties:
+      - id: d2c2c6d1-1ca7-4544-8379-d8451954d38f
+        name: sent_mislabelled
+        type: string
+        value:
+        - 'False'
+        - 'True'
+        - 'TRUE'
+        - 'False'
+        - t
+      sections: []
+      type: boolean
+    - id: 889124e7-09a5-400a-b7de-7d0e6d019d7e
+      name: sec_text
+      properties:
+      - id: 0a05a652-cfe7-46c2-bba4-fa9d1714a635
+        name: texts_mislabelled
+        type: string
+        value:
+        - "lineA \n lineB"
+        - "lineC\n lineD"
+        - "\nlineE\n lineF"
+      sections: []
+      type: text
+    - id: db9d7872-86d4-4155-9a14-2a44a4402b1a
+      name: sec_2_tuple
+      properties:
+      - id: 508517b1-e67a-42d3-aca1-6bd55ddea0e6
+        name: Location_mislabelled
+        type: string
+        value:
+        - (39.12; 67.19)
+        - (39.12; 67.19)
+        - (39.12; 67.18)
+      sections: []
+      type: 2-tuple
+    - id: a75c955a-6bef-40a7-99fd-a26160ae79d2
+      name: sec_3_tuple
+      properties:
+      - id: 84aa21f3-c571-420c-963f-59c5785a45f2
+        name: Coos_mislabelled
+        type: string
+        value:
+        - (39.12; 89; 67.19)
+        - (39.12; 78; 67.19)
+        - (39.12; 56; 67.18)
+      sections: []
+      type: 3-tuple
+    type: mislabelled_dtypes
+odml-version: '1.1'

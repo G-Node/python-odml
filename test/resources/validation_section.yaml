@@ -1,0 +1,13 @@
+Document:
+  id: 468dfc92-d794-4ae9-9ffe-a0944a957d36
+  sections:
+  - id: 5279b30a-3dfd-4c44-ac18-2a80e7647449
+    name: sec_type_undefined
+    properties: []
+    sections: []
+  - id: 2033d777-fc2b-4b73-a8f0-ae164bb1ea10
+    name: sec_type_empty
+    properties: []
+    sections: []
+    type: ''
+odml-version: '1.1'

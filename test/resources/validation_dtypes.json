@@ -1,0 +1,370 @@
+{
+    "Document": {
+        "id": "2c9bddd2-0082-410c-89d4-cd6ea44a404b",
+        "sections": [
+            {
+                "id": "f545ca92-1d4c-4d02-8170-1837b9e16395",
+                "type": "no_dtypes",
+                "name": "no_dtypes",
+                "sections": [
+                    {
+                        "id": "24d75996-d19d-4138-8d79-8b90d7affbc2",
+                        "name": "sec_string",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "951db657-ba2d-43b9-9827-f83ef3ce8e64",
+                                "name": "words_no",
+                                "value": [
+                                    "hello",
+                                    "-world",
+                                    "3",
+                                    "True"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "2b3540fc-a422-4279-b10d-f87e16e0a2c3",
+                        "type": "int",
+                        "name": "sec_int",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "55829af7-1058-4cd6-8454-de1d77143935",
+                                "name": "members_no",
+                                "value": [
+                                    "-13",
+                                    "101",
+                                    "-11",
+                                    "0",
+                                    "-8"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "725b997a-16af-436f-b6a4-bb7a16822958",
+                        "type": "float",
+                        "name": "sec_float",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "d26b8eed-fd92-4d04-8434-f0846186ceee",
+                                "name": "potential_no",
+                                "value": [
+                                    "-4.8",
+                                    "10.0",
+                                    "-11.9",
+                                    "-10.0",
+                                    "18.0"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "f8a620b1-b71c-42eb-917b-c5879b4f9e96",
+                        "type": "date",
+                        "name": "sec_date",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "9d207f37-ca27-4df7-9409-02e369cced7a",
+                                "name": "dates_no",
+                                "value": [
+                                    "1997-12-14",
+                                    "00-12-14",
+                                    "89-07-04"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "857f3300-d6ac-4c48-9d95-12a1d70b9092",
+                        "type": "datetime",
+                        "name": "sec_datetime",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "8fa99c25-4cc9-491b-9398-59afb563f103",
+                                "name": "datetimes_no",
+                                "value": [
+                                    "97-12-14 11:11:11",
+                                    "97-12-14 12:12",
+                                    "1997-12-14 03:03"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "922d2ab9-bfa6-413d-ba8d-f57cc775b6ac",
+                        "type": "time",
+                        "name": "sec_time",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "a275b4cc-e850-4a46-95eb-a01772706468",
+                                "name": "times_no",
+                                "value": [
+                                    "11:11:11",
+                                    "12:12:12",
+                                    "03:03:03"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "f18728fc-1e75-43dc-810f-19c9c64f29c0",
+                        "type": "boolean",
+                        "name": "sec_boolean",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "4080b4ad-fe08-4abc-8071-a84a8169cf30",
+                                "name": "sent_no",
+                                "value": [
+                                    "False",
+                                    "True",
+                                    "TRUE",
+                                    "False",
+                                    "t"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "8c49b24b-0b86-4dd6-a4da-45e1c2c504c6",
+                        "type": "2-tuple",
+                        "name": "sec_2_tuple",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "4f0cfc1b-0175-46f9-9ad4-62ab19fc6625",
+                                "name": "Location_no",
+                                "value": [
+                                    "(39.12; 67.19)",
+                                    "(39.12; 67.19)",
+                                    "(39.12; 67.18)"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "62531fb3-8b5a-4490-a421-8e15cb787f5f",
+                        "type": "3-tuple",
+                        "name": "sec_3_tuple",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "45eae816-9023-414d-b15f-ae7a8a845f45",
+                                "name": "Coos_no",
+                                "value": [
+                                    "(39.12; 89; 67.19)",
+                                    "(39.12; 78; 67.19)",
+                                    "(39.12; 56; 67.18)"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "properties": []
+            },
+            {
+                "id": "bc217fca-d51a-4d01-b37f-7270f02f88a4",
+                "type": "mislabelled_dtypes",
+                "name": "mislabelled_dtypes",
+                "sections": [
+                    {
+                        "id": "3fd7dd7e-246f-4002-a577-534792fb5357",
+                        "type": "string",
+                        "name": "sec_string",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "7c987cf5-7bc7-452d-a87f-69a8e68397ea",
+                                "name": "words_mislabelled",
+                                "value": [
+                                    "hello",
+                                    "-world",
+                                    "3",
+                                    "True"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "196e9408-3d8a-478a-829d-0834d14c9a32",
+                        "type": "int",
+                        "name": "sec_int",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "c581ffae-8d7f-44e7-92cd-b96c253e680d",
+                                "name": "members_mislabelled",
+                                "value": [
+                                    "-13",
+                                    "101",
+                                    "-11",
+                                    "0",
+                                    "-8"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "fbe32258-9b80-43b4-8399-856780e1c67e",
+                        "type": "float",
+                        "name": "sec_float",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "7302729f-ccc0-463d-8c39-78ec1136237f",
+                                "name": "potential_mislabelled",
+                                "value": [
+                                    "-4.8",
+                                    "10.0",
+                                    "-11.9",
+                                    "-10.0",
+                                    "18.0"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "daa8fc2f-fc44-408f-b824-d6f890974e36",
+                        "type": "date",
+                        "name": "sec_date",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "5818ae19-80d5-42c1-ae05-61a36c2b9546",
+                                "name": "dates_mislabelled",
+                                "value": [
+                                    "1997-12-14",
+                                    "00-12-14",
+                                    "89-07-04"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "d2d0b323-4701-4fc1-ac9c-9bb9b04c2710",
+                        "type": "datetime",
+                        "name": "sec_datetime",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "2be4f2c2-5364-4c6e-86c7-8b940cc8ed5f",
+                                "name": "datetimes_mislabelled",
+                                "value": [
+                                    "97-12-14 11:11:11",
+                                    "97-12-14 12:12",
+                                    "1997-12-14 03:03"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "aa38c228-7870-41a0-89bd-f579406468c0",
+                        "type": "time",
+                        "name": "sec_time",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "d20c097f-162c-456a-beb4-0a55e261c9b8",
+                                "name": "times_mislabelled",
+                                "value": [
+                                    "11:11:11",
+                                    "12:12:12",
+                                    "03:03:03"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "b4d969e7-78b3-4bc3-942b-0126046ba538",
+                        "type": "boolean",
+                        "name": "sec_boolean",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "d7f0cf25-a87a-4b77-a7a5-41c4b31763a5",
+                                "name": "sent_mislabelled",
+                                "value": [
+                                    "False",
+                                    "True",
+                                    "TRUE",
+                                    "False",
+                                    "t"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "fe16efe1-5f94-475e-b652-70b7f5495de5",
+                        "type": "text",
+                        "name": "sec_text",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "ae863fc4-b998-4da1-b586-96c0d0124ddb",
+                                "name": "texts_mislabelled",
+                                "value": [
+                                    "lineA \n lineB",
+                                    "lineC\n lineD",
+                                    "\nlineE\n lineF"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "513ce09d-2d15-40b2-8d65-10438ba55752",
+                        "type": "2-tuple",
+                        "name": "sec_2_tuple",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "99318b7a-ce26-4763-bd32-9d3dfb4b956a",
+                                "name": "Location_mislabelled",
+                                "value": [
+                                    "(39.12; 67.19)",
+                                    "(39.12; 67.19)",
+                                    "(39.12; 67.18)"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "f5bb809b-e621-4524-9858-1004e2232a57",
+                        "type": "3-tuple",
+                        "name": "sec_3_tuple",
+                        "sections": [],
+                        "properties": [
+                            {
+                                "id": "1c41cc57-1704-4494-a463-71552a3f90bb",
+                                "name": "Coos_mislabelled",
+                                "value": [
+                                    "(39.12; 89; 67.19)",
+                                    "(39.12; 78; 67.19)",
+                                    "(39.12; 56; 67.18)"
+                                ],
+                                "type": "string"
+                            }
+                        ]
+                    }
+                ],
+                "properties": []
+            }
+        ]
+    },
+    "odml-version": "1.1"
+}

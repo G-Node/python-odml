@@ -3,6 +3,7 @@
 Generic odML validation framework.
 """
 
+import re
 from . import dtypes
 
 LABEL_ERROR = 'error'
@@ -386,3 +387,56 @@ def property_values_check(prop):
 
 
 Validation.register_handler('property', property_values_check)
+
+
+def property_values_string_check(prop):
+    """
+    PROTOTYPE
+
+    Tests whether values with dtype "string" are maybe of different dtype.
+
+    :param prop: property the validation is applied on.
+    """
+
+    if prop.dtype != "string" or not prop.values:
+        return
+
+    dtype_checks = {
+        'int': r'^(-+)?\d+$',
+        'date': r'^\d{2,4}-\d{1,2}-\d{1,2}$',
+        'datetime': r'^\d{2,4}-\d{1,2}-\d{1,2} \d{2}:\d{2}(:\d{2})?$',
+        'time': r'^\d{2}:\d{2}(:\d{2})?$',
+        'float': r'^(-+)?\d+\.\d+$',
+        'tuple': r'^\((.*?)\)',
+        'boolean': r'^TRUE|FALSE|True|False|t|f+$',
+        'text': r'[\r\n]'}
+
+    val_dtypes = []
+
+    for val in prop.values:
+        curr_dtype = "string"
+
+        for check_dtype in dtype_checks.items():
+            if bool(re.compile(check_dtype[1]).match(val.strip())):
+                if check_dtype[0] == "tuple" and val.count(';') > 0:
+                    curr_dtype = str(val.count(';') + 1) + "-" + check_dtype[0]
+                else:
+                    curr_dtype = check_dtype[0]
+                break
+            if check_dtype[0] == "text" and len(re.findall(check_dtype[1], val.strip())) > 0:
+                curr_dtype = check_dtype[0]
+                break
+
+        val_dtypes += [curr_dtype]
+
+    res_dtype = max(set(val_dtypes), key=val_dtypes.count)
+
+    if len(set(val_dtypes)) > 1:
+        res_dtype = "string"
+
+    if res_dtype != "string":
+        msg = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!' % (prop.name, res_dtype)
+        yield ValidationError(prop, msg, LABEL_WARNING)
+
+
+Validation.register_handler('property', property_values_string_check)
