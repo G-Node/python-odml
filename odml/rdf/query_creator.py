@@ -284,7 +284,7 @@ class QueryCreator(BaseQueryCreator):
         :return: string representing rdflib query.
         """
 
-        odml_uri = "https://g-node.org/odml-rdf#"
+        odml_uri = str(odmlns)
         self.query = "SELECT * WHERE {\n"
 
         if "Doc" in self.q_dict.keys():
