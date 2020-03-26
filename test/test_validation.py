@@ -139,6 +139,17 @@ class TestValidation(unittest.TestCase):
         res = validate(doc)
         self.assertError(res, "Name should be readable")
 
+    def test_property_name_readable(self):
+        """
+        Test if property name is not uuid and thus more readable.
+        """
+        doc = odml.Document()
+        sec = odml.Section("sec", parent=doc)
+        prop = odml.Property("prop", parent=sec)
+        prop.name = prop.id
+        res = validate(doc)
+        self.assertError(res, "Name should be readable")
+
     def test_standalone_section(self):
         """
         Test if standalone section does not return errors if required attributes are correct.
