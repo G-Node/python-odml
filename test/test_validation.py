@@ -193,8 +193,8 @@ class TestValidation(unittest.TestCase):
 
         prop2 = odml.Property(name='potential', dtype="string",
                               values=['-4.8', '10.0', '-11.9', '-10.0', '18.0'])
-        self.assertError(validate(prop2),'Dtype of property "potential" currently is "string", '
-                                         'but might fit dtype "float"!')
+        self.assertError(validate(prop2), 'Dtype of property "potential" currently is "string", '
+                                          'but might fit dtype "float"!')
 
         prop3 = odml.Property(name='dates', dtype="string",
                               values=['1997-12-14', '00-12-14', '89-07-04'])
