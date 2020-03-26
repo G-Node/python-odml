@@ -240,17 +240,12 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.xml")
         doc = odml.load(path)
 
-        sec_type_undefined_err = False
-        sec_type_empty_err = False
-
-        for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
-                sec_type_undefined_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
-                sec_type_empty_err = True
-
-        assert sec_type_undefined_err
-        assert sec_type_empty_err
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
+            validate(doc).errors))) > 0
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
+            validate(doc).errors))) > 0
 
     def test_load_dtypes_xml(self):
         """
@@ -319,17 +314,12 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.json")
         doc = odml.load(path, "JSON")
 
-        sec_type_undefined_err = False
-        sec_type_empty_err = False
-
-        for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
-                sec_type_undefined_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
-                sec_type_empty_err = True
-
-        assert sec_type_undefined_err
-        assert sec_type_empty_err
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
+            validate(doc).errors))) > 0
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
+            validate(doc).errors))) > 0
 
     def test_load_dtypes_json(self):
         """
@@ -398,17 +388,12 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.yaml")
         doc = odml.load(path, "YAML")
 
-        sec_type_undefined_err = False
-        sec_type_empty_err = False
-
-        for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
-                sec_type_undefined_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
-                sec_type_empty_err = True
-
-        assert sec_type_undefined_err
-        assert sec_type_empty_err
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
+            validate(doc).errors))) > 0
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
+            validate(doc).errors))) > 0
 
     def test_load_dtypes_yaml(self):
         """
