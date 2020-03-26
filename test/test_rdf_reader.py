@@ -105,3 +105,31 @@ class TestRDFReader(unittest.TestCase):
         self.assertEqual(prop.uncertainty, "0.8")
         self.assertEqual(prop.value_origin, "force")
         self.assertEqual(prop.reference, "Experiment 1")
+
+    def test_mandatory_attrs_section(self):
+        """
+        Test if ParserError is thrown if mandatory attributes are missing for section.
+        """
+        w = RDFWriter([self.doc])
+        w.convert_to_rdf()
+        for rdf_sec in w.graph.subjects(predicate=odmlns.hasName, object=Literal("sec1")):
+            w.graph.remove((rdf_sec, odmlns.hasName, Literal("sec1")))
+
+        new_graph = w.graph.serialize(format="turtle").decode("utf-8")
+
+        with self.assertRaises(ParserException):
+            RDFReader().from_string(new_graph, "turtle")
+
+    def test_mandatory_attrs_property(self):
+        """
+        Test if ParserError is thrown if mandatory attributes are missing for section.
+        """
+        w = RDFWriter([self.doc])
+        w.convert_to_rdf()
+        for rdf_sec in w.graph.subjects(predicate=odmlns.hasName, object=Literal("prop1")):
+            w.graph.remove((rdf_sec, odmlns.hasName, Literal("prop1")))
+
+        new_graph = w.graph.serialize(format="turtle").decode("utf-8")
+
+        with self.assertRaises(ParserException):
+            RDFReader().from_string(new_graph, "turtle")
