@@ -231,6 +231,11 @@ class TestProperty(unittest.TestCase):
         self.assertRaises(ValueError, p8.append, 1.3)
         self.assertRaises(ValueError, p8.append, True)
 
+        prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
+        prop.append("(7; 8; 9)")
+        self.assertEqual(len(prop), 2)
+        self.assertRaises(ValueError, prop.append, "(10; 11)")
+
     def test_value_extend(self):
         prop = Property(name="extend")
 
