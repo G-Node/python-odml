@@ -1,9 +1,15 @@
 import unittest
 import odml
 import os
+import sys
 import odml.validation
 import odml.terminology
 from . import test_samplefile as samplefile
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 validate = odml.validation.Validation
 
@@ -175,6 +181,19 @@ class TestValidation(unittest.TestCase):
 
         for err in validate(prop).errors:
             assert not err.is_error
+
+    def test_section_init(self):
+        """
+        Test validation errors printed to stdout on section init.
+        """
+        val_errs = StringIO()
+
+        old_stdout = sys.stdout
+        sys.stdout = val_errs
+        odml.Section(name="sec", type=None)
+        sys.stdout = old_stdout
+
+        assert "Section type undefined" in val_errs.getvalue()
 
     def test_prop_string_values(self):
         """
