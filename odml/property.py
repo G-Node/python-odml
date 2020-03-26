@@ -688,7 +688,8 @@ class BaseProperty(base.BaseObject):
                 dtypes.infer_dtype(new_value[0]) != self.dtype:
 
             type_check = dtypes.infer_dtype(new_value[0])
-            if not (type_check == "string" and self.dtype in dtypes.special_dtypes):
+            if not (type_check == "string" and self.dtype in dtypes.special_dtypes) \
+                    and not self.dtype.endswith("-tuple"):
                 msg = "odml.Property.extend: passed value data type found "
                 msg += "(\"%s\") does not match expected dtype \"%s\"!" % (type_check,
                                                                            self._dtype)
