@@ -179,8 +179,7 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property()
         prop.type = ""
 
-        for err in validate(prop).errors:
-            assert not err.is_error
+        assert len(list(filter(lambda x: x.is_error, validate(prop).errors))) == 0
 
     def test_section_init(self):
         """
