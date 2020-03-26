@@ -13,7 +13,8 @@ class TestTypes(unittest.TestCase):
     # TODO :- Write tests for JSONParser once it's completed.
 
     def setUp(self):
-        self.file = 'doc/example_odMLs/THGTTG.odml'
+        self.dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.file = os.path.join(self.dir_path, 'resources', 'example.odml')
         # Do not allow anything to be printed on STDOUT
         self.captured_stdout = StringIO()
         sys.stdout = self.captured_stdout
