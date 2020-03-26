@@ -746,12 +746,12 @@ class TestProperty(unittest.TestCase):
         p_val = ["a", "b"]
 
         prop_a = Property(name=p_name, value_origin=p_origin, unit=p_unit,
-                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
-                        dependency=p_dep, dependency_value=p_dep_val, value=p_val)
+                          uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                          dependency=p_dep, dependency_value=p_dep_val, value=p_val)
 
         prop_b = Property(name=p_name, value_origin=p_origin, unit=p_unit,
-                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
-                        dependency=p_dep, dependency_value=p_dep_val, value=p_val)
+                          uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                          dependency=p_dep, dependency_value=p_dep_val, value=p_val)
 
         self.assertEqual(prop_a, prop_b)
 
