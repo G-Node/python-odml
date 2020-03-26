@@ -134,7 +134,7 @@ def object_required_attributes(obj):
     for arg in args:
         if arg[1] == 1:
             if not hasattr(obj, arg[0]):
-                msg = "Missing attribute %s for %s" % (obj.format().name.capitalize(), arg[0])
+                msg = "Missing attribute %s for %s" % (arg[0], obj.format().name.capitalize())
                 yield ValidationError(obj, msg, LABEL_ERROR)
                 continue
             obj_arg = getattr(obj, arg[0])
