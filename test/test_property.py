@@ -279,7 +279,7 @@ class TestProperty(unittest.TestCase):
         prop.extend(ext_prop)
         self.assertEqual(prop.values, ["a", "b", "c", "d", "e"])
 
-        ext_prop = Property(name="value extend", value=[1, 2 ,3])
+        ext_prop = Property(name="value extend", value=[1, 2, 3])
         with self.assertRaises(ValueError):
             prop.extend(ext_prop)
         self.assertEqual(prop.values, ["a", "b", "c", "d", "e"])
