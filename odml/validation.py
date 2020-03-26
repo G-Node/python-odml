@@ -308,6 +308,20 @@ Validation.register_handler('section', section_unique_name_type)
 Validation.register_handler('section', property_unique_names)
 
 
+def object_name_readable(obj):
+    """
+    Tests if object name is easily readable, so not equal to id.
+
+    :param obj: odml.Section or odml.Property.
+    """
+    if obj.name == obj.id:
+        yield ValidationError(obj, 'Name should be readable', LABEL_WARNING)
+
+
+Validation.register_handler('section', object_name_readable)
+Validation.register_handler('property', object_name_readable)
+
+
 def property_terminology_check(prop):
     """
     1. warn, if there are properties that do not occur in the terminology.
