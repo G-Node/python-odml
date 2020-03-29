@@ -231,6 +231,11 @@ class TestProperty(unittest.TestCase):
         self.assertRaises(ValueError, p8.append, 1.3)
         self.assertRaises(ValueError, p8.append, True)
 
+        prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
+        prop.append("(7; 8; 9)")
+        self.assertEqual(len(prop), 2)
+        self.assertRaises(ValueError, prop.append, "(10; 11)")
+
     def test_value_extend(self):
         prop = Property(name="extend")
 
@@ -274,7 +279,7 @@ class TestProperty(unittest.TestCase):
         prop.extend(ext_prop)
         self.assertEqual(prop.values, ["a", "b", "c", "d", "e"])
 
-        ext_prop = Property(name="value extend", value=[1, 2 ,3])
+        ext_prop = Property(name="value extend", value=[1, 2, 3])
         with self.assertRaises(ValueError):
             prop.extend(ext_prop)
         self.assertEqual(prop.values, ["a", "b", "c", "d", "e"])
@@ -318,16 +323,21 @@ class TestProperty(unittest.TestCase):
         p2 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
         p2.extend("https://en.wikipedia.org/wiki/Mars")
         self.assertEqual(len(p2), 2)
-        self.assertRaises(ValueError, p2.append, 1)
-        self.assertRaises(ValueError, p2.append, 1.3)
-        self.assertRaises(ValueError, p2.append, True)
+        self.assertRaises(ValueError, p2.extend, 1)
+        self.assertRaises(ValueError, p2.extend, 1.3)
+        self.assertRaises(ValueError, p2.extend, True)
 
         p3 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
         p3.extend("Mars is No. 4.")
         self.assertEqual(len(p3), 2)
-        self.assertRaises(ValueError, p3.append, 1)
-        self.assertRaises(ValueError, p3.append, 1.3)
-        self.assertRaises(ValueError, p3.append, True)
+        self.assertRaises(ValueError, p3.extend, 1)
+        self.assertRaises(ValueError, p3.extend, 1.3)
+        self.assertRaises(ValueError, p3.extend, True)
+
+        prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
+        prop.extend(["(7; 8; 9)", "(10; 11; 12)"])
+        self.assertEqual(len(prop), 3)
+        self.assertRaises(ValueError, prop.extend, "(10; 11)")
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
@@ -736,12 +746,12 @@ class TestProperty(unittest.TestCase):
         p_val = ["a", "b"]
 
         prop_a = Property(name=p_name, value_origin=p_origin, unit=p_unit,
-                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
-                        dependency=p_dep, dependency_value=p_dep_val, value=p_val)
+                          uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                          dependency=p_dep, dependency_value=p_dep_val, value=p_val)
 
         prop_b = Property(name=p_name, value_origin=p_origin, unit=p_unit,
-                        uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
-                        dependency=p_dep, dependency_value=p_dep_val, value=p_val)
+                          uncertainty=p_uncertainty, reference=p_ref, definition=p_def,
+                          dependency=p_dep, dependency_value=p_dep_val, value=p_val)
 
         self.assertEqual(prop_a, prop_b)
 

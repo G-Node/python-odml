@@ -1,9 +1,15 @@
 import unittest
 import odml
 import os
+import sys
 import odml.validation
 import odml.terminology
 from . import test_samplefile as samplefile
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 validate = odml.validation.Validation
 
@@ -129,6 +135,27 @@ class TestValidation(unittest.TestCase):
         res = validate(doc)
         self.assertError(res, "Duplicate id in Section")
 
+    def test_section_name_readable(self):
+        """
+        Test if section name is not uuid and thus more readable.
+        """
+        doc = odml.Document()
+        sec = odml.Section("sec", parent=doc)
+        sec.name = sec.id
+        res = validate(doc)
+        self.assertError(res, "Name should be readable")
+
+    def test_property_name_readable(self):
+        """
+        Test if property name is not uuid and thus more readable.
+        """
+        doc = odml.Document()
+        sec = odml.Section("sec", parent=doc)
+        prop = odml.Property("prop", parent=sec)
+        prop.name = prop.id
+        res = validate(doc)
+        self.assertError(res, "Name should be readable")
+
     def test_standalone_section(self):
         """
         Test if standalone section does not return errors if required attributes are correct.
@@ -152,8 +179,20 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property()
         prop.type = ""
 
-        for err in validate(prop).errors:
-            assert not err.is_error
+        assert len(list(filter(lambda x: x.is_error, validate(prop).errors))) == 0
+
+    def test_section_init(self):
+        """
+        Test validation errors printed to stdout on section init.
+        """
+        val_errs = StringIO()
+
+        old_stdout = sys.stdout
+        sys.stdout = val_errs
+        odml.Section(name="sec", type=None)
+        sys.stdout = old_stdout
+
+        assert "Section type undefined" in val_errs.getvalue()
 
     def test_prop_string_values(self):
         """
@@ -172,8 +211,8 @@ class TestValidation(unittest.TestCase):
 
         prop2 = odml.Property(name='potential', dtype="string",
                               values=['-4.8', '10.0', '-11.9', '-10.0', '18.0'])
-        self.assertError(validate(prop2),'Dtype of property "potential" currently is "string", '
-                                         'but might fit dtype "float"!')
+        self.assertError(validate(prop2), 'Dtype of property "potential" currently is "string", '
+                                          'but might fit dtype "float"!')
 
         prop3 = odml.Property(name='dates', dtype="string",
                               values=['1997-12-14', '00-12-14', '89-07-04'])
@@ -219,17 +258,12 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.xml")
         doc = odml.load(path)
 
-        sec_type_undefined_err = False
-        sec_type_empty_err = False
-
-        for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
-                sec_type_undefined_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
-                sec_type_empty_err = True
-
-        assert sec_type_undefined_err
-        assert sec_type_empty_err
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
+            validate(doc).errors))) > 0
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
+            validate(doc).errors))) > 0
 
     def test_load_dtypes_xml(self):
         """
@@ -298,17 +332,12 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.json")
         doc = odml.load(path, "JSON")
 
-        sec_type_undefined_err = False
-        sec_type_empty_err = False
-
-        for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
-                sec_type_undefined_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
-                sec_type_empty_err = True
-
-        assert sec_type_undefined_err
-        assert sec_type_empty_err
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
+            validate(doc).errors))) > 0
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
+            validate(doc).errors))) > 0
 
     def test_load_dtypes_json(self):
         """
@@ -377,17 +406,12 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.yaml")
         doc = odml.load(path, "YAML")
 
-        sec_type_undefined_err = False
-        sec_type_empty_err = False
-
-        for err in validate(doc).errors:
-            if err.msg == "Section type undefined" and err.obj.name == "sec_type_undefined":
-                sec_type_undefined_err = True
-            elif err.msg == "Section type undefined" and err.obj.name == "sec_type_empty":
-                sec_type_empty_err = True
-
-        assert sec_type_undefined_err
-        assert sec_type_empty_err
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
+            validate(doc).errors))) > 0
+        assert len(list(filter(
+            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
+            validate(doc).errors))) > 0
 
     def test_load_dtypes_yaml(self):
         """

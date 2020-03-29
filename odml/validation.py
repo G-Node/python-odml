@@ -134,7 +134,7 @@ def object_required_attributes(obj):
     for arg in args:
         if arg[1] == 1:
             if not hasattr(obj, arg[0]):
-                msg = "Missing attribute %s for %s" % (obj.format().name.capitalize(), arg[0])
+                msg = "Missing attribute %s for %s" % (arg[0], obj.format().name.capitalize())
                 yield ValidationError(obj, msg, LABEL_ERROR)
                 continue
             obj_arg = getattr(obj, arg[0])
@@ -306,6 +306,20 @@ def property_unique_names(obj):
 Validation.register_handler('odML', section_unique_name_type)
 Validation.register_handler('section', section_unique_name_type)
 Validation.register_handler('section', property_unique_names)
+
+
+def object_name_readable(obj):
+    """
+    Tests if object name is easily readable, so not equal to id.
+
+    :param obj: odml.Section or odml.Property.
+    """
+    if obj.name == obj.id:
+        yield ValidationError(obj, 'Name should be readable', LABEL_WARNING)
+
+
+Validation.register_handler('section', object_name_readable)
+Validation.register_handler('property', object_name_readable)
 
 
 def property_terminology_check(prop):
