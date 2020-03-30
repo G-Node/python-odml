@@ -540,7 +540,41 @@ class BaseProperty(base.BaseObject):
         :param new_value: Can be either 'None', a positive integer, which will set the maximum
                           or an integer 2-tuple of the format '(min, max)'.
         """
-        self._val_cardinality = new_value
+        invalid_input = False
+
+        # Empty values reset the cardinality to None.
+        if not new_value or new_value == (None, None):
+            self._val_cardinality = None
+
+        # Providing a single integer sets the maximum value in a tuple.
+        elif isinstance(new_value, int) and new_value > 0:
+            self._val_cardinality = (None, new_value)
+
+        # Only integer 2-tuples of the format '(min, max)' are supported to set the cardinality
+        elif isinstance(new_value, tuple) and len(new_value) == 2:
+            v_min = new_value[0]
+            v_max = new_value[1]
+
+            min_int = isinstance(v_min, int) and v_min >= 0
+            max_int = isinstance(v_max, int) and v_max >= 0
+
+            if max_int and min_int and v_max > v_min:
+                self._val_cardinality = (v_min, v_max)
+
+            elif max_int and not v_min:
+                self._val_cardinality = (None, v_max)
+
+            elif min_int and not v_max:
+                self._val_cardinality = (v_min, None)
+
+            else:
+                invalid_input = True
+        else:
+            invalid_input = True
+
+        if invalid_input:
+            msg = "Can only assign single int or int-tuples of the format '(min, max)'"
+            raise ValueError(msg)
 
     def remove(self, value):
         """
