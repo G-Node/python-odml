@@ -40,6 +40,43 @@ INFILE_STYLE_TEMPLATE = """<xsl:template match="odML"><xsl:variable name="reposi
 """
 
 
+def parse_cardinality(val):
+    """
+    Parses an odml specific cardinality from a string.
+
+    If the string content is valid, returns an appropriate tuple.
+    Returns None if the string is empty or the content cannot be
+    properly parsed.
+
+    :param val: string
+    :return: None or 2-tuple
+    """
+    if not val:
+        return None
+
+    # Remove parenthesis and split on comma
+    parsed_vals = val.strip()[1:-1].split(",")
+    if len(parsed_vals) == 2:
+        min_val = parsed_vals[0].strip()
+        max_val = parsed_vals[1].strip()
+
+        min_int = min_val.isdigit() and int(min_val) >= 0
+        max_int = max_val.isdigit() and int(max_val) >= 0
+
+        if min_int and max_int and int(max_val) > int(min_val):
+            return int(min_val), int(max_val)
+
+        if min_int and max_val == "None":
+            return int(min_val), None
+
+        if max_int and min_val == "None":
+            return None, int(max_val)
+
+    # Todo we were not able to properly parse the current cardinality
+    # add an appropriate Error/Warning
+    return None
+
+
 def to_csv(val):
     """
     Modifies odML values for serialization to strings and files.
@@ -410,6 +447,9 @@ class XMLReader(object):
                     if tag == "values" and curr_text:
                         content = from_csv(node.text)
                         arguments[tag] = content
+                    # Special handling of cardinality
+                    elif tag.endswith("_cardinality") and curr_text:
+                        arguments[tag] = parse_cardinality(node.text)
                     else:
                         arguments[tag] = curr_text
             else:
