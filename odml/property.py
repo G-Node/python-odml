@@ -576,6 +576,17 @@ class BaseProperty(base.BaseObject):
             msg = "Can only assign single int or int-tuples of the format '(min, max)'"
             raise ValueError(msg)
 
+    def values_set_cardinality(self, min_val=None, max_val=None):
+        """
+        Sets the values cardinality of a Property.
+
+        :param min_val: Required minimal number of values elements. None denotes
+                        no restrictions on values elements minimum. Default is None.
+        :param max_val: Allowed maximal number of values elements. None denotes
+                        no restrictions on values elements maximum. Default is None.
+        """
+        self.val_cardinality = (min_val, max_val)
+
     def remove(self, value):
         """
         Remove a value from this property. Only the first encountered
