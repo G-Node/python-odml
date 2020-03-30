@@ -82,6 +82,10 @@ class BaseProperty(base.BaseObject):
     :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
                an id will be generated and assigned. An id has to be unique
                within an odML Document.
+    :param val_cardinality: Value cardinality defines how many values are allowed for this Property.
+                            By default unlimited values can be set.
+                            A required number of values can be set by assigning a tuple of the
+                            format "(min, max)".
     :param value: Legacy code to the 'values' attribute. If 'values' is provided,
                   any data provided via 'value' will be ignored.
     """
@@ -91,7 +95,7 @@ class BaseProperty(base.BaseObject):
     def __init__(self, name=None, values=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None,
-                 value_origin=None, oid=None, value=None):
+                 value_origin=None, oid=None, val_cardinality=None, value=None):
 
         try:
             if oid is not None:
@@ -128,6 +132,8 @@ class BaseProperty(base.BaseObject):
             self.values = value
 
         self.parent = parent
+
+        self._val_cardinality = val_cardinality
 
         for err in validation.Validation(self).errors:
             if err.is_error:
