@@ -8,6 +8,47 @@ from ..info import FORMAT_VERSION
 from .parser_utils import InvalidVersionException, ParserException, odml_tuple_export
 
 
+def parse_cardinality(vals):
+    """
+    Parses an odml specific cardinality from an input value.
+
+    If the input content is valid, returns an appropriate tuple.
+    Returns None if the input is empty or the content cannot be
+    properly parsed.
+
+    :param vals: list or tuple
+    :return: None or 2-tuple
+    """
+    if not vals:
+        return None
+
+    if isinstance(vals, (list, tuple)) and len(vals) == 2:
+        min_val = vals[0]
+        max_val = vals[1]
+
+        if min_val is None or str(min_val).strip() == "None":
+            min_val = None
+
+        if max_val is None or str(max_val).strip() == "None":
+            max_val = None
+
+        min_int = isinstance(min_val, int) and min_val >= 0
+        max_int = isinstance(max_val, int) and max_val >= 0
+
+        if min_int and max_int and max_val > min_val:
+            return min_val, max_val
+
+        if min_int and not max_val:
+            return min_val, None
+
+        if max_int and not min_val:
+            return None, max_val
+
+    # We were not able to properly parse the current cardinality, so add
+    # an appropriate Error/Warning once the reader 'ignore_errors' option has been implemented.
+    return None
+
+
 class DictWriter:
     """
     A writer to parse an odml.Document to a Python dictionary object equivalent.
@@ -255,8 +296,12 @@ class DictReader:
             for i in _property:
                 attr = self.is_valid_attribute(i, odmlfmt.Property)
                 if attr:
+                    content = _property[attr]
+                    if attr.endswith("_cardinality"):
+                        content = parse_cardinality(content)
+
                     # Make sure to always use the correct odml format attribute name
-                    prop_attrs[odmlfmt.Property.map(attr)] = _property[attr]
+                    prop_attrs[odmlfmt.Property.map(attr)] = content
 
             prop = odmlfmt.Property.create(**prop_attrs)
             odml_props.append(prop)
