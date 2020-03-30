@@ -133,7 +133,8 @@ class BaseProperty(base.BaseObject):
 
         self.parent = parent
 
-        self._val_cardinality = val_cardinality
+        self._val_cardinality = None
+        self.val_cardinality = val_cardinality
 
         for err in validation.Validation(self).errors:
             if err.is_error:
@@ -512,6 +513,34 @@ class BaseProperty(base.BaseObject):
         if new_value == "":
             new_value = None
         self._dependency_value = new_value
+
+    @property
+    def val_cardinality(self):
+        """
+        The value cardinality of a Property. It defines how many values
+        are minimally required and how many values should be maximally
+        stored. Use 'values_set_cardinality' to set.
+        """
+        return self._val_cardinality
+
+    @val_cardinality.setter
+    def val_cardinality(self, new_value):
+        """
+        Sets the values cardinality of a Property.
+
+        The following cardinality cases are supported:
+        (n, n) - default, no restriction
+        (d, n) - minimally d entries, no maximum
+        (n, d) - maximally d entries, no minimum
+        (d, d) - minimally d entries, maximally d entries
+
+        Only positive integers are supported. 'None' is used to denote
+        no restrictions on a maximum or minimum.
+
+        :param new_value: Can be either 'None', a positive integer, which will set the maximum
+                          or an integer 2-tuple of the format '(min, max)'.
+        """
+        self._val_cardinality = new_value
 
     def remove(self, value):
         """
