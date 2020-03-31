@@ -84,7 +84,9 @@ class BaseSection(base.Sectionable):
 
         for err in validation.Validation(self).errors:
             if err.is_error:
-                msg = "\n\t- %s %s: %s" % (err.obj, err.rank, err.msg)
+                use_name = err.obj.name if err.obj.id != err.obj.name else None
+                sec_formatted = "Section[id=%s|%s/%s]" % (err.obj.id, use_name, err.obj.type)
+                msg = "%s\n    Validation[%s]: %s" % (sec_formatted, err.rank, err.msg)
                 print(msg)
 
     def __repr__(self):
