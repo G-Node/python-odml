@@ -454,3 +454,32 @@ def property_values_string_check(prop):
 
 
 Validation.register_handler('property', property_values_string_check)
+
+
+def property_values_cardinality(prop):
+    """
+    Checks Property values against any set value cardinality.
+
+    :param prop: odml.Property
+    :return: Yields a ValidationError warning, if a set cardinality is not met.
+    """
+    if prop.val_cardinality and isinstance(prop.val_cardinality, tuple):
+
+        val_min = prop.val_cardinality[0]
+        val_max = prop.val_cardinality[1]
+
+        val_len = len(prop.values) if prop.values else 0
+
+        invalid_cause = ""
+        if val_min and val_len < val_min:
+            invalid_cause = "minimum %s values" % val_min
+        elif val_max and (prop.values and len(prop.values) > val_max):
+            invalid_cause = "maximum %s values" % val_max
+
+        if invalid_cause:
+            msg = "Number of Property values does not satisfy value cardinality"
+            msg += " (%s, %s found)" % (invalid_cause, val_len)
+            yield ValidationError(prop, msg, LABEL_WARNING)
+
+
+Validation.register_handler("property", property_values_cardinality)
