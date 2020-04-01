@@ -119,6 +119,7 @@ class BaseProperty(base.BaseObject):
         self._definition = definition
         self._dependency = dependency
         self._dependency_value = dependency_value
+        self._val_cardinality = None
 
         self._dtype = None
         if dtypes.valid_type(dtype):
@@ -135,7 +136,6 @@ class BaseProperty(base.BaseObject):
 
         # Cardinality should always be set after values have been added
         # since it is always tested against values when it is set.
-        self._val_cardinality = None
         self.val_cardinality = val_cardinality
 
         for err in validation.Validation(self).errors:
@@ -409,6 +409,11 @@ class BaseProperty(base.BaseObject):
                 msg = "odml.Property.values: passed values are not of consistent type!"
                 raise ValueError(msg)
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
+
+        # Validate and inform user if the current values cardinality is violated
+        valid = validation.Validation(self)
+        for err in valid.errors:
+            print("%s: %s" % (err.rank.capitalize(), err.msg))
 
     @property
     def value_origin(self):
