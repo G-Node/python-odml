@@ -472,13 +472,13 @@ def property_values_cardinality(prop):
 
         invalid_cause = ""
         if val_min and val_len < val_min:
-            invalid_cause = "minimum %s values" % val_min
+            invalid_cause = "minimum %s" % val_min
         elif val_max and (prop.values and len(prop.values) > val_max):
-            invalid_cause = "maximum %s values" % val_max
+            invalid_cause = "maximum %s" % val_max
 
         if invalid_cause:
-            msg = "Number of Property values does not satisfy value cardinality"
-            msg += " (%s, %s found)" % (invalid_cause, val_len)
+            msg = "Property values cardinality violated"
+            msg += " (%s values, %s found)" % (invalid_cause, val_len)
             yield ValidationError(prop, msg, LABEL_WARNING)
 
 
