@@ -537,8 +537,8 @@ class BaseProperty(base.BaseObject):
         Only positive integers are supported. 'None' is used to denote
         no restrictions on a maximum or minimum.
 
-        :param new_value: Can be either 'None', a positive integer, which will set the maximum
-                          or an integer 2-tuple of the format '(min, max)'.
+        :param new_value: Can be either 'None', a positive integer, which will set
+                          the maximum or an integer 2-tuple of the format '(min, max)'.
         """
         invalid_input = False
 
@@ -576,7 +576,7 @@ class BaseProperty(base.BaseObject):
             msg = "Can only assign single int or int-tuples of the format '(min, max)'"
             raise ValueError(msg)
 
-    def values_set_cardinality(self, min_val=None, max_val=None):
+    def set_values_cardinality(self, min_val=None, max_val=None):
         """
         Sets the values cardinality of a Property.
 
