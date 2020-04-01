@@ -133,6 +133,8 @@ class BaseProperty(base.BaseObject):
 
         self.parent = parent
 
+        # Cardinality should always be set after values have been added
+        # since it is always tested against values when it is set.
         self._val_cardinality = None
         self.val_cardinality = val_cardinality
 
@@ -572,7 +574,12 @@ class BaseProperty(base.BaseObject):
         else:
             invalid_input = True
 
-        if invalid_input:
+        if not invalid_input:
+            # Validate and inform user if the current values cardinality is violated
+            valid = validation.Validation(self)
+            for err in valid.errors:
+                print("%s: %s" % (err.rank.capitalize(), err.msg))
+        else:
             msg = "Can only assign single int or int-tuples of the format '(min, max)'"
             raise ValueError(msg)
 
