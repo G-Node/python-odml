@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import unittest
 
+from odml import Document, Section, Property
 from odml.tools import odmlparser
 
 
@@ -82,6 +83,10 @@ class TestOdmlParser(unittest.TestCase):
         self.assertEqual(json_doc, self.odml_doc)
 
     def test_rdf_file(self):
+        """
+        Test comparison of document before and after rdf-conversion
+        """
+
         self.rdf_writer.write_file(self.odml_doc, self.rdf_file)
         rdf_doc = self.rdf_reader.from_file(self.rdf_file, "xml")
 
@@ -100,6 +105,45 @@ class TestOdmlParser(unittest.TestCase):
         # Check error on missing document format
         with self.assertRaises(ValueError):
             self.rdf_reader.from_file(self.rdf_file)
+
+        doc = Document()
+        sec1 = Section(name="sec1", type="int", parent=doc)
+        Property(name="prop11", values=[1, 2, 3], dtype="int", parent=sec1)
+        Property(name="prop12", values=[1.1, 2.2, 3.3], dtype="float", parent=sec1)
+        Property(name="prop13", values=["a", "b", "c"], dtype="string", parent=sec1)
+        sec2 = Section(name="sec2", type="int", parent=doc)
+        Property(name="prop21", values=[1, 2, 3], dtype="int", parent=sec2)
+        Property(name="prop22", values=[1.1, 2.2, 3.3], dtype="float", parent=sec2)
+        Property(name="prop23", values=["a", "b", "c"], dtype="string", parent=sec2)
+        sec3 = Section(name="sec3", type="int", parent=doc)
+        Property(name="prop31", values=[1, 2, 3], dtype="int", parent=sec3)
+        Property(name="prop32", values=[1.1, 2.2, 3.3], dtype="float", parent=sec3)
+        Property(name="prop33", values=["a", "b", "c"], dtype="string", parent=sec3)
+        self.rdf_writer.write_file(doc, self.rdf_file)
+        rdf_doc = self.rdf_reader.from_file(self.rdf_file, "xml")
+
+        self.assertEqual(doc, rdf_doc[0])
+        self.assertEqual(len(rdf_doc), 1)
+        self.assertEqual(len(rdf_doc[0].sections), 3)
+
+        self.assertIn(doc.sections[0].name, rdf_doc[0].sections)
+        self.assertIn(doc.sections[1].name, rdf_doc[0].sections)
+        self.assertIn(doc.sections[2].name, rdf_doc[0].sections)
+        rdf_sec1 = rdf_doc[0].sections[doc.sections[0].name]
+        self.assertEqual(len(rdf_sec1.properties), 3)
+        self.assertIn(doc.sections[0].properties[0].name, rdf_sec1.properties)
+        self.assertIn(doc.sections[0].properties[1].name, rdf_sec1.properties)
+        self.assertIn(doc.sections[0].properties[1].name, rdf_sec1.properties)
+        rdf_sec2 = rdf_doc[0].sections[doc.sections[1].name]
+        self.assertEqual(len(rdf_sec2.properties), 3)
+        self.assertIn(doc.sections[1].properties[0].name, rdf_sec2.properties)
+        self.assertIn(doc.sections[1].properties[1].name, rdf_sec2.properties)
+        self.assertIn(doc.sections[1].properties[1].name, rdf_sec2.properties)
+        rdf_sec3 = rdf_doc[0].sections[doc.sections[2].name]
+        self.assertEqual(len(rdf_sec3.properties), 3)
+        self.assertIn(doc.sections[2].properties[0].name, rdf_sec3.properties)
+        self.assertIn(doc.sections[2].properties[1].name, rdf_sec3.properties)
+        self.assertIn(doc.sections[2].properties[1].name, rdf_sec3.properties)
 
     def test_xml_string(self):
         # Read from string
