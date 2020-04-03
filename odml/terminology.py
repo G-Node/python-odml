@@ -58,6 +58,29 @@ def cache_load(url):
     return open(cache_file)
 
 
+def refresh(url):
+    """
+    Deletes the current odML terminology file from cache and reloads
+    it from the given URL.
+
+    :param url: URL from where to load an odML terminology file from.
+    """
+    filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
+    cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+    cache_file = os.path.join(cache_dir, filename)
+    try:
+        urllib2.urlopen(url).read()
+    except Exception as exc:
+        print('Cache for file "%s" could not be refreshed. Failed loading "%s": %s'
+              % (filename, url, exc))
+        return
+
+    if os.path.exists(cache_file):
+        os.remove(cache_file)
+
+    cache_load(url)
+
+
 class Terminologies(dict):
     """
     Terminologies facilitates synchronous and deferred loading, caching,
