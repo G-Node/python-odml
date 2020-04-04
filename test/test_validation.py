@@ -222,7 +222,8 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property()
         prop.type = ""
 
-        assert len(list(filter(lambda x: x.is_error, validate(prop).errors))) == 0
+        errs = list(filter(lambda x: x.is_error, validate(prop).errors))
+        self.assertEquals(len(errs), 0)
 
     def test_section_init(self):
         """
@@ -235,7 +236,7 @@ class TestValidation(unittest.TestCase):
         odml.Section(name="sec", type=None)
         sys.stdout = old_stdout
 
-        assert "Section type undefined" in val_errs.getvalue()
+        self.assertIn("Section type undefined", val_errs.getvalue())
 
     def test_prop_string_values(self):
         """
@@ -247,51 +248,44 @@ class TestValidation(unittest.TestCase):
                               values=['-13', '101', '-11', 'hello'])
         assert len(validate(prop0).errors) == 0
 
+        msg_base = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!'
+
         prop1 = odml.Property(name='members', dtype="string",
                               values=['-13', '101', '-11', '0', '-8'])
-        self.assertError(validate(prop1), 'Dtype of property "members" currently is "string",'
-                                          ' but might fit dtype "int"!')
+        self.assertError(validate(prop1), msg_base % ("members", "int"))
 
         prop2 = odml.Property(name='potential', dtype="string",
                               values=['-4.8', '10.0', '-11.9', '-10.0', '18.0'])
-        self.assertError(validate(prop2), 'Dtype of property "potential" currently is "string", '
-                                          'but might fit dtype "float"!')
+        self.assertError(validate(prop2), msg_base % ("potential", "float"))
 
         prop3 = odml.Property(name='dates', dtype="string",
                               values=['1997-12-14', '00-12-14', '89-07-04'])
-        self.assertError(validate(prop3), 'Dtype of property "dates" currently is "string", '
-                                          'but might fit dtype "date"!')
+        self.assertError(validate(prop3), msg_base % ("dates", "date"))
 
         prop4 = odml.Property(name='datetimes', dtype="string",
                               values=['97-12-14 11:11:11', '97-12-14 12:12', '1997-12-14 03:03'])
-        self.assertError(validate(prop4), 'Dtype of property "datetimes" currently is "string", '
-                                          'but might fit dtype "datetime"!')
+        self.assertError(validate(prop4), msg_base % ("datetimes", "datetime"))
 
         prop5 = odml.Property(name='times', dtype="string",
                               values=['11:11:11', '12:12:12', '03:03:03'])
-        self.assertError(validate(prop5), 'Dtype of property "times" currently is "string", '
-                                          'but might fit dtype "time"!')
+        self.assertError(validate(prop5), msg_base % ("times", "time"))
 
         prop6 = odml.Property(name='sent', dtype="string",
                               values=['False', True, 'TRUE', False, 't'])
-        self.assertError(validate(prop6), 'Dtype of property "sent" currently is "string", '
-                                          'but might fit dtype "boolean"!')
+        self.assertError(validate(prop6), msg_base % ("sent", "boolean"))
 
         prop7 = odml.Property(name='texts', dtype="string",
                               values=['line1\n line2', 'line3\n line4', '\nline5\nline6'])
-        self.assertError(validate(prop7), 'Dtype of property "texts" currently is "string", '
-                                          'but might fit dtype "text"!')
+        self.assertError(validate(prop7), msg_base % ("texts", "text"))
 
         prop8 = odml.Property(name="Location", dtype='string',
                               values=['(39.12; 67.19)', '(39.12; 67.19)', '(39.12; 67.18)'])
-        self.assertError(validate(prop8), 'Dtype of property "Location" currently is "string", '
-                                          'but might fit dtype "2-tuple"!')
+        self.assertError(validate(prop8), msg_base % ("Location", "2-tuple"))
 
         prop9 = odml.Property(name="Coos", dtype='string',
                               values=['(39.12; 89; 67.19)', '(39.12; 78; 67.19)',
                                       '(39.12; 56; 67.18)'])
-        self.assertError(validate(prop9), 'Dtype of property "Coos" currently is "string", '
-                                          'but might fit dtype "3-tuple"!')
+        self.assertError(validate(prop9), msg_base % ("Coos", "3-tuple"))
 
     def test_load_section_xml(self):
         """
@@ -308,65 +302,6 @@ class TestValidation(unittest.TestCase):
             lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
             validate(doc).errors))) > 0
 
-    def test_load_dtypes_xml(self):
-        """
-        Test if loading xml document raises validation errors for Properties with undefined dtypes.
-        """
-
-        path = os.path.join(self.dir_path, "resources", "validation_dtypes.xml")
-        doc = odml.load(path)
-
-        self.assertError(validate(doc), 'Dtype of property "members_no" currently is "string", '
-                                        'but might fit dtype "int"!')
-
-        self.assertError(validate(doc), 'Dtype of property "potential_no" currently is "string", '
-                                        'but might fit dtype "float"!')
-
-        self.assertError(validate(doc), 'Dtype of property "dates_no" currently is "string", '
-                                        'but might fit dtype "date"!')
-
-        self.assertError(validate(doc), 'Dtype of property "datetimes_no" currently is "string", '
-                                        'but might fit dtype "datetime"!')
-
-        self.assertError(validate(doc), 'Dtype of property "times_no" currently is "string", '
-                                        'but might fit dtype "time"!')
-
-        self.assertError(validate(doc), 'Dtype of property "sent_no" currently is "string", '
-                                        'but might fit dtype "boolean"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Location_no" currently is "string", '
-                                        'but might fit dtype "2-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Coos_no" currently is "string", '
-                                        'but might fit dtype "3-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "members_mislabelled" currently is '
-                                        '"string", but might fit dtype "int"!')
-
-        self.assertError(validate(doc), 'Dtype of property "potential_mislabelled" currently is '
-                                        '"string", but might fit dtype "float"!')
-
-        self.assertError(validate(doc), 'Dtype of property "dates_mislabelled" currently is '
-                                        '"string", but might fit dtype "date"!')
-
-        self.assertError(validate(doc), 'Dtype of property "datetimes_mislabelled" currently is '
-                                        '"string", but might fit dtype "datetime"!')
-
-        self.assertError(validate(doc), 'Dtype of property "times_mislabelled" currently is '
-                                        '"string", but might fit dtype "time"!')
-
-        self.assertError(validate(doc), 'Dtype of property "sent_mislabelled" currently is '
-                                        '"string", but might fit dtype "boolean"!')
-
-        self.assertError(validate(doc), 'Dtype of property "texts_mislabelled" currently is '
-                                        '"string", but might fit dtype "text"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Location_mislabelled" currently is '
-                                        '"string", but might fit dtype "2-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Coos_mislabelled" currently is '
-                                        '"string", but might fit dtype "3-tuple"!')
-
     def test_load_section_json(self):
         """
         Test if loading json document raises validation errors for Sections with undefined type.
@@ -381,65 +316,6 @@ class TestValidation(unittest.TestCase):
         assert len(list(filter(
             lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
             validate(doc).errors))) > 0
-
-    def test_load_dtypes_json(self):
-        """
-        Test if loading json document raises validation errors for Properties with undefined dtypes.
-        """
-
-        path = os.path.join(self.dir_path, "resources", "validation_dtypes.json")
-        doc = odml.load(path, "JSON")
-
-        self.assertError(validate(doc), 'Dtype of property "members_no" currently is "string", '
-                                        'but might fit dtype "int"!')
-
-        self.assertError(validate(doc), 'Dtype of property "potential_no" currently is "string", '
-                                        'but might fit dtype "float"!')
-
-        self.assertError(validate(doc), 'Dtype of property "dates_no" currently is "string", '
-                                        'but might fit dtype "date"!')
-
-        self.assertError(validate(doc), 'Dtype of property "datetimes_no" currently is "string", '
-                                        'but might fit dtype "datetime"!')
-
-        self.assertError(validate(doc), 'Dtype of property "times_no" currently is "string", '
-                                        'but might fit dtype "time"!')
-
-        self.assertError(validate(doc), 'Dtype of property "sent_no" currently is "string", '
-                                        'but might fit dtype "boolean"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Location_no" currently is "string", '
-                                        'but might fit dtype "2-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Coos_no" currently is "string", '
-                                        'but might fit dtype "3-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "members_mislabelled" currently is '
-                                        '"string", but might fit dtype "int"!')
-
-        self.assertError(validate(doc), 'Dtype of property "potential_mislabelled" currently is '
-                                        '"string", but might fit dtype "float"!')
-
-        self.assertError(validate(doc), 'Dtype of property "dates_mislabelled" currently is '
-                                        '"string", but might fit dtype "date"!')
-
-        self.assertError(validate(doc), 'Dtype of property "datetimes_mislabelled" currently is '
-                                        '"string", but might fit dtype "datetime"!')
-
-        self.assertError(validate(doc), 'Dtype of property "times_mislabelled" currently is '
-                                        '"string", but might fit dtype "time"!')
-
-        self.assertError(validate(doc), 'Dtype of property "sent_mislabelled" currently is '
-                                        '"string", but might fit dtype "boolean"!')
-
-        self.assertError(validate(doc), 'Dtype of property "texts_mislabelled" currently is '
-                                        '"string", but might fit dtype "text"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Location_mislabelled" currently is '
-                                        '"string", but might fit dtype "2-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Coos_mislabelled" currently is '
-                                        '"string", but might fit dtype "3-tuple"!')
 
     def test_load_section_yaml(self):
         """
@@ -456,61 +332,55 @@ class TestValidation(unittest.TestCase):
             lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
             validate(doc).errors))) > 0
 
+    def load_dtypes_validation(self, doc):
+        msg_base = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!'
+
+        doc_val = validate(doc)
+        self.assertError(doc_val, msg_base % ("members_no", "int"))
+        self.assertError(doc_val, msg_base % ("potential_no", "float"))
+        self.assertError(doc_val, msg_base % ("dates_no", "date"))
+        self.assertError(doc_val, msg_base % ("datetimes_no", "datetime"))
+        self.assertError(doc_val, msg_base % ("times_no", "time"))
+        self.assertError(doc_val, msg_base % ("sent_no", "boolean"))
+        self.assertError(doc_val, msg_base % ("Location_no", "2-tuple"))
+        self.assertError(doc_val, msg_base % ("Coos_no", "3-tuple"))
+
+        self.assertError(doc_val, msg_base % ("members_mislabelled", "int"))
+        self.assertError(doc_val, msg_base % ("potential_mislabelled", "float"))
+        self.assertError(doc_val, msg_base % ("dates_mislabelled", "date"))
+        self.assertError(doc_val, msg_base % ("datetimes_mislabelled", "datetime"))
+        self.assertError(doc_val, msg_base % ("times_mislabelled", "time"))
+        self.assertError(doc_val, msg_base % ("sent_mislabelled", "boolean"))
+        self.assertError(doc_val, msg_base % ("texts_mislabelled", "text"))
+        self.assertError(doc_val, msg_base % ("Location_mislabelled", "2-tuple"))
+        self.assertError(doc_val, msg_base % ("Coos_mislabelled", "3-tuple"))
+
+    def test_load_dtypes_xml(self):
+        """
+        Test if loading xml document raises validation errors
+        for Properties with undefined dtypes.
+        """
+
+        path = os.path.join(self.dir_path, "resources", "validation_dtypes.xml")
+        doc = odml.load(path)
+        self.load_dtypes_validation(doc)
+
+    def test_load_dtypes_json(self):
+        """
+        Test if loading json document raises validation errors
+        for Properties with undefined dtypes.
+        """
+
+        path = os.path.join(self.dir_path, "resources", "validation_dtypes.json")
+        doc = odml.load(path, "JSON")
+        self.load_dtypes_validation(doc)
+
     def test_load_dtypes_yaml(self):
         """
-        Test if loading yaml document raises validation errors for Properties with undefined dtypes.
+        Test if loading yaml document raises validation errors
+        for Properties with undefined dtypes.
         """
 
         path = os.path.join(self.dir_path, "resources", "validation_dtypes.yaml")
         doc = odml.load(path, "YAML")
-
-        self.assertError(validate(doc), 'Dtype of property "members_no" currently is "string", '
-                                        'but might fit dtype "int"!')
-
-        self.assertError(validate(doc), 'Dtype of property "potential_no" currently is "string", '
-                                        'but might fit dtype "float"!')
-
-        self.assertError(validate(doc), 'Dtype of property "dates_no" currently is "string", '
-                                        'but might fit dtype "date"!')
-
-        self.assertError(validate(doc), 'Dtype of property "datetimes_no" currently is "string", '
-                                        'but might fit dtype "datetime"!')
-
-        self.assertError(validate(doc), 'Dtype of property "times_no" currently is "string", '
-                                        'but might fit dtype "time"!')
-
-        self.assertError(validate(doc), 'Dtype of property "sent_no" currently is "string", '
-                                        'but might fit dtype "boolean"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Location_no" currently is "string", '
-                                        'but might fit dtype "2-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Coos_no" currently is "string", '
-                                        'but might fit dtype "3-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "members_mislabelled" currently is '
-                                        '"string", but might fit dtype "int"!')
-
-        self.assertError(validate(doc), 'Dtype of property "potential_mislabelled" currently is '
-                                        '"string", but might fit dtype "float"!')
-
-        self.assertError(validate(doc), 'Dtype of property "dates_mislabelled" currently is '
-                                        '"string", but might fit dtype "date"!')
-
-        self.assertError(validate(doc), 'Dtype of property "datetimes_mislabelled" currently is '
-                                        '"string", but might fit dtype "datetime"!')
-
-        self.assertError(validate(doc), 'Dtype of property "times_mislabelled" currently is '
-                                        '"string", but might fit dtype "time"!')
-
-        self.assertError(validate(doc), 'Dtype of property "sent_mislabelled" currently is '
-                                        '"string", but might fit dtype "boolean"!')
-
-        self.assertError(validate(doc), 'Dtype of property "texts_mislabelled" currently is '
-                                        '"string", but might fit dtype "text"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Location_mislabelled" currently is '
-                                        '"string", but might fit dtype "2-tuple"!')
-
-        self.assertError(validate(doc), 'Dtype of property "Coos_mislabelled" currently is '
-                                        '"string", but might fit dtype "3-tuple"!')
+        self.load_dtypes_validation(doc)
