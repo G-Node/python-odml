@@ -26,3 +26,12 @@ class TestValidationIntegration(unittest.TestCase):
         # Reset stdout
         sys.stdout = sys.__stdout__
 
+    def _get_captured_output(self):
+        out = [txt.strip() for txt in self.capture.getvalue().split('\n') if txt]
+
+        # Buffer reset
+        self.capture.seek(0)
+        self.capture.truncate()
+
+        return out
+
