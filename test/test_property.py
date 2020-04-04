@@ -859,6 +859,46 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             prop.val_cardinality = (5, 1)
 
+    def test_set_values_cardinality(self):
+        doc = Document()
+        sec = Section(name="sec", type="sec_type", parent=doc)
+
+        prop = Property(name="prop", val_cardinality=1, parent=sec)
+
+        # Test Property values cardinality min assignment
+        prop.set_values_cardinality(1)
+        self.assertEqual(prop.val_cardinality, (1, None))
+
+        # Test Property values cardinality keyword min assignment
+        prop.set_values_cardinality(min_val=2)
+        self.assertEqual(prop.val_cardinality, (2, None))
+
+        # Test Property values cardinality max assignment
+        prop.set_values_cardinality(None, 1)
+        self.assertEqual(prop.val_cardinality, (None, 1))
+
+        # Test Property values cardinality keyword max assignment
+        prop.set_values_cardinality(max_val=2)
+        self.assertEqual(prop.val_cardinality, (None, 2))
+
+        # Test Property values cardinality min max assignment
+        prop.set_values_cardinality(1, 2)
+        self.assertEqual(prop.val_cardinality, (1, 2))
+
+        # Test Property values cardinality keyword min max assignment
+        prop.set_values_cardinality(min_val=2, max_val=5)
+        self.assertEqual(prop.val_cardinality, (2, 5))
+
+        # Test Property values cardinality empty reset
+        prop.set_values_cardinality()
+        self.assertIsNone(prop.val_cardinality)
+
+        # Test Property values cardinality keyword empty reset
+        prop.set_values_cardinality(1)
+        self.assertIsNotNone(prop.val_cardinality)
+        prop.set_values_cardinality(min_val=None, max_val=None)
+        self.assertIsNone(prop.val_cardinality)
+
 
 if __name__ == "__main__":
     print("TestProperty")
