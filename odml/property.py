@@ -548,6 +548,7 @@ class BaseProperty(base.BaseObject):
                           the maximum or an integer 2-tuple of the format '(min, max)'.
         """
         invalid_input = False
+        exc_msg = "Can only assign positive single int or int-tuples of the format '(min, max)'"
 
         # Empty values reset the cardinality to None.
         if not new_value or new_value == (None, None):
@@ -576,6 +577,10 @@ class BaseProperty(base.BaseObject):
 
             else:
                 invalid_input = True
+
+            # Use helpful exception message in the following case:
+            if max_int and min_int and v_max < v_min:
+                exc_msg = "Minimum larger than maximum (min=%s, max=%s)" % (v_min, v_max)
         else:
             invalid_input = True
 
@@ -585,8 +590,7 @@ class BaseProperty(base.BaseObject):
             for err in valid.errors:
                 print("%s: %s" % (err.rank.capitalize(), err.msg))
         else:
-            msg = "Can only assign single int or int-tuples of the format '(min, max)'"
-            raise ValueError(msg)
+            raise ValueError(exc_msg)
 
     def set_values_cardinality(self, min_val=None, max_val=None):
         """
