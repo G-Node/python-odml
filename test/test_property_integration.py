@@ -131,3 +131,71 @@ class TestPropertyIntegration(unittest.TestCase):
         self.assertEqual(yprop.definition, p_def)
         self.assertEqual(yprop.dependency, p_dep)
         self.assertEqual(yprop.dependency_value, p_dep_val)
+
+    def test_cardinality(self):
+        """
+        Test saving and loading of property values cardinality variants to
+        and from all supported file formats.
+        """
+        doc = odml.Document()
+        sec = odml.Section(name="sec", type="sometype", parent=doc)
+
+        prop_empty = "prop_cardinality_empty"
+        prop_max = "prop_cardinality_max"
+        prop_max_card = (None, 10)
+        prop_min = "prop_cardinality_min"
+        prop_min_card = (2, None)
+        prop_full = "prop_full"
+        prop_full_card = (1, 5)
+
+        _ = odml.Property(name=prop_empty, parent=sec)
+        _ = odml.Property(name=prop_max, val_cardinality=prop_max_card, parent=sec)
+        _ = odml.Property(name=prop_min, val_cardinality=prop_min_card, parent=sec)
+        _ = odml.Property(name=prop_full, val_cardinality=prop_full_card, parent=sec)
+
+        # Test saving to and loading from an XML file
+        odml.save(doc, self.xml_file)
+        xml_doc = odml.load(self.xml_file)
+        xml_prop = xml_doc.sections["sec"].properties[prop_empty]
+        self.assertIsNone(xml_prop.val_cardinality)
+
+        xml_prop = xml_doc.sections["sec"].properties[prop_max]
+        self.assertEqual(xml_prop.val_cardinality, prop_max_card)
+
+        xml_prop = xml_doc.sections["sec"].properties[prop_min]
+        self.assertEqual(xml_prop.val_cardinality, prop_min_card)
+
+        xml_prop = xml_doc.sections["sec"].properties[prop_full]
+        self.assertEqual(xml_prop.val_cardinality, prop_full_card)
+
+        # Test saving to and loading from a JSON file
+        odml.save(doc, self.json_file, "JSON")
+        json_doc = odml.load(self.json_file, "JSON")
+
+        json_prop = json_doc.sections["sec"].properties[prop_empty]
+        self.assertIsNone(json_prop.val_cardinality)
+
+        json_prop = json_doc.sections["sec"].properties[prop_max]
+        self.assertEqual(json_prop.val_cardinality, prop_max_card)
+
+        json_prop = json_doc.sections["sec"].properties[prop_min]
+        self.assertEqual(json_prop.val_cardinality, prop_min_card)
+
+        json_prop = json_doc.sections["sec"].properties[prop_full]
+        self.assertEqual(json_prop.val_cardinality, prop_full_card)
+
+        # Test saving to and loading from a YAML file
+        odml.save(doc, self.yaml_file, "YAML")
+        yaml_doc = odml.load(self.yaml_file, "YAML")
+
+        yaml_prop = yaml_doc.sections["sec"].properties[prop_empty]
+        self.assertIsNone(yaml_prop.val_cardinality)
+
+        yaml_prop = yaml_doc.sections["sec"].properties[prop_max]
+        self.assertEqual(yaml_prop.val_cardinality, prop_max_card)
+
+        yaml_prop = yaml_doc.sections["sec"].properties[prop_min]
+        self.assertEqual(yaml_prop.val_cardinality, prop_min_card)
+
+        yaml_prop = yaml_doc.sections["sec"].properties[prop_full]
+        self.assertEqual(yaml_prop.val_cardinality, prop_full_card)
