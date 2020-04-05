@@ -287,6 +287,19 @@ class TestValidation(unittest.TestCase):
                                       '(39.12; 56; 67.18)'])
         self.assertError(validate(prop9), msg_base % ("Coos", "3-tuple"))
 
+    def load_section_validation(self, doc):
+        filter_func = lambda x: x.msg == filter_msg and x.obj.name == filter_name
+
+        # Check error for deliberate empty section type
+        filter_msg = "Missing required attribute 'type'"
+        filter_name = "sec_type_empty"
+        self.assertGreater(len(list(filter(filter_func, validate(doc).errors))), 0)
+
+        # Check warning for not specified section type
+        filter_msg = "Section type not specified"
+        filter_name = "sec_type_undefined"
+        self.assertGreater(len(list(filter(filter_func, validate(doc).errors))), 0)
+
     def test_load_section_xml(self):
         """
         Test if loading xml document raises validation errors for Sections with undefined type.
@@ -295,12 +308,7 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.xml")
         doc = odml.load(path)
 
-        assert len(list(filter(
-            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
-            validate(doc).errors))) > 0
-        assert len(list(filter(
-            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
-            validate(doc).errors))) > 0
+        self.load_section_validation(doc)
 
     def test_load_section_json(self):
         """
@@ -310,12 +318,7 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.json")
         doc = odml.load(path, "JSON")
 
-        assert len(list(filter(
-            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
-            validate(doc).errors))) > 0
-        assert len(list(filter(
-            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
-            validate(doc).errors))) > 0
+        self.load_section_validation(doc)
 
     def test_load_section_yaml(self):
         """
@@ -325,12 +328,7 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(self.dir_path, "resources", "validation_section.yaml")
         doc = odml.load(path, "YAML")
 
-        assert len(list(filter(
-            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_undefined",
-            validate(doc).errors))) > 0
-        assert len(list(filter(
-            lambda x: x.msg == "Section type undefined" and x.obj.name == "sec_type_empty",
-            validate(doc).errors))) > 0
+        self.load_section_validation(doc)
 
     def load_dtypes_validation(self, doc):
         msg_base = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!'
