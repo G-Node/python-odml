@@ -654,14 +654,19 @@ class Sectionable(BaseObject):
         """
         return self._repository
 
-    def create_section(self, name, type="undefined", oid=None):
+    def create_section(self, name, type="n.s.", oid=None):
         """
         Creates a new subsection that is a child of this section.
 
-        :param name: The name of the section to create.
-        :param type: The type of the section.
+        :param name: The name of the section to create. If the name is not
+                 provided, the uuid of the Property is assigned as its name.
+                 Section name is a required attribute.
+        :param type: String providing a grouping description for similar Sections.
+                     Section type is a required attribute and will be set to the string
+                     'n.s.' by default.
         :param oid: object id, UUID string as specified in RFC 4122. If no id
                     is provided, an id will be generated and assigned.
+
         :return: The new section.
         """
         from odml.section import BaseSection

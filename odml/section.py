@@ -27,7 +27,10 @@ class BaseSection(base.Sectionable):
 
     :param name: string providing the name of the Section. If the name is not
                  provided, the uuid of the Property is assigned as its name.
+                 Section name is a required attribute.
     :param type: String providing a grouping description for similar Sections.
+                 Section type is a required attribute and will be set to the string
+                 'n.s.' by default.
     :param parent: the parent object of the new Section. If the object is not
                    an odml.Section or an odml.Document, a ValueError is raised.
     :param definition: String describing the definition of the Section.
@@ -49,7 +52,7 @@ class BaseSection(base.Sectionable):
 
     _format = fmt.Section
 
-    def __init__(self, name=None, type=None, parent=None,
+    def __init__(self, name=None, type="n.s.", parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, oid=None):
 
