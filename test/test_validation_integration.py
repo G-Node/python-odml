@@ -17,14 +17,16 @@ class TestValidationIntegration(unittest.TestCase):
 
     def setUp(self):
         # Redirect stdout to test messages
+        self.stdout_orig = sys.stdout
         self.capture = StringIO()
         sys.stdout = self.capture
 
         self.msg_base = "Property values cardinality violated"
 
     def tearDown(self):
-        # Reset stdout
-        sys.stdout = sys.__stdout__
+        # Reset stdout; resetting using 'sys.__stdout__' fails on windows
+        sys.stdout = self.stdout_orig
+        self.capture.close()
 
     def _get_captured_output(self):
         out = [txt.strip() for txt in self.capture.getvalue().split('\n') if txt]
