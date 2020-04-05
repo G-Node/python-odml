@@ -84,12 +84,6 @@ class TestValidation(unittest.TestCase):
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
 
-    def test_section_type(self):
-        doc = samplefile.parse("""s1[undefined]""")
-        res = validate(doc)
-        # the section type is undefined (also in the mapping)
-        self.assertError(res, "Section type undefined")
-
     def test_section_in_terminology(self):
         doc = samplefile.parse("""s1[T1]""")
         res = validate(doc)
@@ -202,17 +196,12 @@ class TestValidation(unittest.TestCase):
     def test_standalone_section(self):
         """
         Test if standalone section does not return errors if required attributes are correct.
-        If type is undefined, check error message.
+        If type is not specified, check error message.
         """
 
         sec_one = odml.Section("sec1")
-
         res = validate(sec_one)
-        self.assertError(res, "Section type undefined")
-
-        doc = samplefile.parse("""s1[undefined]""")
-        res = validate(doc)
-        self.assertError(res, "Section type undefined")
+        self.assertError(res, "Section type not specified")
 
     def test_standalone_property(self):
         """
@@ -229,14 +218,15 @@ class TestValidation(unittest.TestCase):
         """
         Test validation errors printed to stdout on section init.
         """
-        val_errs = StringIO()
+        check_msg = "Missing required attribute 'type'"
 
+        val_errs = StringIO()
         old_stdout = sys.stdout
         sys.stdout = val_errs
         odml.Section(name="sec", type=None)
         sys.stdout = old_stdout
 
-        self.assertIn("Section type undefined", val_errs.getvalue())
+        self.assertIn(check_msg, val_errs.getvalue())
 
     def test_prop_string_values(self):
         """
@@ -246,7 +236,7 @@ class TestValidation(unittest.TestCase):
 
         prop0 = odml.Property(name='words', dtype="string",
                               values=['-13', '101', '-11', 'hello'])
-        assert len(validate(prop0).errors) == 0
+        self.assertEquals(len(validate(prop0).errors), 0)
 
         msg_base = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!'
 
