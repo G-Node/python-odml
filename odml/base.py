@@ -654,18 +654,31 @@ class Sectionable(BaseObject):
         """
         return self._repository
 
-    def create_section(self, name, type="undefined", oid=None):
+    def create_section(self, name=None, type="n.s.", oid=None, definition=None,
+                       reference=None, repository=None, link=None, include=None):
         """
         Creates a new subsection that is a child of this section.
 
-        :param name: The name of the section to create.
-        :param type: The type of the section.
+        :param name: The name of the section to create. If the name is not
+                     provided, the object id of the Section is assigned as its name.
+                     Section name is a required attribute.
+        :param type: String providing a grouping description for similar Sections.
+                     Section type is a required attribute and will be set to the string
+                     'n.s.' by default.
         :param oid: object id, UUID string as specified in RFC 4122. If no id
                     is provided, an id will be generated and assigned.
+        :param definition: String defining this Section.
+        :param reference: A reference (e.g. an URL) to an external definition
+                          of the Section.
+        :param repository: URL to a repository in which the Section is defined.
+        :param link: Specifies a soft link, i.e. a path within the document.
+        :param include: Specifies an arbitrary URL. Can only be used if *link* is not set.
+
         :return: The new section.
         """
         from odml.section import BaseSection
-        sec = BaseSection(name=name, type=type, oid=oid)
+        sec = BaseSection(name=name, type=type, definition=definition, reference=reference,
+                          repository=repository, link=link, include=include, oid=oid)
         sec.parent = self
 
         return sec

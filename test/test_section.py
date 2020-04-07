@@ -906,7 +906,7 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(root.sections), 2)
         self.assertEqual(subsec.parent, root)
         self.assertEqual(root.sections[name], subsec)
-        self.assertEqual(root.sections[name].type, "undefined")
+        self.assertEqual(root.sections[name].type, "n.s.")
 
         name = "subsubsec"
         subsec = root.sections[0].create_section(name)

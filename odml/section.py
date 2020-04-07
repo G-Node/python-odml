@@ -26,14 +26,17 @@ class BaseSection(base.Sectionable):
     An odML Section.
 
     :param name: string providing the name of the Section. If the name is not
-                 provided, the uuid of the Property is assigned as its name.
+                 provided, the object id of the Section is assigned as its name.
+                 Section name is a required attribute.
     :param type: String providing a grouping description for similar Sections.
+                 Section type is a required attribute and will be set to the string
+                 'n.s.' by default.
     :param parent: the parent object of the new Section. If the object is not
                    an odml.Section or an odml.Document, a ValueError is raised.
-    :param definition: String describing the definition of the Section.
+    :param definition: String defining this Section.
     :param reference: A reference (e.g. an URL) to an external definition
                       of the Section.
-    :param repository: URL to a repository where this Section can be found.
+    :param repository: URL to a repository in which the Section is defined.
     :param link: Specifies a soft link, i.e. a path within the document.
     :param include: Specifies an arbitrary URL. Can only be used if *link* is not set.
     :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
@@ -49,7 +52,7 @@ class BaseSection(base.Sectionable):
 
     _format = fmt.Section
 
-    def __init__(self, name=None, type=None, parent=None,
+    def __init__(self, name=None, type="n.s.", parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, oid=None):
 
@@ -84,7 +87,9 @@ class BaseSection(base.Sectionable):
 
         for err in validation.Validation(self).errors:
             if err.is_error:
-                msg = "\n\t- %s %s: %s" % (err.obj, err.rank, err.msg)
+                use_name = err.obj.name if err.obj.id != err.obj.name else None
+                sec_formatted = "Section[id=%s|%s/%s]" % (err.obj.id, use_name, err.obj.type)
+                msg = "%s\n    Validation[%s]: %s" % (sec_formatted, err.rank, err.msg)
                 print(msg)
 
     def __repr__(self):

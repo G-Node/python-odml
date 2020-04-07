@@ -133,13 +133,12 @@ def object_required_attributes(obj):
     args = obj.format().arguments
     for arg in args:
         if arg[1] == 1:
+            msg = "Missing required attribute '%s'" % (arg[0])
             if not hasattr(obj, arg[0]):
-                msg = "Missing attribute %s for %s" % (arg[0], obj.format().name.capitalize())
                 yield ValidationError(obj, msg, LABEL_ERROR)
                 continue
             obj_arg = getattr(obj, arg[0])
             if not obj_arg and not isinstance(obj_arg, bool):
-                msg = "%s %s undefined" % (obj.format().name.capitalize(), arg[0])
                 yield ValidationError(obj, msg, LABEL_ERROR)
 
 
@@ -150,12 +149,12 @@ Validation.register_handler('property', object_required_attributes)
 
 def section_type_must_be_defined(sec):
     """
-    Tests that no Section has an undefined type.
+    Tests that no Section has an unspecified type and adds a warning otherwise.
 
     :param sec: odml.Section.
     """
-    if sec.type is None or sec.type == '' or sec.type == 'undefined':
-        yield ValidationError(sec, 'Section type undefined', LABEL_WARNING)
+    if sec.type and sec.type == "n.s.":
+        yield ValidationError(sec, "Section type not specified", LABEL_WARNING)
 
 
 Validation.register_handler('section', section_type_must_be_defined)
