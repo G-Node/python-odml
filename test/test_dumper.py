@@ -1,21 +1,18 @@
 import unittest
 import sys
-import odml
-
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
+import odml
+
+from odml.tools.dumper import dump_doc
+
 
 class TestTypes(unittest.TestCase):
 
     def setUp(self):
-        # Capture the output printed by the functions to STDOUT, and use it for
-        # testing purposes.
-        self.captured_stdout = StringIO()
-        sys.stdout = self.captured_stdout
-
         s_type = "type"
 
         self.doc = odml.Document(author='Rave', version='1.0')
@@ -38,10 +35,19 @@ class TestTypes(unittest.TestCase):
         self.doc.append(s1)
 
     def test_dump_doc(self):
+        # Capture the output printed by the functions to STDOUT, and use it for
+        # testing purposes. It needs to be reset after the capture.
+        captured_stdout = StringIO()
+        sys.stdout = captured_stdout
+
         # This test dumps the whole document and checks it word by word.
-        # If possible, maybe some better way of testing this ?
-        odml.tools.dumper.dump_doc(self.doc)
-        output = [x.strip() for x in self.captured_stdout.getvalue().split('\n') if x]
+        # If possible, maybe some better way of testing this?
+        dump_doc(self.doc)
+        output = [x.strip() for x in captured_stdout.getvalue().split('\n') if x]
+
+        # Reset stdout
+        sys.stdout = sys.__stdout__
+
         expected_output = []
         expected_output.append("*Cell (type='type')")
         expected_output.append(":Type (values=Rechargeable, dtype='string')")
@@ -50,10 +56,7 @@ class TestTypes(unittest.TestCase):
         expected_output.append("*Electrode (type='type')")
         expected_output.append(":Material (values=Nickel, dtype='string')")
         expected_output.append(":Models (values=[AA,AAA], dtype='string')")
+
         self.assertEqual(len(output), len(expected_output))
         for i in range(len(output)):
             self.assertEqual(output[i], expected_output[i])
-
-        # Discard the document output from stdout stream
-        self.captured_stdout.seek(0)
-        self.captured_stdout.truncate(0)

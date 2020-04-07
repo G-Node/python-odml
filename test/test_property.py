@@ -794,6 +794,111 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(ex2['first'].sections), 1)
         self.assertEqual(len(ex2['first']['second'].properties), 1)
 
+    def test_values_cardinality(self):
+        doc = Document()
+        sec = Section(name="sec", type="type", parent=doc)
+
+        # -- Test set cardinality on Property init
+        # Test empty init
+        prop_card_none = Property(name="prop_cardinality_empty", parent=sec)
+        self.assertIsNone(prop_card_none.val_cardinality)
+
+        # Test single int max init
+        prop_card_max = Property(name="prop_cardinality_max", val_cardinality=10, parent=sec)
+        self.assertEqual(prop_card_max.val_cardinality, (None, 10))
+
+        # Test tuple init
+        prop_card_min = Property(name="prop_cardinality_min", val_cardinality=(2, None), parent=sec)
+        self.assertEqual(prop_card_min.val_cardinality, (2, None))
+
+        # -- Test Property cardinality re-assignment
+        prop = Property(name="prop", val_cardinality=(None, 10), parent=sec)
+        self.assertEqual(prop.val_cardinality, (None, 10))
+
+        # Test Property cardinality reset
+        for non_val in [None, "", [], ()]:
+            prop.val_cardinality = non_val
+            self.assertIsNone(prop.val_cardinality)
+            prop.val_cardinality = 1
+
+        # Test Property cardinality single int max assignment
+        prop.val_cardinality = 10
+        self.assertEqual(prop.val_cardinality, (None, 10))
+
+        # Test Property cardinality tuple max assignment
+        prop.val_cardinality = (None, 5)
+        self.assertEqual(prop.val_cardinality, (None, 5))
+
+        # Test Property cardinality tuple min assignment
+        prop.val_cardinality = (5, None)
+        self.assertEqual(prop.val_cardinality, (5, None))
+
+        # Test Property cardinality min/max assignment
+        prop.val_cardinality = (1, 5)
+        self.assertEqual(prop.val_cardinality, (1, 5))
+
+        # -- Test Property cardinality assignment failures
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = "a"
+
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = -1
+
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = (1, "b")
+
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = (1, 2, 3)
+
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = (-1, 1)
+
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = (1, -5)
+
+        with self.assertRaises(ValueError):
+            prop.val_cardinality = (5, 1)
+
+    def test_set_values_cardinality(self):
+        doc = Document()
+        sec = Section(name="sec", type="sec_type", parent=doc)
+
+        prop = Property(name="prop", val_cardinality=1, parent=sec)
+
+        # Test Property values cardinality min assignment
+        prop.set_values_cardinality(1)
+        self.assertEqual(prop.val_cardinality, (1, None))
+
+        # Test Property values cardinality keyword min assignment
+        prop.set_values_cardinality(min_val=2)
+        self.assertEqual(prop.val_cardinality, (2, None))
+
+        # Test Property values cardinality max assignment
+        prop.set_values_cardinality(None, 1)
+        self.assertEqual(prop.val_cardinality, (None, 1))
+
+        # Test Property values cardinality keyword max assignment
+        prop.set_values_cardinality(max_val=2)
+        self.assertEqual(prop.val_cardinality, (None, 2))
+
+        # Test Property values cardinality min max assignment
+        prop.set_values_cardinality(1, 2)
+        self.assertEqual(prop.val_cardinality, (1, 2))
+
+        # Test Property values cardinality keyword min max assignment
+        prop.set_values_cardinality(min_val=2, max_val=5)
+        self.assertEqual(prop.val_cardinality, (2, 5))
+
+        # Test Property values cardinality empty reset
+        prop.set_values_cardinality()
+        self.assertIsNone(prop.val_cardinality)
+
+        # Test Property values cardinality keyword empty reset
+        prop.set_values_cardinality(1)
+        self.assertIsNotNone(prop.val_cardinality)
+        prop.set_values_cardinality(min_val=None, max_val=None)
+        self.assertIsNone(prop.val_cardinality)
+
 
 if __name__ == "__main__":
     print("TestProperty")

@@ -82,6 +82,10 @@ class BaseProperty(base.BaseObject):
     :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
                an id will be generated and assigned. An id has to be unique
                within an odML Document.
+    :param val_cardinality: Value cardinality defines how many values are allowed for this Property.
+                            By default unlimited values can be set.
+                            A required number of values can be set by assigning a tuple of the
+                            format "(min, max)".
     :param value: Legacy code to the 'values' attribute. If 'values' is provided,
                   any data provided via 'value' will be ignored.
     """
@@ -91,7 +95,7 @@ class BaseProperty(base.BaseObject):
     def __init__(self, name=None, values=None, parent=None, unit=None,
                  uncertainty=None, reference=None, definition=None,
                  dependency=None, dependency_value=None, dtype=None,
-                 value_origin=None, oid=None, value=None):
+                 value_origin=None, oid=None, val_cardinality=None, value=None):
 
         try:
             if oid is not None:
@@ -115,6 +119,7 @@ class BaseProperty(base.BaseObject):
         self._definition = definition
         self._dependency = dependency
         self._dependency_value = dependency_value
+        self._val_cardinality = None
 
         self._dtype = None
         if dtypes.valid_type(dtype):
@@ -128,6 +133,10 @@ class BaseProperty(base.BaseObject):
             self.values = value
 
         self.parent = parent
+
+        # Cardinality should always be set after values have been added
+        # since it is always tested against values when it is set.
+        self.val_cardinality = val_cardinality
 
         for err in validation.Validation(self).errors:
             if err.is_error:
@@ -401,6 +410,11 @@ class BaseProperty(base.BaseObject):
                 raise ValueError(msg)
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
+        # Validate and inform user if the current values cardinality is violated
+        valid = validation.Validation(self)
+        for err in valid.errors:
+            print("%s: %s" % (err.rank.capitalize(), err.msg))
+
     @property
     def value_origin(self):
         """
@@ -506,6 +520,88 @@ class BaseProperty(base.BaseObject):
         if new_value == "":
             new_value = None
         self._dependency_value = new_value
+
+    @property
+    def val_cardinality(self):
+        """
+        The value cardinality of a Property. It defines how many values
+        are minimally required and how many values should be maximally
+        stored. Use 'values_set_cardinality' to set.
+        """
+        return self._val_cardinality
+
+    @val_cardinality.setter
+    def val_cardinality(self, new_value):
+        """
+        Sets the values cardinality of a Property.
+
+        The following cardinality cases are supported:
+        (n, n) - default, no restriction
+        (d, n) - minimally d entries, no maximum
+        (n, d) - maximally d entries, no minimum
+        (d, d) - minimally d entries, maximally d entries
+
+        Only positive integers are supported. 'None' is used to denote
+        no restrictions on a maximum or minimum.
+
+        :param new_value: Can be either 'None', a positive integer, which will set
+                          the maximum or an integer 2-tuple of the format '(min, max)'.
+        """
+        invalid_input = False
+        exc_msg = "Can only assign positive single int or int-tuples of the format '(min, max)'"
+
+        # Empty values reset the cardinality to None.
+        if not new_value or new_value == (None, None):
+            self._val_cardinality = None
+
+        # Providing a single integer sets the maximum value in a tuple.
+        elif isinstance(new_value, int) and new_value > 0:
+            self._val_cardinality = (None, new_value)
+
+        # Only integer 2-tuples of the format '(min, max)' are supported to set the cardinality
+        elif isinstance(new_value, tuple) and len(new_value) == 2:
+            v_min = new_value[0]
+            v_max = new_value[1]
+
+            min_int = isinstance(v_min, int) and v_min >= 0
+            max_int = isinstance(v_max, int) and v_max >= 0
+
+            if max_int and min_int and v_max > v_min:
+                self._val_cardinality = (v_min, v_max)
+
+            elif max_int and not v_min:
+                self._val_cardinality = (None, v_max)
+
+            elif min_int and not v_max:
+                self._val_cardinality = (v_min, None)
+
+            else:
+                invalid_input = True
+
+            # Use helpful exception message in the following case:
+            if max_int and min_int and v_max < v_min:
+                exc_msg = "Minimum larger than maximum (min=%s, max=%s)" % (v_min, v_max)
+        else:
+            invalid_input = True
+
+        if not invalid_input:
+            # Validate and inform user if the current values cardinality is violated
+            valid = validation.Validation(self)
+            for err in valid.errors:
+                print("%s: %s" % (err.rank.capitalize(), err.msg))
+        else:
+            raise ValueError(exc_msg)
+
+    def set_values_cardinality(self, min_val=None, max_val=None):
+        """
+        Sets the values cardinality of a Property.
+
+        :param min_val: Required minimal number of values elements. None denotes
+                        no restrictions on values elements minimum. Default is None.
+        :param max_val: Allowed maximal number of values elements. None denotes
+                        no restrictions on values elements maximum. Default is None.
+        """
+        self.val_cardinality = (min_val, max_val)
 
     def remove(self, value):
         """

@@ -117,7 +117,8 @@ class Property(Format):
         'uncertainty': 0,
         'reference': 0,
         'type': 0,
-        'value_origin': 0
+        'value_origin': 0,
+        'val_cardinality': 0
     }
     _map = {
         'dependencyvalue': 'dependency_value',
