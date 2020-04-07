@@ -660,17 +660,17 @@ class Sectionable(BaseObject):
         Creates a new subsection that is a child of this section.
 
         :param name: The name of the section to create. If the name is not
-                 provided, the uuid of the Property is assigned as its name.
-                 Section name is a required attribute.
+                     provided, the object id of the Section is assigned as its name.
+                     Section name is a required attribute.
         :param type: String providing a grouping description for similar Sections.
                      Section type is a required attribute and will be set to the string
                      'n.s.' by default.
         :param oid: object id, UUID string as specified in RFC 4122. If no id
                     is provided, an id will be generated and assigned.
-        :param definition: String describing the definition of the Section.
+        :param definition: String defining this Section.
         :param reference: A reference (e.g. an URL) to an external definition
                           of the Section.
-        :param repository: URL to a repository where this Section can be found.
+        :param repository: URL to a repository in which the Section is defined.
         :param link: Specifies a soft link, i.e. a path within the document.
         :param include: Specifies an arbitrary URL. Can only be used if *link* is not set.
 
