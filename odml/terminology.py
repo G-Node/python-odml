@@ -24,12 +24,13 @@ REPOSITORY = '/'.join([REPOSITORY_BASE, 'v1.1', 'terminologies.xml'])
 CACHE_AGE = datetime.timedelta(days=1)
 
 
-def cache_load(url):
+def cache_load(url, replace_file=False):
     """
     Loads the url and store it in a temporary cache directory
     subsequent requests for this url will use the cached version.
 
     :param url: URL from where to load an odML terminology file from.
+    :param replace_file: True, if file should be reloaded
     """
     filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
     cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
@@ -40,9 +41,12 @@ def cache_load(url):
             if not os.path.exists(cache_dir):
                 raise
     cache_file = os.path.join(cache_dir, filename)
+    if replace_file and os.path.exists(cache_file):
+        os.remove(cache_file)
     if not os.path.exists(cache_file) \
-       or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
-       datetime.datetime.now() - CACHE_AGE:
+            or replace_file \
+            or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
+            datetime.datetime.now() - CACHE_AGE:
         try:
             data = urllib2.urlopen(url).read()
             if sys.version_info.major > 2:
@@ -58,35 +62,13 @@ def cache_load(url):
     return open(cache_file)
 
 
-def refresh(url):
-    """
-    Deletes the current odML terminology file from cache and reloads
-    it from the given URL.
-
-    :param url: URL from where to load an odML terminology file from.
-    """
-    filename = '.'.join([md5(url.encode()).hexdigest(), os.path.basename(url)])
-    cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
-    cache_file = os.path.join(cache_dir, filename)
-    try:
-        urllib2.urlopen(url).read()
-    except Exception as exc:
-        print('Cache for file "%s" could not be refreshed. Failed loading "%s": %s'
-              % (filename, url, exc))
-        return
-
-    if os.path.exists(cache_file):
-        os.remove(cache_file)
-
-    cache_load(url)
-
-
 class Terminologies(dict):
     """
     Terminologies facilitates synchronous and deferred loading, caching,
     browsing and importing of full or partial odML terminologies.
     """
     loading = {}
+    reload_cache = False
 
     def load(self, url):
         """
@@ -115,7 +97,7 @@ class Terminologies(dict):
                  It will silently return None, if any exceptions
                  occur to enable loading of nested odML files.
         """
-        file_obj = cache_load(url)
+        file_obj = cache_load(url, self.reload_cache)
         if file_obj is None:
             print("did not successfully load '%s'" % url)
             return
@@ -140,10 +122,23 @@ class Terminologies(dict):
         self.loading[url] = threading.Thread(target=self._load, args=(url,))
         self.loading[url].start()
 
+    def refresh(self, url):
+        """
+        Deletes and reloads all cached odML XML files given in the
+        terminology file from a URL.
+
+        :param url: location of an odML XML file.
+        """
+        self.reload_cache = True
+        self.clear()
+        self.load(url)
+        self.reload_cache = False
+
 
 terminologies = Terminologies()
 load = terminologies.load
 deferred_load = terminologies.deferred_load
+refresh = terminologies.refresh
 
 
 if __name__ == "__main__":
