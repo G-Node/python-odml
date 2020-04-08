@@ -138,8 +138,6 @@ class TestSection(unittest.TestCase):
                     assert datetime.datetime.fromtimestamp(
                         os.path.getmtime(os.path.join(cache_dir, replaced_file))) > before
 
-
-
     def test_append(self):
         doc = Document()
         self.assertListEqual(doc.sections, [])
