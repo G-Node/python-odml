@@ -79,7 +79,7 @@ class FormatConverter(object):
         parser.add_argument("-r", "--recursive", action="store_true",
                             help="Enable converting files from subdirectories")
         args = parser.parse_args(args)
-        recursive = True if args.recursive else False
+        recursive = bool(args.recursive)
         cls.convert_dir(args.input_dir, args.output_dir, recursive, args.result_format)
 
     @classmethod
