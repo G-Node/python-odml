@@ -156,6 +156,7 @@ class XMLWriter:
             val = getattr(curr_el, fmt.map(k))
             if val is None:
                 continue
+
             if isinstance(fmt, ofmt.Property.__class__) and k == "value":
                 # Custom odML tuples require special handling for save loading from file.
                 if curr_el.dtype and curr_el.dtype.endswith("-tuple") and val:
@@ -274,10 +275,12 @@ class XMLReader(object):
         """
         if root.tag != 'odML':
             raise ParserException("Expecting <odML> tag but got <%s>.\n" % root.tag)
-        elif 'version' not in root.attrib:
-            raise ParserException("Could not find format version attribute "
-                                  "in <odML> tag.\n")
-        elif root.attrib['version'] != FORMAT_VERSION:
+
+        if 'version' not in root.attrib:
+            msg = "Could not find format version attribute in <odML> tag.\n"
+            raise ParserException(msg)
+
+        if root.attrib['version'] != FORMAT_VERSION:
             msg = ("Cannot parse odML document with format version '%s'. \n"
                    "\tUse the 'VersionConverter' from 'odml.tools.converters' "
                    "to import previous odML formats."
