@@ -195,7 +195,8 @@ class RDFWriter(object):
             # Ignore an "id" entry, it has already been used to create the node itself.
             if k == "id" or not curr_val:
                 continue
-            elif k == "repository":
+
+            if k == "repository":
                 self.save_repository_node(curr_node, curr_pred, curr_val)
             elif k == "sections":
                 # generating nodes for child sections
@@ -233,7 +234,8 @@ class RDFWriter(object):
             # Ignore an "id" entry, it has already been used to create the node itself.
             if k == "id" or not curr_val:
                 continue
-            elif k == "repository":
+
+            if k == "repository":
                 self.save_repository_node(curr_node, curr_pred, curr_val)
 
             # generating nodes for sections and properties
@@ -269,7 +271,8 @@ class RDFWriter(object):
             # is only accessed via its non deprecated property "values".
             if k == "id" or not curr_val:
                 continue
-            elif k == "value":
+
+            if k == "value":
                 # generating nodes for Property values
                 self.save_odml_values(curr_node, curr_pred, curr_val)
             else:
