@@ -41,8 +41,6 @@ def cache_load(url, replace_file=False):
             if not os.path.exists(cache_dir):
                 raise
     cache_file = os.path.join(cache_dir, filename)
-    if replace_file and os.path.exists(cache_file):
-        os.remove(cache_file)
     if not os.path.exists(cache_file) \
             or replace_file \
             or datetime.datetime.fromtimestamp(os.path.getmtime(cache_file)) < \
