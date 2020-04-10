@@ -517,13 +517,14 @@ class XMLReader(object):
 
 
 if __name__ == '__main__':
-    from optparse import OptionParser
+    import argparse
     import odml.tools.dumper as dumper
 
-    parser = OptionParser()
-    (options, args) = parser.parse_args()
+    args = sys.argv[1:]
 
-    if len(args) < 1:
-        parser.print_help()
-    else:
-        dumper.dump_doc(load(args[0]))
+    desc = "Print content of an odml xml file to the stdout"
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument("odml_file", help="Path to odml xml file")
+    args = parser.parse_args(args)
+
+    dumper.dump_doc(load(args.odml_file))
