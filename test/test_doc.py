@@ -1,6 +1,9 @@
 import datetime
 import os
 import unittest
+import tempfile
+import odml.terminology
+from hashlib import md5
 try:
     from urllib.request import pathname2url
 except ImportError:
@@ -108,6 +111,32 @@ class TestSection(unittest.TestCase):
 
         doc.repository = None
         self.assertIsNone(doc.get_terminology_equivalent())
+
+    def test_terminology_refresh(self):
+
+        cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
+        url = "https://terminologies.g-node.org/v1.1/terminologies.xml"
+        term_doc = odml.terminology.load(url)
+
+        terms = []
+        for sec in term_doc.sections:
+            terms += ['.'.join([md5(sec.include.encode()).hexdigest(), os.path.basename(sec.include)])]
+
+        before = datetime.datetime.now()
+
+        for loaded_file in os.listdir(cache_dir):
+            for term in terms:
+                if term in loaded_file:
+                    assert datetime.datetime.fromtimestamp(
+                        os.path.getmtime(os.path.join(cache_dir, loaded_file))) < before
+
+        odml.terminology.refresh(url)
+
+        for replaced_file in os.listdir(cache_dir):
+            for term in terms:
+                if term in replaced_file:
+                    assert datetime.datetime.fromtimestamp(
+                        os.path.getmtime(os.path.join(cache_dir, replaced_file))) > before
 
     def test_append(self):
         doc = Document()
