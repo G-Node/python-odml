@@ -16,7 +16,12 @@ class TestUtil(unittest.TestCase):
         self.assertIsNone(format_cardinality({}))
         self.assertIsNone(format_cardinality(""))
         self.assertIsNone(format_cardinality(()))
+
+        # Test empty tuple edge cases
         self.assertIsNone(format_cardinality((None, None)))
+        self.assertIsNone(format_cardinality((0, 0)))
+        self.assertIsNone(format_cardinality((None, 0)))
+        self.assertIsNone(format_cardinality((0, None)))
 
         # Test single int max set
         self.assertEqual(format_cardinality(10), (None, 10))

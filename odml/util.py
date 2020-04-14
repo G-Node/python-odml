@@ -27,7 +27,11 @@ def format_cardinality(in_val):
     exc_msg = "Can only assign positive single int or int-tuples of the format '(min, max)'"
 
     # Empty values reset the cardinality to None.
-    if not in_val or in_val == (None, None):
+    if not in_val:
+        return None
+
+    # Catch tuple edge cases (0, 0); (None, None); (0, None); (None, 0)
+    if isinstance(in_val, tuple) and len(in_val) > 1 and not in_val[0] and not in_val[1]:
         return None
 
     # Providing a single integer sets the maximum value in a tuple.
