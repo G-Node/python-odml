@@ -414,9 +414,7 @@ class BaseProperty(base.BaseObject):
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
         # Validate and inform user if the current values cardinality is violated
-        valid = validation.Validation(self)
-        for err in valid.errors:
-            print("%s: %s" % (err.rank.capitalize(), err.msg))
+        self._values_cardinality_validation()
 
     @property
     def value_origin(self):
@@ -553,6 +551,13 @@ class BaseProperty(base.BaseObject):
         self._val_cardinality = format_cardinality(new_value)
 
         # Validate and inform user if the current values cardinality is violated
+        self._values_cardinality_validation()
+
+    def _values_cardinality_validation(self):
+        """
+        Runs a validation to check whether the values cardinality
+        is respected and prints a warning message otherwise.
+        """
         valid = validation.Validation(self)
         for err in valid.errors:
             print("%s: %s" % (err.rank.capitalize(), err.msg))
