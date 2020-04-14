@@ -34,6 +34,10 @@ class TestUtil(unittest.TestCase):
         set_val = (2, 3)
         self.assertEqual(format_cardinality(set_val), set_val)
 
+        # Test exact value tuple set
+        set_val = (5, 5)
+        self.assertEqual(format_cardinality(set_val), set_val)
+
         # Test set failures
         with self.assertRaises(ValueError):
             format_cardinality("a")

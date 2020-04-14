@@ -46,7 +46,7 @@ def format_cardinality(in_val):
         min_int = isinstance(v_min, int) and v_min >= 0
         max_int = isinstance(v_max, int) and v_max >= 0
 
-        if max_int and min_int and v_max > v_min:
+        if max_int and min_int and v_max >= v_min:
             return v_min, v_max
 
         if max_int and not v_min:
