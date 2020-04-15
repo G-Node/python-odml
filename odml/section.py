@@ -18,6 +18,7 @@ from .doc import BaseDocument
 from .property import BaseProperty
 # it MUST however not be used to create any Property objects
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from .util import format_cardinality
 
 
 @allow_inherit_docstring
@@ -85,11 +86,15 @@ class BaseSection(base.Sectionable):
         self._repository = repository
         self._link = link
         self._include = include
-        self._prop_cardinality = prop_cardinality
+        self._prop_cardinality = None
 
         # this may fire a change event, so have the section setup then
         self.type = type
         self.parent = parent
+
+        # This might lead to a validation warning, since properties are set
+        # at a later point in time.
+        self.prop_cardinality = prop_cardinality
 
         for err in validation.Validation(self).errors:
             if err.is_error:
@@ -354,6 +359,45 @@ class BaseSection(base.Sectionable):
     @base.Sectionable.repository.setter
     def repository(self, url):
         base.Sectionable.repository.fset(self, url)
+
+    @property
+    def prop_cardinality(self):
+        """
+        The Property cardinality of a Section. It defines how many Properties
+        are minimally required and how many Properties should be maximally
+        stored. Use the 'set_properties_cardinality' method to set.
+        """
+        return self._prop_cardinality
+
+    @prop_cardinality.setter
+    def prop_cardinality(self, new_value):
+        """
+        Sets the Properties cardinality of a Section.
+
+        The following cardinality cases are supported:
+        (n, n) - default, no restriction
+        (d, n) - minimally d entries, no maximum
+        (n, d) - maximally d entries, no minimum
+        (d, d) - minimally d entries, maximally d entries
+
+        Only positive integers are supported. 'None' is used to denote
+        no restrictions on a maximum or minimum.
+
+        :param new_value: Can be either 'None', a positive integer, which will set
+                          the maximum or an integer 2-tuple of the format '(min, max)'.
+        """
+        self._prop_cardinality = format_cardinality(new_value)
+
+    def set_properties_cardinality(self, min_val=None, max_val=None):
+        """
+        Sets the Properties cardinality of a Section.
+
+        :param min_val: Required minimal number of values elements. None denotes
+                        no restrictions on values elements minimum. Default is None.
+        :param max_val: Allowed maximal number of values elements. None denotes
+                        no restrictions on values elements maximum. Default is None.
+        """
+        self.prop_cardinality = (min_val, max_val)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
