@@ -388,6 +388,9 @@ class BaseSection(base.Sectionable):
         """
         self._prop_cardinality = format_cardinality(new_value)
 
+        # Validate and inform user if the current cardinality is violated
+        self._properties_cardinality_validation()
+
     def set_properties_cardinality(self, min_val=None, max_val=None):
         """
         Sets the Properties cardinality of a Section.
@@ -398,6 +401,17 @@ class BaseSection(base.Sectionable):
                         no restrictions on values elements maximum. Default is None.
         """
         self.prop_cardinality = (min_val, max_val)
+
+    def _properties_cardinality_validation(self):
+        """
+        Runs a validation to check whether the properties cardinality
+        is respected and prints a warning message otherwise.
+        """
+        valid = validation.Validation(self)
+        # Make sure to display only warnings of the current section
+        res = [curr for curr in valid.errors if self.id == curr.obj.id]
+        for err in res:
+            print("%s: %s" % (err.rank.capitalize(), err.msg))
 
     @inherit_docstring
     def get_terminology_equivalent(self):
