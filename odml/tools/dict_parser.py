@@ -114,8 +114,11 @@ class DictWriter:
                         section_dict[attr] = sections
                     else:
                         tag = getattr(section, attr)
-
-                        if tag:
+                        # Tuples have to be serialized as lists to avoid
+                        # nasty python code annotations when writing to yaml.
+                        if tag and isinstance(tag, tuple):
+                            section_dict[i] = list(tag)
+                        elif tag:
                             # Always use the arguments key attribute name when saving
                             section_dict[i] = tag
 
@@ -143,6 +146,8 @@ class DictWriter:
 
                 if hasattr(prop, attr):
                     tag = getattr(prop, attr)
+                    # Tuples have to be serialized as lists to avoid
+                    # nasty python code annotations when writing to yaml.
                     if isinstance(tag, tuple):
                         prop_dict[attr] = list(tag)
                     elif (tag == []) or tag:  # Even if 'values' is empty, allow '[]'
@@ -266,8 +271,14 @@ class DictReader:
                 elif attr == 'sections':
                     children_secs = self.parse_sections(section['sections'])
                 elif attr:
+                    # Tuples had to be serialized as lists to support the yaml format.
+                    # Now convert cardinality lists back to tuples.
+                    content = section[attr]
+                    if attr.endswith("_cardinality"):
+                        content = parse_cardinality(content)
+
                     # Make sure to always use the correct odml format attribute name
-                    sec_attrs[odmlfmt.Section.map(attr)] = section[attr]
+                    sec_attrs[odmlfmt.Section.map(attr)] = content
 
             sec = odmlfmt.Section.create(**sec_attrs)
             for prop in sec_props:
@@ -297,6 +308,8 @@ class DictReader:
                 attr = self.is_valid_attribute(i, odmlfmt.Property)
                 if attr:
                     content = _property[attr]
+                    # Tuples had to be serialized as lists to support the yaml format.
+                    # Now convert cardinality lists back to tuples.
                     if attr.endswith("_cardinality"):
                         content = parse_cardinality(content)
 
