@@ -978,6 +978,94 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(ex3['first'].sections), 1)
         self.assertEqual(len(ex3['first']['third']), 0)
 
+    def _test_cardinality_re_assignment(self, obj, obj_attribute):
+        """
+        Tests the basic set of both Section properties and sub-sections cardinality.
+
+        :param obj: odml Section
+        :param obj_attribute: string with the cardinality attribute that is supposed to be tested.
+                              Should be either 'prop_cardinality' or 'sec_cardinality'.
+        """
+        oat = obj_attribute
+
+        # Test Section prop/sec cardinality reset
+        for non_val in [None, "", [], (), {}]:
+            setattr(obj, oat, non_val)
+            self.assertIsNone(getattr(obj, oat))
+            setattr(obj, oat, 1)
+
+        # Test Section prop/sec cardinality single int max assignment
+        setattr(obj, oat, 10)
+        self.assertEqual(getattr(obj, oat), (None, 10))
+
+        # Test Section prop/sec cardinality tuple max assignment
+        setattr(obj, oat, (None, 5))
+        self.assertEqual(getattr(obj, oat), (None, 5))
+
+        # Test Section prop/sec cardinality tuple min assignment
+        setattr(obj, oat, (5, None))
+        self.assertEqual(getattr(obj, oat), (5, None))
+
+        # Test Section prop/sec cardinality min/max assignment
+        setattr(obj, oat, (1, 5))
+        self.assertEqual(getattr(obj, oat), (1, 5))
+
+        # -- Test Section prop/sec cardinality assignment failures
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, "a")
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, -1)
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, (1, "b"))
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, (1, 2, 3))
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, [1, 2, 3])
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, {1: 2, 3: 4})
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, (-1, 1))
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, (1, -5))
+
+        with self.assertRaises(ValueError):
+            setattr(obj, oat, (5, 1))
+
+    def test_properties_cardinality(self):
+        """
+        Tests the basic assignment rules for Section Properties cardinality
+        on init and re-assignment but does not test properties assignment or
+        the actual cardinality validation.
+        """
+        doc = Document()
+
+        # -- Test set cardinality on Section init
+        # Test empty init
+        sec_prop_card_none = Section(name="sec_prop_card_none", type="test", parent=doc)
+        self.assertIsNone(sec_prop_card_none.prop_cardinality)
+
+        # Test single int max init
+        sec_card_max = Section(name="prop_cardinality_max", prop_cardinality=10, parent=doc)
+        self.assertEqual(sec_card_max.prop_cardinality, (None, 10))
+
+        # Test tuple init
+        sec_card_min = Section(name="prop_cardinality_min", prop_cardinality=(2, None), parent=doc)
+        self.assertEqual(sec_card_min.prop_cardinality, (2, None))
+
+        # -- Test Section properties cardinality re-assignment
+        sec = Section(name="prop", prop_cardinality=(None, 10), parent=doc)
+        self.assertEqual(sec.prop_cardinality, (None, 10))
+
+        # Use general method to reduce redundancy
+        self._test_cardinality_re_assignment(sec, 'prop_cardinality')
+
     def test_link(self):
         pass
 
