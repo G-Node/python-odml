@@ -191,6 +191,72 @@ class TestSectionIntegration(unittest.TestCase):
         self.assertEqual(len(ysec_lvl_2.sections), 4)
         self.assertEqual(len(ysec_lvl_2.properties), 4)
 
+    def _test_cardinality_load(self, obj_attribute, doc, card_dict,
+                               sec_empty, sec_max, sec_min, sec_full):
+        """
+        Tests the basic set of both Section properties and sub-sections cardinality.
+
+        :param obj_attribute: string with the cardinality attribute that is supposed to be tested.
+                              Should be either 'prop_cardinality' or 'sec_cardinality'.
+        :param doc: loaded odml Document to be tested.
+        :param card_dict: dictionary containing cardinality conditions mapped to the values that
+                          should have been restored.
+        """
+        oat = obj_attribute
+
+        sec = doc.sections[sec_empty]
+        self.assertIsNone(getattr(sec, oat))
+
+        sec = doc.sections[sec_max]
+        self.assertEqual(getattr(sec, oat), card_dict[sec_max])
+
+        sec = doc.sections[sec_min]
+        self.assertEqual(getattr(sec, oat), card_dict[sec_min])
+
+        sec = doc.sections[sec_full]
+        self.assertEqual(getattr(sec, oat), card_dict[sec_full])
+
+    def test_prop_cardinality(self):
+        """
+        Test saving and loading of Section properties cardinality variants to
+        and from all supported file formats.
+        """
+        doc = odml.Document()
+        sec_empty = "card_empty"
+        sec_max = "card_max"
+        sec_min = "card_min"
+        sec_full = "card_full"
+        card_dict = {
+            sec_empty: None,
+            sec_max: (None, 10),
+            sec_min: (2, None),
+            sec_full: (1, 5)
+        }
+
+        _ = odml.Section(name=sec_empty, type="test", parent=doc)
+        _ = odml.Section(name=sec_max, prop_cardinality=card_dict[sec_max], type="test", parent=doc)
+        _ = odml.Section(name=sec_min, prop_cardinality=card_dict[sec_min], type="test", parent=doc)
+        _ = odml.Section(name=sec_full, prop_cardinality=card_dict[sec_full],
+                         type="test", parent=doc)
+
+        # Test saving to and loading from an XML file
+        odml.save(doc, self.xml_file)
+        xml_doc = odml.load(self.xml_file)
+        self._test_cardinality_load("prop_cardinality", xml_doc, card_dict,
+                                    sec_empty, sec_max, sec_min, sec_full)
+
+        # Test saving to and loading from a JSON file
+        odml.save(doc, self.json_file, "JSON")
+        json_doc = odml.load(self.json_file, "JSON")
+        self._test_cardinality_load("prop_cardinality", json_doc, card_dict,
+                                    sec_empty, sec_max, sec_min, sec_full)
+
+        # Test saving to and loading from a YAML file
+        odml.save(doc, self.yaml_file, "YAML")
+        yaml_doc = odml.load(self.yaml_file, "YAML")
+        self._test_cardinality_load("prop_cardinality", yaml_doc, card_dict,
+                                    sec_empty, sec_max, sec_min, sec_full)
+
     def test_link(self):
         pass
 
