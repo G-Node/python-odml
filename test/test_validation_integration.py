@@ -28,6 +28,10 @@ class TestValidationIntegration(unittest.TestCase):
         sys.stdout = self.stdout_orig
         self.capture.close()
 
+    def _clear_output(self):
+        self.capture.seek(0)
+        self.capture.truncate()
+
     def _get_captured_output(self):
         out = [txt.strip() for txt in self.capture.getvalue().split('\n') if txt]
 
@@ -41,6 +45,9 @@ class TestValidationIntegration(unittest.TestCase):
         # -- Test assignment validation warnings
         doc = odml.Document()
         sec = odml.Section(name="sec", type="sec_type", parent=doc)
+
+        # Making sure only the required warnings are tested
+        self._clear_output()
 
         # -- Test cardinality validation warnings on Property init
         # Test warning when setting invalid minimum

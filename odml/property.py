@@ -9,6 +9,7 @@ from . import dtypes
 from . import validation
 from . import format as frmt
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
+from .util import format_cardinality
 
 
 def odml_tuple_import(t_count, new_value):
@@ -413,9 +414,7 @@ class BaseProperty(base.BaseObject):
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
         # Validate and inform user if the current values cardinality is violated
-        valid = validation.Validation(self)
-        for err in valid.errors:
-            print("%s: %s" % (err.rank.capitalize(), err.msg))
+        self._values_cardinality_validation()
 
     @property
     def value_origin(self):
@@ -528,7 +527,7 @@ class BaseProperty(base.BaseObject):
         """
         The value cardinality of a Property. It defines how many values
         are minimally required and how many values should be maximally
-        stored. Use 'values_set_cardinality' to set.
+        stored. Use the 'set_values_cardinality' method to set.
         """
         return self._val_cardinality
 
@@ -549,50 +548,22 @@ class BaseProperty(base.BaseObject):
         :param new_value: Can be either 'None', a positive integer, which will set
                           the maximum or an integer 2-tuple of the format '(min, max)'.
         """
-        invalid_input = False
-        exc_msg = "Can only assign positive single int or int-tuples of the format '(min, max)'"
+        self._val_cardinality = format_cardinality(new_value)
 
-        # Empty values reset the cardinality to None.
-        if not new_value or new_value == (None, None):
-            self._val_cardinality = None
+        # Validate and inform user if the current values cardinality is violated
+        self._values_cardinality_validation()
 
-        # Providing a single integer sets the maximum value in a tuple.
-        elif isinstance(new_value, int) and new_value > 0:
-            self._val_cardinality = (None, new_value)
+    def _values_cardinality_validation(self):
+        """
+        Runs a validation to check whether the values cardinality
+        is respected and prints a warning message otherwise.
+        """
+        valid = validation.Validation(self)
 
-        # Only integer 2-tuples of the format '(min, max)' are supported to set the cardinality
-        elif isinstance(new_value, tuple) and len(new_value) == 2:
-            v_min = new_value[0]
-            v_max = new_value[1]
-
-            min_int = isinstance(v_min, int) and v_min >= 0
-            max_int = isinstance(v_max, int) and v_max >= 0
-
-            if max_int and min_int and v_max > v_min:
-                self._val_cardinality = (v_min, v_max)
-
-            elif max_int and not v_min:
-                self._val_cardinality = (None, v_max)
-
-            elif min_int and not v_max:
-                self._val_cardinality = (v_min, None)
-
-            else:
-                invalid_input = True
-
-            # Use helpful exception message in the following case:
-            if max_int and min_int and v_max < v_min:
-                exc_msg = "Minimum larger than maximum (min=%s, max=%s)" % (v_min, v_max)
-        else:
-            invalid_input = True
-
-        if not invalid_input:
-            # Validate and inform user if the current values cardinality is violated
-            valid = validation.Validation(self)
-            for err in valid.errors:
-                print("%s: %s" % (err.rank.capitalize(), err.msg))
-        else:
-            raise ValueError(exc_msg)
+        # Make sure to display only warnings of the current property
+        res = [curr for curr in valid.errors if self.id == curr.obj.id]
+        for err in res:
+            print("%s: %s" % (err.rank.capitalize(), err.msg))
 
     def set_values_cardinality(self, min_val=None, max_val=None):
         """
