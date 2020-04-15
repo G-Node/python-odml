@@ -1066,6 +1066,59 @@ class TestSection(unittest.TestCase):
         # Use general method to reduce redundancy
         self._test_cardinality_re_assignment(sec, 'prop_cardinality')
 
+    def _test_set_cardinality_method(self, obj, obj_attribute, set_cardinality_method):
+        """
+        Tests the basic set convenience method of both Section properties and
+        sub-sections cardinality.
+
+        :param obj: odml Section
+        :param obj_attribute: string with the cardinality attribute that is supposed to be tested.
+                              Should be either 'prop_cardinality' or 'sec_cardinality'.
+        :param set_cardinality_method: The convenience method used to set the cardinality.
+        """
+        oba = obj_attribute
+
+        # Test Section prop/sec cardinality min assignment
+        set_cardinality_method(1)
+        self.assertEqual(getattr(obj, oba), (1, None))
+
+        # Test Section prop/sec cardinality keyword min assignment
+        set_cardinality_method(min_val=2)
+        self.assertEqual(getattr(obj, oba), (2, None))
+
+        # Test Section prop/sec cardinality max assignment
+        set_cardinality_method(None, 1)
+        self.assertEqual(getattr(obj, oba), (None, 1))
+
+        # Test Section prop/sec cardinality keyword max assignment
+        set_cardinality_method(max_val=2)
+        self.assertEqual(getattr(obj, oba), (None, 2))
+
+        # Test Section prop/sec cardinality min max assignment
+        set_cardinality_method(1, 2)
+        self.assertEqual(getattr(obj, oba), (1, 2))
+
+        # Test Section prop/sec cardinality keyword min max assignment
+        set_cardinality_method(min_val=2, max_val=5)
+        self.assertEqual(getattr(obj, oba), (2, 5))
+
+        # Test Section prop/sec cardinality empty reset
+        set_cardinality_method()
+        self.assertIsNone(getattr(obj, oba))
+
+        # Test Section prop/sec cardinality keyword empty reset
+        set_cardinality_method(1)
+        self.assertIsNotNone(getattr(obj, oba))
+        set_cardinality_method(min_val=None, max_val=None)
+        self.assertIsNone(getattr(obj, oba))
+
+    def test_set_properties_cardinality(self):
+        doc = Document()
+        sec = Section(name="sec", type="test", parent=doc)
+
+        # Use general method to reduce redundancy
+        self._test_set_cardinality_method(sec, 'prop_cardinality', sec.set_properties_cardinality)
+
     def test_link(self):
         pass
 
