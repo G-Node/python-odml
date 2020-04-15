@@ -34,6 +34,14 @@ class TestUtil(unittest.TestCase):
         set_val = (2, 3)
         self.assertEqual(format_cardinality(set_val), set_val)
 
+        # Test list simple list set
+        set_val = [2, None]
+        self.assertEqual(format_cardinality(set_val), tuple(set_val))
+        set_val = [None, 2]
+        self.assertEqual(format_cardinality(set_val), tuple(set_val))
+        set_val = [2, 3]
+        self.assertEqual(format_cardinality(set_val), tuple(set_val))
+
         # Test exact value tuple set
         set_val = (5, 5)
         self.assertEqual(format_cardinality(set_val), set_val)
@@ -41,6 +49,15 @@ class TestUtil(unittest.TestCase):
         # Test set failures
         with self.assertRaises(ValueError):
             format_cardinality("a")
+
+        with self.assertRaises(ValueError):
+            format_cardinality([1])
+
+        with self.assertRaises(ValueError):
+            format_cardinality([1, 2, 3])
+
+        with self.assertRaises(ValueError):
+            format_cardinality({1: 2, 3: 4})
 
         with self.assertRaises(ValueError):
             format_cardinality(-1)

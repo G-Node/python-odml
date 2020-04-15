@@ -31,15 +31,16 @@ def format_cardinality(in_val):
         return None
 
     # Catch tuple edge cases (0, 0); (None, None); (0, None); (None, 0)
-    if isinstance(in_val, tuple) and len(in_val) > 1 and not in_val[0] and not in_val[1]:
+    if isinstance(in_val, (tuple, list)) and len(in_val) == 2 and not in_val[0] and not in_val[1]:
         return None
 
     # Providing a single integer sets the maximum value in a tuple.
     if isinstance(in_val, int) and in_val > 0:
         return None, in_val
 
-    # Only integer 2-tuples of the format '(min, max)' are supported to set the cardinality
-    if isinstance(in_val, tuple) and len(in_val) == 2:
+    # Integer 2-tuples of the format '(min, max)' are supported to set the cardinality.
+    # Also support lists with a length of 2 without advertising it.
+    if isinstance(in_val, (tuple, list)) and len(in_val) == 2:
         v_min = in_val[0]
         v_max = in_val[1]
 
