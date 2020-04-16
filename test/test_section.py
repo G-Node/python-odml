@@ -1066,6 +1066,34 @@ class TestSection(unittest.TestCase):
         # Use general method to reduce redundancy
         self._test_cardinality_re_assignment(sec, 'prop_cardinality')
 
+    def test_sections_cardinality(self):
+        """
+        Tests the basic assignment rules for Section sections cardinality
+        on init and re-assignment but does not test sections assignment or
+        the actual cardinality validation.
+        """
+        doc = Document()
+
+        # -- Test set cardinality on Section init
+        # Test empty init
+        sec_card_none = Section(name="sec_cardinality_none", type="test", parent=doc)
+        self.assertIsNone(sec_card_none.sec_cardinality)
+
+        # Test single int max init
+        sec_card_max = Section(name="sec_cardinality_max", sec_cardinality=10, parent=doc)
+        self.assertEqual(sec_card_max.sec_cardinality, (None, 10))
+
+        # Test tuple init
+        sec_card_min = Section(name="sec_cardinality_min", sec_cardinality=(2, None), parent=doc)
+        self.assertEqual(sec_card_min.sec_cardinality, (2, None))
+
+        # -- Test Section properties cardinality re-assignment
+        sec = Section(name="sec", sec_cardinality=(None, 10), parent=doc)
+        self.assertEqual(sec.sec_cardinality, (None, 10))
+
+        # Use general method to reduce redundancy
+        self._test_cardinality_re_assignment(sec, 'sec_cardinality')
+
     def _test_set_cardinality_method(self, obj, obj_attribute, set_cardinality_method):
         """
         Tests the basic set convenience method of both Section properties and
@@ -1118,6 +1146,13 @@ class TestSection(unittest.TestCase):
 
         # Use general method to reduce redundancy
         self._test_set_cardinality_method(sec, 'prop_cardinality', sec.set_properties_cardinality)
+
+    def test_set_sections_cardinality(self):
+        doc = Document()
+        sec = Section(name="sec", type="test", parent=doc)
+
+        # Use general method to reduce redundancy
+        self._test_set_cardinality_method(sec, 'sec_cardinality', sec.set_sections_cardinality)
 
     def test_link(self):
         pass
