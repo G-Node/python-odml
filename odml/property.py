@@ -253,7 +253,8 @@ class BaseProperty(base.BaseObject):
     def parent(self, new_parent):
         if new_parent is None and self._parent is None:
             return
-        elif new_parent is None and self._parent is not None:
+
+        if new_parent is None and self._parent is not None:
             self._parent.remove(self)
             self._parent = None
         elif self._validate_parent(new_parent):
@@ -319,7 +320,8 @@ class BaseProperty(base.BaseObject):
                 return False
         return True
 
-    def _convert_value_input(self, new_value):
+    @staticmethod
+    def _convert_value_input(new_value):
         """
         This method ensures, that the passed new value is a list.
         If new_value is a string, it will convert it to a list of
@@ -403,14 +405,12 @@ class BaseProperty(base.BaseObject):
             new_value = odml_tuple_import(t_count, new_value)
 
         if not self._validate_values(new_value):
+            msg = "odml.Property.values: passed values are not of consistent type"
             if self._dtype in ("date", "time", "datetime"):
                 req_format = dtypes.default_values(self._dtype)
-                msg = "odml.Property.values: passed values are not of consistent type "
-                msg += "\'%s\'! Format should be \'%s\'." % (self._dtype, req_format)
-                raise ValueError(msg)
-            else:
-                msg = "odml.Property.values: passed values are not of consistent type!"
-                raise ValueError(msg)
+                msg += " \'%s\'! Format should be \'%s\'." % (self._dtype, req_format)
+            raise ValueError(msg)
+
         self._values = [dtypes.get(v, self.dtype) for v in new_value]
 
         # Validate and inform user if the current values cardinality is violated
@@ -714,10 +714,10 @@ class BaseProperty(base.BaseObject):
         Return the merged object (i.e. if the parent section is linked to another one,
         return the corresponding property of the linked section) or None.
         """
-        if self.parent is None or self.parent._merged is None:
+        if self.parent is None or not self.parent.is_merged:
             return None
 
-        return self.parent._merged.contains(self)
+        return self.parent.get_merged_equivalent().contains(self)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
