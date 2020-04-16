@@ -99,6 +99,7 @@ class BaseSection(base.Sectionable):
 
         # This might lead to a validation warning, since properties are set
         # at a later point in time.
+        self.sec_cardinality = sec_cardinality
         self.prop_cardinality = prop_cardinality
 
         for err in validation.Validation(self).errors:
@@ -364,6 +365,34 @@ class BaseSection(base.Sectionable):
     @base.Sectionable.repository.setter
     def repository(self, url):
         base.Sectionable.repository.fset(self, url)
+
+    @property
+    def sec_cardinality(self):
+        """
+        The Section cardinality of a Section. It defines how many Sections
+        are minimally required and how many Sections should be maximally
+        stored. Use the 'set_sections_cardinality' method to set.
+        """
+        return self._sec_cardinality
+
+    @sec_cardinality.setter
+    def sec_cardinality(self, new_value):
+        """
+        Sets the Sections cardinality of a Section.
+
+        The following cardinality cases are supported:
+        (n, n) - default, no restriction
+        (d, n) - minimally d entries, no maximum
+        (n, d) - maximally d entries, no minimum
+        (d, d) - minimally d entries, maximally d entries
+
+        Only positive integers are supported. 'None' is used to denote
+        no restrictions on a maximum or minimum.
+
+        :param new_value: Can be either 'None', a positive integer, which will set
+                          the maximum or an integer 2-tuple of the format '(min, max)'.
+        """
+        self._sec_cardinality = format_cardinality(new_value)
 
     @property
     def prop_cardinality(self):
