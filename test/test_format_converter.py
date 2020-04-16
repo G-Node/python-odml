@@ -141,4 +141,3 @@ class TestFormatConverter(unittest.TestCase):
             FC._check_input_output_directory(in_dir, "/not_valid_path")
         self.assertNotRaises(FC._check_input_output_directory(in_dir, None))
         self.assertNotRaises(FC._check_input_output_directory(in_dir, out_dir))
-

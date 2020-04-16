@@ -8,7 +8,7 @@ import odml.dtypes as typ
 
 class TestTypes(unittest.TestCase):
 
-    def assertLocalRegExp(self, text, regular_expression):
+    def assert_local_regexp(self, text, regular_expression):
         """
         Python 2 is dead and assertRegexpMatches is deprecated and
         will be removed, but keep compatibility until py 2 support is
@@ -20,9 +20,6 @@ class TestTypes(unittest.TestCase):
         else:
             self.assertRegex(text, regular_expression)
 
-    def setUp(self):
-        pass
-
     def test_valid_type(self):
         # Test None
         self.assertTrue(typ.valid_type(None))
@@ -32,7 +29,7 @@ class TestTypes(unittest.TestCase):
             self.assertTrue(typ.valid_type(curr_type), "Invalid DType %s" % curr_type)
 
         # Test that provided shorthand dtypes return as valid dtypes.
-        for curr_shorthand in typ._dtype_map.keys():
+        for curr_shorthand in typ._dtype_map:
             self.assertTrue(typ.valid_type(curr_shorthand),
                             "Invalid dtype shorthand %s" % curr_shorthand)
 
@@ -49,9 +46,9 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.date_get(None), datetime.date)
         self.assertIsInstance(typ.date_get(""), datetime.date)
 
-        re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])$"
-        self.assertLocalRegExp(typ.date_get(None).strftime(typ.FORMAT_DATE), re)
-        self.assertLocalRegExp(typ.date_get("").strftime(typ.FORMAT_DATE), re)
+        reg = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])$"
+        self.assert_local_regexp(typ.date_get(None).strftime(typ.FORMAT_DATE), reg)
+        self.assert_local_regexp(typ.date_get("").strftime(typ.FORMAT_DATE), reg)
 
         date = datetime.date(2011, 12, 1)
         date_string = '2011-12-01'
@@ -81,9 +78,9 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.time_get(None), datetime.time)
         self.assertIsInstance(typ.time_get(""), datetime.time)
 
-        re = "^[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assertLocalRegExp(typ.time_get(None).strftime(typ.FORMAT_TIME), re)
-        self.assertLocalRegExp(typ.time_get("").strftime(typ.FORMAT_TIME), re)
+        reg = "^[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
+        self.assert_local_regexp(typ.time_get(None).strftime(typ.FORMAT_TIME), reg)
+        self.assert_local_regexp(typ.time_get("").strftime(typ.FORMAT_TIME), reg)
 
         time = datetime.time(12, 34, 56)
         time_string = '12:34:56'
@@ -113,10 +110,9 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.datetime_get(None), datetime.datetime)
         self.assertIsInstance(typ.datetime_get(""), datetime.datetime)
 
-        re = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) " \
-             "[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assertLocalRegExp(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), re)
-        self.assertLocalRegExp(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), re)
+        reg = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) [0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
+        self.assert_local_regexp(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), reg)
+        self.assert_local_regexp(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), reg)
 
         date = datetime.datetime(2011, 12, 1, 12, 34, 56)
         date_string = '2011-12-01 12:34:56'

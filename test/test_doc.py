@@ -96,8 +96,7 @@ class TestSection(unittest.TestCase):
 
     def test_get_terminology_equivalent(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources",
-                                           "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
         local_url = "file://%s" % pathname2url(repo_file)
 
         doc = Document(repository=local_url)
@@ -298,14 +297,14 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(root.sections), 0)
 
         name = "subsec"
-        type = "subtype"
+        sec_type = "subtype"
         oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
-        subsec = root.create_section(name, type, oid)
+        subsec = root.create_section(name, sec_type, oid)
 
         self.assertEqual(len(root.sections), 1)
         self.assertEqual(subsec.parent, root)
         self.assertEqual(root.sections[name], subsec)
-        self.assertEqual(root.sections[name].type, type)
+        self.assertEqual(root.sections[name].type, sec_type)
         self.assertEqual(root.sections[name].oid, oid)
 
         name = "othersec"

@@ -10,7 +10,6 @@ except ImportError:
 
 
 class TestTypes(unittest.TestCase):
-    # TODO :- Write tests for JSONParser once it's completed.
 
     def setUp(self):
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -39,4 +38,3 @@ class TestTypes(unittest.TestCase):
 
         with self.assertRaises(NotImplementedError):
             odml.display(doc, 'html')
-

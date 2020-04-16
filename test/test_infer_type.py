@@ -1,66 +1,66 @@
 import unittest
-import sys
+
 from datetime import datetime as dt, date, time
+
 from odml import Property, Section, Document
 from odml.tools.xmlparser import XMLReader, XMLWriter
+
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
 
 
 class TestInferType(unittest.TestCase):
 
     def test_string(self):
-        p = Property("test", value="somestring")
-        assert(p.dtype == "string")
-        if sys.version_info < (3, 0):
-            assert isinstance(p.values[0], unicode)
-        else:
-            assert isinstance(p.values[0], str)
+        prop = Property("test", value="some_string")
+        self.assertEqual(prop.dtype, "string")
+        self.assertIsInstance(prop.values[0], unicode)
 
     def test_text(self):
-        p = Property("test", value="some\nstring")
-        assert(p.dtype == "text")
-        if sys.version_info < (3, 0):
-            assert isinstance(p.values[0], unicode)
-        else:
-            assert isinstance(p.values[0], str)
+        prop = Property("test", value="some\nstring")
+        self.assertEqual(prop.dtype, "text")
+        self.assertIsInstance(prop.values[0], unicode)
 
     def test_int(self):
-        p = Property("test", value=111)
-        assert(p.dtype == "int")
-        assert isinstance(p.values[0], int)
+        prop = Property("test", value=111)
+        self.assertEqual(prop.dtype, "int")
+        self.assertIsInstance(prop.values[0], int)
 
     def test_float(self):
-        p = Property("test", value=3.14)
-        assert(p.dtype == "float")
-        assert isinstance(p.values[0], float)
+        prop = Property("test", value=3.14)
+        self.assertEqual(prop.dtype, "float")
+        self.assertIsInstance(prop.values[0], float)
 
     def test_datetime(self):
-        p = Property("test", value=dt.now())
-        assert(p.dtype == "datetime")
-        assert isinstance(p.values[0], dt)
+        prop = Property("test", value=dt.now())
+        self.assertEqual(prop.dtype, "datetime")
+        self.assertIsInstance(prop.values[0], dt)
 
     def test_date(self):
-        p = Property("test", dt.now().date())
-        assert(p.dtype == "date")
-        assert isinstance(p.values[0], date)
+        prop = Property("test", dt.now().date())
+        self.assertEqual(prop.dtype, "date")
+        self.assertIsInstance(prop.values[0], date)
 
     def test_time(self):
-        p = Property("test", value=dt.now().time())
-        assert(p.dtype == "time")
-        assert isinstance(p.values[0], time)
+        prop = Property("test", value=dt.now().time())
+        self.assertEqual(prop.dtype, "time")
+        self.assertIsInstance(prop.values[0], time)
 
     def test_boolean(self):
-        p = Property("test", True)
-        assert(p.dtype == "boolean")
-        assert isinstance(p.values[0], bool)
+        prop = Property("test", True)
+        self.assertEqual(prop.dtype, "boolean")
+        self.assertIsInstance(prop.values[0], bool)
 
-        p = Property("test", False)
-        assert(p.dtype == "boolean")
-        assert isinstance(p.values[0], bool)
+        prop = Property("test", False)
+        self.assertEqual(prop.dtype, "boolean")
+        self.assertIsInstance(prop.values[0], bool)
 
     def test_read_write(self):
         doc = Document("author")
-        sec = Section("name", "type")
-        doc.append(sec)
+        sec = Section("name", "type", parent=doc)
+
         sec.append(Property("strprop", "somestring"))
         sec.append(Property("txtprop", "some\ntext"))
         sec.append(Property("intprop", 200))
@@ -69,47 +69,40 @@ class TestInferType(unittest.TestCase):
         sec.append(Property("dateprop", dt.now().date()))
         sec.append(Property("timeprop", dt.now().time()))
         sec.append(Property("boolprop", True))
-        if sys.version_info < (3, 0):
-            str_doc = unicode(XMLWriter(doc))
-        else:
-            str_doc = str(XMLWriter(doc))
+
+        str_doc = unicode(XMLWriter(doc))
+
         new_doc = XMLReader().from_string(str_doc)
         new_sec = new_doc.sections[0]
 
-        p = new_sec.properties["strprop"]
-        assert(p.dtype == "string")
-        if sys.version_info < (3, 0):
-            assert isinstance(p.values[0], unicode)
-        else:
-            assert isinstance(p.values[0], str)
+        prop = new_sec.properties["strprop"]
+        self.assertEqual(prop.dtype, "string")
+        self.assertIsInstance(prop.values[0], unicode)
 
-        p = new_sec.properties["txtprop"]
-        assert(p.dtype == "text")
-        if sys.version_info < (3, 0):
-            assert isinstance(p.values[0], unicode)
-        else:
-            assert isinstance(p.values[0], str)
+        prop = new_sec.properties["txtprop"]
+        self.assertEqual(prop.dtype, "text")
+        self.assertIsInstance(prop.values[0], unicode)
 
-        p = new_sec.properties["intprop"]
-        assert(p.dtype == "int")
-        assert isinstance(p.values[0], int)
+        prop = new_sec.properties["intprop"]
+        self.assertEqual(prop.dtype, "int")
+        self.assertIsInstance(prop.values[0], int)
 
-        p = new_sec.properties["floatprop"]
-        assert(p.dtype == "float")
-        assert isinstance(p.values[0], float)
+        prop = new_sec.properties["floatprop"]
+        self.assertEqual(prop.dtype, "float")
+        self.assertIsInstance(prop.values[0], float)
 
-        p = new_sec.properties["datetimeprop"]
-        assert(p.dtype == "datetime")
-        assert isinstance(p.values[0], dt)
+        prop = new_sec.properties["datetimeprop"]
+        self.assertEqual(prop.dtype, "datetime")
+        self.assertIsInstance(prop.values[0], dt)
 
-        p = new_sec.properties["dateprop"]
-        assert(p.dtype == "date")
-        assert isinstance(p.values[0], date)
+        prop = new_sec.properties["dateprop"]
+        self.assertEqual(prop.dtype, "date")
+        self.assertIsInstance(prop.values[0], date)
 
-        p = new_sec.properties["timeprop"]
-        assert(p.dtype == "time")
-        assert isinstance(p.values[0], time)
+        prop = new_sec.properties["timeprop"]
+        self.assertEqual(prop.dtype, "time")
+        self.assertIsInstance(prop.values[0], time)
 
-        p = new_sec.properties["boolprop"]
-        assert(p.dtype == "boolean")
-        assert isinstance(p.values[0], bool)
+        prop = new_sec.properties["boolprop"]
+        self.assertEqual(prop.dtype, "boolean")
+        self.assertIsInstance(prop.values[0], bool)

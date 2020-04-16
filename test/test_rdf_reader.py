@@ -2,13 +2,13 @@ import datetime
 import unittest
 
 from rdflib import Literal
-import odml.format as format
 
 from odml import Property, Section, Document
+from odml.format import Format
 from odml.tools.rdf_converter import RDFWriter, RDFReader
 from odml.tools.parser_utils import ParserException
 
-odmlns = format.Format.namespace()
+ODMLNS = Format.namespace()
 
 
 class TestRDFReader(unittest.TestCase):
@@ -25,23 +25,23 @@ class TestRDFReader(unittest.TestCase):
         """
         Test if document gets correctly converted to odml for turtle, xml and n3.
         """
-        w = RDFWriter(self.doc).get_rdf_str()
-        r = RDFReader().from_string(w, "turtle")
-        self.assertEqual(len(r[0].sections), 1)
-        self.assertEqual(len(r[0].sections[0].sections), 1)
-        self.assertEqual(len(r[0].sections[0].properties), 1)
+        rdf_writer = RDFWriter(self.doc).get_rdf_str()
+        rdf_reader = RDFReader().from_string(rdf_writer, "turtle")
+        self.assertEqual(len(rdf_reader[0].sections), 1)
+        self.assertEqual(len(rdf_reader[0].sections[0].sections), 1)
+        self.assertEqual(len(rdf_reader[0].sections[0].properties), 1)
 
-        w = RDFWriter(self.doc).get_rdf_str("xml")
-        r = RDFReader().from_string(w, "xml")
-        self.assertEqual(len(r[0].sections), 1)
-        self.assertEqual(len(r[0].sections[0].sections), 1)
-        self.assertEqual(len(r[0].sections[0].properties), 1)
+        rdf_writer = RDFWriter(self.doc).get_rdf_str("xml")
+        rdf_reader = RDFReader().from_string(rdf_writer, "xml")
+        self.assertEqual(len(rdf_reader[0].sections), 1)
+        self.assertEqual(len(rdf_reader[0].sections[0].sections), 1)
+        self.assertEqual(len(rdf_reader[0].sections[0].properties), 1)
 
-        w = RDFWriter(self.doc).get_rdf_str("n3")
-        r = RDFReader().from_string(w, "n3")
-        self.assertEqual(len(r[0].sections), 1)
-        self.assertEqual(len(r[0].sections[0].sections), 1)
-        self.assertEqual(len(r[0].sections[0].properties), 1)
+        rdf_writer = RDFWriter(self.doc).get_rdf_str("n3")
+        rdf_reader = RDFReader().from_string(rdf_writer, "n3")
+        self.assertEqual(len(rdf_reader[0].sections), 1)
+        self.assertEqual(len(rdf_reader[0].sections[0].sections), 1)
+        self.assertEqual(len(rdf_reader[0].sections[0].properties), 1)
 
     def test_doc(self):
         """
@@ -52,12 +52,12 @@ class TestRDFReader(unittest.TestCase):
         doc.version = 42
         doc.date = datetime.date(1979, 10, 12)
 
-        w = RDFWriter(doc).get_rdf_str()
-        r = RDFReader().from_string(w, "turtle")
+        rdf_writer = RDFWriter(doc).get_rdf_str()
+        rdf_reader = RDFReader().from_string(rdf_writer, "turtle")
 
-        self.assertEqual(r[0].author, "D. N. Adams")
-        self.assertEqual(r[0].version, "42")
-        self.assertEqual(r[0].date, datetime.date(1979, 10, 12))
+        self.assertEqual(rdf_reader[0].author, "D. N. Adams")
+        self.assertEqual(rdf_reader[0].version, "42")
+        self.assertEqual(rdf_reader[0].date, datetime.date(1979, 10, 12))
 
     def test_section(self):
         """
@@ -68,16 +68,16 @@ class TestRDFReader(unittest.TestCase):
                        reference="The Journal")
         Section(name="sec2", type="test", parent=sec1)
 
-        w = RDFWriter(doc).get_rdf_str()
-        r = RDFReader().from_string(w, "turtle")
+        rdf_writer = RDFWriter(doc).get_rdf_str()
+        rdf_reader = RDFReader().from_string(rdf_writer, "turtle")
 
-        self.assertEqual(r[0].sections[0].name, "sec1")
-        self.assertEqual(r[0].sections[0].type, "test")
-        self.assertEqual(r[0].sections[0].id, sec1.id)
-        self.assertEqual(r[0].sections[0].definition, "Interesting stuff.")
-        self.assertEqual(r[0].sections[0].reference, "The Journal")
-        self.assertEqual(r[0].sections[0].parent, r[0])
-        self.assertEqual(len(r[0].sections[0].sections), 1)
+        self.assertEqual(rdf_reader[0].sections[0].name, "sec1")
+        self.assertEqual(rdf_reader[0].sections[0].type, "test")
+        self.assertEqual(rdf_reader[0].sections[0].id, sec1.id)
+        self.assertEqual(rdf_reader[0].sections[0].definition, "Interesting stuff.")
+        self.assertEqual(rdf_reader[0].sections[0].reference, "The Journal")
+        self.assertEqual(rdf_reader[0].sections[0].parent, rdf_reader[0])
+        self.assertEqual(len(rdf_reader[0].sections[0].sections), 1)
 
     def test_property(self):
         """
@@ -89,15 +89,15 @@ class TestRDFReader(unittest.TestCase):
                          values=[1, 3.4, 67.8, -12], unit="meter", uncertainty=0.8,
                          value_origin="force", reference="Experiment 1")
 
-        w = RDFWriter(doc).get_rdf_str()
-        r = RDFReader().from_string(w, "turtle")
+        rdf_writer = RDFWriter(doc).get_rdf_str()
+        rdf_reader = RDFReader().from_string(rdf_writer, "turtle")
 
-        prop = r[0].sections[0].properties["numbers"]
+        prop = rdf_reader[0].sections[0].properties["numbers"]
 
         self.assertEqual(prop.name, "numbers")
         self.assertEqual(prop.dtype, "float")
         self.assertEqual(prop.id, prop2.id)
-        self.assertEqual(prop.parent, r[0].sections[0])
+        self.assertEqual(prop.parent, rdf_reader[0].sections[0])
         self.assertEqual(len(prop.values), 4)
         self.assertEqual(prop.values, [1, 3.4, 67.8, -12])
         self.assertEqual(prop.definition, "any number")
@@ -110,12 +110,12 @@ class TestRDFReader(unittest.TestCase):
         """
         Test if ParserError is thrown if mandatory attributes are missing for section.
         """
-        w = RDFWriter([self.doc])
-        w.convert_to_rdf()
-        for rdf_sec in w.graph.subjects(predicate=odmlns.hasName, object=Literal("sec1")):
-            w.graph.remove((rdf_sec, odmlns.hasName, Literal("sec1")))
+        rdf_writer = RDFWriter([self.doc])
+        rdf_writer.convert_to_rdf()
+        for rdf_sec in rdf_writer.graph.subjects(predicate=ODMLNS.hasName, object=Literal("sec1")):
+            rdf_writer.graph.remove((rdf_sec, ODMLNS.hasName, Literal("sec1")))
 
-        new_graph = w.graph.serialize(format="turtle").decode("utf-8")
+        new_graph = rdf_writer.graph.serialize(format="turtle").decode("utf-8")
 
         with self.assertRaises(ParserException):
             RDFReader().from_string(new_graph, "turtle")
@@ -124,12 +124,12 @@ class TestRDFReader(unittest.TestCase):
         """
         Test if ParserError is thrown if mandatory attributes are missing for section.
         """
-        w = RDFWriter([self.doc])
-        w.convert_to_rdf()
-        for rdf_sec in w.graph.subjects(predicate=odmlns.hasName, object=Literal("prop1")):
-            w.graph.remove((rdf_sec, odmlns.hasName, Literal("prop1")))
+        rdf_writer = RDFWriter([self.doc])
+        rdf_writer.convert_to_rdf()
+        for rdf_sec in rdf_writer.graph.subjects(predicate=ODMLNS.hasName, object=Literal("prop1")):
+            rdf_writer.graph.remove((rdf_sec, ODMLNS.hasName, Literal("prop1")))
 
-        new_graph = w.graph.serialize(format="turtle").decode("utf-8")
+        new_graph = rdf_writer.graph.serialize(format="turtle").decode("utf-8")
 
         with self.assertRaises(ParserException):
             RDFReader().from_string(new_graph, "turtle")
