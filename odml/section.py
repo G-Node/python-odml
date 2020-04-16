@@ -43,6 +43,10 @@ class BaseSection(base.Sectionable):
     :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
                 an id will be generated and assigned. An id has to be unique
                 within an odML Document.
+    :param sec_cardinality: Section cardinality defines how many Sub-Sections are allowed for this
+                            Section. By default unlimited Sections can be set.
+                            A required number of Sections can be set by assigning a tuple of the
+                            format "(min, max)"
     :param prop_cardinality: Property cardinality defines how many Properties are allowed for this
                              Section. By default unlimited Properties can be set.
                              A required number of Properties can be set by assigning a tuple of the
@@ -60,7 +64,7 @@ class BaseSection(base.Sectionable):
     def __init__(self, name=None, type="n.s.", parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, oid=None,
-                 prop_cardinality=None):
+                 sec_cardinality=None, prop_cardinality=None):
 
         # Sets _sections Smartlist and _repository to None, so run first.
         super(BaseSection, self).__init__()
@@ -86,6 +90,7 @@ class BaseSection(base.Sectionable):
         self._repository = repository
         self._link = link
         self._include = include
+        self._sec_cardinality = None
         self._prop_cardinality = None
 
         # this may fire a change event, so have the section setup then
