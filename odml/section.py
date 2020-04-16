@@ -394,6 +394,31 @@ class BaseSection(base.Sectionable):
         """
         self._sec_cardinality = format_cardinality(new_value)
 
+        # Validate and inform user if the current cardinality is violated
+        self._sections_cardinality_validation()
+
+    def set_sections_cardinality(self, min_val=None, max_val=None):
+        """
+        Sets the Sections cardinality of a Section.
+
+        :param min_val: Required minimal number of values elements. None denotes
+                        no restrictions on values elements minimum. Default is None.
+        :param max_val: Allowed maximal number of values elements. None denotes
+                        no restrictions on values elements maximum. Default is None.
+        """
+        self.sec_cardinality = (min_val, max_val)
+
+    def _sections_cardinality_validation(self):
+        """
+        Runs a validation to check whether the sections cardinality
+        is respected and prints a warning message otherwise.
+        """
+        valid = validation.Validation(self)
+        # Make sure to display only warnings of the current section
+        res = [curr for curr in valid.errors if self.id == curr.obj.id]
+        for err in res:
+            print("%s: %s" % (err.rank.capitalize(), err.msg))
+
     @property
     def prop_cardinality(self):
         """
