@@ -484,6 +484,35 @@ def section_properties_cardinality(obj):
 Validation.register_handler("section", section_properties_cardinality)
 
 
+def section_sections_cardinality(obj):
+    """
+    Checks Section sub-sections against any set sub-section cardinality.
+
+    :param obj: odml.Section
+    :return: Yields a ValidationError warning, if a set cardinality is not met.
+    """
+    if obj.sec_cardinality and isinstance(obj.sec_cardinality, tuple):
+
+        val_min = obj.sec_cardinality[0]
+        val_max = obj.sec_cardinality[1]
+
+        val_len = len(obj.sections) if obj.sections else 0
+
+        invalid_cause = ""
+        if val_min and val_len < val_min:
+            invalid_cause = "minimum %s" % val_min
+        elif val_max and (obj.sections and len(obj.sections) > val_max):
+            invalid_cause = "maximum %s" % val_max
+
+        if invalid_cause:
+            msg = "Section sub-section cardinality violated"
+            msg += " (%s values, %s found)" % (invalid_cause, val_len)
+            yield ValidationError(obj, msg, LABEL_WARNING)
+
+
+Validation.register_handler("section", section_sections_cardinality)
+
+
 def property_values_cardinality(prop):
     """
     Checks Property values against any set value cardinality.
