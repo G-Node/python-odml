@@ -140,6 +140,63 @@ class TestValidation(unittest.TestCase):
 
         self.assertTrue(found)
 
+    def test_section_sections_cardinality(self):
+        msg_base = "Section sections cardinality violated"
+
+        doc = odml.Document()
+        # Test no caught warning on empty cardinality
+        sec = odml.Section(name="sec_empty_cardinality", type="test", parent=doc)
+        # Check that the current section did not throw any sections cardinality warnings
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id:
+                self.assertNotIn(msg_base, err.msg)
+
+        # Test no warning on valid cardinality
+        sec = odml.Section(name="sec_valid_cardinality", sec_cardinality=(1, 2), parent=doc)
+        _ = odml.Section(name="sub_sec_valid_cardinality", type="test", parent=sec)
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id:
+                self.assertNotIn(msg_base, err.msg)
+
+        # Test maximum value cardinality validation
+        test_range = 3
+        test_card = 2
+        sec = odml.Section(name="sec_invalid_max_val", sec_cardinality=test_card, parent=doc)
+        for i in range(test_range):
+            sec_name = "sub_sec_invalid_max_val_%s" % i
+            _ = odml.Section(name=sec_name, type="test", parent=sec)
+
+        test_msg = "%s (maximum %s values, %s found)" % (msg_base, test_card, len(sec.sections))
+
+        # Once ValidationErrors provide validation ids, the following can be simplified.
+        found = False
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id and msg_base in err.msg:
+                self.assertFalse(err.is_error)
+                self.assertIn(test_msg, err.msg)
+                found = True
+
+        self.assertTrue(found)
+
+        # Test minimum value cardinality validation
+        test_card = (4, None)
+
+        sec = odml.Section(name="sec_invalid_min_val", sec_cardinality=test_card, parent=sec)
+        _ = odml.Section(name="sub_sec_invalid_min_val", type="test", parent=sec)
+
+        test_msg = "%s (minimum %s values, %s found)" % (msg_base, test_card[0],
+                                                         len(sec.sections))
+
+        # Once ValidationErrors provide validation ids, the following can be simplified.
+        found = False
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id and msg_base in err.msg:
+                self.assertFalse(err.is_error)
+                self.assertIn(test_msg, err.msg)
+                found = True
+
+        self.assertTrue(found)
+
     def test_section_in_terminology(self):
         doc = samplefile.parse("""s1[T1]""")
         res = validate(doc)
