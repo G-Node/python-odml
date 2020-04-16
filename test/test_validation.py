@@ -57,7 +57,7 @@ class TestValidation(unittest.TestCase):
         for err in validate(doc).errors:
             self.assertNotEqual(err.obj.id, prop.id)
 
-        # Test minimum value cardinality validation
+        # Test maximum value cardinality validation
         test_val = [1, 2, 3]
         test_card = 2
 
@@ -71,7 +71,7 @@ class TestValidation(unittest.TestCase):
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
 
-        # Test maximum value cardinality validation
+        # Test minimum value cardinality validation
         test_val = "I am a nice text to test"
         test_card = (4, None)
 
@@ -83,6 +83,62 @@ class TestValidation(unittest.TestCase):
             if err.obj.id == prop.id:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
+
+    def test_section_properties_cardinality(self):
+        msg_base = "Section properties cardinality violated"
+
+        doc = odml.Document()
+        # Test no caught warning on empty cardinality
+        sec = odml.Section(name="prop_empty_cardinality", type="test", parent=doc)
+        # Check that the current section did not throw any properties cardinality warnings
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id:
+                self.assertNotIn(msg_base, err.msg)
+
+        # Test no warning on valid cardinality
+        sec = odml.Section(name="prop_valid_cardinality", prop_cardinality=(1, 2), parent=doc)
+        _ = odml.Property(parent=sec)
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id:
+                self.assertNotIn(msg_base, err.msg)
+
+        # Test maximum value cardinality validation
+        test_range = 3
+        test_card = 2
+        sec = odml.Section(name="prop_invalid_max_val", prop_cardinality=test_card, parent=doc)
+        for _ in range(test_range):
+            _ = odml.Property(parent=sec)
+
+        test_msg = "%s (maximum %s values, %s found)" % (msg_base, test_card, len(sec.properties))
+
+        # Once ValidationErrors provide validation ids, the following can be simplified.
+        found = False
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id and msg_base in err.msg:
+                self.assertFalse(err.is_error)
+                self.assertIn(test_msg, err.msg)
+                found = True
+
+        self.assertTrue(found)
+
+        # Test minimum value cardinality validation
+        test_card = (4, None)
+
+        sec = odml.Section(name="prop_invalid_min_val", prop_cardinality=test_card, parent=sec)
+        _ = odml.Property(parent=sec)
+
+        test_msg = "%s (minimum %s values, %s found)" % (msg_base, test_card[0],
+                                                         len(sec.properties))
+
+        # Once ValidationErrors provide validation ids, the following can be simplified.
+        found = False
+        for err in validate(doc).errors:
+            if err.obj.id == sec.id and msg_base in err.msg:
+                self.assertFalse(err.is_error)
+                self.assertIn(test_msg, err.msg)
+                found = True
+
+        self.assertTrue(found)
 
     def test_section_in_terminology(self):
         doc = samplefile.parse("""s1[T1]""")

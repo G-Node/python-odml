@@ -156,7 +156,8 @@ class Section(Format):
         'repository': 0,
         'section': 0,
         'include': 0,
-        'property': 0
+        'property': 0,
+        'prop_cardinality': 0
     }
     _map = {
         'section': 'sections',

@@ -455,6 +455,35 @@ def property_values_string_check(prop):
 Validation.register_handler('property', property_values_string_check)
 
 
+def section_properties_cardinality(obj):
+    """
+    Checks Section properties against any set property cardinality.
+
+    :param obj: odml.Section
+    :return: Yields a ValidationError warning, if a set cardinality is not met.
+    """
+    if obj.prop_cardinality and isinstance(obj.prop_cardinality, tuple):
+
+        val_min = obj.prop_cardinality[0]
+        val_max = obj.prop_cardinality[1]
+
+        val_len = len(obj.properties) if obj.properties else 0
+
+        invalid_cause = ""
+        if val_min and val_len < val_min:
+            invalid_cause = "minimum %s" % val_min
+        elif val_max and (obj.properties and len(obj.properties) > val_max):
+            invalid_cause = "maximum %s" % val_max
+
+        if invalid_cause:
+            msg = "Section properties cardinality violated"
+            msg += " (%s values, %s found)" % (invalid_cause, val_len)
+            yield ValidationError(obj, msg, LABEL_WARNING)
+
+
+Validation.register_handler("section", section_properties_cardinality)
+
+
 def property_values_cardinality(prop):
     """
     Checks Property values against any set value cardinality.
