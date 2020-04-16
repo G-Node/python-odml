@@ -841,26 +841,16 @@ class BaseProperty(base.BaseObject):
 
     def export_leaf(self):
         """
-        Export only the path from this property to the root.
-        Include all properties of parent sections.
+        Export the path including all direct parents from this Property
+        to the root of the document. Section properties are included,
+        Subsections are not included.
 
-        :returns: cloned odml tree to the root of the current document.
+        :returns: Cloned odml tree to the root of the current document.
         """
-        curr = self.parent
-        par = self.parent
-        child = self.parent
+        export = self
+        if export.parent:
+            # Section.export_leaf will take care of the full export and
+            # include the current Property.
+            export = export.parent.export_leaf()
 
-        while curr is not None:
-            par = curr.clone(children=False, keep_id=True)
-            if curr != self.parent:
-                par.append(child)
-            if hasattr(curr, 'properties'):
-                if curr == self.parent:
-                    par.append(self.clone(keep_id=True))
-                else:
-                    for prop in curr.properties:
-                        par.append(prop.clone(keep_id=True))
-            child = par
-            curr = curr.parent
-
-        return par
+        return export

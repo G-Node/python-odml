@@ -760,39 +760,28 @@ class TestProperty(unittest.TestCase):
 
     def test_export_leaf(self):
         doc = Document()
-        first = doc.create_section("first")
-        second = first.create_section("second")
-        first.create_section("third")
 
-        name = "prop1"
-        values = [1.3]
-        first.create_property(name, value=values)
+        sec_a_name = "first"
+        sec_b_name = "second"
+        first = doc.create_section(sec_a_name)
+        second = first.create_section(sec_b_name)
+        _ = first.create_section("third")
 
-        name = "prop2"
-        values = ["words"]
-        second.create_property(name, value=values)
+        prop_aa = first.create_property("prop1", value=[1.3])
+        _ = first.create_property("prop5", value=["abc"])
+        prop_ba = second.create_property("prop2", value=["words"])
+        _ = second.create_property("prop3", value=["a", "b"])
+        _ = second.create_property("prop4", value=[3])
 
-        name = "prop3"
-        values = ["a", "b"]
-        second.create_property(name, value=values)
+        export_doc = prop_aa.export_leaf()
+        self.assertEqual(len(export_doc[sec_a_name].properties), 2)
+        self.assertEqual(len(export_doc[sec_a_name].sections), 0)
 
-        name = "prop4"
-        values = [3]
-        second.create_property(name, value=values)
-
-        name = "prop5"
-        values = ["abc"]
-        first.create_property(name, value=values)
-
-        ex1 = first.properties["prop1"].export_leaf()
-        self.assertEqual(len(ex1['first'].properties), 1)
-        self.assertEqual(len(ex1['first'].sections), 0)
-
-        ex2 = second.properties["prop2"].export_leaf()
-        self.assertEqual(len(ex2.sections), 1)
-        self.assertEqual(len(ex2['first'].properties), 2)
-        self.assertEqual(len(ex2['first'].sections), 1)
-        self.assertEqual(len(ex2['first']['second'].properties), 1)
+        export_doc = prop_ba.export_leaf()
+        self.assertEqual(len(export_doc.sections), 1)
+        self.assertEqual(len(export_doc[sec_a_name].properties), 2)
+        self.assertEqual(len(export_doc[sec_a_name].sections), 1)
+        self.assertEqual(len(export_doc[sec_a_name][sec_b_name].properties), 3)
 
     def test_values_cardinality(self):
         doc = Document()
