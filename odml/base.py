@@ -2,6 +2,7 @@
 """
 This module provides base classes for functionality common to odML objects.
 """
+import copy
 import posixpath
 
 try:
@@ -36,9 +37,10 @@ class BaseObject(object):
             return False
 
         for key in self._format:
-            if key == "id" or key == "oid":
+            if key in ["id", "oid"]:
                 continue
-            elif getattr(self, key) != getattr(obj, key):
+
+            if getattr(self, key) != getattr(obj, key):
                 return False
 
         return True
@@ -87,7 +89,6 @@ class BaseObject(object):
                          from this class.
         """
         # TODO don't we need some recursion / deepcopy here?
-        import copy
         obj = copy.copy(self)
         return obj
 
@@ -148,6 +149,8 @@ class SmartList(list):
         for obj in self:
             if (hasattr(obj, "name") and obj.name == key) or key == obj:
                 return True
+
+        return False
 
     def __eq__(self, obj):
         """
@@ -292,7 +295,7 @@ class Sectionable(BaseObject):
             if not isinstance(sec, BaseSection):
                 raise ValueError("Can only extend objects of type Section.")
 
-            elif isinstance(sec, BaseSection) and sec.name in self._sections:
+            if isinstance(sec, BaseSection) and sec.name in self._sections:
                 raise KeyError("Section with name '%s' already exists." % sec.name)
 
         for sec in sec_list:
@@ -356,9 +359,9 @@ class Sectionable(BaseObject):
                             iterable. Yields iterable if function returns True
         :type filter_func: function
         """
-        for sec in [s for s in self.itersections(max_depth=max_depth,
-                                                 yield_self=True)]:
-            if hasattr(sec, "properties"):  # not to fail if odml.Document
+        for sec in list(self.itersections(max_depth=max_depth, yield_self=True)):
+            # Avoid fail with an odml.Document
+            if hasattr(sec, "properties"):
                 for i in sec.properties:
                     if filter_func(i):
                         yield i
@@ -380,7 +383,7 @@ class Sectionable(BaseObject):
                             iterable. Yields iterable if function returns True
         :type filter_func: function
         """
-        for prop in [p for p in self.iterproperties(max_depth=max_depth)]:
+        for prop in list(self.iterproperties(max_depth=max_depth)):
             if filter_func(prop.values):
                 yield prop.values
 
@@ -478,9 +481,10 @@ class Sectionable(BaseObject):
 
             if found:
                 return found._get_section_by_path("/".join(pathlist[1:]))
+
             raise ValueError("Section named '%s' does not exist" % pathlist[0])
-        else:
-            return self._match_iterable(self.sections, pathlist[0])
+
+        return self._match_iterable(self.sections, pathlist[0])
 
     def find(self, key=None, type=None, findAll=False, include_subtype=False):
         """
