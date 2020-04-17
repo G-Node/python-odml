@@ -104,8 +104,9 @@ class TestTerminology(unittest.TestCase):
             self.assertIn(curr_file, load_map)
             self.assertEqual(orig_map[curr_file], load_map[curr_file])
 
-        # Sleep is needed since the tests might be too fast to result in a different file mtime
-        sleep(0.100)
+        # Sleep is needed since the tests might be too fast to result in a
+        # different file mtime. macOS seems to require sleep time > 0.700.
+        sleep(0.800)
 
         # Test refresh loads same cached files but changes them.
         # Different mtimes and id strings are sufficient.
