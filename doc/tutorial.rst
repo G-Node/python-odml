@@ -70,8 +70,9 @@ experimental project and complements the special needs of your laboratory.
 The code for the example odML files, which we use within this tutorial is part
 of the documentation package (see doc/example_odMLs/).
 
-A summary of available odML terminologies and templates can be found `here
-<https://terminologies.g-node.org/v1.1/terminologies.xml>`_.
+A summary of available odML terminologies and templates can be found at the G-Node `odML terminology
+<https://terminologies.g-node.org/v1.1/terminologies.xml>`_ and `odML template
+<https://templates.g-node.org/>`_ pages.
 
 -------------------------------------------------------------------------------
 
