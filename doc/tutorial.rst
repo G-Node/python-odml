@@ -941,6 +941,48 @@ Also note that any style that is saved with an odML document will be lost, when 
 document is loaded again and changes to the content are added. In this case the required
 style needs to be specified again when saving the changed file as described above.
 
+
+Defining and working with feature cardinality
+---------------------------------------------
+
+The odML format allows users to define a cardinality for
+the number of subsections and properties of Sections and
+the number of values a Property might have.
+
+A cardinality is checked when it is set, when its target is
+set and when a document is saved or loaded. If a specific
+cardinality is violated, a corresponding warning will be printed.
+
+Setting a cardinality
+*********************
+
+A cardinality can be set for sections or properties of sections
+or for values of properties. By default every cardinality is None,
+but it can be set to a defined minimal and/or a maximal number of
+an element.
+
+A cardinality is set via its convenience method:
+
+    >>> # Set the cardinality of the properties of a Section 'sec' to
+    >>> # a maximum of 5 elements.
+    >>> sec = odml.Section(name="cardinality", type="test")
+    >>> sec.set_properties_cardinality(max_val=5)
+
+    >>> # Set the cardinality of the subsections of Section 'sec' to
+    >>> # a minimum of one and a maximum of 2 elements.
+    >>> sec.set_sections_cardinality(min_val=1, max_val=2)
+
+    >>> # Set the cardinality of the values of a Property 'prop' to
+    >>> # a minimum of 1 element.
+    >>> prop = odml.Property(name="cardinality")
+    >>> prop.set_values_cardinality(min_val=1)
+
+    >>> # Re-set the cardinality of the values of a Property 'prop' to not set.
+    >>> prop.set_values_cardinality()
+    >>> # or
+    >>> prop.val_cardinality = None
+
+
 Advanced knowledge on Values
 ----------------------------
 

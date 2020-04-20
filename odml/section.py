@@ -403,9 +403,9 @@ class BaseSection(base.Sectionable):
         Sets the Sections cardinality of a Section.
 
         :param min_val: Required minimal number of values elements. None denotes
-                        no restrictions on values elements minimum. Default is None.
+                        no restrictions on sections elements minimum. Default is None.
         :param max_val: Allowed maximal number of values elements. None denotes
-                        no restrictions on values elements maximum. Default is None.
+                        no restrictions on sections elements maximum. Default is None.
         """
         self.sec_cardinality = (min_val, max_val)
 
@@ -456,9 +456,9 @@ class BaseSection(base.Sectionable):
         Sets the Properties cardinality of a Section.
 
         :param min_val: Required minimal number of values elements. None denotes
-                        no restrictions on values elements minimum. Default is None.
+                        no restrictions on properties elements minimum. Default is None.
         :param max_val: Allowed maximal number of values elements. None denotes
-                        no restrictions on values elements maximum. Default is None.
+                        no restrictions on properties elements maximum. Default is None.
         """
         self.prop_cardinality = (min_val, max_val)
 
