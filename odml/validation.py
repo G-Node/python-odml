@@ -53,9 +53,9 @@ class ValidationError(object):
 class Validation(object):
     """
     Validation provides a set of default validations that can used to validate
-    an odml.Document. Custom validations can be added via the 'register_handler' method.
+    odml objects. Custom validations can be added via the 'register_handler' method.
 
-    :param doc: odml.Document that the validation will be applied to.
+    :param obj: odml object the validation will be applied to.
     """
 
     _handlers = {}
@@ -77,19 +77,18 @@ class Validation(object):
         """
         Validation._handlers.setdefault(klass, set()).add(handler)
 
-    def __init__(self, obj):
-        self.doc = obj  # may also be a section
+    def __init__(self, obj, validate=True, reset=False):
+        self.obj = obj  # may also be a section
         self.errors = []
 
-        self.validate(obj)
-
-        if obj.format().name == "property":
+        # If initialized with reset=True, reset all handlers and
+        # do not run any validation yet to allow custom Validation objects.
+        if reset:
+            self._handlers = {}
             return
 
-        for sec in obj.itersections(recursive=True):
-            self.validate(sec)
-            for prop in sec.properties:
-                self.validate(prop)
+        if validate:
+            self.run_validation()
 
     def validate(self, obj):
         """
@@ -108,6 +107,38 @@ class Validation(object):
         Registers an error found during the validation process.
         """
         self.errors.append(validation_error)
+
+    def run_validation(self):
+        """
+        Runs a clean new validation on the registered Validation object.
+        """
+        self.errors = []
+
+        self.validate(self.obj)
+
+        if self.obj.format().name == "property":
+            return
+
+        for sec in self.obj.itersections(recursive=True):
+            self.validate(sec)
+            for prop in sec.properties:
+                self.validate(prop)
+
+    def register_custom_handler(self, klass, handler):
+        """
+        Adds a validation handler for an odml class. The handler is called in the
+        validation process for each corresponding object.
+        The *handler* is assumed to be a generator function yielding
+        all ValidationErrors it finds.
+
+        Section handlers are only called for sections and not for the document node.
+        If both are required, the handler needs to be registered twice.
+
+        :param klass: string corresponding to an odml class. Valid strings are
+                      'odML', 'section' and 'property'.
+        :param handler: validation function applied to the odml class.
+        """
+        self._handlers.setdefault(klass, set()).add(handler)
 
     def __getitem__(self, obj):
         """
@@ -455,59 +486,89 @@ def property_values_string_check(prop):
 Validation.register_handler('property', property_values_string_check)
 
 
+def _cardinality_validation(obj, cardinality, card_target_attr, validation_rank):
+    """
+    Helper function that validates the cardinality of an odml object attribute.
+    Valid object-attribute combinations are Section-sections, Section-properties and
+    Property-values.
+
+    :param obj: an odml.Section or an odml.Property
+    :param cardinality: 2-int tuple containing the cardinality value
+    :param card_target_attr: string containing the name of the attribute the cardinality is
+                             applied against. Supported values are:
+                             'sections', 'properties' or 'values'
+    :param validation_rank: Rank of the yielded ValidationError.
+
+    :return: Returns a ValidationError, if a set cardinality is not met or None.
+    """
+    err = None
+    if cardinality and isinstance(cardinality, tuple):
+
+        val_min = cardinality[0]
+        val_max = cardinality[1]
+
+        card_target = getattr(obj, card_target_attr)
+        val_len = len(card_target) if card_target else 0
+
+        invalid_cause = ""
+        if val_min and val_len < val_min:
+            invalid_cause = "minimum %s" % val_min
+        elif val_max and val_len > val_max:
+            invalid_cause = "maximum %s" % val_max
+
+        if invalid_cause:
+            obj_name = obj.format().name.capitalize()
+            msg = "%s %s cardinality violated" % (obj_name, card_target_attr)
+            msg += " (%s values, %s found)" % (invalid_cause, val_len)
+
+            err = ValidationError(obj, msg, validation_rank)
+
+    return err
+
+
 def section_properties_cardinality(obj):
     """
     Checks Section properties against any set property cardinality.
 
     :param obj: odml.Section
+
     :return: Yields a ValidationError warning, if a set cardinality is not met.
     """
-    if obj.prop_cardinality and isinstance(obj.prop_cardinality, tuple):
-
-        val_min = obj.prop_cardinality[0]
-        val_max = obj.prop_cardinality[1]
-
-        val_len = len(obj.properties) if obj.properties else 0
-
-        invalid_cause = ""
-        if val_min and val_len < val_min:
-            invalid_cause = "minimum %s" % val_min
-        elif val_max and (obj.properties and len(obj.properties) > val_max):
-            invalid_cause = "maximum %s" % val_max
-
-        if invalid_cause:
-            msg = "Section properties cardinality violated"
-            msg += " (%s values, %s found)" % (invalid_cause, val_len)
-            yield ValidationError(obj, msg, LABEL_WARNING)
+    err = _cardinality_validation(obj, obj.prop_cardinality, 'properties', LABEL_WARNING)
+    if err:
+        yield err
 
 
 Validation.register_handler("section", section_properties_cardinality)
 
 
-def property_values_cardinality(prop):
+def section_sections_cardinality(obj):
+    """
+    Checks Section sub-sections against any set sub-section cardinality.
+
+    :param obj: odml.Section
+
+    :return: Yields a ValidationError warning, if a set cardinality is not met.
+    """
+    err = _cardinality_validation(obj, obj.sec_cardinality, 'sections', LABEL_WARNING)
+    if err:
+        yield err
+
+
+Validation.register_handler("section", section_sections_cardinality)
+
+
+def property_values_cardinality(obj):
     """
     Checks Property values against any set value cardinality.
 
-    :param prop: odml.Property
+    :param obj: odml.Property
+
     :return: Yields a ValidationError warning, if a set cardinality is not met.
     """
-    if prop.val_cardinality and isinstance(prop.val_cardinality, tuple):
-
-        val_min = prop.val_cardinality[0]
-        val_max = prop.val_cardinality[1]
-
-        val_len = len(prop.values) if prop.values else 0
-
-        invalid_cause = ""
-        if val_min and val_len < val_min:
-            invalid_cause = "minimum %s" % val_min
-        elif val_max and (prop.values and len(prop.values) > val_max):
-            invalid_cause = "maximum %s" % val_max
-
-        if invalid_cause:
-            msg = "Property values cardinality violated"
-            msg += " (%s values, %s found)" % (invalid_cause, val_len)
-            yield ValidationError(prop, msg, LABEL_WARNING)
+    err = _cardinality_validation(obj, obj.val_cardinality, 'values', LABEL_WARNING)
+    if err:
+        yield err
 
 
 Validation.register_handler("property", property_values_cardinality)

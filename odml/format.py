@@ -157,6 +157,7 @@ class Section(Format):
         'section': 0,
         'include': 0,
         'property': 0,
+        'sec_cardinality': 0,
         'prop_cardinality': 0
     }
     _map = {

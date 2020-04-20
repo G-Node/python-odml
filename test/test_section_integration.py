@@ -257,6 +257,48 @@ class TestSectionIntegration(unittest.TestCase):
         self._test_cardinality_load("prop_cardinality", yaml_doc, card_dict,
                                     sec_empty, sec_max, sec_min, sec_full)
 
+    def test_sec_cardinality(self):
+        """
+        Test saving and loading of Section sections cardinality variants to
+        and from all supported file formats.
+        """
+        doc = odml.Document()
+
+        sec_empty = "card_empty"
+        sec_max = "card_max"
+        sec_min = "card_min"
+        sec_full = "card_full"
+        card_dict = {
+            sec_empty: None,
+            sec_max: (None, 10),
+            sec_min: (2, None),
+            sec_full: (1, 5)
+        }
+
+        _ = odml.Section(name=sec_empty, type="test", parent=doc)
+        _ = odml.Section(name=sec_max, sec_cardinality=card_dict[sec_max], type="test", parent=doc)
+        _ = odml.Section(name=sec_min, sec_cardinality=card_dict[sec_min], type="test", parent=doc)
+        _ = odml.Section(name=sec_full, sec_cardinality=card_dict[sec_full],
+                         type="test", parent=doc)
+
+        # Test saving to and loading from an XML file
+        odml.save(doc, self.xml_file)
+        xml_doc = odml.load(self.xml_file)
+        self._test_cardinality_load("sec_cardinality", xml_doc, card_dict,
+                                    sec_empty, sec_max, sec_min, sec_full)
+
+        # Test saving to and loading from a JSON file
+        odml.save(doc, self.json_file, "JSON")
+        json_doc = odml.load(self.json_file, "JSON")
+        self._test_cardinality_load("sec_cardinality", json_doc, card_dict,
+                                    sec_empty, sec_max, sec_min, sec_full)
+
+        # Test saving to and loading from a YAML file
+        odml.save(doc, self.yaml_file, "YAML")
+        yaml_doc = odml.load(self.yaml_file, "YAML")
+        self._test_cardinality_load("sec_cardinality", yaml_doc, card_dict,
+                                    sec_empty, sec_max, sec_min, sec_full)
+
     def test_link(self):
         pass
 

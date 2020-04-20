@@ -43,6 +43,10 @@ class BaseSection(base.Sectionable):
     :param oid: object id, UUID string as specified in RFC 4122. If no id is provided,
                 an id will be generated and assigned. An id has to be unique
                 within an odML Document.
+    :param sec_cardinality: Section cardinality defines how many Sub-Sections are allowed for this
+                            Section. By default unlimited Sections can be set.
+                            A required number of Sections can be set by assigning a tuple of the
+                            format "(min, max)"
     :param prop_cardinality: Property cardinality defines how many Properties are allowed for this
                              Section. By default unlimited Properties can be set.
                              A required number of Properties can be set by assigning a tuple of the
@@ -60,7 +64,7 @@ class BaseSection(base.Sectionable):
     def __init__(self, name=None, type="n.s.", parent=None,
                  definition=None, reference=None,
                  repository=None, link=None, include=None, oid=None,
-                 prop_cardinality=None):
+                 sec_cardinality=None, prop_cardinality=None):
 
         # Sets _sections Smartlist and _repository to None, so run first.
         super(BaseSection, self).__init__()
@@ -86,6 +90,7 @@ class BaseSection(base.Sectionable):
         self._repository = repository
         self._link = link
         self._include = include
+        self._sec_cardinality = None
         self._prop_cardinality = None
 
         # this may fire a change event, so have the section setup then
@@ -94,6 +99,7 @@ class BaseSection(base.Sectionable):
 
         # This might lead to a validation warning, since properties are set
         # at a later point in time.
+        self.sec_cardinality = sec_cardinality
         self.prop_cardinality = prop_cardinality
 
         for err in validation.Validation(self).errors:
@@ -359,6 +365,59 @@ class BaseSection(base.Sectionable):
     @base.Sectionable.repository.setter
     def repository(self, url):
         base.Sectionable.repository.fset(self, url)
+
+    @property
+    def sec_cardinality(self):
+        """
+        The Section cardinality of a Section. It defines how many Sections
+        are minimally required and how many Sections should be maximally
+        stored. Use the 'set_sections_cardinality' method to set.
+        """
+        return self._sec_cardinality
+
+    @sec_cardinality.setter
+    def sec_cardinality(self, new_value):
+        """
+        Sets the Sections cardinality of a Section.
+
+        The following cardinality cases are supported:
+        (n, n) - default, no restriction
+        (d, n) - minimally d entries, no maximum
+        (n, d) - maximally d entries, no minimum
+        (d, d) - minimally d entries, maximally d entries
+
+        Only positive integers are supported. 'None' is used to denote
+        no restrictions on a maximum or minimum.
+
+        :param new_value: Can be either 'None', a positive integer, which will set
+                          the maximum or an integer 2-tuple of the format '(min, max)'.
+        """
+        self._sec_cardinality = format_cardinality(new_value)
+
+        # Validate and inform user if the current cardinality is violated
+        self._sections_cardinality_validation()
+
+    def set_sections_cardinality(self, min_val=None, max_val=None):
+        """
+        Sets the Sections cardinality of a Section.
+
+        :param min_val: Required minimal number of values elements. None denotes
+                        no restrictions on values elements minimum. Default is None.
+        :param max_val: Allowed maximal number of values elements. None denotes
+                        no restrictions on values elements maximum. Default is None.
+        """
+        self.sec_cardinality = (min_val, max_val)
+
+    def _sections_cardinality_validation(self):
+        """
+        Runs a validation to check whether the sections cardinality
+        is respected and prints a warning message otherwise.
+        """
+        valid = validation.Validation(self)
+        # Make sure to display only warnings of the current section
+        res = [curr for curr in valid.errors if self.id == curr.obj.id]
+        for err in res:
+            print("%s: %s" % (err.rank.capitalize(), err.msg))
 
     @property
     def prop_cardinality(self):
