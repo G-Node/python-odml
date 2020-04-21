@@ -312,7 +312,14 @@ class DictReader:
                     # Make sure to always use the correct odml format attribute name
                     sec_attrs[odmlfmt.Section.map(attr)] = content
 
-            sec = odmlfmt.Section.create(**sec_attrs)
+            try:
+                sec = odmlfmt.Section.create(**sec_attrs)
+            except Exception as exc:
+                msg = "Error trying to create Section (%s)\n%s" % (sec_attrs, str(exc))
+                self.error(msg)
+                # If recovered in ignore_error mode, return empty list
+                return odml_sections
+
             for prop in sec_props:
                 sec.append(prop)
 
@@ -348,7 +355,11 @@ class DictReader:
                     # Make sure to always use the correct odml format attribute name
                     prop_attrs[odmlfmt.Property.map(attr)] = content
 
-            prop = odmlfmt.Property.create(**prop_attrs)
-            odml_props.append(prop)
+            try:
+                prop = odmlfmt.Property.create(**prop_attrs)
+                odml_props.append(prop)
+            except Exception as exc:
+                msg = "Error trying to create Property (%s)\n%s" % (prop_attrs, str(exc))
+                self.error(msg)
 
         return odml_props
