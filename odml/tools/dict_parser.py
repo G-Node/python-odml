@@ -202,7 +202,10 @@ class DictReader:
         if fmt.revmap(attr):
             return attr
 
-        msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
+        msg = "Invalid element |%s| inside <%s> tag" % (attr, fmt.__class__.__name__)
+        self.error(msg)
+
+        return None
 
     def error(self, msg):
         """
@@ -228,10 +231,9 @@ class DictReader:
         msg = "warning: %s\n" % msg
 
         self.warnings.append(msg)
+
         if self.show_warnings:
             print(msg)
-
-        return None
 
     def to_odml(self, parsed_doc):
         """
