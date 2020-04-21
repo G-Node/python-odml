@@ -197,6 +197,30 @@ class DictReader:
             return attr
 
         msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
+
+    def error(self, msg):
+        """
+        If the parsers ignore_errors property is set to False, a ParserException
+        will be raised. Otherwise the message is passed to the parsers warning
+        method.
+
+        :param msg: Error message.
+        """
+        if self.ignore_errors:
+            return self.warn(msg)
+
+        raise ParserException(msg)
+
+    def warn(self, msg):
+        """
+        Adds a message to the parsers warnings property. If the parsers show_warnings
+        property is set to True, an additional error message will be written
+        to sys.stderr.
+
+        :param msg: Warning message.
+        """
+        msg = "warning: %s\n" % msg
+
         self.warnings.append(msg)
         if self.show_warnings:
             print(msg)
