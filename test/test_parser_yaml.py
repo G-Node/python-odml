@@ -1,4 +1,10 @@
+"""
+This module supplies basic tests for the odml.dict_parser.DictReader
+reading from yaml files.
+"""
+
 import os
+import tempfile
 import unittest
 import yaml
 
@@ -13,6 +19,25 @@ class TestYAMLParser(unittest.TestCase):
         self.basepath = os.path.join(dir_path, "resources")
 
         self.yaml_reader = dict_parser.DictReader()
+
+        dir_name = "odml_%s" % os.path.basename(os.path.splitext(__file__)[0])
+        tmp_dir_path = os.path.join(tempfile.gettempdir(), dir_name)
+
+        if not os.path.exists(tmp_dir_path):
+            os.mkdir(tmp_dir_path)
+
+        self.tmp_dir_path = tmp_dir_path
+
+    def _prepare_doc(self, file_name, file_content):
+        file_path = os.path.join(self.tmp_dir_path, file_name)
+
+        with open(file_path, "w") as dump_file:
+            dump_file.write(file_content)
+
+        with open(file_path) as raw_data:
+            parsed_doc = yaml.safe_load(raw_data)
+
+        return parsed_doc
 
     def test_missing_root(self):
         filename = "missing_root.yaml"
