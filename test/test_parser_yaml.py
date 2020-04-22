@@ -18,10 +18,10 @@ class TestYAMLParser(unittest.TestCase):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         self.basepath = os.path.join(dir_path, "resources")
 
-        self.yaml_reader = dict_parser.DictReader()
+        self.yaml_reader = dict_parser.DictReader(show_warnings=False)
 
-        dir_name = "odml_%s" % os.path.basename(os.path.splitext(__file__)[0])
-        tmp_dir_path = os.path.join(tempfile.gettempdir(), dir_name)
+        dir_name = os.path.basename(os.path.splitext(__file__)[0])
+        tmp_dir_path = os.path.join(tempfile.gettempdir(), "odml_test", dir_name)
 
         if not os.path.exists(tmp_dir_path):
             os.mkdir(tmp_dir_path)
@@ -151,6 +151,46 @@ odml-version: '1.1'
         self.assertEqual(len(doc.sections["sec"].sections), 1)
         self.assertIn(valid, doc.sections["sec"].sections)
         self.assertNotIn(invalid, doc.sections["sec"].sections)
+
+        self.assertEqual(len(self.yaml_reader.warnings), 1)
+        for msg in self.yaml_reader.warnings:
+            self.assertIn("Error", msg)
+            self.assertIn(exc_msg, msg)
+
+    def test_prop_creation_error(self):
+        filename = "broken_property.yaml"
+        file_content = """Document:
+  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
+  sections:
+  - id: 1111a20a-c02f-4102-a9fe-2e8b77d1d0d2
+    name: sec
+    properties:
+    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
+      name: valid_prop
+    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
+      name: invalid_prop
+      type: int
+      values:
+      - 'a'
+      - 'b'
+    type: test
+odml-version: '1.1'
+"""
+        parsed_doc = self._prepare_doc(filename, file_content)
+
+        # Test ParserException on default parse
+        exc_msg = "Property not created"
+        with self.assertRaises(ParserException) as exc:
+            _ = self.yaml_reader.to_odml(parsed_doc)
+        self.assertIn(exc_msg, str(exc.exception))
+
+        # Test success on ignore_error parse
+        self.yaml_reader.ignore_errors = True
+        doc = self.yaml_reader.to_odml(parsed_doc)
+
+        self.assertEqual(len(doc.sections["sec"].properties), 1)
+        self.assertIn("valid_prop", doc.sections["sec"].properties)
+        self.assertNotIn("invalid_prop", doc.sections["sec"].properties)
 
         self.assertEqual(len(self.yaml_reader.warnings), 1)
         for msg in self.yaml_reader.warnings:
