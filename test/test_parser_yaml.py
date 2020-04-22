@@ -71,3 +71,47 @@ class TestYAMLParser(unittest.TestCase):
 
         with self.assertRaises(InvalidVersionException):
             _ = self.yaml_reader.to_odml(parsed_doc)
+
+    def test_invalid_attribute_handling(self):
+        filename = "invalid_attributes.yaml"
+
+        inv_doc_attr = "invalid_doc_attr"
+        inv_sec_attr = "invalid_sec_attr"
+        inv_prop_attr = "invalid_prop_attr"
+
+        file_content = """Document:
+  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
+  %s: i_do_not_exist_on_doc_level
+  sections:
+  - id: d4f3120a-c02f-4102-a9fe-2e8b77d1d0d2
+    name: sec
+    %s: i_do_not_exist_on_sec_level
+    properties:
+    - id: 18ad5176-2b46-4a08-9b85-eafd6b14fab7
+      name: prop
+      value: []
+      %s: i_do_not_exist_on_prop_level
+    sections: []
+    type: test
+odml-version: '1.1'
+""" % (inv_doc_attr, inv_sec_attr, inv_prop_attr)
+
+        parsed_doc = self._prepare_doc(filename, file_content)
+
+        # Test ParserException on default parse
+        exc_msg = "Invalid element"
+        with self.assertRaises(ParserException) as exc:
+            _ = self.yaml_reader.to_odml(parsed_doc)
+        self.assertIn(exc_msg, str(exc.exception))
+
+        # Test success on ignore_error parse
+        self.yaml_reader.ignore_errors = True
+        doc = self.yaml_reader.to_odml(parsed_doc)
+
+        self.assertEqual(len(doc.sections), 1)
+        self.assertEqual(len(doc.sections["sec"].properties), 1)
+
+        self.assertEqual(len(self.yaml_reader.warnings), 3)
+        for msg in self.yaml_reader.warnings:
+            self.assertIn("Error", msg)
+            self.assertTrue(inv_doc_attr in msg or inv_sec_attr in msg or inv_prop_attr in msg)
