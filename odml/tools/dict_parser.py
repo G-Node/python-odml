@@ -2,6 +2,7 @@
 The dict_parser module provides access to the DictWriter and DictReader class.
 Both handle the conversion of odML documents from and to Python dictionary objects.
 """
+import sys
 
 from .. import format as odmlfmt
 from ..info import FORMAT_VERSION
@@ -233,7 +234,7 @@ class DictReader:
         self.warnings.append(msg)
 
         if self.show_warnings:
-            print(msg)
+            sys.stderr.write("Parser%s\n" % msg)
 
     def to_odml(self, parsed_doc):
         """
