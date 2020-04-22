@@ -21,8 +21,11 @@ class TestYAMLParser(unittest.TestCase):
         self.yaml_reader = dict_parser.DictReader(show_warnings=False)
 
         dir_name = os.path.basename(os.path.splitext(__file__)[0])
-        tmp_dir_path = os.path.join(tempfile.gettempdir(), "odml_test", dir_name)
+        tmp_base_path = os.path.join(tempfile.gettempdir(), "odml_test")
+        if not os.path.exists(tmp_base_path):
+            os.mkdir(tmp_base_path)
 
+        tmp_dir_path = os.path.join(tmp_base_path, dir_name)
         if not os.path.exists(tmp_dir_path):
             os.mkdir(tmp_dir_path)
 
