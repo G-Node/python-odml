@@ -320,7 +320,7 @@ class DictReader:
             try:
                 sec = odmlfmt.Section.create(**sec_attrs)
             except Exception as exc:
-                msg = "Error trying to create Section (%s)\n%s" % (sec_attrs, str(exc))
+                msg = "Section not created (%s)\n  %s" % (sec_attrs, str(exc))
                 self.error(msg)
                 # If recovered in ignore_error mode, return empty list
                 return odml_sections
@@ -364,7 +364,7 @@ class DictReader:
                 prop = odmlfmt.Property.create(**prop_attrs)
                 odml_props.append(prop)
             except Exception as exc:
-                msg = "Error trying to create Property (%s)\n%s" % (prop_attrs, str(exc))
+                msg = "Property not created (%s)\n%s" % (prop_attrs, str(exc))
                 self.error(msg)
 
         return odml_props
