@@ -8,6 +8,9 @@ from .. import format as odmlfmt
 from ..info import FORMAT_VERSION
 from .parser_utils import InvalidVersionException, ParserException, odml_tuple_export
 
+LABEL_ERROR = "Error"
+LABEL_WARNING = "Warning"
+
 
 def parse_cardinality(vals):
     """
@@ -203,7 +206,7 @@ class DictReader:
         if fmt.revmap(attr):
             return attr
 
-        msg = "Invalid element |%s| inside <%s> tag" % (attr, fmt.__class__.__name__)
+        msg = "Invalid element '%s' inside <%s> tag" % (attr, fmt.__class__.__name__)
         self.error(msg)
 
         return None
@@ -217,19 +220,20 @@ class DictReader:
         :param msg: Error message.
         """
         if self.ignore_errors:
-            return self.warn(msg)
+            return self.warn(msg, LABEL_ERROR)
 
         raise ParserException(msg)
 
-    def warn(self, msg):
+    def warn(self, msg, label=LABEL_WARNING):
         """
         Adds a message to the parsers warnings property. If the parsers show_warnings
         property is set to True, an additional error message will be written
         to sys.stderr.
 
         :param msg: Warning message.
+        :param label: Defined message level, can be 'Error' or 'Warning'. Default is 'Warning'.
         """
-        msg = "warning: %s\n" % msg
+        msg = "%s: %s" % (label, msg)
 
         self.warnings.append(msg)
 
