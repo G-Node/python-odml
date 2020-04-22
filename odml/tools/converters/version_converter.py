@@ -13,6 +13,7 @@ import yaml
 from lxml import etree as ET
 
 from ..parser_utils import ParserException
+from ..xmlparser import XML_HEADER
 
 from ...format import Document, Section, Property
 from ...info import FORMAT_VERSION
@@ -531,5 +532,5 @@ class VersionConverter(object):
 
         if data and "<odML " in data:
             with open(filename, "w") as file:
-                file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+                file.write("%s\n" % XML_HEADER)
                 file.write(data)
