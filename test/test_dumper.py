@@ -16,23 +16,23 @@ class TestTypes(unittest.TestCase):
         s_type = "type"
 
         self.doc = odml.Document(author='Rave', version='1.0')
-        s1 = odml.Section(name='Cell', type=s_type)
-        p1 = odml.Property(name='Type', values='Rechargeable')
-        s1.append(p1)
+        sec1 = odml.Section(name='Cell', type=s_type)
+        prop1 = odml.Property(name='Type', values='Rechargeable')
+        sec1.append(prop1)
 
-        s2 = odml.Section(name='Electrolyte', type=s_type)
-        p2 = odml.Property(name='Composition', values='Ni-Cd')
-        s2.append(p2)
-        s1.append(s2)
+        sec2 = odml.Section(name='Electrolyte', type=s_type)
+        prop2 = odml.Property(name='Composition', values='Ni-Cd')
+        sec2.append(prop2)
+        sec1.append(sec2)
 
-        s3 = odml.Section(name='Electrode', type=s_type)
-        p3 = odml.Property(name='Material', values='Nickel')
-        p4 = odml.Property(name='Models', values=['AA', 'AAA'])
-        s3.append(p3)
-        s3.append(p4)
-        s2.append(s3)
+        sec3 = odml.Section(name='Electrode', type=s_type)
+        prop3 = odml.Property(name='Material', values='Nickel')
+        prop4 = odml.Property(name='Models', values=['AA', 'AAA'])
+        sec3.append(prop3)
+        sec3.append(prop4)
+        sec2.append(sec3)
 
-        self.doc.append(s1)
+        self.doc.append(sec1)
 
     def test_dump_doc(self):
         # Capture the output printed by the functions to STDOUT, and use it for
@@ -48,15 +48,14 @@ class TestTypes(unittest.TestCase):
         # Reset stdout
         sys.stdout = sys.__stdout__
 
-        expected_output = []
-        expected_output.append("*Cell (type='type')")
-        expected_output.append(":Type (values=Rechargeable, dtype='string')")
-        expected_output.append("*Electrolyte (type='type')")
-        expected_output.append(":Composition (values=Ni-Cd, dtype='string')")
-        expected_output.append("*Electrode (type='type')")
-        expected_output.append(":Material (values=Nickel, dtype='string')")
-        expected_output.append(":Models (values=[AA,AAA], dtype='string')")
+        expected_output = ["*Cell (type='type')",
+                           ":Type (values=Rechargeable, dtype='string')",
+                           "*Electrolyte (type='type')",
+                           ":Composition (values=Ni-Cd, dtype='string')",
+                           "*Electrode (type='type')",
+                           ":Material (values=Nickel, dtype='string')",
+                           ":Models (values=[AA,AAA], dtype='string')"]
 
         self.assertEqual(len(output), len(expected_output))
-        for i in range(len(output)):
+        for i, _ in enumerate(output):
             self.assertEqual(output[i], expected_output[i])

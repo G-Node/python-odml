@@ -1,9 +1,7 @@
 import datetime
 import os
 import unittest
-import tempfile
-import odml.terminology
-from hashlib import md5
+
 try:
     from urllib.request import pathname2url
 except ImportError:
@@ -98,8 +96,7 @@ class TestSection(unittest.TestCase):
 
     def test_get_terminology_equivalent(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources",
-                                           "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
         local_url = "file://%s" % pathname2url(repo_file)
 
         doc = Document(repository=local_url)
@@ -111,32 +108,6 @@ class TestSection(unittest.TestCase):
 
         doc.repository = None
         self.assertIsNone(doc.get_terminology_equivalent())
-
-    def test_terminology_refresh(self):
-
-        cache_dir = os.path.join(tempfile.gettempdir(), "odml.cache")
-        url = "https://terminologies.g-node.org/v1.1/terminologies.xml"
-        term_doc = odml.terminology.load(url)
-
-        terms = []
-        for sec in term_doc.sections:
-            terms += ['.'.join([md5(sec.include.encode()).hexdigest(), os.path.basename(sec.include)])]
-
-        before = datetime.datetime.now()
-
-        for loaded_file in os.listdir(cache_dir):
-            for term in terms:
-                if term in loaded_file:
-                    assert datetime.datetime.fromtimestamp(
-                        os.path.getmtime(os.path.join(cache_dir, loaded_file))) < before
-
-        odml.terminology.refresh(url)
-
-        for replaced_file in os.listdir(cache_dir):
-            for term in terms:
-                if term in replaced_file:
-                    assert datetime.datetime.fromtimestamp(
-                        os.path.getmtime(os.path.join(cache_dir, replaced_file))) > before
 
     def test_append(self):
         doc = Document()
@@ -326,14 +297,14 @@ class TestSection(unittest.TestCase):
         self.assertEqual(len(root.sections), 0)
 
         name = "subsec"
-        type = "subtype"
+        sec_type = "subtype"
         oid = "79b613eb-a256-46bf-84f6-207df465b8f7"
-        subsec = root.create_section(name, type, oid)
+        subsec = root.create_section(name, sec_type, oid)
 
         self.assertEqual(len(root.sections), 1)
         self.assertEqual(subsec.parent, root)
         self.assertEqual(root.sections[name], subsec)
-        self.assertEqual(root.sections[name].type, type)
+        self.assertEqual(root.sections[name].type, sec_type)
         self.assertEqual(root.sections[name].oid, oid)
 
         name = "othersec"

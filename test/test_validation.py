@@ -1,7 +1,8 @@
-import unittest
-import odml
 import os
 import sys
+import unittest
+
+import odml
 import odml.validation
 import odml.terminology
 from . import test_samplefile as samplefile
@@ -11,25 +12,21 @@ try:
 except ImportError:
     from io import StringIO
 
-validate = odml.validation.Validation
+Validate = odml.validation.Validation
 
 
 class TestValidation(unittest.TestCase):
 
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        self.maxDiff = None
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    def filter_repository_errors(self, errors):
-        return filter(lambda x: "A section should have an associated "
-                                "repository" not in x.msg, errors)
+    @staticmethod
+    def filter_repository_errors(errors):
+        find_msg = "A section should have an associated repository"
+        return filter(lambda x: find_msg not in x.msg, errors)
 
-    def test_errorfree(self):
-        res = validate(self.doc)
-        self.assertEqual(list(self.filter_repository_errors(res.errors)), [])
-
-    def assertError(self, res, err, filter_rep=True, filter_map=False):
+    def assertError(self, res, err, filter_rep=True):
         """
         Passes only if err appears in res.errors
         """
@@ -48,13 +45,13 @@ class TestValidation(unittest.TestCase):
         # Test no caught warning on empty cardinality
         prop = odml.Property(name="prop_empty_cardinality", values=[1, 2, 3, 4], parent=sec)
         # Check that the current property is not in the list of validation warnings or errors
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             self.assertNotEqual(err.obj.id, prop.id)
 
         # Test no warning on valid cardinality
         prop = odml.Property(name="prop_valid_cardinality", values=[1, 2, 3, 4],
                              val_cardinality=(2, 10), parent=sec)
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             self.assertNotEqual(err.obj.id, prop.id)
 
         # Test maximum value cardinality validation
@@ -66,7 +63,7 @@ class TestValidation(unittest.TestCase):
 
         test_msg_base = "Property values cardinality violated"
         test_msg = "%s (maximum %s values, %s found)" % (test_msg_base, test_card, len(prop.values))
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == prop.id:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
@@ -78,8 +75,9 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property(name="prop_invalid_min_val", values=test_val,
                              val_cardinality=test_card, parent=sec)
 
-        test_msg = "%s (minimum %s values, %s found)" % (test_msg_base, test_card[0], len(prop.values))
-        for err in validate(doc).errors:
+        test_msg = "%s (minimum %s values, %s found)" % (test_msg_base, test_card[0],
+                                                         len(prop.values))
+        for err in Validate(doc).errors:
             if err.obj.id == prop.id:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
@@ -91,14 +89,14 @@ class TestValidation(unittest.TestCase):
         # Test no caught warning on empty cardinality
         sec = odml.Section(name="prop_empty_cardinality", type="test", parent=doc)
         # Check that the current section did not throw any properties cardinality warnings
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id:
                 self.assertNotIn(msg_base, err.msg)
 
         # Test no warning on valid cardinality
         sec = odml.Section(name="prop_valid_cardinality", prop_cardinality=(1, 2), parent=doc)
         _ = odml.Property(parent=sec)
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id:
                 self.assertNotIn(msg_base, err.msg)
 
@@ -113,7 +111,7 @@ class TestValidation(unittest.TestCase):
 
         # Once ValidationErrors provide validation ids, the following can be simplified.
         found = False
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id and msg_base in err.msg:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
@@ -132,7 +130,7 @@ class TestValidation(unittest.TestCase):
 
         # Once ValidationErrors provide validation ids, the following can be simplified.
         found = False
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id and msg_base in err.msg:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
@@ -147,14 +145,14 @@ class TestValidation(unittest.TestCase):
         # Test no caught warning on empty cardinality
         sec = odml.Section(name="sec_empty_cardinality", type="test", parent=doc)
         # Check that the current section did not throw any sections cardinality warnings
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id:
                 self.assertNotIn(msg_base, err.msg)
 
         # Test no warning on valid cardinality
         sec = odml.Section(name="sec_valid_cardinality", sec_cardinality=(1, 2), parent=doc)
         _ = odml.Section(name="sub_sec_valid_cardinality", type="test", parent=sec)
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id:
                 self.assertNotIn(msg_base, err.msg)
 
@@ -170,7 +168,7 @@ class TestValidation(unittest.TestCase):
 
         # Once ValidationErrors provide validation ids, the following can be simplified.
         found = False
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id and msg_base in err.msg:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
@@ -189,7 +187,7 @@ class TestValidation(unittest.TestCase):
 
         # Once ValidationErrors provide validation ids, the following can be simplified.
         found = False
-        for err in validate(doc).errors:
+        for err in Validate(doc).errors:
             if err.obj.id == sec.id and msg_base in err.msg:
                 self.assertFalse(err.is_error)
                 self.assertIn(test_msg, err.msg)
@@ -199,7 +197,7 @@ class TestValidation(unittest.TestCase):
 
     def test_section_in_terminology(self):
         doc = samplefile.parse("""s1[T1]""")
-        res = validate(doc)
+        res = Validate(doc)
         self.assertError(res, "A section should have an associated repository",
                          filter_rep=False)
 
@@ -208,7 +206,7 @@ class TestValidation(unittest.TestCase):
         - S1[T1]
         """)
         doc.sections[0].repository = 'map'
-        res = validate(doc)
+        res = Validate(doc)
         # self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
         self.assertEqual(res.errors, [])
 
@@ -234,7 +232,7 @@ class TestValidation(unittest.TestCase):
             - P1
             """)
         doc.repository = 'term'
-        res = validate(doc)
+        res = Validate(doc)
         self.assertEqual(res.errors, [])
 
         doc = samplefile.parse("""
@@ -243,18 +241,18 @@ class TestValidation(unittest.TestCase):
             - P1
             """)
         doc.repository = 'term'
-        res = validate(doc)
+        res = Validate(doc)
         self.assertError(res, "Property 'p1' not found in terminology")
 
     def test_property_values(self):
         # different units
         doc = samplefile.parse("""s1[t1]""")
-        p = odml.Property(name="p1", value=[0, 1])
-        doc["s1"].append(p)
+        prop = odml.Property(name="p1", value=[0, 1])
+        doc["s1"].append(prop)
 
         # missing dependency
-        p.dependency = "p2"
-        res = validate(doc)
+        prop.dependency = "p2"
+        res = Validate(doc)
         self.assertError(res, "non-existent dependency object")
 
     def test_property_unique_ids(self):
@@ -269,7 +267,7 @@ class TestValidation(unittest.TestCase):
         cprop = prop.clone(keep_id=True)
         sec_two.append(cprop)
 
-        res = validate(doc)
+        res = Validate(doc)
         self.assertError(res, "Duplicate id in Property")
 
     def test_section_unique_ids(self):
@@ -282,7 +280,7 @@ class TestValidation(unittest.TestCase):
         csec = sec.clone(keep_id=True)
         sec.append(csec)
 
-        res = validate(doc)
+        res = Validate(doc)
         self.assertError(res, "Duplicate id in Section")
 
     def test_section_name_readable(self):
@@ -292,7 +290,7 @@ class TestValidation(unittest.TestCase):
         doc = odml.Document()
         sec = odml.Section("sec", parent=doc)
         sec.name = sec.id
-        res = validate(doc)
+        res = Validate(doc)
         self.assertError(res, "Name should be readable")
 
     def test_property_name_readable(self):
@@ -303,7 +301,7 @@ class TestValidation(unittest.TestCase):
         sec = odml.Section("sec", parent=doc)
         prop = odml.Property("prop", parent=sec)
         prop.name = prop.id
-        res = validate(doc)
+        res = Validate(doc)
         self.assertError(res, "Name should be readable")
 
     def test_standalone_section(self):
@@ -313,7 +311,7 @@ class TestValidation(unittest.TestCase):
         """
 
         sec_one = odml.Section("sec1")
-        res = validate(sec_one)
+        res = Validate(sec_one)
         self.assertError(res, "Section type not specified")
 
     def test_standalone_property(self):
@@ -324,8 +322,8 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property()
         prop.type = ""
 
-        errs = list(filter(lambda x: x.is_error, validate(prop).errors))
-        self.assertEquals(len(errs), 0)
+        errs = list(filter(lambda x: x.is_error, Validate(prop).errors))
+        self.assertEqual(len(errs), 0)
 
     def test_section_init(self):
         """
@@ -347,48 +345,47 @@ class TestValidation(unittest.TestCase):
         raise validation warning.
         """
 
-        prop0 = odml.Property(name='words', dtype="string",
-                              values=['-13', '101', '-11', 'hello'])
-        self.assertEquals(len(validate(prop0).errors), 0)
+        val = ['-13', '101', '-11', 'hello']
+        prop0 = odml.Property(name='words', dtype="string", values=val)
+        self.assertEqual(len(Validate(prop0).errors), 0)
 
         msg_base = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!'
 
-        prop1 = odml.Property(name='members', dtype="string",
-                              values=['-13', '101', '-11', '0', '-8'])
-        self.assertError(validate(prop1), msg_base % ("members", "int"))
+        val = ['-13', '101', '-11', '0', '-8']
+        prop1 = odml.Property(name='members', dtype="string", values=val)
+        self.assertError(Validate(prop1), msg_base % ("members", "int"))
 
-        prop2 = odml.Property(name='potential', dtype="string",
-                              values=['-4.8', '10.0', '-11.9', '-10.0', '18.0'])
-        self.assertError(validate(prop2), msg_base % ("potential", "float"))
+        val = ['-4.8', '10.0', '-11.9', '-10.0', '18.0']
+        prop2 = odml.Property(name='potential', dtype="string", values=val)
+        self.assertError(Validate(prop2), msg_base % ("potential", "float"))
 
-        prop3 = odml.Property(name='dates', dtype="string",
-                              values=['1997-12-14', '00-12-14', '89-07-04'])
-        self.assertError(validate(prop3), msg_base % ("dates", "date"))
+        val = ['1997-12-14', '00-12-14', '89-07-04']
+        prop3 = odml.Property(name='dates', dtype="string", values=val)
+        self.assertError(Validate(prop3), msg_base % ("dates", "date"))
 
-        prop4 = odml.Property(name='datetimes', dtype="string",
-                              values=['97-12-14 11:11:11', '97-12-14 12:12', '1997-12-14 03:03'])
-        self.assertError(validate(prop4), msg_base % ("datetimes", "datetime"))
+        val = ['97-12-14 11:11:11', '97-12-14 12:12', '1997-12-14 03:03']
+        prop4 = odml.Property(name='datetimes', dtype="string", values=val)
+        self.assertError(Validate(prop4), msg_base % ("datetimes", "datetime"))
 
-        prop5 = odml.Property(name='times', dtype="string",
-                              values=['11:11:11', '12:12:12', '03:03:03'])
-        self.assertError(validate(prop5), msg_base % ("times", "time"))
+        val = ['11:11:11', '12:12:12', '03:03:03']
+        prop5 = odml.Property(name='times', dtype="string", values=val)
+        self.assertError(Validate(prop5), msg_base % ("times", "time"))
 
-        prop6 = odml.Property(name='sent', dtype="string",
-                              values=['False', True, 'TRUE', False, 't'])
-        self.assertError(validate(prop6), msg_base % ("sent", "boolean"))
+        val = ['False', True, 'TRUE', False, 't']
+        prop6 = odml.Property(name='sent', dtype="string", values=val)
+        self.assertError(Validate(prop6), msg_base % ("sent", "boolean"))
 
-        prop7 = odml.Property(name='texts', dtype="string",
-                              values=['line1\n line2', 'line3\n line4', '\nline5\nline6'])
-        self.assertError(validate(prop7), msg_base % ("texts", "text"))
+        val = ['line1\n line2', 'line3\n line4', '\nline5\nline6']
+        prop7 = odml.Property(name='texts', dtype="string", values=val)
+        self.assertError(Validate(prop7), msg_base % ("texts", "text"))
 
-        prop8 = odml.Property(name="Location", dtype='string',
-                              values=['(39.12; 67.19)', '(39.12; 67.19)', '(39.12; 67.18)'])
-        self.assertError(validate(prop8), msg_base % ("Location", "2-tuple"))
+        val = ['(39.12; 67.19)', '(39.12; 67.19)', '(39.12; 67.18)']
+        prop8 = odml.Property(name="Location", dtype='string', values=val)
+        self.assertError(Validate(prop8), msg_base % ("Location", "2-tuple"))
 
-        prop9 = odml.Property(name="Coos", dtype='string',
-                              values=['(39.12; 89; 67.19)', '(39.12; 78; 67.19)',
-                                      '(39.12; 56; 67.18)'])
-        self.assertError(validate(prop9), msg_base % ("Coos", "3-tuple"))
+        val = ['(39.12; 89; 67.19)', '(39.12; 78; 67.19)', '(39.12; 56; 67.18)']
+        prop9 = odml.Property(name="Coos", dtype='string', values=val)
+        self.assertError(Validate(prop9), msg_base % ("Coos", "3-tuple"))
 
     def load_section_validation(self, doc):
         filter_func = lambda x: x.msg == filter_msg and x.obj.name == filter_name
@@ -396,12 +393,12 @@ class TestValidation(unittest.TestCase):
         # Check error for deliberate empty section type
         filter_msg = "Missing required attribute 'type'"
         filter_name = "sec_type_empty"
-        self.assertGreater(len(list(filter(filter_func, validate(doc).errors))), 0)
+        self.assertGreater(len(list(filter(filter_func, Validate(doc).errors))), 0)
 
         # Check warning for not specified section type
         filter_msg = "Section type not specified"
         filter_name = "sec_type_undefined"
-        self.assertGreater(len(list(filter(filter_func, validate(doc).errors))), 0)
+        self.assertGreater(len(list(filter(filter_func, Validate(doc).errors))), 0)
 
     def test_load_section_xml(self):
         """
@@ -436,7 +433,7 @@ class TestValidation(unittest.TestCase):
     def load_dtypes_validation(self, doc):
         msg_base = 'Dtype of property "%s" currently is "string", but might fit dtype "%s"!'
 
-        doc_val = validate(doc)
+        doc_val = Validate(doc)
         self.assertError(doc_val, msg_base % ("members_no", "int"))
         self.assertError(doc_val, msg_base % ("potential_no", "float"))
         self.assertError(doc_val, msg_base % ("dates_no", "date"))

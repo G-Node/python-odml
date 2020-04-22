@@ -41,18 +41,18 @@ class TestSection(unittest.TestCase):
 
     def test_name(self):
         # Test id is used when name is not provided
-        s = Section()
-        self.assertIsNotNone(s.name)
-        self.assertEqual(s.name, s.id)
+        sec = Section()
+        self.assertIsNotNone(sec.name)
+        self.assertEqual(sec.name, sec.id)
 
         # Test name is properly set on init
         name = "rumpelstilzchen"
-        s = Section(name)
-        self.assertEqual(s.name, name)
+        sec = Section(name)
+        self.assertEqual(sec.name, name)
 
         name = "rumpelstilzchen"
-        s = Section(name=name)
-        self.assertEqual(s.name, name)
+        sec = Section(name=name)
+        self.assertEqual(sec.name, name)
 
         # Test name can be properly set on single and connected Sections
         sec = Section()
@@ -78,41 +78,41 @@ class TestSection(unittest.TestCase):
 
         # Test section name set will fail on existing same name document sibling
         doc = Document()
-        sec_a = Section(name="a", parent=doc)
+        _ = Section(name="a", parent=doc)
         sec_b = Section(name="b", parent=doc)
         with self.assertRaises(KeyError):
             sec_b.name = "a"
 
     def test_parent(self):
-        s = Section("Section")
-        self.assertIsNone(s.parent)
-        s.parent = None
-        self.assertIsNone(s.parent)
-        s.parent = Document()
-        self.assertIsInstance(s.parent, BaseDocument)
-        self.assertIsInstance(s.parent._sections[0], BaseSection)
+        sec = Section("Section")
+        self.assertIsNone(sec.parent)
+        sec.parent = None
+        self.assertIsNone(sec.parent)
+        sec.parent = Document()
+        self.assertIsInstance(sec.parent, BaseDocument)
+        self.assertIsInstance(sec.parent._sections[0], BaseSection)
 
-        """ Test if child is removed from _sections of a parent after assigning
-            a new parent to the child """
-        p = s.parent
-        s.parent = Section("S")
-        self.assertEqual(len(p._sections), 0)
+        # Test if child is removed from _sections of a parent after
+        # assigning a new parent to the child.
+        sec_parent = sec.parent
+        sec.parent = Section("S")
+        self.assertEqual(len(sec_parent._sections), 0)
 
-        s = Section("section_doc", parent=Document())
-        self.assertIsInstance(s.parent, BaseDocument)
-        self.assertEqual(len(s.parent._sections), 1)
-        p = s.parent
-        s.parent = None
-        self.assertEqual(len(p._sections), 0)
-        self.assertEqual(s.parent, None)
+        sec = Section("section_doc", parent=Document())
+        self.assertIsInstance(sec.parent, BaseDocument)
+        self.assertEqual(len(sec.parent._sections), 1)
+        sec_parent = sec.parent
+        sec.parent = None
+        self.assertEqual(len(sec_parent._sections), 0)
+        self.assertEqual(sec.parent, None)
 
-        s = Section("section_sec", parent=Section("S"))
-        self.assertIsInstance(s.parent, BaseSection)
-        self.assertEqual(len(s.parent._sections), 1)
-        p = s.parent
-        s.parent = None
-        self.assertEqual(len(p._sections), 0)
-        self.assertEqual(s.parent, None)
+        sec = Section("section_sec", parent=Section("S"))
+        self.assertIsInstance(sec.parent, BaseSection)
+        self.assertEqual(len(sec.parent._sections), 1)
+        sec_parent = sec.parent
+        sec.parent = None
+        self.assertEqual(len(sec_parent._sections), 0)
+        self.assertEqual(sec.parent, None)
 
         with self.assertRaises(ValueError):
             Section("section_property", parent=Property("P"))
@@ -227,18 +227,18 @@ class TestSection(unittest.TestCase):
             sec.props[1] = "prop2"
 
     def test_id(self):
-        s = Section(name="S")
-        self.assertIsNotNone(s.id)
+        sec = Section(name="S")
+        self.assertIsNotNone(sec.id)
 
-        s = Section("S", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
-        self.assertEqual(s.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
+        sec = Section("S", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertEqual(sec.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        s = Section("S", oid="id")
-        self.assertNotEqual(s.id, "id")
+        sec = Section("S", oid="id")
+        self.assertNotEqual(sec.id, "id")
 
         # Make sure id cannot be reset programmatically.
         with self.assertRaises(AttributeError):
-            s.id = "someId"
+            sec.id = "someId"
 
     def test_new_id(self):
         sec = Section(name="sec")
@@ -573,13 +573,13 @@ class TestSection(unittest.TestCase):
 
         s_sec_one = Section(name="lvl", type="one",
                             reference="ref", definition="def", parent=source)
-        s_sec_two = Section(name="unrelated", type="one",
-                            reference="one", definition="one", parent=source)
+        _ = Section(name="unrelated", type="one",
+                    reference="one", definition="one", parent=source)
 
-        d_sec_one = Section(name="lvl", type="one",
-                            reference="ref", definition="def", parent=destination)
-        d_sec_two = Section(name="unrelated", type="two",
-                            reference="two", definition="two", parent=destination)
+        _ = Section(name="lvl", type="one",
+                    reference="ref", definition="def", parent=destination)
+        _ = Section(name="unrelated", type="two",
+                    reference="two", definition="two", parent=destination)
 
         # Test Section child level definition check
         destination.merge_check(source, True)
@@ -603,17 +603,17 @@ class TestSection(unittest.TestCase):
                                reference="ref2", definition="def2", parent=s_sec_one)
         s_sec_two = Section(name="unrelated", type="one",
                             reference="one", definition="one", parent=source)
-        s_subsec_two = Section(name="lvl", type="two",
-                               reference="none1", definition="none1", parent=s_sec_two)
+        _ = Section(name="lvl", type="two",
+                    reference="none1", definition="none1", parent=s_sec_two)
 
         d_sec_one = Section(name="lvl", type="one",
                             reference="ref", definition="def", parent=destination)
-        d_subsec_one = Section(name="lvl", type="two",
-                               reference="ref2", definition="def2", parent=d_sec_one)
+        _ = Section(name="lvl", type="two",
+                    reference="ref2", definition="def2", parent=d_sec_one)
         d_sec_two = Section(name="unrelated", type="two",
                             reference="two", definition="two", parent=destination)
-        d_subsec_two = Section(name="lvl", type="two",
-                               reference="none2", definition="none2", parent=d_sec_two)
+        _ = Section(name="lvl", type="two",
+                    reference="none2", definition="none2", parent=d_sec_two)
 
         # Test Section 2nd child level definition check
         # Check no definition/reference ValueError between s_subsec_two and d_subsec_one
@@ -655,10 +655,10 @@ class TestSection(unittest.TestCase):
         destination = Section(name="destination")
 
         s_prop_one = Property(name="lvl one", unit="Hz", parent=source)
-        s_prop_two = Property(name="unrelated one", unit="one", parent=source)
+        _ = Property(name="unrelated one", unit="one", parent=source)
 
-        d_prop_one = Property(name="lvl one", unit="Hz", parent=destination)
-        d_prop_two = Property(name="unrelated two", unit="two", parent=destination)
+        _ = Property(name="lvl one", unit="Hz", parent=destination)
+        _ = Property(name="unrelated two", unit="two", parent=destination)
 
         # Test Property child level check
         destination.merge_check(source, True)
@@ -676,13 +676,13 @@ class TestSection(unittest.TestCase):
         s_subprop_one = Property(name="lvl one", unit="Hz", parent=s_sec_one)
 
         s_sec_two = Section(name="unrelated", type="one", parent=source)
-        s_subprop_two = Property(name="unrelated one", unit="one", parent=s_sec_two)
+        _ = Property(name="unrelated one", unit="one", parent=s_sec_two)
 
         d_sec_one = Section(name="lvl", type="one", parent=destination)
-        d_subprop_one = Property(name="lvl one", unit="Hz", parent=d_sec_one)
+        _ = Property(name="lvl one", unit="Hz", parent=d_sec_one)
 
         d_sec_two = Section(name="unrelated", type="two", parent=destination)
-        d_subprop_two = Property(name="unrelated one", unit="two", parent=d_sec_two)
+        _ = Property(name="unrelated one", unit="two", parent=d_sec_two)
 
         # Test Property 2nd child level definition check
         # Check no unit ValueError between s_subprop_two and d_subprop_one
@@ -707,7 +707,7 @@ class TestSection(unittest.TestCase):
         # -- First child level Section merge tests
         s_sec_one = Section(name="lvl", type="one", definition="def", parent=source)
         s_sec_two = Section(name="other", type="one", parent=source)
-        d_sec_one = Section(name="lvl", type="one", parent=destination)
+        _ = Section(name="lvl", type="one", parent=destination)
 
         self.assertEqual(len(destination), 1)
         self.assertIsNone(destination.sections["lvl"].definition)
@@ -725,7 +725,7 @@ class TestSection(unittest.TestCase):
 
         s_prop_one = Property(name="prop_one", unit="Hz", parent=source)
         s_prop_two = Property(name="prop_two", parent=source)
-        d_prop_one = Property(name="prop_one", parent=destination)
+        _ = Property(name="prop_one", parent=destination)
 
         self.assertEqual(len(destination.properties), 1)
         self.assertIsNone(destination.properties["prop_one"].unit)
@@ -744,7 +744,7 @@ class TestSection(unittest.TestCase):
         s_prop_two = Property(name="prop_two", parent=s_sec_one)
 
         d_sec_one = Section(name="lvl", type="one", parent=destination)
-        d_prop_one = Property(name="prop_one", parent=d_sec_one)
+        _ = Property(name="prop_one", parent=d_sec_one)
 
         self.assertEqual(len(destination.properties), 0)
         self.assertEqual(len(destination.sections["lvl"].properties), 1)
@@ -763,10 +763,10 @@ class TestSection(unittest.TestCase):
         destination = Section(name="destination")
 
         s_sec_one = Section(name="lvl", type="one", definition="def", parent=source)
-        s_sec_two = Section(name="other", type="one", parent=source)
+        _ = Section(name="other", type="one", parent=source)
         d_sec_one = Section(name="lvl", type="one", parent=destination)
 
-        s_subprop_one = Property(name="prop", value=[1, 2, 3], parent=s_sec_one)
+        _ = Property(name="prop", value=[1, 2, 3], parent=s_sec_one)
         d_subprop_one = Property(name="prop", value=["four", "five"], parent=d_sec_one)
 
         self.assertEqual(len(destination.sections), 1)

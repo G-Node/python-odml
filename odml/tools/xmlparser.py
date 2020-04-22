@@ -156,6 +156,7 @@ class XMLWriter:
             val = getattr(curr_el, fmt.map(k))
             if val is None:
                 continue
+
             if isinstance(fmt, ofmt.Property.__class__) and k == "value":
                 # Custom odML tuples require special handling for save loading from file.
                 if curr_el.dtype and curr_el.dtype.endswith("-tuple") and val:
@@ -274,10 +275,12 @@ class XMLReader(object):
         """
         if root.tag != 'odML':
             raise ParserException("Expecting <odML> tag but got <%s>.\n" % root.tag)
-        elif 'version' not in root.attrib:
-            raise ParserException("Could not find format version attribute "
-                                  "in <odML> tag.\n")
-        elif root.attrib['version'] != FORMAT_VERSION:
+
+        if 'version' not in root.attrib:
+            msg = "Could not find format version attribute in <odML> tag.\n"
+            raise ParserException(msg)
+
+        if root.attrib['version'] != FORMAT_VERSION:
             msg = ("Cannot parse odML document with format version '%s'. \n"
                    "\tUse the 'VersionConverter' from 'odml.tools.converters' "
                    "to import previous odML formats."
@@ -304,7 +307,8 @@ class XMLReader(object):
 
         # Provide original file name via the in memory document
         if isinstance(xml_file, unicode):
-            doc._origin_file_name = basename(xml_file)
+            doc.origin_file_name = basename(xml_file)
+
         return doc
 
     def from_string(self, string):
@@ -513,13 +517,14 @@ class XMLReader(object):
 
 
 if __name__ == '__main__':
-    from optparse import OptionParser
+    import argparse
     import odml.tools.dumper as dumper
 
-    parser = OptionParser()
-    (options, args) = parser.parse_args()
+    args = sys.argv[1:]
 
-    if len(args) < 1:
-        parser.print_help()
-    else:
-        dumper.dump_doc(load(args[0]))
+    desc = "Print content of an odml xml file to the stdout"
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument("odml_file", help="Path to odml xml file")
+    args = parser.parse_args(args)
+
+    dumper.dump_doc(load(args.odml_file))

@@ -1,14 +1,18 @@
-import odml
-
-import unittest
 import os
-import sys
 import re
+import sys
 import tempfile
+import unittest
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
+import odml
 
 from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
-from odml.tools import dumper
 
 try:
     unicode = unicode
@@ -38,16 +42,17 @@ def parse(data):
         - s21[t2] linked to /s1/s2
     """
     lines = data.strip(" ").strip("\n").split("\n")
-    offset = len(re.compile('(\s*)').match(lines[0]).group())
+    offset = len(re.compile(r'(\s*)').match(lines[0]).group())
     pat = re.compile(r'(?P<name>\w+)(\[(?P<type>\w+)\])?(\s+mapping \[(?P<dst>'
-                     '[\w:]+)\])?(\s+linked to (?P<link>[\w/]+))?')
+                     r'[\w:]+)\])?(\s+linked to (?P<link>[\w/]+))?')
+
     parents = [odml.Document(), None]
     for line in lines:
         line = line[offset:]
         while len(parents) > 1:
-            parpref = (len(parents) - 2) * 2
-            if line.startswith(" " * parpref):
-                line = line[parpref:]
+            parp_ref = (len(parents) - 2) * 2
+            if line.startswith(" " * parp_ref):
+                line = line[parp_ref:]
                 break
             parents.pop()
 
@@ -57,54 +62,59 @@ def parse(data):
             parents.pop()
 
         try:
-            m = pat.match(line).groupdict()
+            match_line = pat.match(line).groupdict()
         except:
             print("error parsing", repr(line))
             raise
-        if m['type'] is None:
-            obj = odml.Property(name=m['name'], value="[val]")
+
+        if match_line['type'] is None:
+            obj = odml.Property(name=match_line['name'], value="[val]")
         else:
-            obj = odml.Section(name=m['name'], type=m['type'])
-        if m['dst'] is not None:
-            obj.mapping = 'map#%s' % m['dst']
-        if m['link'] is not None:
-            obj._link = m['link']
+            obj = odml.Section(name=match_line['name'], type=match_line['type'])
+
+        if match_line['dst'] is not None:
+            obj.mapping = 'map#%s' % match_line['dst']
+
+        if match_line['link'] is not None:
+            obj._link = match_line['link']
+
         parents[-1].append(obj)
         parents.append(obj)
+
     return parents[0]
 
 
 class SampleFileCreator:
-
     def create_document(self):
         doc = odml.Document()
         for i in range(3):
             doc.append(self.create_section("sec %d" % i))
+
         return doc
 
     def create_section(self, name, depth=0):
-        s = odml.Section(name=name, type=name.replace("sec", "type"))
+        sec = odml.Section(name=name, type=name.replace("sec", "type"))
         if depth < 1:
             for i in range(2):
-                s.append(self.create_section("%s,%d" %
-                                             (name, i), depth=depth + 1))
+                sec.append(self.create_section("%s,%d" % (name, i), depth=depth + 1))
 
         if name.endswith("1"):
             for i in range(3):
-                s.append(self.create_property("%s:%d" % (name, i)))
+                sec.append(self.create_property("%s:%d" % (name, i)))
 
-        return s
+        return sec
 
-    def create_property(self, name):
+    @staticmethod
+    def create_property(name):
         return odml.Property(name=name.replace("sec", "prop"),
                              value=name.replace("sec", "val"))
 
 
 class SampleFileCreatorTest(unittest.TestCase):
 
-    def test_samplefile(self):
-        doc = SampleFileCreator().create_document()
-        # dumper.dump_doc(doc)
+    @staticmethod
+    def test_sample_file():
+        _ = SampleFileCreator().create_document()
 
 
 class SampleFileOperationTest(unittest.TestCase):
@@ -144,35 +154,27 @@ class SampleFileOperationTest(unittest.TestCase):
             val = unicode(xmlparser.XMLWriter(doc))
         else:
             val = str(xmlparser.XMLWriter(doc))
+
         self.assertIn('version="%s"' % FORMAT_VERSION, val)
         doc = xmlparser.XMLReader().from_string(val)
+
         # This test is switched off until the XML versioning support is implemented
         # self.assertEqual(doc._xml_version, FORMAT_VERSION)
 
     def test_save(self):
+        base_path = tempfile.gettempdir()
         for module in [xmlparser.XMLWriter]:
+            path = os.path.join(base_path, "temp.odml")
             doc = module(self.doc)
-            import tempfile
-
-            path = tempfile.gettempdir()
-            path = os.path.join(path, "temp.odml")
             doc.write_file(path)
-            os.unlink(path)
+            os.remove(path)
 
     def test_restore(self):
-        try:
-            from StringIO import StringIO
-        except ImportError:
-            from io import StringIO
         modules = [(xmlparser.XMLWriter, xmlparser.XMLReader)]
 
         for Writer, Reader in modules:
-
             doc = Writer(self.doc)
-            if sys.version_info < (3, 0):
-                doc = StringIO(unicode(doc))
-            else:
-                doc = StringIO(str(doc))
+            doc = StringIO(unicode(doc))
             doc = Reader().from_file(doc)
             self.assertEqual(doc, self.doc)
 
@@ -191,48 +193,50 @@ class SampleFileOperationTest(unittest.TestCase):
 class AttributeTest(unittest.TestCase):
 
     def test_value_int(self):
-        p = odml.Property("test", 1, dtype="int")
-        self.assertEqual(p.values[0], 1)
+        prop = odml.Property("test", 1, dtype="int")
+        self.assertEqual(prop.values[0], 1)
 
     def test_conversion_int_to_float(self):
-        p = odml.Property("test", "1", dtype="int")
-        self.assertEqual(p.dtype, "int")
-        self.assertIsInstance(p.values[0], int)
-        p.dtype = "float"  # change dtype
-        self.assertEqual(p.dtype, "float")
-        self.assertEqual(p.values[0], 1.0)
+        prop = odml.Property("test", "1", dtype="int")
+        self.assertEqual(prop.dtype, "int")
+        self.assertIsInstance(prop.values[0], int)
+
+        # change dtype
+        prop.dtype = "float"
+        self.assertEqual(prop.dtype, "float")
+        self.assertEqual(prop.values[0], 1.0)
 
     def test_conversion_float_to_int(self):
-        p = odml.Property("test", "1.5", dtype="float")
-        self.assertEqual(p.dtype, "float")
-        p.dtype = "int"
-        self.assertEqual(p.dtype, "int")
-        self.assertEqual(p.values[0], 1)
+        prop = odml.Property("test", "1.5", dtype="float")
+        self.assertEqual(prop.dtype, "float")
+        prop.dtype = "int"
+        self.assertEqual(prop.dtype, "int")
+        self.assertEqual(prop.values[0], 1)
 
     def test_value_float(self):
-        p = odml.Property("test", value="1.5", dtype="float")
-        self.assertEqual(p.values[0], 1.5)
+        prop = odml.Property("test", value="1.5", dtype="float")
+        self.assertEqual(prop.values[0], 1.5)
 
 
 class CopyTest(unittest.TestCase):
 
     def setUp(self):
-        self.p = odml.Property(name="test", value=1)
+        self.prop = odml.Property(name="test", value=1)
 
     def test_dependence(self):
-        a = self.p
-        b = self.p
-        self.assertEqual(a, b)
-        a.values = 5
-        self.assertEqual(a, b)
-        self.assertEqual(a.values, b.values)
+        prop1 = self.prop
+        prop2 = self.prop
+        self.assertEqual(prop1, prop2)
+        prop1.values = 5
+        self.assertEqual(prop1, prop2)
+        self.assertEqual(prop1.values, prop2.values)
 
     def test_independence(self):
-        a = self.p.clone()
-        b = self.p.clone()
-        self.assertEqual(a, b)
-        a.values = 5
-        self.assertNotEqual(a, b)
+        prop1 = self.prop.clone()
+        prop2 = self.prop.clone()
+        self.assertEqual(prop1, prop2)
+        prop1.values = 5
+        self.assertNotEqual(prop1, prop2)
         # self.assertUn
 
 
@@ -242,7 +246,7 @@ class MiscTest(unittest.TestCase):
         self.doc = SampleFileCreator().create_document()
 
     def test_paths(self):
-        sec = odml.Section("bar")
+        sec = odml.Section("sec")
         self.assertEqual(sec._get_relative_path("/a", "/b"), "/b")
         self.assertEqual(sec._get_relative_path("/a", "/a/b"), "b")
         self.assertEqual(sec._get_relative_path("/a/b", "/a/c"), "../c")
@@ -297,9 +301,7 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(self.doc.sections[2].name, "sec 1")
 
     def test_get_section_by_path(self):
-        sec0 = self.doc.sections[0]
         sec1 = self.doc.sections[1]
-        sec01 = sec0.sections[1]
         sec10 = sec1.sections[0]
         sec11 = sec1.sections[1]
 
@@ -321,18 +323,17 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(current, sec11)
 
         # test wrong parent
-        wrongpath = "../" + sec10.get_relative_path(sec11)
-        self.assertRaises(ValueError, sec10.get_section_by_path, wrongpath)
+        wrong_path = "../" + sec10.get_relative_path(sec11)
+        self.assertRaises(ValueError, sec10.get_section_by_path, wrong_path)
 
         # test wrong child
-        wrongpath = sec1.get_relative_path(sec10) + "/foo"
-        self.assertRaises(ValueError, sec1.get_section_by_path, wrongpath)
+        wrong_path = sec1.get_relative_path(sec10) + "/sec"
+        self.assertRaises(ValueError, sec1.get_section_by_path, wrong_path)
 
         # test absolute path with no document
-        newsec = SampleFileCreator().create_section("foo", 0)
-        path = newsec.sections[0].get_path()
-        self.assertRaises(ValueError,
-                          newsec.sections[1].get_section_by_path, path)
+        new_sec = SampleFileCreator().create_section("sec", 0)
+        path = new_sec.sections[0].get_path()
+        self.assertRaises(ValueError, new_sec.sections[1].get_section_by_path, path)
 
         # test path with property is invalid
         path = sec11.properties[0].get_path()
@@ -355,17 +356,17 @@ class MiscTest(unittest.TestCase):
         self.assertEqual(current, prop)
 
         # test relative path from section
-        manualpath = "../%s/%s:%s" % (sec1.name, sec11.name, prop.name)
-        current = sec0.get_property_by_path(manualpath)
+        manual_path = "../%s/%s:%s" % (sec1.name, sec11.name, prop.name)
+        current = sec0.get_property_by_path(manual_path)
         self.assertEqual(current, prop)
 
         # test non-existing property
-        wrongpath = sec10.get_relative_path(sec11) + ":foo"
-        self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
+        wrong_path = sec10.get_relative_path(sec11) + ":foo"
+        self.assertRaises(ValueError, sec1.get_property_by_path, wrong_path)
 
         # test path with section is invalid
-        wrongpath = sec11.get_path()
-        self.assertRaises(ValueError, sec1.get_property_by_path, wrongpath)
+        wrong_path = sec11.get_path()
+        self.assertRaises(ValueError, sec1.get_property_by_path, wrong_path)
 
     def test_save_version(self):
         tmp_file = os.path.join(tempfile.gettempdir(), "example.odml")

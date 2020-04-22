@@ -3,15 +3,10 @@ import os
 import shutil
 import tempfile
 import unittest
-try:
-    import urllib.request as urllib2
-    from urllib.request import pathname2url
-except ImportError:
-    import urllib2
-    from urllib import pathname2url
 
 from contextlib import contextmanager
 from lxml import etree as ET
+
 from odml.terminology import REPOSITORY_BASE
 from odml.tools.converters import VersionConverter
 
@@ -118,8 +113,8 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("type"), None)
 
         file = io.StringIO(unicode(self.doc))
-        vc = self.VC(file)
-        tree = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        tree = converter._convert(converter._parse_xml())
         root = tree.getroot()
         prop = root.find("section").find("property")
         val_elems = []
@@ -146,12 +141,10 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources",
-                                           "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
         local_url = "file://%s" % repo_file
 
-        repo_old_file = os.path.join(dir_path, "resources",
-                                               "local_repository_file_v1.0.xml")
+        repo_old_file = os.path.join(dir_path, "resources", "local_repository_file_v1.0.xml")
         local_old_url = "file://%s" % repo_old_file
 
         doc = """
@@ -185,8 +178,8 @@ class TestVersionConverter(unittest.TestCase):
         """ % local_old_url
 
         file = io.StringIO(unicode(doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
         # Test export of Document tags, repository is excluded
         self.assertEqual(len(root.findall("author")), 1)
@@ -201,19 +194,19 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test warning message on non-importable repository
         file = io.StringIO(unicode(invalid_repo_doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
         self.assertEqual(root.findall("repository")[0].text, "Unresolvable")
-        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
+        self.assertIn("not odML v1.1 compatible", converter.conversion_log[0])
 
         # Test warning message on old repository
         file = io.StringIO(unicode(old_repo_doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
         self.assertEqual(root.findall("repository")[0].text, local_old_url)
-        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
+        self.assertIn("not odML v1.1 compatible", converter.conversion_log[0])
 
     def test_convert_odml_file_section(self):
         """Test proper conversion of the odml.Section entity from
@@ -224,12 +217,10 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources",
-                                           "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
         local_url = "file://%s" % repo_file
 
-        repo_old_file = os.path.join(dir_path, "resources",
-                                               "local_repository_file_v1.0.xml")
+        repo_old_file = os.path.join(dir_path, "resources", "local_repository_file_v1.0.xml")
         local_old_url = "file://%s" % repo_old_file
 
         doc = """
@@ -268,8 +259,8 @@ class TestVersionConverter(unittest.TestCase):
         """ % (local_url, local_url)
 
         file = io.StringIO(unicode(doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
 
         root_id = root.findall("id")
@@ -318,11 +309,11 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>""" % local_old_url
 
         file = io.StringIO(unicode(doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         sec = conv_doc.getroot().findall("section")
         self.assertEqual(sec[0].find("repository").text, local_old_url)
-        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
+        self.assertIn("not odML v1.1 compatible", converter.conversion_log[0])
 
         # Test presence of v1.0 include tag and warning log entry
         doc = """
@@ -334,12 +325,12 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>""" % local_old_url
 
         file = io.StringIO(unicode(doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         sec = conv_doc.getroot().findall("section")
 
         self.assertEqual(sec[0].find("include").text, local_old_url)
-        self.assertIn("not odML v1.1 compatible", vc.conversion_log[0])
+        self.assertIn("not odML v1.1 compatible", converter.conversion_log[0])
 
     def test_convert_odml_file_property(self):
         """Test proper conversion of the odml.Property entity from
@@ -375,8 +366,8 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         file = io.StringIO(unicode(doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
         sec = root.findall("section")
 
@@ -540,8 +531,8 @@ class TestVersionConverter(unittest.TestCase):
         """
 
         file = io.StringIO(unicode(doc))
-        vc = self.VC(file)
-        conv_doc = vc._convert(vc._parse_xml())
+        converter = self.VC(file)
+        conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
         root_id = root.findall("id")
         self.assertEqual(len(root_id), 1)
@@ -659,7 +650,6 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(prop.findall("id")), 1)
         self.assertNotEqual(prop.find("id").text, "1")
 
-
     def test_parse_dict_document(self):
         # Test appending tags; not appending empty sections
         doc_dict = {'Document': {'author': 'HPL', 'sections': []}}
@@ -757,24 +747,23 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test working and valid repository link
         repo.text = '/'.join([REPOSITORY_BASE, 'v1.1', 'analysis', 'analysis.xml'])
-        vc = self.VC("")
-        self.assertIsNone(vc._handle_repository(repo))
-        self.assertEqual(vc.conversion_log, [])
+        converter = self.VC("")
+        self.assertIsNone(converter._handle_repository(repo))
+        self.assertEqual(converter.conversion_log, [])
 
         # Test replaced working repository link
         repo.text = '/'.join([REPOSITORY_BASE, 'v1.0', 'analysis', 'analysis.xml'])
-        self.assertIsNone(vc._handle_repository(repo))
-        self.assertEqual(repo.text, '/'.join([REPOSITORY_BASE, 'v1.1',
-                                              'analysis', 'analysis.xml']))
-        self.assertEqual(len(vc.conversion_log), 1)
-        self.assertTrue("[Info]" in vc.conversion_log[0])
+        self.assertIsNone(converter._handle_repository(repo))
+        self.assertEqual(repo.text, '/'.join([REPOSITORY_BASE, 'v1.1', 'analysis', 'analysis.xml']))
+        self.assertEqual(len(converter.conversion_log), 1)
+        self.assertTrue("[Info]" in converter.conversion_log[0])
 
         # Test invalid repository link
         invalid = "I am leading nowhere"
         repo.text = invalid
-        self.assertIsNone(vc._handle_repository(repo))
-        self.assertEqual(len(vc.conversion_log), 2)
-        self.assertTrue("[Warning]" in vc.conversion_log[1])
+        self.assertIsNone(converter._handle_repository(repo))
+        self.assertEqual(len(converter.conversion_log), 2)
+        self.assertTrue("[Warning]" in converter.conversion_log[1])
         self.assertEqual(repo.text, invalid)
 
     def test_handle_include(self):
@@ -782,24 +771,23 @@ class TestVersionConverter(unittest.TestCase):
 
         # Test working and valid repository link
         repo.text = '/'.join([REPOSITORY_BASE, 'v1.1', 'analysis', 'analysis.xml'])
-        vc = self.VC("")
-        self.assertIsNone(vc._handle_include(repo))
-        self.assertEqual(vc.conversion_log, [])
+        converter = self.VC("")
+        self.assertIsNone(converter._handle_include(repo))
+        self.assertEqual(converter.conversion_log, [])
 
         # Test replaced working repository link
         repo.text = '/'.join([REPOSITORY_BASE, 'v1.0', 'analysis', 'analysis.xml'])
-        self.assertIsNone(vc._handle_include(repo))
-        self.assertEqual(repo.text, '/'.join([REPOSITORY_BASE, 'v1.1',
-                                              'analysis', 'analysis.xml']))
-        self.assertEqual(len(vc.conversion_log), 1)
-        self.assertTrue("[Info]" in vc.conversion_log[0])
+        self.assertIsNone(converter._handle_include(repo))
+        self.assertEqual(repo.text, '/'.join([REPOSITORY_BASE, 'v1.1', 'analysis', 'analysis.xml']))
+        self.assertEqual(len(converter.conversion_log), 1)
+        self.assertTrue("[Info]" in converter.conversion_log[0])
 
         # Test invalid repository link
         invalid = "I am leading nowhere"
         repo.text = invalid
-        self.assertIsNone(vc._handle_include(repo))
-        self.assertEqual(len(vc.conversion_log), 2)
-        self.assertTrue("[Warning]" in vc.conversion_log[1])
+        self.assertIsNone(converter._handle_include(repo))
+        self.assertEqual(len(converter.conversion_log), 2)
+        self.assertTrue("[Warning]" in converter.conversion_log[1])
         self.assertEqual(repo.text, invalid)
 
     def test_convert_xml_file(self):

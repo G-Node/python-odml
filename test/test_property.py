@@ -1,16 +1,11 @@
 import unittest
 
-import datetime
-
 from odml import Property, Section, Document, DType
 from odml.property import BaseProperty
 from odml.section import BaseSection
 
 
 class TestProperty(unittest.TestCase):
-
-    def setUp(self):
-        pass
 
     def test_simple_attributes(self):
         p_name = "propertyName"
@@ -70,34 +65,34 @@ class TestProperty(unittest.TestCase):
         self.assertIsNone(prop.dependency_value)
 
     def test_value(self):
-        p = Property("property", 100)
-        self.assertEqual(p.values[0], 100)
-        self.assertIsInstance(p.values, list)
+        prop = Property("property", 100)
+        self.assertEqual(prop.values[0], 100)
+        self.assertIsInstance(prop.values, list)
 
-        p.values = None
-        self.assertEqual(len(p), 0)
+        prop.values = None
+        self.assertEqual(len(prop), 0)
 
-        p.values = [1, 2, 3]
-        p.values = ""
-        self.assertEqual(len(p), 0)
+        prop.values = [1, 2, 3]
+        prop.values = ""
+        self.assertEqual(len(prop), 0)
 
-        p.values = [1, 2, 3]
-        p.values = []
-        self.assertEqual(len(p), 0)
+        prop.values = [1, 2, 3]
+        prop.values = []
+        self.assertEqual(len(prop), 0)
 
-        p.values = [1, 2, 3]
-        p.values = ()
-        self.assertEqual(len(p), 0)
+        prop.values = [1, 2, 3]
+        prop.values = ()
+        self.assertEqual(len(prop), 0)
 
-        p.values.append(5)
-        self.assertEqual(len(p.values), 0)
+        prop.values.append(5)
+        self.assertEqual(len(prop.values), 0)
 
-        p2 = Property("test", {"name": "Marie", "name": "Johanna"})
-        self.assertEqual(len(p2), 1)
+        prop2 = Property("test", {"name": "Marie"})
+        self.assertEqual(len(prop2), 1)
 
         # Test tuple dtype value.
-        t = Property(name="Location", value='(39.12; 67.19)', dtype='2-tuple')
-        tuple_value = t.values[0]  # As the formed tuple is a list of list
+        prop_tuple = Property(name="Location", value='(39.12; 67.19)', dtype='2-tuple')
+        tuple_value = prop_tuple.values[0]  # As the formed tuple is a list of list
         self.assertEqual(tuple_value[0], '39.12')
         self.assertEqual(tuple_value[1], '67.19')
 
@@ -105,17 +100,17 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = Property(name="Public-Key", value='(5689; 1254; 687)', dtype='2-tuple')
 
-        p3 = Property('myprop', value=0, dtype=DType.int)
-        self.assertEqual(p3.value, [0])
-        self.assertEqual(p3.values, [0])
+        prop3 = Property('myprop', value=0, dtype=DType.int)
+        self.assertEqual(prop3.value, [0])
+        self.assertEqual(prop3.values, [0])
 
-        p4 = Property('myprop', value=0, dtype=DType.boolean)
-        self.assertEqual(p4.value, [False])
-        self.assertEqual(p4.values, [False])
+        prop4 = Property('myprop', value=0, dtype=DType.boolean)
+        self.assertEqual(prop4.value, [False])
+        self.assertEqual(prop4.values, [False])
 
-        p5 = Property('myprop', value=0)
-        self.assertEqual(p5.value, [0])
-        self.assertEqual(p5.values, [0])
+        prop5 = Property('myprop', value=0)
+        self.assertEqual(prop5.value, [0])
+        self.assertEqual(prop5.values, [0])
 
         with self.assertRaises(ValueError):
             Property(name="dateprop", dtype=DType.date, value=['20190707'])
@@ -128,7 +123,6 @@ class TestProperty(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             Property(name="intprop", dtype=DType.int, value=[2, "Hello!", 4])
-
 
     def test_value_append(self):
         # Test append w/o Property value or dtype
@@ -205,36 +199,38 @@ class TestProperty(unittest.TestCase):
             prop.append("invalid")
         self.assertEqual(prop.values, [1, 2, 3, 1, 5])
 
-        p5 = Property("test", value="a string")
-        p5.append("Freude")
-        self.assertEqual(len(p5), 2)
-        self.assertRaises(ValueError, p5.append, "[a, b, c]")
+        prop5 = Property("test", value="a string")
+        prop5.append("Freude")
+        self.assertEqual(len(prop5), 2)
+        self.assertRaises(ValueError, prop5.append, "[a, b, c]")
 
-        p6 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
-        p6.append("D Dickins")
-        self.assertEqual(len(p6), 4)
-        self.assertRaises(ValueError, p6.append, 1)
-        self.assertRaises(ValueError, p6.append, 1.3)
-        self.assertRaises(ValueError, p6.append, True)
+        prop6 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"],
+                         dtype=DType.person)
+        prop6.append("D Dickins")
+        self.assertEqual(len(prop6), 4)
+        self.assertRaises(ValueError, prop6.append, 1)
+        self.assertRaises(ValueError, prop6.append, 1.3)
+        self.assertRaises(ValueError, prop6.append, True)
 
-        p7 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
-        p7.append("https://en.wikipedia.org/wiki/Mars")
-        self.assertEqual(len(p7), 2)
-        self.assertRaises(ValueError, p7.append, 1)
-        self.assertRaises(ValueError, p7.append, 1.3)
-        self.assertRaises(ValueError, p7.append, True)
+        prop7 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"],
+                         dtype=DType.url)
+        prop7.append("https://en.wikipedia.org/wiki/Mars")
+        self.assertEqual(len(prop7), 2)
+        self.assertRaises(ValueError, prop7.append, 1)
+        self.assertRaises(ValueError, prop7.append, 1.3)
+        self.assertRaises(ValueError, prop7.append, True)
 
-        p8 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
-        p8.append("Mars is No. 4.")
-        self.assertEqual(len(p8), 2)
-        self.assertRaises(ValueError, p8.append, 1)
-        self.assertRaises(ValueError, p8.append, 1.3)
-        self.assertRaises(ValueError, p8.append, True)
+        prop8 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
+        prop8.append("Mars is No. 4.")
+        self.assertEqual(len(prop8), 2)
+        self.assertRaises(ValueError, prop8.append, 1)
+        self.assertRaises(ValueError, prop8.append, 1.3)
+        self.assertRaises(ValueError, prop8.append, True)
 
-        prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
-        prop.append("(7; 8; 9)")
-        self.assertEqual(len(prop), 2)
-        self.assertRaises(ValueError, prop.append, "(10; 11)")
+        prop9 = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
+        prop9.append("(7; 8; 9)")
+        self.assertEqual(len(prop9), 2)
+        self.assertRaises(ValueError, prop9.append, "(10; 11)")
 
     def test_value_extend(self):
         prop = Property(name="extend")
@@ -313,26 +309,28 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             prop.extend([6, "some text"])
 
-        p1 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"], dtype=DType.person)
-        p1.extend("D Dickins")
-        self.assertEqual(len(p1), 4)
-        self.assertRaises(ValueError, p1.extend, 1)
-        self.assertRaises(ValueError, p1.extend, 1.3)
-        self.assertRaises(ValueError, p1.extend, True)
+        prop1 = Property(name="prop", value=["A Abraham", "B Barnes", "C Clark"],
+                         dtype=DType.person)
+        prop1.extend("D Dickins")
+        self.assertEqual(len(prop1), 4)
+        self.assertRaises(ValueError, prop1.extend, 1)
+        self.assertRaises(ValueError, prop1.extend, 1.3)
+        self.assertRaises(ValueError, prop1.extend, True)
 
-        p2 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"], dtype=DType.url)
-        p2.extend("https://en.wikipedia.org/wiki/Mars")
-        self.assertEqual(len(p2), 2)
-        self.assertRaises(ValueError, p2.extend, 1)
-        self.assertRaises(ValueError, p2.extend, 1.3)
-        self.assertRaises(ValueError, p2.extend, True)
+        prop2 = Property(name="prop", value=["https://en.wikipedia.org/wiki/Earth"],
+                         dtype=DType.url)
+        prop2.extend("https://en.wikipedia.org/wiki/Mars")
+        self.assertEqual(len(prop2), 2)
+        self.assertRaises(ValueError, prop2.extend, 1)
+        self.assertRaises(ValueError, prop2.extend, 1.3)
+        self.assertRaises(ValueError, prop2.extend, True)
 
-        p3 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
-        p3.extend("Mars is No. 4.")
-        self.assertEqual(len(p3), 2)
-        self.assertRaises(ValueError, p3.extend, 1)
-        self.assertRaises(ValueError, p3.extend, 1.3)
-        self.assertRaises(ValueError, p3.extend, True)
+        prop3 = Property(name="prop", value=["Earth is No. 3."], dtype=DType.text)
+        prop3.extend("Mars is No. 4.")
+        self.assertEqual(len(prop3), 2)
+        self.assertRaises(ValueError, prop3.extend, 1)
+        self.assertRaises(ValueError, prop3.extend, 1.3)
+        self.assertRaises(ValueError, prop3.extend, True)
 
         prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
         prop.extend(["(7; 8; 9)", "(10; 11; 12)"])
@@ -341,81 +339,81 @@ class TestProperty(unittest.TestCase):
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
-        p = Property("property", value=values)
+        prop = Property("property", value=values)
 
-        self.assertEqual(len(p), 5)
-        for s, d in zip(values, p.values):
-            self.assertEqual(s, d)
+        self.assertEqual(len(prop), 5)
+        for lval, pval in zip(values, prop.values):
+            self.assertEqual(lval, pval)
 
         count = 0
-        for v in p:
+        for _ in prop:
             count += 1
         self.assertEqual(count, len(values))
 
-        p[0] = 10
-        self.assertEqual(p[0], 10)
+        prop[0] = 10
+        self.assertEqual(prop[0], 10)
         with self.assertRaises(ValueError):
-            p[1] = 'stringval'
+            prop[1] = 'stringval'
 
     def test_bool_conversion(self):
         # Success tests
-        p = Property(name='received', value=[1, 0, 1, 0, 1])
-        assert(p.dtype == 'int')
-        p.dtype = DType.boolean
-        assert(p.dtype == 'boolean')
-        assert(p.values == [True, False, True, False, True])
+        prop = Property(name='received', value=[1, 0, 1, 0, 1])
+        self.assertEqual(prop.dtype, 'int')
+        prop.dtype = DType.boolean
+        self.assertEqual(prop.dtype, 'boolean')
+        self.assertEqual(prop.values, [True, False, True, False, True])
 
-        q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', 'F', '1'])
-        assert(q.dtype == 'string')
-        q.dtype = DType.boolean
-        assert(q.dtype == 'boolean')
-        assert(q.values == [False, True, True, False, True, False, True])
+        prop = Property(name='sent', value=['False', True, 'TRUE', '0', 't', 'F', '1'])
+        self.assertEqual(prop.dtype, 'string')
+        prop.dtype = DType.boolean
+        self.assertEqual(prop.dtype, 'boolean')
+        self.assertEqual(prop.values, [False, True, True, False, True, False, True])
 
         # Failure tests
         curr_val = [3, 0, 1, 0, 8]
         curr_type = 'int'
-        p = Property(name='received', value=curr_val)
-        assert(p.dtype == curr_type)
+        prop = Property(name='received', value=curr_val)
+        self.assertEqual(prop.dtype, curr_type)
         with self.assertRaises(ValueError):
-            p.dtype = DType.boolean
-        assert(p.dtype == curr_type)
-        assert(p.values == curr_val)
+            prop.dtype = DType.boolean
+        self.assertEqual(prop.dtype, curr_type)
+        self.assertEqual(prop.values, curr_val)
 
         curr_type = 'string'
-        q = Property(name='sent', value=['False', True, 'TRUE', '0', 't', '12', 'Ft'])
-        assert(q.dtype == curr_type)
+        prop = Property(name='sent', value=['False', True, 'TRUE', '0', 't', '12', 'Ft'])
+        self.assertEqual(prop.dtype, curr_type)
         with self.assertRaises(ValueError):
-            q.dtype = DType.boolean
-        assert(q.dtype == curr_type)
+            prop.dtype = DType.boolean
+        self.assertEqual(prop.dtype, curr_type)
 
     def test_str_to_int_convert(self):
         # Success Test
-        p = Property(name='cats_onboard', value=['3', '0', '1', '0', '8'])
-        assert(p.dtype == 'string')
-        p.dtype = DType.int
-        assert(p.dtype == 'int')
-        assert(p.values == [3, 0, 1, 0, 8])
+        prop = Property(name='cats_onboard', value=['3', '0', '1', '0', '8'])
+        self.assertEqual(prop.dtype, 'string')
+        prop.dtype = DType.int
+        self.assertEqual(prop.dtype, 'int')
+        self.assertEqual(prop.values, [3, 0, 1, 0, 8])
 
         # Failure Test
-        p = Property(name='dogs_onboard', value=['7', '20', '1 Dog', 'Seven'])
-        assert(p.dtype == 'string')
+        prop = Property(name='dogs_onboard', value=['7', '20', '1 Dog', 'Seven'])
+        self.assertEqual(prop.dtype, 'string')
 
         with self.assertRaises(ValueError):
-            p.dtype = DType.int
+            prop.dtype = DType.int
 
-        assert(p.dtype == 'string')
-        assert(p.values == ['7', '20', '1 Dog', 'Seven'])
+        self.assertEqual(prop.dtype, 'string')
+        self.assertEqual(prop.values, ['7', '20', '1 Dog', 'Seven'])
 
     def test_name(self):
         # Test id is used when name is not provided
-        p = Property()
-        self.assertIsNotNone(p.name)
-        self.assertEqual(p.name, p.id)
+        prop = Property()
+        self.assertIsNotNone(prop.name)
+        self.assertEqual(prop.name, prop.id)
 
         # Test name is properly set on init
         name = "rumpelstilzchen"
-        p = Property(name)
-        self.assertEqual(p.name, name)
+        prop = Property(name)
+        self.assertEqual(prop.name, name)
 
         # Test name can be properly set on single and connected Properties
         prop = Property()
@@ -441,22 +439,22 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(prop_b.name, "prop")
 
     def test_parent(self):
-        p = Property("property_section", parent=Section("S"))
-        self.assertIsInstance(p.parent, BaseSection)
-        self.assertEqual(len(p.parent._props), 1)
+        prop = Property("property_section", parent=Section("S"))
+        self.assertIsInstance(prop.parent, BaseSection)
+        self.assertEqual(len(prop.parent.props), 1)
 
         """ Test if child is removed from _props of a parent after assigning
             a new parent to the child """
-        prop_parent = p.parent
-        p.parent = Section("S1")
-        self.assertEqual(len(prop_parent._props), 0)
-        self.assertIsInstance(p.parent, BaseSection)
-        self.assertIsInstance(p.parent._props[0], BaseProperty)
+        prop_parent = prop.parent
+        prop.parent = Section("S1")
+        self.assertEqual(len(prop_parent.props), 0)
+        self.assertIsInstance(prop.parent, BaseSection)
+        self.assertIsInstance(prop.parent.props[0], BaseProperty)
 
-        prop_parent = p.parent
-        p.parent = None
-        self.assertIsNone(p.parent)
-        self.assertEqual(len(prop_parent._props), 0)
+        prop_parent = prop.parent
+        prop.parent = None
+        self.assertIsNone(prop.parent)
+        self.assertEqual(len(prop_parent.props), 0)
 
         with self.assertRaises(ValueError):
             Property("property_prop", parent=Property("P"))
@@ -512,18 +510,18 @@ class TestProperty(unittest.TestCase):
         self.assertEqual("/%s:%s" % (sec.name, prop.name), prop.get_path())
 
     def test_id(self):
-        p = Property(name="P")
-        self.assertIsNotNone(p.id)
+        prop = Property(name="P")
+        self.assertIsNotNone(prop.id)
 
-        p = Property("P", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
-        self.assertEqual(p.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
+        prop = Property("P", oid="79b613eb-a256-46bf-84f6-207df465b8f7")
+        self.assertEqual(prop.id, "79b613eb-a256-46bf-84f6-207df465b8f7")
 
-        p = Property("P", oid="id")
-        self.assertNotEqual(p.id, "id")
+        prop = Property("P", oid="id")
+        self.assertNotEqual(prop.id, "id")
 
         # Make sure id cannot be reset programmatically.
         with self.assertRaises(AttributeError):
-            p.id = "someId"
+            prop.id = "someId"
 
     def test_new_id(self):
         prop = Property(name="prop")
@@ -631,9 +629,11 @@ class TestProperty(unittest.TestCase):
         destination.merge_check(source, False)
 
     def test_merge(self):
-        p_dst = Property("p1", value=[1, 2, 3], unit="Hz", definition="Freude\t schoener\nGoetterfunken\n",
+        p_dst = Property("p1", value=[1, 2, 3], unit="Hz",
+                         definition="Freude\t schoener\nGoetterfunken\n",
                          reference="portal.g-node.org", uncertainty=0.0, value_origin="file")
-        p_src = Property("p2", value=[2, 4, 6], unit="Hz", definition="FREUDE schoener GOETTERfunken")
+        p_src = Property("p2", value=[2, 4, 6], unit="Hz",
+                         definition="FREUDE schoener GOETTERfunken")
 
         test_p = p_dst.clone()
         test_p.merge(p_src)
@@ -760,39 +760,28 @@ class TestProperty(unittest.TestCase):
 
     def test_export_leaf(self):
         doc = Document()
-        first = doc.create_section("first")
-        second = first.create_section("second")
-        first.create_section("third")
 
-        name = "prop1"
-        values = [1.3]
-        first.create_property(name, value=values)
+        sec_a_name = "first"
+        sec_b_name = "second"
+        first = doc.create_section(sec_a_name)
+        second = first.create_section(sec_b_name)
+        _ = first.create_section("third")
 
-        name = "prop2"
-        values = ["words"]
-        second.create_property(name, value=values)
+        prop_aa = first.create_property("prop1", value=[1.3])
+        _ = first.create_property("prop5", value=["abc"])
+        prop_ba = second.create_property("prop2", value=["words"])
+        _ = second.create_property("prop3", value=["a", "b"])
+        _ = second.create_property("prop4", value=[3])
 
-        name = "prop3"
-        values = ["a", "b"]
-        second.create_property(name, value=values)
+        export_doc = prop_aa.export_leaf()
+        self.assertEqual(len(export_doc[sec_a_name].properties), 2)
+        self.assertEqual(len(export_doc[sec_a_name].sections), 0)
 
-        name = "prop4"
-        values = [3]
-        second.create_property(name, value=values)
-
-        name = "prop5"
-        values = ["abc"]
-        first.create_property(name, value=values)
-
-        ex1 = first.properties["prop1"].export_leaf()
-        self.assertEqual(len(ex1['first'].properties), 1)
-        self.assertEqual(len(ex1['first'].sections), 0)
-
-        ex2 = second.properties["prop2"].export_leaf()
-        self.assertEqual(len(ex2.sections), 1)
-        self.assertEqual(len(ex2['first'].properties), 2)
-        self.assertEqual(len(ex2['first'].sections), 1)
-        self.assertEqual(len(ex2['first']['second'].properties), 1)
+        export_doc = prop_ba.export_leaf()
+        self.assertEqual(len(export_doc.sections), 1)
+        self.assertEqual(len(export_doc[sec_a_name].properties), 2)
+        self.assertEqual(len(export_doc[sec_a_name].sections), 1)
+        self.assertEqual(len(export_doc[sec_a_name][sec_b_name].properties), 3)
 
     def test_values_cardinality(self):
         doc = Document()
@@ -898,10 +887,3 @@ class TestProperty(unittest.TestCase):
         self.assertIsNotNone(prop.val_cardinality)
         prop.set_values_cardinality(min_val=None, max_val=None)
         self.assertIsNone(prop.val_cardinality)
-
-
-if __name__ == "__main__":
-    print("TestProperty")
-    tp = TestProperty()
-    tp.test_value()
-    tp.test_merge()

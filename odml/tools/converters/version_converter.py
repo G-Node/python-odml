@@ -12,6 +12,8 @@ import yaml
 
 from lxml import etree as ET
 
+from ..parser_utils import ParserException
+
 from ...format import Document, Section, Property
 from ...info import FORMAT_VERSION
 from ...terminology import Terminologies, REPOSITORY_BASE
@@ -52,7 +54,7 @@ class VersionConverter(object):
             tree = ET.parse(self.filename, parser)
         else:
             msg = "Cannot parse provided file object '%s'." % self.filename
-            raise Exception(msg)
+            raise ParserException(msg)
 
         return tree
 

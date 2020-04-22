@@ -184,8 +184,8 @@ class RDFWriter(object):
 
         # If available, add the documents' filename to the document node
         # so we can identify where the data came from.
-        if hasattr(doc, "_origin_file_name"):
-            curr_lit = Literal(doc._origin_file_name)
+        if hasattr(doc, "origin_file_name"):
+            curr_lit = Literal(doc.origin_file_name)
             self.graph.add((curr_node, ODML_NS.hasFileName, curr_lit))
 
         for k in fmt.rdf_map_keys:
@@ -195,7 +195,8 @@ class RDFWriter(object):
             # Ignore an "id" entry, it has already been used to create the node itself.
             if k == "id" or not curr_val:
                 continue
-            elif k == "repository":
+
+            if k == "repository":
                 self.save_repository_node(curr_node, curr_pred, curr_val)
             elif k == "sections":
                 # generating nodes for child sections
@@ -233,7 +234,8 @@ class RDFWriter(object):
             # Ignore an "id" entry, it has already been used to create the node itself.
             if k == "id" or not curr_val:
                 continue
-            elif k == "repository":
+
+            if k == "repository":
                 self.save_repository_node(curr_node, curr_pred, curr_val)
 
             # generating nodes for sections and properties
@@ -269,7 +271,8 @@ class RDFWriter(object):
             # is only accessed via its non deprecated property "values".
             if k == "id" or not curr_val:
                 continue
-            elif k == "value":
+
+            if k == "value":
                 # generating nodes for Property values
                 self.save_odml_values(curr_node, curr_pred, curr_val)
             else:
@@ -383,7 +386,7 @@ class RDFReader(object):
         docs = self.to_odml()
         for curr_doc in docs:
             # Provide original file name via the document
-            curr_doc._origin_file_name = os.path.basename(filename)
+            curr_doc.origin_file_name = os.path.basename(filename)
 
         return docs
 

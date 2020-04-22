@@ -1,5 +1,6 @@
-import odml
 import unittest
+
+import odml
 
 from odml.terminology import REPOSITORY
 

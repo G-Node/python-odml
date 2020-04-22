@@ -54,7 +54,6 @@ class BaseSection(base.Sectionable):
     """
 
     type = None
-    reference = None  # the *import* property
     _link = None
     _include = None
     _merged = None
@@ -328,7 +327,8 @@ class BaseSection(base.Sectionable):
     def parent(self, new_parent):
         if new_parent is None and self._parent is None:
             return
-        elif new_parent is None and self._parent is not None:
+
+        if new_parent is None and self._parent is not None:
             self._parent.remove(self)
             self._parent = None
         elif self._validate_parent(new_parent):
@@ -341,7 +341,8 @@ class BaseSection(base.Sectionable):
                 "odml.Section.parent: passed value is not of consistent type!"
                 "\nodml.Document or odml.Section expected")
 
-    def _validate_parent(self, new_parent):
+    @staticmethod
+    def _validate_parent(new_parent):
         """
         Checks whether a provided object is a valid odml.Section or odml.Document..
 
@@ -402,9 +403,9 @@ class BaseSection(base.Sectionable):
         Sets the Sections cardinality of a Section.
 
         :param min_val: Required minimal number of values elements. None denotes
-                        no restrictions on values elements minimum. Default is None.
+                        no restrictions on sections elements minimum. Default is None.
         :param max_val: Allowed maximal number of values elements. None denotes
-                        no restrictions on values elements maximum. Default is None.
+                        no restrictions on sections elements maximum. Default is None.
         """
         self.sec_cardinality = (min_val, max_val)
 
@@ -455,9 +456,9 @@ class BaseSection(base.Sectionable):
         Sets the Properties cardinality of a Section.
 
         :param min_val: Required minimal number of values elements. None denotes
-                        no restrictions on values elements minimum. Default is None.
+                        no restrictions on properties elements minimum. Default is None.
         :param max_val: Allowed maximal number of values elements. None denotes
-                        no restrictions on values elements maximum. Default is None.
+                        no restrictions on properties elements maximum. Default is None.
         """
         self.prop_cardinality = (min_val, max_val)
 
@@ -521,16 +522,16 @@ class BaseSection(base.Sectionable):
         # Make sure only Sections and Properties with unique names will be added.
         for obj in obj_list:
             if not isinstance(obj, BaseSection) and not isinstance(obj, BaseProperty):
-                raise ValueError("odml.Section.extend: "
-                                 "Can only extend sections and properties.")
+                msg = "odml.Section.extend: Can only extend sections and properties."
+                raise ValueError(msg)
 
-            elif isinstance(obj, BaseSection) and obj.name in self.sections:
-                raise KeyError("odml.Section.extend: "
-                               "Section with name '%s' already exists." % obj.name)
+            if isinstance(obj, BaseSection) and obj.name in self.sections:
+                msg = "odml.Section.extend: Section with name '%s' already exists." % obj.name
+                raise KeyError(msg)
 
-            elif isinstance(obj, BaseProperty) and obj.name in self.properties:
-                raise KeyError("odml.Section.extend: "
-                               "Property with name '%s' already exists." % obj.name)
+            if isinstance(obj, BaseProperty) and obj.name in self.properties:
+                msg = "odml.Section.extend: Property with name '%s' already exists." % obj.name
+                raise KeyError(msg)
 
         for obj in obj_list:
             self.append(obj)
@@ -613,13 +614,14 @@ class BaseSection(base.Sectionable):
         if isinstance(obj, BaseSection):
             return super(BaseSection, self).contains(obj)
 
-        elif isinstance(obj, BaseProperty):
+        if isinstance(obj, BaseProperty):
             for i in self._props:
                 if obj.name == i.name:
                     return i
-        else:
-            raise ValueError("odml.Section.contains:"
-                             "Section or Property object expected.")
+
+            return None
+
+        raise ValueError("odml.Section.contains: Section or Property object expected.")
 
     def merge_check(self, source_section, strict=True):
         """
