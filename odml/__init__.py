@@ -12,9 +12,26 @@ from .fileio import load, save, display
 from .info import VERSION
 from .tools.parser_utils import SUPPORTED_PARSERS as PARSERS
 
+
+def _format_warning(warn_msg, *args, **kwargs):
+    """
+    Used to provide users with deprecation warnings via the warnings module
+    but without spamming them with full stack traces.
+    """
+    final_msg = "%s\n" % str(warn_msg)
+    # If available add category name to the message
+    if args and hasattr(args[0], "__name__"):
+        final_msg = "%s: %s" % (args[0].__name__, final_msg)
+
+    return final_msg
+
+
+# Monkey patch formatting 'warnings' messages for the whole module.
+warnings.formatwarning = _format_warning
+
 if _python_version.major < 3 or _python_version.major == 3 and _python_version.minor < 6:
     msg = "The '%s' package is not tested with your Python version. " % __name__
-    msg += "Please consider upgrading to the latest Python distribution."
+    msg += "\n\tPlease consider upgrading to the latest Python distribution."
     warnings.warn(msg)
 
 __version__ = VERSION
