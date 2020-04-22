@@ -115,3 +115,44 @@ odml-version: '1.1'
         for msg in self.yaml_reader.warnings:
             self.assertIn("Error", msg)
             self.assertTrue(inv_doc_attr in msg or inv_sec_attr in msg or inv_prop_attr in msg)
+
+    def test_sec_creation_error(self):
+        filename = "broken_section.yaml"
+
+        valid = "valid_sec"
+        invalid = "invalid_sec"
+
+        file_content = """Document:
+  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
+  sections:
+  - id: 1111a20a-c02f-4102-a9fe-2e8b77d1d0d2
+    name: sec
+    sections:
+    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
+      name: %s
+      type: test
+    - id: [I-am-so-kaputt]
+      name: %s
+    type: test
+odml-version: '1.1'
+""" % (valid, invalid)
+        parsed_doc = self._prepare_doc(filename, file_content)
+
+        # Test ParserException on default parse
+        exc_msg = "Section not created"
+        with self.assertRaises(ParserException) as exc:
+            _ = self.yaml_reader.to_odml(parsed_doc)
+        self.assertIn(exc_msg, str(exc.exception))
+
+        # Test success on ignore_error parse
+        self.yaml_reader.ignore_errors = True
+        doc = self.yaml_reader.to_odml(parsed_doc)
+
+        self.assertEqual(len(doc.sections["sec"].sections), 1)
+        self.assertIn(valid, doc.sections["sec"].sections)
+        self.assertNotIn(invalid, doc.sections["sec"].sections)
+
+        self.assertEqual(len(self.yaml_reader.warnings), 1)
+        for msg in self.yaml_reader.warnings:
+            self.assertIn("Error", msg)
+            self.assertIn(exc_msg, msg)
