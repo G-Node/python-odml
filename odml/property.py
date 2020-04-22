@@ -3,6 +3,7 @@
 This module provides the Base Property class.
 """
 import uuid
+import warnings
 
 from . import base
 from . import dtypes
@@ -10,6 +11,10 @@ from . import validation
 from . import format as frmt
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 from .util import format_cardinality
+
+
+MSG_VALUE_DEPRECATION = "The attribute 'value' is deprecated and will be removed, " \
+                        "use 'values' instead."
 
 
 def odml_tuple_import(t_count, new_value):
@@ -131,6 +136,8 @@ class BaseProperty(base.BaseObject):
         self._values = []
         self.values = values
         if not values and (value or isinstance(value, (bool, int))):
+            # Using stacklevel=2 to avoid file name and code line in the message output.
+            warnings.warn(MSG_VALUE_DEPRECATION, category=DeprecationWarning, stacklevel=2)
             self.values = value
 
         self.parent = parent
@@ -285,7 +292,9 @@ class BaseProperty(base.BaseObject):
         """
         Deprecated alias of 'values'. Will be removed with the next minor release.
         """
-        print("The attribute 'value' is deprecated. Please use 'values' instead.")
+        # Using stacklevel=2 to avoid file name and code line in the message output.
+        warnings.warn(MSG_VALUE_DEPRECATION, category=DeprecationWarning, stacklevel=2)
+
         return self.values
 
     @value.setter
@@ -295,7 +304,8 @@ class BaseProperty(base.BaseObject):
 
         :param new_value: a single value or list of values.
         """
-        print("The attribute 'value' is deprecated. Please use 'values' instead.")
+        # Using stacklevel=2 to avoid file name and code line in the message output.
+        warnings.warn(MSG_VALUE_DEPRECATION, category=DeprecationWarning, stacklevel=2)
         self.values = new_value
 
     def value_str(self, index=0):
