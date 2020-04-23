@@ -10,7 +10,7 @@ import yaml
 
 from odml.tools import dict_parser
 from odml.tools.parser_utils import ParserException, InvalidVersionException
-from .util import create_test_dir
+from .util import create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 
 _INVALID_ATTRIBUTE_HANDLING_DOC = """
@@ -70,11 +70,8 @@ odml-version: '1.1'
 class TestYAMLParser(unittest.TestCase):
 
     def setUp(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.basepath = os.path.join(dir_path, "resources")
-
+        self.base_path = RES_DIR
         self.yaml_reader = dict_parser.DictReader(show_warnings=False)
-
         self.tmp_dir_path = create_test_dir(__file__)
 
     def tearDown(self):
@@ -96,7 +93,7 @@ class TestYAMLParser(unittest.TestCase):
         filename = "missing_root.yaml"
         message = "Missing root element"
 
-        with open(os.path.join(self.basepath, filename)) as raw_data:
+        with open(os.path.join(self.base_path, filename)) as raw_data:
             parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(ParserException) as exc:
@@ -108,7 +105,7 @@ class TestYAMLParser(unittest.TestCase):
         filename = "missing_version.yaml"
         message = "Could not find odml-version"
 
-        with open(os.path.join(self.basepath, filename)) as raw_data:
+        with open(os.path.join(self.base_path, filename)) as raw_data:
             parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(ParserException) as exc:
@@ -119,7 +116,7 @@ class TestYAMLParser(unittest.TestCase):
     def test_invalid_version(self):
         filename = "invalid_version.yaml"
 
-        with open(os.path.join(self.basepath, filename)) as raw_data:
+        with open(os.path.join(self.base_path, filename)) as raw_data:
             parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(InvalidVersionException):

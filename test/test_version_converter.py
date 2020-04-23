@@ -9,7 +9,7 @@ from lxml import etree as ET
 
 from odml.terminology import REPOSITORY_BASE
 from odml.tools.converters import VersionConverter
-from .util import ODML_CACHE_DIR as CACHE_DIR, create_test_dir
+from .util import ODML_CACHE_DIR as CACHE_DIR, create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 try:
     unicode = unicode
@@ -19,8 +19,7 @@ except NameError:
 
 class TestVersionConverter(unittest.TestCase):
     def setUp(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.basepath = os.path.join(dir_path, "resources")
+        self.base_path = RES_DIR
 
         self.VC = VersionConverter
 
@@ -147,12 +146,10 @@ class TestVersionConverter(unittest.TestCase):
         The test checks for the proper conversion of all valid
         Document tags and exclusion of non-Document tags.
         """
-
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(RES_DIR, "local_repository_file_v1.1.xml")
         local_url = "file://%s" % repo_file
 
-        repo_old_file = os.path.join(dir_path, "resources", "local_repository_file_v1.0.xml")
+        repo_old_file = os.path.join(RES_DIR, "local_repository_file_v1.0.xml")
         local_old_url = "file://%s" % repo_old_file
 
         doc = """
@@ -223,12 +220,10 @@ class TestVersionConverter(unittest.TestCase):
         The test checks for the proper conversion of all valid
         Section tags and exclusion of non-Section tags.
         """
-
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(RES_DIR, "local_repository_file_v1.1.xml")
         local_url = "file://%s" % repo_file
 
-        repo_old_file = os.path.join(dir_path, "resources", "local_repository_file_v1.0.xml")
+        repo_old_file = os.path.join(RES_DIR, "local_repository_file_v1.0.xml")
         local_old_url = "file://%s" % repo_old_file
 
         doc = """
@@ -800,7 +795,7 @@ class TestVersionConverter(unittest.TestCase):
 
     def test_convert_xml_file(self):
         # Test minimal reading from an xml file.
-        basefile = os.path.join(self.basepath, "version_conversion.xml")
+        basefile = os.path.join(self.base_path, "version_conversion.xml")
 
         root = self.VC(basefile)._parse_xml().getroot()
         self.assertIsNotNone(root.find("section"))
@@ -817,7 +812,7 @@ class TestVersionConverter(unittest.TestCase):
 
     def test_convert_yaml_file(self):
         # Test minimal reading from a yaml file.
-        basefile = os.path.join(self.basepath, "version_conversion.yaml")
+        basefile = os.path.join(self.base_path, "version_conversion.yaml")
 
         root = self.VC(basefile)._parse_yaml().getroot()
         self.assertIsNotNone(root.find("section"))
@@ -834,7 +829,7 @@ class TestVersionConverter(unittest.TestCase):
 
     def test_convert_json_file(self):
         # Test minimal reading from a json file.
-        basefile = os.path.join(self.basepath, "version_conversion.json")
+        basefile = os.path.join(self.base_path, "version_conversion.json")
 
         root = self.VC(basefile)._parse_json().getroot()
         self.assertIsNotNone(root.find("section"))
@@ -850,7 +845,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertIsNotNone(prop.find("value"))
 
     def test_write_to_file(self):
-        infile = os.path.join(self.basepath, "version_conversion.xml")
+        infile = os.path.join(self.base_path, "version_conversion.xml")
         self.tmp_dir = create_test_dir(__file__)
 
         # Test write to named file

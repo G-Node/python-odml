@@ -10,7 +10,7 @@ import unittest
 
 from odml.tools import dict_parser
 from odml.tools.parser_utils import ParserException, InvalidVersionException
-from .util import create_test_dir
+from .util import create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 
 _INVALID_ATTRIBUTE_HANDLING_DOC = """
@@ -110,11 +110,8 @@ _PROP_CREATION_ERROR_DOC = """
 class TestJSONParser(unittest.TestCase):
 
     def setUp(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.basepath = os.path.join(dir_path, "resources")
-
+        self.base_path = RES_DIR
         self.json_reader = dict_parser.DictReader(show_warnings=False)
-
         self.tmp_dir_path = create_test_dir(__file__)
 
     def tearDown(self):
@@ -136,7 +133,7 @@ class TestJSONParser(unittest.TestCase):
         filename = "missing_root.json"
         message = "Missing root element"
 
-        with open(os.path.join(self.basepath, filename)) as json_data:
+        with open(os.path.join(self.base_path, filename)) as json_data:
             parsed_doc = json.load(json_data)
 
         with self.assertRaises(ParserException) as exc:
@@ -148,7 +145,7 @@ class TestJSONParser(unittest.TestCase):
         filename = "missing_version.json"
         message = "Could not find odml-version"
 
-        with open(os.path.join(self.basepath, filename)) as json_data:
+        with open(os.path.join(self.base_path, filename)) as json_data:
             parsed_doc = json.load(json_data)
 
         with self.assertRaises(ParserException) as exc:
@@ -159,7 +156,7 @@ class TestJSONParser(unittest.TestCase):
     def test_invalid_version(self):
         filename = "invalid_version.json"
 
-        with open(os.path.join(self.basepath, filename)) as json_data:
+        with open(os.path.join(self.base_path, filename)) as json_data:
             parsed_doc = json.load(json_data)
 
         with self.assertRaises(InvalidVersionException):

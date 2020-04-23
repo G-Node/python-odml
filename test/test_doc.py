@@ -12,7 +12,7 @@ except ImportError:
 from odml import Document, Section, Property
 from odml.doc import BaseDocument
 from odml.dtypes import FORMAT_DATE
-from .util import ODML_CACHE_DIR as CACHE_DIR
+from .util import ODML_CACHE_DIR as CACHE_DIR, TEST_RESOURCES_DIR as RES_DIR
 
 
 class TestSection(unittest.TestCase):
@@ -109,8 +109,7 @@ class TestSection(unittest.TestCase):
             doc.date = "some format"
 
     def test_get_terminology_equivalent(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources", self.local_repo_file)
+        repo_file = os.path.join(RES_DIR, self.local_repo_file)
         local_url = "file://%s" % pathname2url(repo_file)
 
         doc = Document(repository=local_url)

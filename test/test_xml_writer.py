@@ -7,15 +7,13 @@ import odml
 from odml.tools.xmlparser import XML_HEADER, EXTERNAL_STYLE_HEADER, \
     INFILE_STYLE_HEADER, INFILE_STYLE_TEMPLATE
 from odml.tools import XMLWriter
-from .util import create_test_dir
+from .util import create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 
 class TestXMLWriter(unittest.TestCase):
     def setUp(self):
         # Set up test environment
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-
-        self.xmlfile = os.path.join(dir_path, "resources", "version_conversion_int.xml")
+        self.xmlfile = os.path.join(RES_DIR, "version_conversion_int.xml")
 
         self.tmp_dir = create_test_dir(__file__)
         self.outfile = os.path.join(self.tmp_dir, "xml_writer.xml")

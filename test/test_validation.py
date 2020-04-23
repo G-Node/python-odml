@@ -6,6 +6,7 @@ import odml
 import odml.validation
 import odml.terminology
 from . import test_samplefile as samplefile
+from .util import TEST_RESOURCES_DIR as RES_DIR
 
 try:
     from StringIO import StringIO
@@ -19,7 +20,6 @@ class TestValidation(unittest.TestCase):
 
     def setUp(self):
         self.doc = samplefile.SampleFileCreator().create_document()
-        self.dir_path = os.path.dirname(os.path.realpath(__file__))
 
     @staticmethod
     def filter_repository_errors(errors):
@@ -405,7 +405,7 @@ class TestValidation(unittest.TestCase):
         Test if loading xml document raises validation errors for Sections with undefined type.
         """
 
-        path = os.path.join(self.dir_path, "resources", "validation_section.xml")
+        path = os.path.join(RES_DIR, "validation_section.xml")
         doc = odml.load(path)
 
         self.load_section_validation(doc)
@@ -415,7 +415,7 @@ class TestValidation(unittest.TestCase):
         Test if loading json document raises validation errors for Sections with undefined type.
         """
 
-        path = os.path.join(self.dir_path, "resources", "validation_section.json")
+        path = os.path.join(RES_DIR, "validation_section.json")
         doc = odml.load(path, "JSON")
 
         self.load_section_validation(doc)
@@ -425,7 +425,7 @@ class TestValidation(unittest.TestCase):
         Test if loading yaml document raises validation errors for Sections with undefined type.
         """
 
-        path = os.path.join(self.dir_path, "resources", "validation_section.yaml")
+        path = os.path.join(RES_DIR, "validation_section.yaml")
         doc = odml.load(path, "YAML")
 
         self.load_section_validation(doc)
@@ -459,7 +459,7 @@ class TestValidation(unittest.TestCase):
         for Properties with undefined dtypes.
         """
 
-        path = os.path.join(self.dir_path, "resources", "validation_dtypes.xml")
+        path = os.path.join(RES_DIR, "validation_dtypes.xml")
         doc = odml.load(path)
         self.load_dtypes_validation(doc)
 
@@ -469,7 +469,7 @@ class TestValidation(unittest.TestCase):
         for Properties with undefined dtypes.
         """
 
-        path = os.path.join(self.dir_path, "resources", "validation_dtypes.json")
+        path = os.path.join(RES_DIR, "validation_dtypes.json")
         doc = odml.load(path, "JSON")
         self.load_dtypes_validation(doc)
 
@@ -479,6 +479,6 @@ class TestValidation(unittest.TestCase):
         for Properties with undefined dtypes.
         """
 
-        path = os.path.join(self.dir_path, "resources", "validation_dtypes.yaml")
+        path = os.path.join(RES_DIR, "validation_dtypes.yaml")
         doc = odml.load(path, "YAML")
         self.load_dtypes_validation(doc)

@@ -6,6 +6,9 @@ import tempfile
 
 ODML_CACHE_DIR = os.path.join(tempfile.gettempdir(), "odml.cache")
 
+TEST_RESOURCES_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                  "resources")
+
 TEST_TEMP_DIR = os.path.join(tempfile.gettempdir(), "odml_test")
 if not os.path.exists(TEST_TEMP_DIR):
     os.mkdir(TEST_TEMP_DIR)
