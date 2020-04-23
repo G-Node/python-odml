@@ -15,8 +15,7 @@ except ImportError:
     from urllib import pathname2url
 
 from odml import Document, save, Section, terminology
-
-CACHE_DIR = os.path.join(tempfile.gettempdir(), "odml.cache")
+from .util import ODML_CACHE_DIR as CACHE_DIR
 
 
 class TestTerminology(unittest.TestCase):

@@ -5,10 +5,12 @@ import tempfile
 import unittest
 
 from contextlib import contextmanager
+from glob import glob
 from lxml import etree as ET
 
 from odml.terminology import REPOSITORY_BASE
 from odml.tools.converters import VersionConverter
+from .util import ODML_CACHE_DIR as CACHE_DIR
 
 try:
     unicode = unicode
@@ -52,8 +54,15 @@ class TestVersionConverter(unittest.TestCase):
         self.tmp_dir = None
 
     def tearDown(self):
+        """
+        Cleanup any created temporary files.
+        """
         if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
+
+        find_us = os.path.join(CACHE_DIR, "*local_repository_file_v1*")
+        for file_path in glob(find_us):
+            os.remove(file_path)
 
     @contextmanager
     def assertNotRaises(self, exc_type):

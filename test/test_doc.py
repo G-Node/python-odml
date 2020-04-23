@@ -2,6 +2,8 @@ import datetime
 import os
 import unittest
 
+from glob import glob
+
 try:
     from urllib.request import pathname2url
 except ImportError:
@@ -10,11 +12,23 @@ except ImportError:
 from odml import Document, Section, Property
 from odml.doc import BaseDocument
 from odml.dtypes import FORMAT_DATE
+from .util import ODML_CACHE_DIR as CACHE_DIR
 
 
 class TestSection(unittest.TestCase):
     def setUp(self):
-        pass
+        self.local_repo_file = "local_repository_file_v1.1.xml"
+
+    def tearDown(self):
+        """
+        Remove all files loaded to the terminology cache directory
+        to avoid test cross pollution.
+        """
+        temp_file_glob = "*%s" % self.local_repo_file
+        find_us = os.path.join(CACHE_DIR, temp_file_glob)
+
+        for file_path in glob(find_us):
+            os.remove(file_path)
 
     def test_simple_attributes(self):
         author = "HPL"
@@ -96,7 +110,7 @@ class TestSection(unittest.TestCase):
 
     def test_get_terminology_equivalent(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        repo_file = os.path.join(dir_path, "resources", "local_repository_file_v1.1.xml")
+        repo_file = os.path.join(dir_path, "resources", self.local_repo_file)
         local_url = "file://%s" % pathname2url(repo_file)
 
         doc = Document(repository=local_url)
