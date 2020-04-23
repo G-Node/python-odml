@@ -195,21 +195,6 @@ class TestValidation(unittest.TestCase):
 
         self.assertTrue(found)
 
-    def test_section_in_terminology(self):
-        doc = samplefile.parse("""s1[T1]""")
-        res = Validate(doc)
-        self.assertError(res, "A section should have an associated repository",
-                         filter_rep=False)
-
-        odml.terminology.terminologies['map'] = samplefile.parse("""
-        s0[t0]
-        - S1[T1]
-        """)
-        doc.sections[0].repository = 'map'
-        res = Validate(doc)
-        # self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
-        self.assertEqual(res.errors, [])
-
     def test_uniques(self):
         self.assertRaises(KeyError, samplefile.parse, """
             s1[t1]

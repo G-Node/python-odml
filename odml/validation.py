@@ -191,6 +191,8 @@ def section_type_must_be_defined(sec):
 Validation.register_handler('section', section_type_must_be_defined)
 
 
+# The Section repository present is no longer part of the default validation
+# and should be added on demand.
 def section_repository_present(sec):
     """
     1. warn, if a section has no repository or
@@ -212,9 +214,6 @@ def section_repository_present(sec):
     if tsec is None:
         msg = "Section type '%s' not found in terminology" % sec.type
         yield ValidationError(sec, msg, LABEL_WARNING)
-
-
-Validation.register_handler('section', section_repository_present)
 
 
 def document_unique_ids(doc):
