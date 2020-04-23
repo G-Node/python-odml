@@ -5,11 +5,11 @@ with all supported odML parsers via the tools.odmlparser classes.
 
 import os
 import shutil
-import tempfile
 import unittest
 
 from odml import Document, Section, Property
 from odml.tools import odmlparser
+from .util import create_test_dir
 
 
 class TestOdmlParser(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestOdmlParser(unittest.TestCase):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         self.basefile = os.path.join(dir_path, "resources", "example.odml")
 
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
 
         self.json_file = os.path.join(self.tmp_dir, "test.json")
         self.xml_file = os.path.join(self.tmp_dir, "test.xml")

@@ -5,11 +5,11 @@ to v1.1 with all supported file formats.
 
 import os
 import shutil
-import tempfile
 import unittest
 
 from odml import load
 from odml.tools.converters import VersionConverter as VC
+from .util import create_test_dir
 
 
 class TestVersionConverterIntegration(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestVersionConverterIntegration(unittest.TestCase):
         self.xmlfile = os.path.join(dir_path, "resources", "version_conversion_int.xml")
         self.yamlfile = os.path.join(dir_path, "resources", "version_conversion_int.yaml")
 
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
         self.outfile = os.path.join(self.tmp_dir, "version_conversion.xml")
 
     def tearDown(self):

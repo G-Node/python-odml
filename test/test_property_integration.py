@@ -5,17 +5,18 @@ of odML Properties with all supported odML parsers.
 
 import os
 import shutil
-import tempfile
 import unittest
 
 import odml
+
+from .util import create_test_dir
 
 
 class TestPropertyIntegration(unittest.TestCase):
 
     def setUp(self):
         # Set up test environment
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
 
         self.json_file = os.path.join(self.tmp_dir, "test.json")
         self.xml_file = os.path.join(self.tmp_dir, "test.xml")

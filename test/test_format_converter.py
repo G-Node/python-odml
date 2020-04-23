@@ -1,9 +1,12 @@
 import os
+import shutil
 import tempfile
 import unittest
+
 from contextlib import contextmanager
 
 from odml.tools.converters import FormatConverter
+from .util import create_test_dir
 
 FC = FormatConverter
 
@@ -20,6 +23,11 @@ class TestFormatConverter(unittest.TestCase):
                         </section>
                       </odML>
                    """
+        self.tmp_dir = None
+
+    def tearDown(self):
+        if os.path.exists(self.tmp_dir):
+            shutil.rmtree(self.tmp_dir)
 
     @contextmanager
     def assertNotRaises(self, exc_type):
@@ -27,6 +35,13 @@ class TestFormatConverter(unittest.TestCase):
             yield None
         except exc_type:
             raise self.failureException('{} raised'.format(exc_type.__name__))
+
+    def _create_open_file(self, in_dir):
+        in_file = tempfile.NamedTemporaryFile(mode='a+', suffix=".xml", dir=in_dir)
+        in_file.write(self.doc)
+        in_file.seek(0)
+
+        return in_file
 
     def test_convert(self):
         if os.name == 'nt':
@@ -50,10 +65,10 @@ class TestFormatConverter(unittest.TestCase):
         if os.name == 'nt':
             raise unittest.SkipTest("Skipping test on Windows")
 
-        work_dir = tempfile.mkdtemp()
-        in_dir = tempfile.mkdtemp(dir=work_dir)
-        in_file = self.create_open_file(in_dir)
-        in_file2 = self.create_open_file(in_dir)
+        self.tmp_dir = create_test_dir(__file__)
+        in_dir = tempfile.mkdtemp(dir=self.tmp_dir)
+        in_file = self._create_open_file(in_dir)
+        in_file2 = self._create_open_file(in_dir)
 
         if not func:
             FC.convert_dir(in_dir, None, recursive, "odml")
@@ -64,7 +79,7 @@ class TestFormatConverter(unittest.TestCase):
                 func([in_dir, "odml"])
 
         files = []
-        for dir_path, dir_names, file_names in os.walk(work_dir):
+        for dir_path, dir_names, file_names in os.walk(self.tmp_dir):
             for file_name in file_names:
                 files.append(os.path.join(dir_path, file_name))
 
@@ -89,10 +104,11 @@ class TestFormatConverter(unittest.TestCase):
             raise unittest.SkipTest("Skipping test on Windows")
 
         # Testing FC.convert_dir(in_dir, out_dir, False, "odml")
-        in_dir = tempfile.mkdtemp()
-        out_dir = tempfile.mkdtemp()
-        in_file = self.create_open_file(in_dir)
-        in_file2 = self.create_open_file(in_dir)
+        self.tmp_dir = create_test_dir(__file__)
+        in_dir = tempfile.mkdtemp(dir=self.tmp_dir)
+        out_dir = tempfile.mkdtemp(dir=self.tmp_dir)
+        in_file = self._create_open_file(in_dir)
+        in_file2 = self._create_open_file(in_dir)
 
         if not func:
             FC.convert_dir(in_dir, out_dir, False, "odml")
@@ -124,15 +140,10 @@ class TestFormatConverter(unittest.TestCase):
         in_file.close()
         in_file2.close()
 
-    def create_open_file(self, in_dir):
-        in_file = tempfile.NamedTemporaryFile(mode='a+', suffix=".xml", dir=in_dir)
-        in_file.write(self.doc)
-        in_file.seek(0)
-        return in_file
-
     def test_check_io_directory(self):
-        out_dir = tempfile.mkdtemp()
-        in_dir = tempfile.mkdtemp()
+        self.tmp_dir = create_test_dir(__file__)
+        out_dir = tempfile.mkdtemp(dir=self.tmp_dir)
+        in_dir = tempfile.mkdtemp(dir=self.tmp_dir)
         with self.assertRaises(ValueError):
             FC._check_input_output_directory(None, None)
         with self.assertRaises(ValueError):

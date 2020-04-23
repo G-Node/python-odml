@@ -1,6 +1,5 @@
 import os
 import shutil
-import tempfile
 import unittest
 
 import odml
@@ -8,6 +7,7 @@ import odml
 from odml.tools.xmlparser import XML_HEADER, EXTERNAL_STYLE_HEADER, \
     INFILE_STYLE_HEADER, INFILE_STYLE_TEMPLATE
 from odml.tools import XMLWriter
+from .util import create_test_dir
 
 
 class TestXMLWriter(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestXMLWriter(unittest.TestCase):
 
         self.xmlfile = os.path.join(dir_path, "resources", "version_conversion_int.xml")
 
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
         self.outfile = os.path.join(self.tmp_dir, "xml_writer.xml")
 
         doc = odml.Document()

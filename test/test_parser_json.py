@@ -5,11 +5,12 @@ reading from json files.
 
 import json
 import os
-import tempfile
+import shutil
 import unittest
 
 from odml.tools import dict_parser
 from odml.tools.parser_utils import ParserException, InvalidVersionException
+from .util import create_test_dir
 
 
 _INVALID_ATTRIBUTE_HANDLING_DOC = """
@@ -114,16 +115,11 @@ class TestJSONParser(unittest.TestCase):
 
         self.json_reader = dict_parser.DictReader(show_warnings=False)
 
-        dir_name = os.path.basename(os.path.splitext(__file__)[0])
-        tmp_base_path = os.path.join(tempfile.gettempdir(), "odml_test")
-        if not os.path.exists(tmp_base_path):
-            os.mkdir(tmp_base_path)
+        self.tmp_dir_path = create_test_dir(__file__)
 
-        tmp_dir_path = os.path.join(tmp_base_path, dir_name)
-        if not os.path.exists(tmp_dir_path):
-            os.mkdir(tmp_dir_path)
-
-        self.tmp_dir_path = tmp_dir_path
+    def tearDown(self):
+        if os.path.exists(self.tmp_dir_path):
+            shutil.rmtree(self.tmp_dir_path)
 
     def _prepare_doc(self, file_name, file_content):
         file_path = os.path.join(self.tmp_dir_path, file_name)

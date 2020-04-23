@@ -1,7 +1,6 @@
 import io
 import os
 import shutil
-import tempfile
 import unittest
 
 from contextlib import contextmanager
@@ -10,7 +9,7 @@ from lxml import etree as ET
 
 from odml.terminology import REPOSITORY_BASE
 from odml.tools.converters import VersionConverter
-from .util import ODML_CACHE_DIR as CACHE_DIR
+from .util import ODML_CACHE_DIR as CACHE_DIR, create_test_dir
 
 try:
     unicode = unicode
@@ -852,7 +851,7 @@ class TestVersionConverter(unittest.TestCase):
 
     def test_write_to_file(self):
         infile = os.path.join(self.basepath, "version_conversion.xml")
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
 
         # Test write to named file
         outfile = os.path.join(self.tmp_dir, "test.odml")

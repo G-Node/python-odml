@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-import tempfile
 import unittest
 
 try:
@@ -13,6 +12,7 @@ import odml
 
 from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
+from .util import create_test_dir
 
 try:
     unicode = unicode
@@ -162,7 +162,7 @@ class SampleFileOperationTest(unittest.TestCase):
         # self.assertEqual(doc._xml_version, FORMAT_VERSION)
 
     def test_save(self):
-        base_path = tempfile.gettempdir()
+        base_path = create_test_dir(__file__)
         for module in [xmlparser.XMLWriter]:
             path = os.path.join(base_path, "temp.odml")
             doc = module(self.doc)
@@ -369,7 +369,8 @@ class MiscTest(unittest.TestCase):
         self.assertRaises(ValueError, sec1.get_property_by_path, wrong_path)
 
     def test_save_version(self):
-        tmp_file = os.path.join(tempfile.gettempdir(), "example.odml")
+        tmp_dir = create_test_dir(__file__)
+        tmp_file = os.path.join(tmp_dir, "example.odml")
 
         self.doc.version = '2.4'
         writer = xmlparser.XMLWriter(self.doc)
