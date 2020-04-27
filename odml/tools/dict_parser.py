@@ -319,19 +319,17 @@ class DictReader:
 
             try:
                 sec = odmlfmt.Section.create(**sec_attrs)
+
+                for prop in sec_props:
+                    sec.append(prop)
+
+                for child_sec in children_secs:
+                    sec.append(child_sec)
+
+                odml_sections.append(sec)
             except Exception as exc:
                 msg = "Section not created (%s)\n  %s" % (sec_attrs, str(exc))
                 self.error(msg)
-                # If recovered in ignore_error mode, return empty list
-                return odml_sections
-
-            for prop in sec_props:
-                sec.append(prop)
-
-            for child_sec in children_secs:
-                sec.append(child_sec)
-
-            odml_sections.append(sec)
 
         return odml_sections
 
