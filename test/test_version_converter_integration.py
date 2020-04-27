@@ -23,7 +23,7 @@ class TestVersionConverterIntegration(unittest.TestCase):
         self.outfile = os.path.join(self.tmp_dir, "version_conversion.xml")
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def test_convert_xml(self):

@@ -29,7 +29,7 @@ class TestTypesIntegration(unittest.TestCase):
         self.doc = doc
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def test_time(self):

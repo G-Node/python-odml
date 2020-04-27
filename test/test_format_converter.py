@@ -26,7 +26,7 @@ class TestFormatConverter(unittest.TestCase):
         self.tmp_dir = None
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     @contextmanager

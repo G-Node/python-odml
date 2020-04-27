@@ -37,7 +37,7 @@ class TestOdmlParser(unittest.TestCase):
         self.odml_doc = self.xml_reader.from_file(base_file)
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def test_json_yaml_xml(self):

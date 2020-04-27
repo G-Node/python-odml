@@ -75,7 +75,7 @@ class TestYAMLParser(unittest.TestCase):
         self.tmp_dir_path = create_test_dir(__file__)
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir_path):
+        if self.tmp_dir_path and os.path.exists(self.tmp_dir_path):
             shutil.rmtree(self.tmp_dir_path)
 
     def _prepare_doc(self, file_name, file_content):

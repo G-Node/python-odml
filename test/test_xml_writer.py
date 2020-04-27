@@ -26,7 +26,7 @@ class TestXMLWriter(unittest.TestCase):
         self.writer = XMLWriter(doc)
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def test_write_default(self):
