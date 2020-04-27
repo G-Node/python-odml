@@ -12,6 +12,100 @@ from odml.tools import dict_parser
 from odml.tools.parser_utils import ParserException, InvalidVersionException
 
 
+_INVALID_ATTRIBUTE_HANDLING_DOC = """
+{
+  "Document": {
+    "id": "6af2a3ec-9f3a-42d6-a59d-95f3ccbaa383",
+    "%s": "i_do_not_exist_on_doc_level",
+    "sections": [
+      {
+        "id": "51f3c79c-a7d7-471e-be16-e085caa851fb",
+        "%s": "i_do_not_exist_on_sec_level",
+        "type": "test",
+        "name": "sec",
+        "sections": [],
+        "properties": [
+          {
+            "id": "c5aed35a-d9ff-437d-82d6-68f0cda8ea94",
+            "%s": "i_do_not_exist_on_prop_level",
+            "name": "prop",
+            "value": [
+              1,
+              2,
+              3
+            ],
+            "type": "int"
+          }
+        ]
+      }
+    ]
+  },
+  "odml-version": "1.1"
+}
+""".strip()
+
+_SEC_CREATION_ERROR_DOC = """
+{
+  "Document": {
+    "id": "6af2a3ec-9f3a-42d6-a59d-95f3ccbaa383",
+    "sections": [
+      {
+        "id": "1113c79c-a7d7-471e-be16-e085caa851fb",
+        "name": "sec",
+        "type": "test",
+        "sections": [
+          {
+            "id": "1213c79c-a7d7-471e-be16-e085caa851fb",
+            "name": "%s",
+            "type": "test"
+          },
+          {
+            "id": [
+              "I-am-so-kaputt"
+            ],
+            "name": "%s",
+            "type": "test"
+          }
+        ]
+      }
+    ]
+  },
+  "odml-version": "1.1"
+}
+""".strip()
+
+_PROP_CREATION_ERROR_DOC = """
+{
+  "Document": {
+    "id": "6af2a3ec-9f3a-42d6-a59d-95f3ccbaa383",
+    "sections": [
+      {
+        "id": "51f3c79c-a7d7-471e-be16-e085caa851fb",
+        "type": "test",
+        "name": "sec",
+        "properties": [
+          {
+            "id": "121ed35a-d9ff-437d-82d6-68f0cda8ea94",
+            "name": "valid_prop"
+          },
+          {
+            "id": "122ed35a-d9ff-437d-82d6-68f0cda8ea94",
+            "name": "invalid_prop",
+            "value": [
+              "a",
+              "b"
+            ],
+            "type": "int"
+          }
+        ]
+      }
+    ]
+  },
+  "odml-version": "1.1"
+}
+""".strip()
+
+
 class TestJSONParser(unittest.TestCase):
 
     def setUp(self):
@@ -82,36 +176,7 @@ class TestJSONParser(unittest.TestCase):
         inv_sec_attr = "invalid_sec_attr"
         inv_prop_attr = "invalid_prop_attr"
 
-        file_content = """{
-  "Document": {
-    "id": "6af2a3ec-9f3a-42d6-a59d-95f3ccbaa383",
-    "%s": "i_do_not_exist_on_doc_level",
-    "sections": [
-      {
-        "id": "51f3c79c-a7d7-471e-be16-e085caa851fb",
-        "%s": "i_do_not_exist_on_sec_level",
-        "type": "test",
-        "name": "sec",
-        "sections": [],
-        "properties": [
-          {
-            "id": "c5aed35a-d9ff-437d-82d6-68f0cda8ea94",
-            "%s": "i_do_not_exist_on_prop_level",
-            "name": "prop",
-            "value": [
-              1,
-              2,
-              3
-            ],
-            "type": "int"
-          }
-        ]
-      }
-    ]
-  },
-  "odml-version": "1.1"
-}
-""" % (inv_doc_attr, inv_sec_attr, inv_prop_attr)
+        file_content = _INVALID_ATTRIBUTE_HANDLING_DOC % (inv_doc_attr, inv_sec_attr, inv_prop_attr)
         parsed_doc = self._prepare_doc(filename, file_content)
 
         # Test ParserException on default parse
@@ -138,34 +203,7 @@ class TestJSONParser(unittest.TestCase):
         valid = "valid_sec"
         invalid = "invalid_sec"
 
-        file_content = """{
-  "Document": {
-    "id": "6af2a3ec-9f3a-42d6-a59d-95f3ccbaa383",
-    "sections": [
-      {
-        "id": "1113c79c-a7d7-471e-be16-e085caa851fb",
-        "name": "sec",
-        "type": "test",
-        "sections": [
-          {
-            "id": "1213c79c-a7d7-471e-be16-e085caa851fb",
-            "name": "%s",
-            "type": "test"
-          },
-          {
-            "id": [
-              "I-am-so-kaputt"
-            ],
-            "name": "%s",
-            "type": "test"
-          }
-        ]
-      }
-    ]
-  },
-  "odml-version": "1.1"
-}
-""" % (valid, invalid)
+        file_content = _SEC_CREATION_ERROR_DOC % (valid, invalid)
         parsed_doc = self._prepare_doc(filename, file_content)
 
         # Test ParserException on default parse
@@ -189,36 +227,8 @@ class TestJSONParser(unittest.TestCase):
 
     def test_prop_creation_error(self):
         filename = "broken_property.yaml"
-        file_content = """{
-  "Document": {
-    "id": "6af2a3ec-9f3a-42d6-a59d-95f3ccbaa383",
-    "sections": [
-      {
-        "id": "51f3c79c-a7d7-471e-be16-e085caa851fb",
-        "type": "test",
-        "name": "sec",
-        "properties": [
-          {
-            "id": "121ed35a-d9ff-437d-82d6-68f0cda8ea94",
-            "name": "valid_prop"
-          },
-          {
-            "id": "122ed35a-d9ff-437d-82d6-68f0cda8ea94",
-            "name": "invalid_prop",
-            "value": [
-              "a",
-              "b"
-            ],
-            "type": "int"
-          }
-        ]
-      }
-    ]
-  },
-  "odml-version": "1.1"
-}
-"""
-        parsed_doc = self._prepare_doc(filename, file_content)
+
+        parsed_doc = self._prepare_doc(filename, _PROP_CREATION_ERROR_DOC)
 
         # Test ParserException on default parse
         exc_msg = "Property not created"

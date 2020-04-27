@@ -12,6 +12,60 @@ from odml.tools import dict_parser
 from odml.tools.parser_utils import ParserException, InvalidVersionException
 
 
+_INVALID_ATTRIBUTE_HANDLING_DOC = """
+Document:
+  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
+  %s: i_do_not_exist_on_doc_level
+  sections:
+  - id: d4f3120a-c02f-4102-a9fe-2e8b77d1d0d2
+    name: sec
+    %s: i_do_not_exist_on_sec_level
+    properties:
+    - id: 18ad5176-2b46-4a08-9b85-eafd6b14fab7
+      name: prop
+      value: []
+      %s: i_do_not_exist_on_prop_level
+    sections: []
+    type: test
+odml-version: '1.1'
+""".strip()
+
+_SEC_CREATION_ERROR_DOC = """
+Document:
+  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
+  sections:
+  - id: 1111a20a-c02f-4102-a9fe-2e8b77d1d0d2
+    name: sec
+    sections:
+    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
+      name: %s
+      type: test
+    - id: [I-am-so-kaputt]
+      name: %s
+    type: test
+odml-version: '1.1'
+""".strip()
+
+_PROP_CREATION_ERROR_DOC = """
+Document:
+  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
+  sections:
+  - id: 1111a20a-c02f-4102-a9fe-2e8b77d1d0d2
+    name: sec
+    properties:
+    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
+      name: valid_prop
+    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
+      name: invalid_prop
+      type: int
+      values:
+      - 'a'
+      - 'b'
+    type: test
+odml-version: '1.1'
+""".strip()
+
+
 class TestYAMLParser(unittest.TestCase):
 
     def setUp(self):
@@ -82,22 +136,7 @@ class TestYAMLParser(unittest.TestCase):
         inv_sec_attr = "invalid_sec_attr"
         inv_prop_attr = "invalid_prop_attr"
 
-        file_content = """Document:
-  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
-  %s: i_do_not_exist_on_doc_level
-  sections:
-  - id: d4f3120a-c02f-4102-a9fe-2e8b77d1d0d2
-    name: sec
-    %s: i_do_not_exist_on_sec_level
-    properties:
-    - id: 18ad5176-2b46-4a08-9b85-eafd6b14fab7
-      name: prop
-      value: []
-      %s: i_do_not_exist_on_prop_level
-    sections: []
-    type: test
-odml-version: '1.1'
-""" % (inv_doc_attr, inv_sec_attr, inv_prop_attr)
+        file_content = _INVALID_ATTRIBUTE_HANDLING_DOC % (inv_doc_attr, inv_sec_attr, inv_prop_attr)
 
         parsed_doc = self._prepare_doc(filename, file_content)
 
@@ -125,20 +164,8 @@ odml-version: '1.1'
         valid = "valid_sec"
         invalid = "invalid_sec"
 
-        file_content = """Document:
-  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
-  sections:
-  - id: 1111a20a-c02f-4102-a9fe-2e8b77d1d0d2
-    name: sec
-    sections:
-    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
-      name: %s
-      type: test
-    - id: [I-am-so-kaputt]
-      name: %s
-    type: test
-odml-version: '1.1'
-""" % (valid, invalid)
+        file_content = _SEC_CREATION_ERROR_DOC % (valid, invalid)
+
         parsed_doc = self._prepare_doc(filename, file_content)
 
         # Test ParserException on default parse
@@ -162,24 +189,8 @@ odml-version: '1.1'
 
     def test_prop_creation_error(self):
         filename = "broken_property.yaml"
-        file_content = """Document:
-  id: 82408bdb-1d9d-4fa9-b4dd-ad78831c797c
-  sections:
-  - id: 1111a20a-c02f-4102-a9fe-2e8b77d1d0d2
-    name: sec
-    properties:
-    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
-      name: valid_prop
-    - id: 1121a20a-c02f-4102-a9fe-2e8b77d1d0d2
-      name: invalid_prop
-      type: int
-      values:
-      - 'a'
-      - 'b'
-    type: test
-odml-version: '1.1'
-"""
-        parsed_doc = self._prepare_doc(filename, file_content)
+
+        parsed_doc = self._prepare_doc(filename, _PROP_CREATION_ERROR_DOC)
 
         # Test ParserException on default parse
         exc_msg = "Property not created"
