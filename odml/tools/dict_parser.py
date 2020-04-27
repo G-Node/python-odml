@@ -2,10 +2,14 @@
 The dict_parser module provides access to the DictWriter and DictReader class.
 Both handle the conversion of odML documents from and to Python dictionary objects.
 """
+import sys
 
 from .. import format as odmlfmt
 from ..info import FORMAT_VERSION
 from .parser_utils import InvalidVersionException, ParserException, odml_tuple_export
+
+LABEL_ERROR = "Error"
+LABEL_WARNING = "Warning"
 
 
 def parse_cardinality(vals):
@@ -169,15 +173,21 @@ class DictReader:
     A reader to parse dictionaries with odML content into an odml.Document.
     """
 
-    def __init__(self, show_warnings=True):
+    def __init__(self, show_warnings=True, ignore_errors=False):
         """
         :param show_warnings: Toggle whether to print warnings to the command line.
                               Any warnings can be accessed via the Reader's class
                               warnings attribute after parsing is done.
+        :param ignore_errors: To allow loading and fixing of invalid odml files
+                              encountered errors can be converted to warnings
+                              instead. Such a document can only be saved when
+                              all errors have been addressed though.
         """
         self.parsed_doc = None  # Python dictionary object equivalent
-        self.show_warnings = show_warnings
         self.warnings = []
+
+        self.show_warnings = show_warnings
+        self.ignore_errors = ignore_errors
 
     def is_valid_attribute(self, attr, fmt):
         """
@@ -196,12 +206,39 @@ class DictReader:
         if fmt.revmap(attr):
             return attr
 
-        msg = "Invalid element <%s> inside <%s> tag" % (attr, fmt.__class__.__name__)
-        self.warnings.append(msg)
-        if self.show_warnings:
-            print(msg)
+        msg = "Invalid element '%s' inside <%s> tag" % (attr, fmt.__class__.__name__)
+        self.error(msg)
 
         return None
+
+    def error(self, msg):
+        """
+        If the parsers ignore_errors property is set to False, a ParserException
+        will be raised. Otherwise the message is passed to the parsers warning
+        method.
+
+        :param msg: Error message.
+        """
+        if self.ignore_errors:
+            return self.warn(msg, LABEL_ERROR)
+
+        raise ParserException(msg)
+
+    def warn(self, msg, label=LABEL_WARNING):
+        """
+        Adds a message to the parsers warnings property. If the parsers show_warnings
+        property is set to True, an additional error message will be written
+        to sys.stderr.
+
+        :param msg: Warning message.
+        :param label: Defined message level, can be 'Error' or 'Warning'. Default is 'Warning'.
+        """
+        msg = "%s: %s" % (label, msg)
+
+        self.warnings.append(msg)
+
+        if self.show_warnings:
+            sys.stderr.write("Parser%s\n" % msg)
 
     def to_odml(self, parsed_doc):
         """
@@ -280,14 +317,19 @@ class DictReader:
                     # Make sure to always use the correct odml format attribute name
                     sec_attrs[odmlfmt.Section.map(attr)] = content
 
-            sec = odmlfmt.Section.create(**sec_attrs)
-            for prop in sec_props:
-                sec.append(prop)
+            try:
+                sec = odmlfmt.Section.create(**sec_attrs)
 
-            for child_sec in children_secs:
-                sec.append(child_sec)
+                for prop in sec_props:
+                    sec.append(prop)
 
-            odml_sections.append(sec)
+                for child_sec in children_secs:
+                    sec.append(child_sec)
+
+                odml_sections.append(sec)
+            except Exception as exc:
+                msg = "Section not created (%s)\n  %s" % (sec_attrs, str(exc))
+                self.error(msg)
 
         return odml_sections
 
@@ -316,7 +358,11 @@ class DictReader:
                     # Make sure to always use the correct odml format attribute name
                     prop_attrs[odmlfmt.Property.map(attr)] = content
 
-            prop = odmlfmt.Property.create(**prop_attrs)
-            odml_props.append(prop)
+            try:
+                prop = odmlfmt.Property.create(**prop_attrs)
+                odml_props.append(prop)
+            except Exception as exc:
+                msg = "Property not created (%s)\n%s" % (prop_attrs, str(exc))
+                self.error(msg)
 
         return odml_props

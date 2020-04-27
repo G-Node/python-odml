@@ -82,7 +82,8 @@ class Format(object):
             else:
                 for k, val in self._map.items():
                     self._rev_map[val] = k
-        return self._rev_map.get(name, name)
+
+        return self._rev_map.get(name)
 
     def __iter__(self):
         """ Iterates each python property name """

@@ -3,10 +3,11 @@ Tests functions and classes from the odml terminology module.
 """
 
 import os
-import unittest
 import tempfile
+import unittest
 
 from glob import glob
+from sys import platform
 from time import sleep
 try:
     from urllib.request import pathname2url
@@ -104,9 +105,13 @@ class TestTerminology(unittest.TestCase):
             self.assertIn(curr_file, load_map)
             self.assertEqual(orig_map[curr_file], load_map[curr_file])
 
+        sleep_time = 0.5
+        if platform == "darwin":
+            sleep_time = 2
+
         # Sleep is needed since the tests might be too fast to result in a
-        # different file mtime. macOS seems to require sleep time > 0.700.
-        sleep(0.800)
+        # different file mtime. Travis macOS seems to require sleep time > 1s.
+        sleep(sleep_time)
 
         # Test refresh loads same cached files but changes them.
         # Different mtimes and id strings are sufficient.

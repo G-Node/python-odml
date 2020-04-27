@@ -183,7 +183,8 @@ class ODMLReader:
                     print(err)
                     return None
 
-            par = DictReader(show_warnings=self.show_warnings)
+            par = DictReader(ignore_errors=True,
+                             show_warnings=self.show_warnings)
             self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
             self.doc.origin_file_name = basename(file)
