@@ -29,7 +29,10 @@ def _format_warning(warn_msg, *args, **kwargs):
 # Monkey patch formatting 'warnings' messages for the whole module.
 warnings.formatwarning = _format_warning
 
-if _python_version.major < 3 or _python_version.major == 3 and _python_version.minor < 6:
+if _python_version.major < 3:
+    msg = "Python 2 has been deprecated.\n\todML support for Python 2 will be dropped August 2020."
+    warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
+elif _python_version.major == 3 and _python_version.minor < 6:
     msg = "The '%s' package is not tested with your Python version. " % __name__
     msg += "\n\tPlease consider upgrading to the latest Python distribution."
     warnings.warn(msg)
