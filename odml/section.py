@@ -416,10 +416,12 @@ class BaseSection(base.Sectionable):
         is respected and prints a warning message otherwise.
         """
         valid = validation.Validation(self)
+        val_id = validation.ValidationID.section_sections_cardinality
+
         # Make sure to display only warnings of the current section
-        res = [curr for curr in valid.errors if self.id == curr.obj.id]
-        for err in res:
-            print("%s: %s" % (err.rank.capitalize(), err.msg))
+        for curr in valid.errors:
+            if curr.validation_id == val_id and self.id == curr.obj.id:
+                print("%s: %s" % (curr.rank.capitalize(), curr.msg))
 
     @property
     def prop_cardinality(self):
@@ -469,10 +471,12 @@ class BaseSection(base.Sectionable):
         is respected and prints a warning message otherwise.
         """
         valid = validation.Validation(self)
+        val_id = validation.ValidationID.section_properties_cardinality
+
         # Make sure to display only warnings of the current section
-        res = [curr for curr in valid.errors if self.id == curr.obj.id]
-        for err in res:
-            print("%s: %s" % (err.rank.capitalize(), err.msg))
+        for curr in valid.errors:
+            if curr.validation_id == val_id and self.id == curr.obj.id:
+                print("%s: %s" % (curr.rank.capitalize(), curr.msg))
 
     @inherit_docstring
     def get_terminology_equivalent(self):

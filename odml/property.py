@@ -569,11 +569,12 @@ class BaseProperty(base.BaseObject):
         is respected and prints a warning message otherwise.
         """
         valid = validation.Validation(self)
+        val_id = validation.ValidationID.property_values_cardinality
 
         # Make sure to display only warnings of the current property
-        res = [curr for curr in valid.errors if self.id == curr.obj.id]
-        for err in res:
-            print("%s: %s" % (err.rank.capitalize(), err.msg))
+        for curr in valid.errors:
+            if curr.validation_id == val_id and self.id == curr.obj.id:
+                print("%s: %s" % (curr.rank.capitalize(), curr.msg))
 
     def set_values_cardinality(self, min_val=None, max_val=None):
         """
