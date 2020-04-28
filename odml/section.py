@@ -171,6 +171,11 @@ class BaseSection(base.Sectionable):
         if self.name == new_value:
             return
 
+        # Make sure name cannot be set to None or empty
+        if not new_value:
+            self._name = self._id
+            return
+
         curr_parent = self.parent
         if hasattr(curr_parent, "sections") and new_value in curr_parent.sections:
             raise KeyError("Object with the same name already exists!")
