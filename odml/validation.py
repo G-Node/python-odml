@@ -4,10 +4,47 @@ Generic odML validation framework.
 """
 
 import re
+
+from enum import Enum
+
 from . import dtypes
 
 LABEL_ERROR = 'error'
 LABEL_WARNING = 'warning'
+
+
+class ValidationID(Enum):
+    """
+    IDs identifying registered validation handlers.
+    """
+    unspecified = 1
+
+    # Required attributes validations
+    object_required_attributes = 10
+    section_type_must_be_defined = 11
+
+    # Unique id, name and type validations
+    section_unique_ids = 20
+    property_unique_ids = 21
+    section_unique_name_type = 22
+    property_unique_name = 23
+
+    # Good form validations
+    object_name_readable = 30
+
+    # Property specific validations
+    property_terminology_check = 40
+    property_dependency_check = 41
+    property_values_check = 42
+    property_values_string_check = 43
+
+    # Cardinality validations
+    section_properties_cardinality = 50
+    section_sections_cardinality = 51
+    property_values_cardinality = 52
+
+    # Optional validations
+    section_repository_present = 60
 
 
 class ValidationError(object):
