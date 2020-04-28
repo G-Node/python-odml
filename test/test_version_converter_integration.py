@@ -5,27 +5,25 @@ to v1.1 with all supported file formats.
 
 import os
 import shutil
-import tempfile
 import unittest
 
 from odml import load
 from odml.tools.converters import VersionConverter as VC
+from .util import create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 
 class TestVersionConverterIntegration(unittest.TestCase):
     def setUp(self):
         # Set up test environment
-        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.jsonfile = os.path.join(RES_DIR, "version_conversion_int.json")
+        self.xmlfile = os.path.join(RES_DIR, "version_conversion_int.xml")
+        self.yamlfile = os.path.join(RES_DIR, "version_conversion_int.yaml")
 
-        self.jsonfile = os.path.join(dir_path, "resources", "version_conversion_int.json")
-        self.xmlfile = os.path.join(dir_path, "resources", "version_conversion_int.xml")
-        self.yamlfile = os.path.join(dir_path, "resources", "version_conversion_int.yaml")
-
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
         self.outfile = os.path.join(self.tmp_dir, "version_conversion.xml")
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def test_convert_xml(self):

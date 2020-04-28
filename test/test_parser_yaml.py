@@ -4,12 +4,13 @@ reading from yaml files.
 """
 
 import os
-import tempfile
+import shutil
 import unittest
 import yaml
 
 from odml.tools import dict_parser
 from odml.tools.parser_utils import ParserException, InvalidVersionException
+from .util import create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 
 _INVALID_ATTRIBUTE_HANDLING_DOC = """
@@ -69,21 +70,13 @@ odml-version: '1.1'
 class TestYAMLParser(unittest.TestCase):
 
     def setUp(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.basepath = os.path.join(dir_path, "resources")
-
+        self.base_path = RES_DIR
         self.yaml_reader = dict_parser.DictReader(show_warnings=False)
+        self.tmp_dir_path = create_test_dir(__file__)
 
-        dir_name = os.path.basename(os.path.splitext(__file__)[0])
-        tmp_base_path = os.path.join(tempfile.gettempdir(), "odml_test")
-        if not os.path.exists(tmp_base_path):
-            os.mkdir(tmp_base_path)
-
-        tmp_dir_path = os.path.join(tmp_base_path, dir_name)
-        if not os.path.exists(tmp_dir_path):
-            os.mkdir(tmp_dir_path)
-
-        self.tmp_dir_path = tmp_dir_path
+    def tearDown(self):
+        if self.tmp_dir_path and os.path.exists(self.tmp_dir_path):
+            shutil.rmtree(self.tmp_dir_path)
 
     def _prepare_doc(self, file_name, file_content):
         file_path = os.path.join(self.tmp_dir_path, file_name)
@@ -100,7 +93,7 @@ class TestYAMLParser(unittest.TestCase):
         filename = "missing_root.yaml"
         message = "Missing root element"
 
-        with open(os.path.join(self.basepath, filename)) as raw_data:
+        with open(os.path.join(self.base_path, filename)) as raw_data:
             parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(ParserException) as exc:
@@ -112,7 +105,7 @@ class TestYAMLParser(unittest.TestCase):
         filename = "missing_version.yaml"
         message = "Could not find odml-version"
 
-        with open(os.path.join(self.basepath, filename)) as raw_data:
+        with open(os.path.join(self.base_path, filename)) as raw_data:
             parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(ParserException) as exc:
@@ -123,7 +116,7 @@ class TestYAMLParser(unittest.TestCase):
     def test_invalid_version(self):
         filename = "invalid_version.yaml"
 
-        with open(os.path.join(self.basepath, filename)) as raw_data:
+        with open(os.path.join(self.base_path, filename)) as raw_data:
             parsed_doc = yaml.safe_load(raw_data)
 
         with self.assertRaises(InvalidVersionException):

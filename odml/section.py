@@ -3,6 +3,7 @@
 This module provides the Base Section class.
 """
 import uuid
+import warnings
 
 try:
     from collections.abc import Iterable
@@ -774,21 +775,32 @@ class BaseSection(base.Sectionable):
 
         return self._reorder(self.parent.sections, new_index)
 
-    def create_property(self, name, value=None, dtype=None, oid=None):
+    def create_property(self, name, values=None, dtype=None, oid=None, value=None):
         """
         Create a new property that is a child of this section.
 
         :param name: The name of the property.
-        :param value: Some data value, it can be a single value or
-                      a list of homogeneous values.
+        :param values: Some data value, it can be a single value or
+                       a list of homogeneous values.
         :param dtype: The data type of the values stored in the property,
                       if dtype is not given, the type is deduced from the values.
                       Check odml.DType for supported data types.
         :param oid: object id, UUID string as specified in RFC 4122. If no id
                     is provided, an id will be generated and assigned.
+        :param value: Deprecated alias of 'values'. Any content of 'value' is ignored,
+                      if 'values' is set.
+
         :return: The new property.
         """
-        prop = BaseProperty(name=name, value=value, dtype=dtype, oid=oid)
+        if value and values:
+            print("Warning: Both 'values' and 'value' were set; ignoring 'value'.")
+
+        if not values and (value or isinstance(value, (bool, int))):
+            msg = "The attribute 'value' is deprecated and will be removed, use 'values' instead."
+            warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
+            values = value
+
+        prop = BaseProperty(name=name, values=values, dtype=dtype, oid=oid)
         prop.parent = self
 
         return prop

@@ -1,19 +1,21 @@
-import unittest
-import sys
 import os
-import odml
+import sys
+import unittest
 
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
+import odml
+
+from .util import TEST_RESOURCES_DIR as RES_DIR
+
 
 class TestTypes(unittest.TestCase):
 
     def setUp(self):
-        self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.file = os.path.join(self.dir_path, 'resources', 'example.odml')
+        self.file = os.path.join(RES_DIR, "example.odml")
         # Do not allow anything to be printed on STDOUT
         self.captured_stdout = StringIO()
         sys.stdout = self.captured_stdout
@@ -21,8 +23,9 @@ class TestTypes(unittest.TestCase):
     def test_load_save(self):
         doc = odml.load(self.file)
         self.assertTrue(isinstance(doc, odml.doc.BaseDocument))
-        odml.save(doc, self.file + '_copy')
-        os.remove(self.file + '_copy')
+        file_name = "%s_copy" % self.file
+        odml.save(doc, file_name)
+        os.remove(file_name)
 
     def test_display(self):
         doc = odml.load(self.file)
@@ -30,11 +33,12 @@ class TestTypes(unittest.TestCase):
 
     def test_invalid_parser(self):
         with self.assertRaises(NotImplementedError):
-            odml.load(self.file, 'html')
+            odml.load(self.file, "html")
 
         doc = odml.load(self.file)
         with self.assertRaises(NotImplementedError):
-            odml.save(doc, self.file + '_copy_html', 'html')
+            file_name = "%s_copy_html" % self.file
+            odml.save(doc, file_name, "html")
 
         with self.assertRaises(NotImplementedError):
-            odml.display(doc, 'html')
+            odml.display(doc, "html")

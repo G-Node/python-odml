@@ -3,7 +3,6 @@ Tests functions and classes from the odml terminology module.
 """
 
 import os
-import tempfile
 import unittest
 
 from glob import glob
@@ -15,8 +14,7 @@ except ImportError:
     from urllib import pathname2url
 
 from odml import Document, save, Section, terminology
-
-CACHE_DIR = os.path.join(tempfile.gettempdir(), "odml.cache")
+from .util import ODML_CACHE_DIR as CACHE_DIR, create_test_dir
 
 
 class TestTerminology(unittest.TestCase):
@@ -25,7 +23,7 @@ class TestTerminology(unittest.TestCase):
         """
         Set up local temporary terminology files in a temporary folder
         """
-        tmp_dir = tempfile.mkdtemp("_odml")
+        tmp_dir = create_test_dir(__file__)
         tmp_name = os.path.basename(tmp_dir)
 
         main_name = "%s_main.xml" % tmp_name

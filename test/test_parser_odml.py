@@ -5,21 +5,19 @@ with all supported odML parsers via the tools.odmlparser classes.
 
 import os
 import shutil
-import tempfile
 import unittest
 
 from odml import Document, Section, Property
 from odml.tools import odmlparser
+from .util import create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
 
 class TestOdmlParser(unittest.TestCase):
 
     def setUp(self):
         # Set up test environment
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.basefile = os.path.join(dir_path, "resources", "example.odml")
-
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        base_file = os.path.join(RES_DIR, "example.odml")
+        self.tmp_dir = create_test_dir(__file__)
 
         self.json_file = os.path.join(self.tmp_dir, "test.json")
         self.xml_file = os.path.join(self.tmp_dir, "test.xml")
@@ -36,10 +34,10 @@ class TestOdmlParser(unittest.TestCase):
         self.json_writer = odmlparser.ODMLWriter(parser='JSON')
         self.rdf_writer = odmlparser.ODMLWriter(parser='RDF')
 
-        self.odml_doc = self.xml_reader.from_file(self.basefile)
+        self.odml_doc = self.xml_reader.from_file(base_file)
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def test_json_yaml_xml(self):

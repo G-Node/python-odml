@@ -5,17 +5,17 @@ of odML Documents with all supported odML parsers.
 
 import os
 import shutil
-import tempfile
 import unittest
 
 import odml
+from .util import create_test_dir
 
 
 class TestDocumentIntegration(unittest.TestCase):
 
     def setUp(self):
         # Set up test environment
-        self.tmp_dir = tempfile.mkdtemp(suffix=".odml")
+        self.tmp_dir = create_test_dir(__file__)
 
         self.json_file = os.path.join(self.tmp_dir, "test.json")
         self.xml_file = os.path.join(self.tmp_dir, "test.xml")
@@ -26,7 +26,7 @@ class TestDocumentIntegration(unittest.TestCase):
         self.doc = doc
 
     def tearDown(self):
-        if os.path.exists(self.tmp_dir):
+        if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 
     def save_load(self):

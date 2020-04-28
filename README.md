@@ -36,7 +36,7 @@ pip install odml
 ## Tutorial and examples
 
 - We have assembled a set of
- [tutorials](http://github.com/G-Node/python-odml/blob/master/doc/tutorial.rst "Python Tutorial").
+ [tutorials](https://python-odml.readthedocs.io/en/latest/tutorial.html "Python Tutorial").
 
 ## Python convenience scripts
 
