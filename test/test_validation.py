@@ -276,7 +276,7 @@ class TestValidation(unittest.TestCase):
         sec = odml.Section("sec", parent=doc)
         sec.name = sec.id
         res = Validate(doc)
-        self.assertError(res, "Name should be readable")
+        self.assertError(res, "Name not assigned")
 
     def test_property_name_readable(self):
         """
@@ -287,7 +287,7 @@ class TestValidation(unittest.TestCase):
         prop = odml.Property("prop", parent=sec)
         prop.name = prop.id
         res = Validate(doc)
-        self.assertError(res, "Name should be readable")
+        self.assertError(res, "Name not assigned")
 
     def test_standalone_section(self):
         """

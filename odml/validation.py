@@ -409,7 +409,7 @@ def object_name_readable(obj):
     validation_id = ValidationID.object_name_readable
 
     if obj.name == obj.id:
-        yield ValidationError(obj, "Name should be readable", LABEL_WARNING, validation_id)
+        yield ValidationError(obj, "Name not assigned", LABEL_WARNING, validation_id)
 
 
 Validation.register_handler('section', object_name_readable)
