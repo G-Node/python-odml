@@ -173,6 +173,36 @@ class Validation(object):
             for prop in sec.properties:
                 self.validate(prop)
 
+    def report(self):
+        """
+        Validates the registered object and returns a results report.
+        """
+        self.run_validation()
+
+        err_count = 0
+        reduce = set()
+        sec_count = 0
+        prop_count = 0
+
+        for i in self.errors:
+            if i.is_error:
+                err_count += 1
+
+            if i.obj not in reduce and 'section' in str(i.obj).lower():
+                sec_count += 1
+            elif i.obj not in reduce and 'property' in str(i.obj).lower():
+                prop_count += 1
+
+            reduce.add(i.obj)
+
+        warn_count = len(self.errors) - err_count
+        msg = ""
+        if err_count or warn_count:
+            msg = "Validation found %s errors and %s warnings" % (err_count, warn_count)
+            msg += " in %s Sections and %s Properties." % (sec_count, prop_count)
+
+        return msg
+
     def register_custom_handler(self, klass, handler):
         """
         Adds a validation handler for an odml class. The handler is called in the
