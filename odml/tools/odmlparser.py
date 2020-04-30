@@ -71,7 +71,7 @@ class ODMLWriter:
         report = validation.report()
         if report:
             msg += "The saved Document contains formal issues."
-            msg += " Run 'odml.Validation' to resolve them.\n%s" % report
+            msg += " Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
             warnings.warn(msg)
 
         with open(filename, 'w') as file:
@@ -165,7 +165,7 @@ class ODMLReader:
         report = Validation(self.doc).report()
         if report:
             msg = "The loaded Document contains formal issues."
-            msg += "Run 'odml.Validation' to resolve them.\n%s" % report
+            msg += "Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
             warnings.warn(msg)
 
     def from_file(self, file, doc_format=None):
@@ -245,7 +245,7 @@ class ODMLReader:
                 report = Validation(doc).report()
                 if report:
                     msg = "The loaded Document contains formal issues."
-                    msg += "Run 'odml.Validation' to resolve them.\n%s" % report
+                    msg += "Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
                     warnings.warn(msg)
 
             return self.doc
@@ -314,7 +314,7 @@ class ODMLReader:
                 report = Validation(doc).report()
                 if report:
                     msg = "The loaded Document contains formal issues."
-                    msg += "Run 'odml.Validation' to resolve them.\n%s" % report
+                    msg += "Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
                     warnings.warn(msg)
 
             return self.doc
