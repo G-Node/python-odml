@@ -18,7 +18,7 @@ LABEL_ERROR = 'error'
 LABEL_WARNING = 'warning'
 
 
-class ValidationID(Enum):
+class IssueID(Enum):
     """
     IDs identifying registered validation handlers.
     """
@@ -239,7 +239,7 @@ def object_required_attributes(obj):
 
     :param obj: document, section or property.
     """
-    validation_id = ValidationID.object_required_attributes
+    validation_id = IssueID.object_required_attributes
 
     args = obj.format().arguments
     for arg in args:
@@ -264,7 +264,7 @@ def section_type_must_be_defined(sec):
 
     :param sec: odml.Section.
     """
-    validation_id = ValidationID.section_type_must_be_defined
+    validation_id = IssueID.section_type_must_be_defined
 
     if sec.type and sec.type == "n.s.":
         yield ValidationError(sec, "Section type not specified", LABEL_WARNING, validation_id)
@@ -280,7 +280,7 @@ def section_repository_present(sec):
     1. warn, if a section has no repository or
     2. the section type is not present in the repository
     """
-    validation_id = ValidationID.section_repository_present
+    validation_id = IssueID.section_repository_present
 
     repo = sec.get_repository()
     if repo is None:
@@ -327,7 +327,7 @@ def section_unique_ids(parent, id_map=None):
     :param parent: odML Document or Section
     :param id_map: "id":"odML object / path" dictionary
     """
-    validation_id = ValidationID.section_unique_ids
+    validation_id = IssueID.section_unique_ids
 
     if not id_map:
         id_map = {}
@@ -358,7 +358,7 @@ def property_unique_ids(section, id_map=None):
     :param section: odML Section
     :param id_map: "id":"odML object / path" dictionary
     """
-    validation_id = ValidationID.property_unique_ids
+    validation_id = IssueID.property_unique_ids
 
     if not id_map:
         id_map = {}
@@ -406,7 +406,7 @@ def section_unique_name_type(obj):
     """
     for i in object_unique_names(
             obj,
-            validation_id=ValidationID.section_unique_name_type,
+            validation_id=IssueID.section_unique_name_type,
             attr=lambda x: (x.name, x.type),
             children=lambda x: x.sections,
             msg="name/type combination must be unique"):
@@ -420,7 +420,7 @@ def property_unique_names(obj):
     :param obj: odml class instance the validation is applied on.
     """
     for i in object_unique_names(obj,
-                                 validation_id=ValidationID.property_unique_name,
+                                 validation_id=IssueID.property_unique_name,
                                  children=lambda x: x.properties):
         yield i
 
@@ -436,7 +436,7 @@ def object_name_readable(obj):
 
     :param obj: odml.Section or odml.Property.
     """
-    validation_id = ValidationID.object_name_readable
+    validation_id = IssueID.object_name_readable
 
     if obj.name == obj.id:
         yield ValidationError(obj, "Name not assigned", LABEL_WARNING, validation_id)
@@ -452,7 +452,7 @@ def property_terminology_check(prop):
     2. warn, if there are multiple values with different units or the unit does
        not match the one in the terminology.
     """
-    validation_id = ValidationID.property_terminology_check
+    validation_id = IssueID.property_terminology_check
 
     if not prop.parent:
         return
@@ -475,7 +475,7 @@ def property_dependency_check(prop):
     Produces a warning if the dependency attribute refers to a non-existent attribute
     or the dependency_value does not match.
     """
-    validation_id = ValidationID.property_dependency_check
+    validation_id = IssueID.property_dependency_check
 
     if not prop.parent:
         return
@@ -506,7 +506,7 @@ def property_values_check(prop):
 
     :param prop: property the validation is applied on.
     """
-    validation_id = ValidationID.property_values_check
+    validation_id = IssueID.property_values_check
 
     if prop.dtype is not None and prop.dtype != "":
         dtype = prop.dtype
@@ -540,7 +540,7 @@ def property_values_string_check(prop):
 
     :param prop: property the validation is applied on.
     """
-    validation_id = ValidationID.property_values_string_check
+    validation_id = IssueID.property_values_string_check
 
     if prop.dtype != "string" or not prop.values:
         return
@@ -636,7 +636,7 @@ def section_properties_cardinality(obj):
 
     :return: Yields a ValidationError warning, if a set cardinality is not met.
     """
-    validation_id = ValidationID.section_properties_cardinality
+    validation_id = IssueID.section_properties_cardinality
 
     err = _cardinality_validation(obj, obj.prop_cardinality, 'properties',
                                   LABEL_WARNING, validation_id)
@@ -655,7 +655,7 @@ def section_sections_cardinality(obj):
 
     :return: Yields a ValidationError warning, if a set cardinality is not met.
     """
-    validation_id = ValidationID.section_sections_cardinality
+    validation_id = IssueID.section_sections_cardinality
 
     err = _cardinality_validation(obj, obj.sec_cardinality, 'sections',
                                   LABEL_WARNING, validation_id)
@@ -674,7 +674,7 @@ def property_values_cardinality(obj):
 
     :return: Yields a ValidationError warning, if a set cardinality is not met.
     """
-    validation_id = ValidationID.property_values_cardinality
+    validation_id = IssueID.property_values_cardinality
 
     err = _cardinality_validation(obj, obj.val_cardinality, 'values',
                                   LABEL_WARNING, validation_id)

@@ -421,7 +421,7 @@ class BaseSection(base.Sectionable):
         is respected and prints a warning message otherwise.
         """
         valid = validation.Validation(self)
-        val_id = validation.ValidationID.section_sections_cardinality
+        val_id = validation.IssueID.section_sections_cardinality
 
         # Make sure to display only warnings of the current section
         for curr in valid.errors:
@@ -476,7 +476,7 @@ class BaseSection(base.Sectionable):
         is respected and prints a warning message otherwise.
         """
         valid = validation.Validation(self)
-        val_id = validation.ValidationID.section_properties_cardinality
+        val_id = validation.IssueID.section_properties_cardinality
 
         # Make sure to display only warnings of the current section
         for curr in valid.errors:

@@ -574,7 +574,7 @@ class BaseProperty(base.BaseObject):
         is respected and prints a warning message otherwise.
         """
         valid = validation.Validation(self)
-        val_id = validation.ValidationID.property_values_cardinality
+        val_id = validation.IssueID.property_values_cardinality
 
         # Make sure to display only warnings of the current property
         for curr in valid.errors:
