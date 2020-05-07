@@ -8,6 +8,7 @@ from . import base
 from . import dtypes
 from . import format as fmt
 from . import terminology
+from . import validation
 from .tools.doc_inherit import inherit_docstring, allow_inherit_docstring
 
 
@@ -151,6 +152,14 @@ class BaseDocument(base.Sectionable):
                 sec.link = sec._link
             if sec._include is not None:
                 sec.include = sec._include
+
+    def validate(self):
+        """
+        Runs a validation on itself and returns the Validation object.
+
+        :return: odml.Validation
+        """
+        return validation.Validation(self)
 
     @inherit_docstring
     def get_terminology_equivalent(self):
