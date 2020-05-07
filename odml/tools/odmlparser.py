@@ -70,8 +70,8 @@ class ODMLWriter:
 
         report = validation.report()
         if report:
-            msg += "The saved Document contains formal issues."
-            msg += " Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
+            msg += "The saved Document contains unresolved issues."
+            msg += " Run the Documents 'validate' method to access them.\n%s" % report
             warnings.warn(msg)
 
         with open(filename, 'w') as file:
@@ -164,8 +164,8 @@ class ODMLReader:
     def _validation_warning(self):
         report = Validation(self.doc).report()
         if report:
-            msg = "The loaded Document contains formal issues."
-            msg += "Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
+            msg = "The loaded Document contains unresolved issues."
+            msg += " Run the Documents 'validate' method to access them.\n%s" % report
             warnings.warn(msg)
 
     def from_file(self, file, doc_format=None):
@@ -244,8 +244,8 @@ class ODMLReader:
             for doc in self.doc:
                 report = Validation(doc).report()
                 if report:
-                    msg = "The loaded Document contains formal issues."
-                    msg += "Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
+                    msg = "The loaded Document contains unresolved issues."
+                    msg += " Run the Documents 'validate' method to access them.\n%s" % report
                     warnings.warn(msg)
 
             return self.doc
@@ -313,8 +313,8 @@ class ODMLReader:
             for doc in self.doc:
                 report = Validation(doc).report()
                 if report:
-                    msg = "The loaded Document contains formal issues."
-                    msg += "Run 'odml.validation.Validation(doc)' to resolve them.\n%s" % report
+                    msg = "The loaded Document contains unresolved issues."
+                    msg += " Run the Documents 'validate' method to access them.\n%s" % report
                     warnings.warn(msg)
 
             return self.doc
