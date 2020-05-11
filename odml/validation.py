@@ -25,31 +25,31 @@ class IssueID(Enum):
     unspecified = 1
 
     # Required attributes validations
-    object_required_attributes = 110
-    section_type_must_be_defined = 111
+    object_required_attributes = 101
+    section_type_must_be_defined = 102
 
     # Unique id, name and type validations
-    section_unique_ids = 120
-    property_unique_ids = 121
-    section_unique_name_type = 122
-    property_unique_name = 123
+    section_unique_ids = 200
+    property_unique_ids = 201
+    section_unique_name_type = 202
+    property_unique_name = 203
 
     # Good form validations
-    object_name_readable = 130
+    object_name_readable = 300
 
     # Property specific validations
-    property_terminology_check = 140
-    property_dependency_check = 141
-    property_values_check = 142
-    property_values_string_check = 143
+    property_terminology_check = 400
+    property_dependency_check = 401
+    property_values_check = 402
+    property_values_string_check = 403
 
     # Cardinality validations
-    section_properties_cardinality = 150
-    section_sections_cardinality = 151
-    property_values_cardinality = 152
+    section_properties_cardinality = 500
+    section_sections_cardinality = 501
+    property_values_cardinality = 502
 
     # Optional validations
-    section_repository_present = 160
+    section_repository_present = 600
 
 
 class ValidationError(object):
