@@ -7,6 +7,7 @@ All supported formats can be found in parser_utils.SUPPORTED_PARSERS.
 import datetime
 import json
 import sys
+import warnings
 
 from os.path import basename
 
@@ -61,10 +62,17 @@ class ODMLWriter:
         msg = ""
         for err in validation.errors:
             if err.is_error:
-                msg += "\n\t- %s %s: %s" % (err.obj, err.rank, err.msg)
+                # msg += "\n\t- %s %s: %s" % (err.obj, err.rank, err.msg)
+                msg += "\n- %s" % err
         if msg != "":
             msg = "Resolve document validation errors before saving %s" % msg
             raise ParserException(msg)
+
+        report = validation.report()
+        if report:
+            msg += "The saved Document contains unresolved issues."
+            msg += " Run the Documents 'validate' method to access them.\n%s" % report
+            warnings.warn(msg)
 
         with open(filename, 'w') as file:
             # Add XML header to support odML stylesheets.
@@ -153,6 +161,13 @@ class ODMLReader:
         self.show_warnings = show_warnings
         self.warnings = []
 
+    def _validation_warning(self):
+        report = Validation(self.doc).report()
+        if report:
+            msg = "The loaded Document contains unresolved issues."
+            msg += " Run the Documents 'validate' method to access them.\n%s" % report
+            warnings.warn(msg)
+
     def from_file(self, file, doc_format=None):
         """
         Loads an odML document from a file. The ODMLReader.parser specifies the
@@ -171,6 +186,11 @@ class ODMLReader:
                                       show_warnings=self.show_warnings)
             self.warnings = par.warnings
             self.doc = par.from_file(file)
+
+            # Print validation warnings after parsing
+            if self.show_warnings:
+                self._validation_warning()
+
             return self.doc
 
         if self.parser == 'YAML':
@@ -188,6 +208,11 @@ class ODMLReader:
             self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
             self.doc.origin_file_name = basename(file)
+
+            # Print validation warnings after parsing
+            if self.show_warnings:
+                self._validation_warning()
+
             return self.doc
 
         if self.parser == 'JSON':
@@ -202,13 +227,27 @@ class ODMLReader:
             self.doc = par.to_odml(self.parsed_doc)
             # Provide original file name via the in memory document
             self.doc.origin_file_name = basename(file)
+
+            # Print validation warnings after parsing
+            if self.show_warnings:
+                self._validation_warning()
+
             return self.doc
 
         if self.parser == 'RDF':
             if not doc_format:
                 raise ValueError("Format of the rdf file was not specified")
 
+            # Importing from an RDF graph can return multiple documents
             self.doc = RDFReader().from_file(file, doc_format)
+
+            for doc in self.doc:
+                report = Validation(doc).report()
+                if report:
+                    msg = "The loaded Document contains unresolved issues."
+                    msg += " Run the Documents 'validate' method to access them.\n%s" % report
+                    warnings.warn(msg)
+
             return self.doc
 
     def from_string(self, string, doc_format=None):
@@ -227,6 +266,11 @@ class ODMLReader:
 
         if self.parser == 'XML':
             self.doc = xmlparser.XMLReader().from_string(string)
+
+            # Print validation warnings after parsing
+            if self.show_warnings:
+                self._validation_warning()
+
             return self.doc
 
         if self.parser == 'YAML':
@@ -237,6 +281,11 @@ class ODMLReader:
                 return
 
             self.doc = DictReader().to_odml(self.parsed_doc)
+
+            # Print validation warnings after parsing
+            if self.show_warnings:
+                self._validation_warning()
+
             return self.doc
 
         if self.parser == 'JSON':
@@ -247,13 +296,27 @@ class ODMLReader:
                 return
 
             self.doc = DictReader().to_odml(self.parsed_doc)
+
+            # Print validation warnings after parsing
+            if self.show_warnings:
+                self._validation_warning()
+
             return self.doc
 
         if self.parser == 'RDF':
             if not doc_format:
                 raise ValueError("Format of the rdf file was not specified")
 
+            # Importing from an RDF graph can return multiple documents
             self.doc = RDFReader().from_string(string, doc_format)
+
+            for doc in self.doc:
+                report = Validation(doc).report()
+                if report:
+                    msg = "The loaded Document contains unresolved issues."
+                    msg += " Run the Documents 'validate' method to access them.\n%s" % report
+                    warnings.warn(msg)
+
             return self.doc
 
 
