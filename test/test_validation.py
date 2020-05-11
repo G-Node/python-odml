@@ -467,3 +467,27 @@ class TestValidation(unittest.TestCase):
         path = os.path.join(RES_DIR, "validation_dtypes.yaml")
         doc = odml.load(path, "YAML")
         self.load_dtypes_validation(doc)
+
+    def test_section_in_terminology(self):
+        """
+        Test optional section in terminology validation.
+        """
+        doc = samplefile.parse("""s1[T1]""")
+
+        # Set up custom validation and add section_repository_present handler
+        res = odml.validation.Validation(doc, validate=False, reset=True)
+        handler = odml.validation.section_repository_present
+        res.register_custom_handler('section', handler)
+
+        res.run_validation()
+        self.assertError(res, "A section should have an associated repository",
+                         filter_rep=False)
+
+        odml.terminology.terminologies['map'] = samplefile.parse("""
+        s0[t0]
+        - S1[T1]
+        """)
+        doc.sections[0].repository = 'map'
+        res = Validate(doc)
+        # self.assertEqual(list(self.filter_mapping_errors(res.errors)), [])
+        self.assertEqual(res.errors, [])
