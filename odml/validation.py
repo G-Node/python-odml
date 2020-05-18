@@ -51,6 +51,9 @@ class IssueID(Enum):
     # Optional validations
     section_repository_present = 600
 
+    # Custom validation
+    custom_validation = 701
+
 
 class ValidationError(object):
     """
