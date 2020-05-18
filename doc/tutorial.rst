@@ -983,6 +983,49 @@ A cardinality is set via its convenience method:
     >>> # or
     >>> prop.val_cardinality = None
 
+Working with Validations
+------------------------
+
+odML Validations are a set of pre-defined checks that are run against an odML document automatically when it is saved or loaded. A document cannot be saved, if a Validation fails a check that is classified as an Error. Most validation checks are Warnings that are supposed to raise the overall data quality of the odml Document.
+
+When an odML document is saved or loaded, tha automatic validation will print a short report of encountered Validation Warnings and it is up to the user whether they want to resolve the Warnings. The odML document provides the ``validate`` method to gain easy access to the default validations. A Validation in turn provides not only a specific description of all encountered warnings or errors within an odML document, but it also provides direct access to each and every odML entity i.e. an odml.Section or an odml.Property where am issue has been found. This enables the user to quickly access and fix an encountered issue.
+
+A minimal example shows how a workflow using default validations might look like:
+
+    >>> # Create a minimal document with Section issues: name and type are not assigned
+    >>> doc = odml.Document()
+    >>> sec = odml.Section(parent=doc)
+    >>> odml.save(doc, "validation_example.odml.xml")
+
+This minimal example document will be saved, but will also print the following Validation report:
+
+    >>> UserWarning: The saved Document contains unresolved issues. Run the Documents 'validate' method to access them.
+    >>> Validation found 0 errors and 2 warnings in 1 Sections and 0 Properties.
+
+To fix the encountered warnings, users can access the validation via the documents' ``validate`` method:
+
+    >>> validation = doc.validate()
+    >>> for issue in validation.errors:
+    >>>     print(issue)
+
+This will show that the validation has encountered two Warnings and also displays the offending odml entity.
+
+    >>> ValidationWarning: Section[73f29acd-16ae-47af-afc7-371d57898e28] 'Section type not specified'
+    >>> ValidationWarning: Section[73f29acd-16ae-47af-afc7-371d57898e28] 'Name not assigned'
+
+To fix the "Name not assigned" warning the Section can be accessed via the validation entry and used to directly assign a human readable name to Section in the original document. Re-running the validation will show, that the warning has been removed.
+
+    >>> validation.errors[1].obj.name = "validation_example_section"
+    >>> # Check that the section name has been changed in the document
+    >>> print(doc.sections)
+    >>> # Re-running validation
+    >>> validation = doc.validate()
+    >>> for issue in validation.errors:
+    >>>     print(issue)
+
+Similarly the second validation warning can be resolved before saving the document again.
+
+Please note that the automatic validation is run whenever a document is saved or loaded using the ``odml.save`` and ``odml.load`` functions as well as the ``ODMLWriter`` or the ``ODMLReader``. The validation is not run when using any of the lower level ``xmlparser``, ``dict_parser`` or ``rdf_converter`` classes.
 
 Advanced knowledge on Values
 ----------------------------
