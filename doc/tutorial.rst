@@ -1107,6 +1107,40 @@ The following contains a list of the default odml validations, their message and
 | Applies to: ``Section``
 | Course of action: Optional validation. Will report any section that does not specify a repository. Add a repository to the reported Section to resolve.
 
+Custom validations
+******************
+
+Users can write their own validation and register them either with the default validation or add it to their own validation class instance.
+
+A custom validation handler needs to ``yield`` a ``ValidationError``. See the ``validation.ValidationError`` class for details.
+
+Custom validation handlers can be registered to be applied on ``odML`` (the odml Document), ``section`` or ``property``.
+
+    >>> import odml
+    >>> import odml.validation as oval
+    >>>
+    >>> # Create an example document
+    >>> doc = odml.Document()
+    >>> sec_valid = odml.Section(name="Recording-20200505", parent=doc)
+    >>> sec_invalid = odml.Section(name="Movie-20200505", parent=doc)
+    >>> subsec = odml.Section(name="Sub-Movie-20200505", parent=sec_valid)
+    >>>
+    >>> # Define a validation handler that yields a ValidationError if a section name does not start with 'Recording-'
+    >>> def custom_validation_handler(obj):
+    >>>     validation_id = oval.IssueID.custom_validation
+    >>>     msg = "Section name does not start with 'Recording-'"
+    >>>     if not obj.name.startswith("Recording-"):
+    >>>         yield oval.ValidationError(obj, msg, oval.LABEL_ERROR, validation_id)
+    >>>
+    >>> # Create a custom, empty validation with an odML document 'doc'
+    >>> custom_validation = oval.Validation(doc, reset=True)
+    >>> # Register a custom validation handler that should be applied on all Sections of a Document
+    >>> custom_validation.register_custom_handler("section", custom_validation_handler)
+    >>> # Run the custom validation and return a report
+    >>> custom_validation.report()
+    >>> # Display the errors reported by the validation
+    >>> print(custom_validation.errors)
+
 Advanced knowledge on Values
 ----------------------------
 
