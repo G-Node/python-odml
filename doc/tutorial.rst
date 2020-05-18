@@ -1027,6 +1027,86 @@ Similarly the second validation warning can be resolved before saving the docume
 
 Please note that the automatic validation is run whenever a document is saved or loaded using the ``odml.save`` and ``odml.load`` functions as well as the ``ODMLWriter`` or the ``ODMLReader``. The validation is not run when using any of the lower level ``xmlparser``, ``dict_parser`` or ``rdf_converter`` classes.
 
+List of available default validations
+*************************************
+
+The following contains a list of the default odml validations, their message and the suggested course of action to resolve the issue.
+
+| Validation: ``object_required_attributes``
+| Message: "Missing required attribute 'xyz'"
+| Applies to: ``Document``, ``Section``, ``Property``
+| Course of action: Add an appropriate value to attribute 'xyz' for the reported odml entity.
+
+| Validation: ``section_type_must_be_defined``
+| Message: "Section type not specified"
+| Applies to: ``Section``
+| Course of action: Fill in the ``type`` attribute of the reported Section.
+
+| Validation: ``section_unique_ids``
+| Message: "Duplicate id in Section 'secA' and 'secB'"
+| Applies to: ``Section``
+| Course of action: IDs have to be unique and a duplicate id was found. Assign a new id for the reported Section.
+
+| Validation: ``property_unique_ids``
+| Message: "Duplicate id in Property 'propA' and 'propB'"
+| Applies to: ``Property``
+| Course of action: IDs have to be unique and a duplicate id was found. Assign a new id for the reported Property
+
+| Validation: ``section_unique_name_type``
+| Message: "name/type combination must be unique"
+| Applies to: ``Section``
+| Course of action: The combination of Section.name and Section.type has to be unique on the same level. Change either name or type of the reported Section.
+
+| Validation: ``object_unique_name``
+| Message: "Object names must be unique"
+| Applies to: ``Document``, ``Section``, ``Property``
+| Course of action: Property name has to be unique on the same level. Change the name of the reported Property.
+
+| Validation: ``object_name_readable``
+| Message: "Name not assigned"
+| Applies to: ``Section``, ``Property``
+| Course of action: When Section or Property names are left empty on creation or set to None, they are automatically assigned the entities uuid. Assign a human readable name to the reported entity.
+
+| Validation: ``property_terminology_check``
+| Message: "Property 'prop' not found in terminology"
+| Applies to: ``Property``
+| Course of action: The reported entity is linked to an repository but the repository is not available. Check if the linked content has moved.
+
+| Validation: ``property_dependency_check``
+| Message: "Property refers to a non-existent dependency object" or "Dependency-value is not equal to value of the property's dependency"
+| Applies to: ``Property``
+| Course of action: The reported entity depends on another Property, but this dependency has not been satisfied. Check the referenced Property and its value to resolve the issue.
+
+| Validation: ``property_values_check``
+| Message: "Tuple of length 'x' not consistent with dtype 'dtype'!" or "Property values not of consistent dtype!".
+| Applies to: ``Property``
+| Course of action: Adjust the values or the dtype of the referenced Propery.
+
+| Validation: ``property_values_string_check``
+| Message: "Dtype of property "prop" currently is "string", but might fit dtype "dtype"!"
+| Applies to: ``Property``
+| Course of action: Check if the datatype of the referenced Property.values has been loaded correctly and change the Property.dtype if required.
+
+| Validation: ``section_properties_cardinality``
+| Message: "cardinality violated x values, y found)"
+| Applies to: ``Section``
+| Course of action: A cardinality defined for the number of Properties of a Section does not match. Add or remove Properties until the cardinality has been satisfied or adjust the cardinality.
+
+| Validation: ``section_sections_cardinality``
+| Message: "cardinality violated x values, y found)"
+| Applies to: ``Section``
+| Course of action: A cardinality defined for the number of Sections of a Section does not match. Add or remove Sections until the cardinality has been satisfied or adjust the cardinality.
+
+| Validation: ``property_values_cardinality``
+| Message: "cardinality violated x values, y found)"
+| Applies to: ``Property``
+| Course of action: A cardinality defined for the number of Values of a Property does not match. Add or remove Values until the cardinality has been satisfied or adjust the cardinality.
+
+| Validation: ``section_repository_present``
+| Message: "A section should have an associated repository" or "Could not load terminology" or "Section type not found in terminology"
+| Applies to: ``Section``
+| Course of action: Optional validation. Will report any section that does not specify a repository. Add a repository to the reported Section to resolve.
+
 Advanced knowledge on Values
 ----------------------------
 
