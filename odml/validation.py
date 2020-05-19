@@ -451,9 +451,7 @@ Validation.register_handler('property', object_name_readable)
 
 def property_terminology_check(prop):
     """
-    1. warn, if there are properties that do not occur in the terminology.
-    2. warn, if there are multiple values with different units or the unit does
-       not match the one in the terminology.
+    Tests if there are properties that do not occur in the terminology.
     """
     validation_id = IssueID.property_terminology_check
 
@@ -468,9 +466,6 @@ def property_terminology_check(prop):
     except KeyError:
         msg = "Property '%s' not found in terminology" % prop.name
         yield ValidationError(prop, msg, LABEL_WARNING, validation_id)
-
-
-Validation.register_handler('property', property_terminology_check)
 
 
 def property_dependency_check(prop):
