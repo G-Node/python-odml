@@ -514,6 +514,10 @@ def property_values_check(prop):
         return
 
     for val in prop.values:
+        # Do not continue if a value is None
+        if val is None:
+            return
+
         if dtype.endswith("-tuple"):
             tuple_len = int(dtype[:-6])
             if len(val) != tuple_len:
@@ -556,6 +560,10 @@ def property_values_string_check(prop):
     val_dtypes = []
 
     for val in prop.values:
+        # Do not continue if a value is None
+        if val is None:
+            return
+
         curr_dtype = "string"
 
         for check_dtype in dtype_checks.items():
