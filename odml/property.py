@@ -573,7 +573,12 @@ class BaseProperty(base.BaseObject):
         Runs a validation to check whether the values cardinality
         is respected and prints a warning message otherwise.
         """
-        valid = validation.Validation(self)
+        # This check is run quite frequently so do not run all checks via the default validation
+        # but use a custom validation instead.
+        valid = validation.Validation(self, validate=False, reset=True)
+        valid.register_custom_handler("property", validation.property_values_cardinality)
+        valid.run_validation()
+
         val_id = validation.IssueID.property_values_cardinality
 
         # Make sure to display only warnings of the current property
