@@ -3,6 +3,66 @@
 Used to document all changes from previous releases and collect changes 
 until the next release.
 
+# Version 1.5.0
+
+# Python 2 deprecation warning
+A Python 2 deprecation warning for August 2020 has been added. See issue #387 for details.
+
+# Validation feature update
+See issues #377, #378 and #379 as well as Pull Request #389 for details.
+
+An `IssueID` enum class as been added to provide identifiers to individual ValidationErrors. The `Validation` class itself has been refactored to provide the option to create standalone Validation instances with a different set of registered validations than the default library validation.
+The `Validation` class now features the new `register_custom_handler`, `run_validation`and `report` methods to add custom validation handlers to an instance, re-run the validations of an existing Instance and provide a brief report of encountered errors and warnings. The general `ValidationError.__repr__` string has been shortened to make the individual ValidationErrors more convenient to print and read. The default Validation is always run when a Document is saved or loaded via the `ODMLParser` and the `Validation.report` method is used to provide a `warnings.warn` message of the following format:
+```
+UserWarning: The saved Document contains formal issues. Run 'odml.validation.Validation(doc)' to resolve them.
+Validation found 0 errors and 3 warnings in 1 Sections and 1 Properties.
+```
+
+Further changes to the Validation class and behavior include:
+- an odml `Document` now provides a `validate` method that will run a default Validation and return the Validation instance to provide users with access to encountered issues.
+- a `validation_id` field has been added to the `ValidationError` class.
+- standalone Sections and Properties can now be validated.
+- Sections and Properties are validated on init.
+- the `section_repository_present` validation has been removed from the default validation list. Since Sections rarely have repositories set, this validation can lead to spam when validating a Document.
+
+# Cardinality feature
+Property and Section now provide a cardinality feature. Users can now define a range how many Values a Property and how many Properties or Sections a Section should have. A cardinality can be set and read via its accessor method and can be set via an additional convenience method. Whenever a cardinality or an affected Value, Section or Property is set, a corresponding validation is triggered. If this a set cardinality for a Property or Section is violated, a message is printed to the command line directly and a warning is issued when a Document is saved or loaded. Every cardinality is saved to and loaded from all available file formats.
+The full functionality of all cardinality features are documented in the tutorial and is available via readthedocs. For additional details see pull requests #374, #382, #383, #384 and issue #361. 
+
+# Update in Section type default behavior
+With recent updates the library now respects and enforces `Section.type` as a required attribute and allows save only with documents where this requirement is satisfied.
+To allow backwards file compatibility and ease usage, `Section.type` is by default set to the string `n.s.` (not specified), which means files where no `Section.type` had been specified can be loaded and saved, but will contain `n.s.` as value for every `Sections.type` that was previously not specified.
+Further the validation run before a document can be saved will issue a warning, if a `Section.type` with value `n.s.` is encountered and will still refuse to save with an error, if an empty `Section.type` is encountered. See PR #376 for details.
+
+# DictParser and ODMLParser fully support ignore errors
+- the `DictParser.DictReader` is now able to ignore errors, collect warnings and print corresponding notifications and works now analogous to the `xmlparser.XMLReader` behaviour. See issue #367 for details.
+- the `ODMLParser.ODMLReader` for JSON and YAML now uses `ignore_errors` by default e.g. when using the `odml.load` function for JSON and YAML odml files.
+
+# Fixes
+- fixes an exception when trying to append or extend a `Property` with dtype `tuple`. See issue #364 for details.
+- when trying to set the `name` attribute to `None`, it now silently sets the name to `id` instead, since `name` must not be empty. It would be set to `id` on load and can cause `AttributeError` exceptions with some methods if its not set.
+- a bug was fixed in `format.revmap` where the reverse mapping of an odml attribute would always return the case that the attribute is part of the format, even if it was not.
+
+# Minor changes and updates
+- all deprecation warnings now use the warnings module.
+- the `Property.value` attribute deprecation warnings have been unified. See issue #360 for details.
+- the `base.Sectionable.create_section` method has been updated to conform with `Section.__init__`. See issue #368 for details.
+- all saved XML odML files now use the same XML header. See issue #339 for details.
+- a function to manually refresh the terminology cache has been added. See issue #202 for details.
+- a Validation to note non-human readable `Property` and `Section` names has been added. See issue #365 for details.
+- getter and setter methods are added to the `odml.Document.origin_file_name` attribute. See issue #358 for details.
+- the Exception type in `odml.tools.converters.VersionConverter` is changed to `odml.tools.parser_utils.ParserException`. See issue #359 for details.
+- the `odml.Property.export_leaf` method now also includes sibling Properties on export.
+- the `rdf_converter` has been cleaned up, see issues #211 and #345 for details.
+- the test for the `Section`/`Property` order in documents obtained via the `RDFReader` has been expanded. See issue #265 for details.
+- tests for Validation errors on `Section` or `Property` init have been added. See issue #369 for details.
+- tests writing temporary files now properly clean up after themselves. See issue #381 for details.
+- tests now use a common temporary directory to write files and use a constant for accessing the test/resources directory.
+- the link to the odML tutorial in the README file now points to python-odml.readthedocs.org; the README file now also includes links to Travis and Coveralls.
+- the tutorial now includes descriptions of the `pprint` method and a link to the odML templates hosting site. Further the tutorial has been updated to include descriptions of the cardinality feature and Validation usage. 
+- introduces major PEP8 fixes to basically all files of the library. See Pull Request #385 for details.
+- the class reference now includes the Template, Terminology and Validation classes.
+
 # Version 1.4.5
 
 ## Minor changes, updates and fixes.
