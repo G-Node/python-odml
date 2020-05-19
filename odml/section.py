@@ -420,7 +420,12 @@ class BaseSection(base.Sectionable):
         Runs a validation to check whether the sections cardinality
         is respected and prints a warning message otherwise.
         """
-        valid = validation.Validation(self)
+        # This check is run quite frequently so do not run all checks via the default validation
+        # but use a custom validation instead.
+        valid = validation.Validation(self, validate=False, reset=True)
+        valid.register_custom_handler("section", validation.section_sections_cardinality)
+        valid.run_validation()
+
         val_id = validation.IssueID.section_sections_cardinality
 
         # Make sure to display only warnings of the current section
@@ -475,7 +480,12 @@ class BaseSection(base.Sectionable):
         Runs a validation to check whether the properties cardinality
         is respected and prints a warning message otherwise.
         """
-        valid = validation.Validation(self)
+        # This check is run quite frequently so do not run all checks via the default validation
+        # but use a custom validation instead.
+        valid = validation.Validation(self, validate=False, reset=True)
+        valid.register_custom_handler("section", validation.section_properties_cardinality)
+        valid.run_validation()
+
         val_id = validation.IssueID.section_properties_cardinality
 
         # Make sure to display only warnings of the current section
