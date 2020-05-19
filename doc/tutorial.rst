@@ -983,12 +983,14 @@ A cardinality is set via its convenience method:
     >>> # or
     >>> prop.val_cardinality = None
 
+Please note that a set cardinality is not enforced. Users can set less or more entities than are specified allowed via a cardinality. Instead whenever a cardinality is not met, a warning message is displayed and any unment cardinality will show up as a Validation warning message whenever a document is saved or loaded.
+
 Working with Validations
 ------------------------
 
 odML Validations are a set of pre-defined checks that are run against an odML document automatically when it is saved or loaded. A document cannot be saved, if a Validation fails a check that is classified as an Error. Most validation checks are Warnings that are supposed to raise the overall data quality of the odml Document.
 
-When an odML document is saved or loaded, tha automatic validation will print a short report of encountered Validation Warnings and it is up to the user whether they want to resolve the Warnings. The odML document provides the ``validate`` method to gain easy access to the default validations. A Validation in turn provides not only a specific description of all encountered warnings or errors within an odML document, but it also provides direct access to each and every odML entity i.e. an odml.Section or an odml.Property where am issue has been found. This enables the user to quickly access and fix an encountered issue.
+When an odML document is saved or loaded, tha automatic validation will print a short report of encountered Validation Warnings and it is up to the user whether they want to resolve the Warnings. The odML document provides the ``validate`` method to gain easy access to the default validations. A Validation in turn provides not only a specific description of all encountered warnings or errors within an odML document, but it also provides direct access to each and every odML entity i.e. an ``odml.Section`` or an ``odml.Property`` where an issue has been found. This enables the user to quickly access and fix an encountered issue.
 
 A minimal example shows how a workflow using default validations might look like:
 
@@ -1013,7 +1015,7 @@ This will show that the validation has encountered two Warnings and also display
     >>> ValidationWarning: Section[73f29acd-16ae-47af-afc7-371d57898e28] 'Section type not specified'
     >>> ValidationWarning: Section[73f29acd-16ae-47af-afc7-371d57898e28] 'Name not assigned'
 
-To fix the "Name not assigned" warning the Section can be accessed via the validation entry and used to directly assign a human readable name to Section in the original document. Re-running the validation will show, that the warning has been removed.
+To fix the "Name not assigned" warning the Section can be accessed via the validation entry and used to directly assign a human readable name to the Section in the original document. Re-running the validation will show, that the warning has been removed.
 
     >>> validation.errors[1].obj.name = "validation_example_section"
     >>> # Check that the section name has been changed in the document
@@ -1025,7 +1027,7 @@ To fix the "Name not assigned" warning the Section can be accessed via the valid
 
 Similarly the second validation warning can be resolved before saving the document again.
 
-Please note that the automatic validation is run whenever a document is saved or loaded using the ``odml.save`` and ``odml.load`` functions as well as the ``ODMLWriter`` or the ``ODMLReader``. The validation is not run when using any of the lower level ``xmlparser``, ``dict_parser`` or ``rdf_converter`` classes.
+Please note that the automatic validation is run whenever a document is saved or loaded using the ``odml.save`` and ``odml.load`` functions as well as the ``ODMLWriter`` or the ``ODMLReader`` class. The validation is not run when using any of the lower level ``xmlparser``, ``dict_parser`` or ``rdf_converter`` classes.
 
 List of available default validations
 *************************************
@@ -1114,7 +1116,7 @@ Users can write their own validation and register them either with the default v
 
 A custom validation handler needs to ``yield`` a ``ValidationError``. See the ``validation.ValidationError`` class for details.
 
-Custom validation handlers can be registered to be applied on ``odML`` (the odml Document), ``section`` or ``property``.
+Custom validation handlers can be registered to be applied on "odML" (the odml Document), "section" or "property".
 
     >>> import odml
     >>> import odml.validation as oval
@@ -1141,8 +1143,8 @@ Custom validation handlers can be registered to be applied on ``odML`` (the odml
     >>> # Display the errors reported by the validation
     >>> print(custom_validation.errors)
 
-Advanced knowledge on Values
-----------------------------
+Advanced Value features
+-----------------------
 
 Data type conversions
 *********************
@@ -1178,8 +1180,6 @@ converted to integer and then back to float::
 
 Links & Includes
 ****************
-Please note, that this section is outdated but still valid.
-
 Sections can be linked to other Sections, so that they include their defined
 attributes. A link can be within the document (``link`` property) or to an
 external one (``include`` property).
@@ -1211,8 +1211,6 @@ then set merge with the new object.
 
 Terminologies
 *************
-Please note, that this section is outdated but still valid.
-
 odML supports terminologies that are data structure templates for typical use cases.
 Sections can have a ``repository`` attribute. As repositories can be inherited,
 the current applicable one can be obtained using the
