@@ -51,6 +51,9 @@ class IssueID(Enum):
     # Optional validations
     section_repository_present = 600
 
+    # Custom validation
+    custom_validation = 701
+
 
 class ValidationError(object):
     """
@@ -448,9 +451,7 @@ Validation.register_handler('property', object_name_readable)
 
 def property_terminology_check(prop):
     """
-    1. warn, if there are properties that do not occur in the terminology.
-    2. warn, if there are multiple values with different units or the unit does
-       not match the one in the terminology.
+    Tests if there are properties that do not occur in the terminology.
     """
     validation_id = IssueID.property_terminology_check
 
@@ -465,9 +466,6 @@ def property_terminology_check(prop):
     except KeyError:
         msg = "Property '%s' not found in terminology" % prop.name
         yield ValidationError(prop, msg, LABEL_WARNING, validation_id)
-
-
-Validation.register_handler('property', property_terminology_check)
 
 
 def property_dependency_check(prop):
@@ -516,6 +514,10 @@ def property_values_check(prop):
         return
 
     for val in prop.values:
+        # Do not continue if a value is None
+        if val is None:
+            return
+
         if dtype.endswith("-tuple"):
             tuple_len = int(dtype[:-6])
             if len(val) != tuple_len:
@@ -558,6 +560,10 @@ def property_values_string_check(prop):
     val_dtypes = []
 
     for val in prop.values:
+        # Do not continue if a value is None
+        if val is None:
+            return
+
         curr_dtype = "string"
 
         for check_dtype in dtype_checks.items():

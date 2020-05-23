@@ -208,6 +208,9 @@ class TestValidation(unittest.TestCase):
             """)
 
     def test_property_in_terminology(self):
+        odml.validation.Validation.register_handler("property",
+                                                    odml.validation.property_terminology_check)
+
         doc = samplefile.parse("""
             s1[t1]
             - P1
