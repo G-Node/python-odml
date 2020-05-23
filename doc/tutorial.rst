@@ -1072,7 +1072,7 @@ The following contains a list of the default odml validations, their message and
 | Validation: ``property_terminology_check``
 | Message: "Property 'prop' not found in terminology"
 | Applies to: ``Property``
-| Course of action: The reported entity is linked to an repository but the repository is not available. Check if the linked content has moved.
+| Course of action: The reported entity is linked to a repository but the repository is not available. Check if the linked content has moved.
 
 | Validation: ``property_dependency_check``
 | Message: "Property refers to a non-existent dependency object" or "Dependency-value is not equal to value of the property's dependency"
