@@ -794,6 +794,11 @@ class BaseProperty(base.BaseObject):
             return
 
         new_value = self._convert_value_input(obj)
+
+        if self._dtype.endswith("-tuple"):
+            t_count = int(self._dtype.split("-")[0])
+            new_value = odml_tuple_import(t_count, new_value)
+
         if len(new_value) > 0 and strict and \
                 dtypes.infer_dtype(new_value[0]) != self.dtype:
 
@@ -830,6 +835,10 @@ class BaseProperty(base.BaseObject):
         new_value = self._convert_value_input(obj)
         if len(new_value) > 1:
             raise ValueError("odml.property.append: Use extend to add a list of values!")
+
+        if self._dtype.endswith("-tuple"):
+            t_count = int(self._dtype.split("-")[0])
+            new_value = odml_tuple_import(t_count, new_value)
 
         if len(new_value) > 0 and strict and \
                 dtypes.infer_dtype(new_value[0]) != self.dtype:
