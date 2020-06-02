@@ -124,14 +124,14 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             Property(name="intprop", dtype=DType.int, value=[2, "Hello!", 4])
 
-        p6 = Property('myprop', values=["(8; 9; 10)", "(11; 12; 13)"], dtype="3-tuple")
-        self.assertEqual(len(p6.values), 2)
+        prop6 = Property('myprop', values=["(8; 9; 10)", "(11; 12; 13)"], dtype="3-tuple")
+        self.assertEqual(len(prop6.values), 2)
 
-        p7 = Property('myprop', values=[["0", "1", "2"], [3, 4, 5]], dtype="3-tuple")
-        self.assertEqual(len(p7.values), 2)
+        prop7 = Property('myprop', values=[["0", "1", "2"], [3, 4, 5]], dtype="3-tuple")
+        self.assertEqual(len(prop7.values), 2)
 
-        p7 = Property('myprop', values=["(8; 9; 10)", ["0", "1", "2"], [3, 4, 5]], dtype="3-tuple")
-        self.assertEqual(len(p7.values), 3)
+        prop8 = Property('myprop', values=["(8; 9; 10)", ["0", "1", "2"], [3, 4, 5]], dtype="3-tuple")
+        self.assertEqual(len(prop8.values), 3)
 
 
     def test_value_append(self):
@@ -237,13 +237,13 @@ class TestProperty(unittest.TestCase):
         self.assertRaises(ValueError, prop8.append, 1.3)
         self.assertRaises(ValueError, prop8.append, True)
 
-        prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
-        prop.append("(7; 8; 9)")
-        self.assertEqual(len(prop), 2)
-        self.assertRaises(ValueError, prop.append, "(10; 11)")
-        prop.append([[2, 3, 4]])
-        self.assertEqual(len(prop), 3)
-        self.assertRaises(ValueError, prop.append, [[10, 11]])
+        prop9 = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
+        prop9.append("(7; 8; 9)")
+        self.assertEqual(len(prop9), 2)
+        self.assertRaises(ValueError, prop9.append, "(10; 11)")
+        prop9.append([[2, 3, 4]])
+        self.assertEqual(len(prop9), 3)
+        self.assertRaises(ValueError, prop9.append, [[10, 11]])
 
     def test_value_extend(self):
         prop = Property(name="extend")
@@ -345,13 +345,13 @@ class TestProperty(unittest.TestCase):
         self.assertRaises(ValueError, prop3.extend, 1.3)
         self.assertRaises(ValueError, prop3.extend, True)
 
-        prop = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
-        prop.extend(["(7; 8; 9)", "(10; 11; 12)"])
-        self.assertEqual(len(prop), 3)
-        self.assertRaises(ValueError, prop.extend, "(10; 11)")
-        prop.extend([[2, 3, 4], [5, 6, 7]])
-        self.assertEqual(len(prop), 5)
-        self.assertRaises(ValueError, prop.extend, [[10, 11]])
+        prop4 = Property(name="tuple-test", dtype="3-tuple", values="(1; 2; 3)")
+        prop4.extend(["(7; 8; 9)", "(10; 11; 12)"])
+        self.assertEqual(len(prop4), 3)
+        self.assertRaises(ValueError, prop4.extend, "(10; 11)")
+        prop4.extend([[2, 3, 4], [5, 6, 7]])
+        self.assertEqual(len(prop4), 5)
+        self.assertRaises(ValueError, prop4.extend, [[10, 11]])
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
