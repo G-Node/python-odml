@@ -34,19 +34,39 @@ def odml_tuple_import(t_count, new_value):
     except NameError:
         unicode = str
 
-    if len(new_value) != 1 and not isinstance(new_value[0], unicode):
-        return new_value
+    if not isinstance(new_value, (list, tuple)) and \
+            not isinstance(new_value[0], (list, tuple)):
+        new_value = [new_value]
 
-    cln = new_value[0].strip()
-    l_check = cln.startswith("[") and cln.endswith("]")
-    br_check = cln.count("(") == cln.count(")")
-    com_check = cln.count("(") == (cln.count(",") + 1)
-    sep_check = t_count == 1 or cln.count("(") == (cln.count(";") / (t_count - 1))
+    return_value = []
 
-    if l_check and br_check and com_check and sep_check:
-        new_value = cln[1:-1].split(",")
+    for n_val in new_value:
+        if isinstance(n_val, (list, tuple)):
+            if len(n_val) == t_count:
+                n_val_str = "("
+                for tuple_val in n_val:
+                    n_val_str += str(tuple_val) + "; "
+                return_value += [n_val_str[:-2] + ")"]
+        else:
+            #non-unicode handling needed for python2
+            if len(n_val) != 1 and not isinstance(n_val[0], unicode):
+                n_val = n_val.encode('utf-8')
+            cln = n_val.strip()
+            br_check = cln.count("(") == cln.count(")")
+            sep_check = t_count == 1 or cln.count("(") == (cln.count(";") / (t_count - 1))
 
-    return new_value
+            if len(new_value) == 1 and cln.startswith("["):
+                l_check = cln.startswith("[") and cln.endswith("]")
+                com_check = cln.count("(") == (cln.count(",") + 1)
+                if l_check and br_check and com_check and sep_check:
+                    return_value = cln[1:-1].split(",")
+            elif br_check and sep_check:
+                return_value += [cln]
+
+    if not return_value:
+        return_value = new_value
+
+    return return_value
 
 
 @allow_inherit_docstring
