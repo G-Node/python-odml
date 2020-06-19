@@ -773,7 +773,6 @@ class BaseProperty(base.BaseObject):
             return None
 
     def _reorder(self, childlist, new_index):
-        print(childlist, new_index)
         lst = childlist
         old_index = lst.index(self)
 
@@ -941,7 +940,6 @@ class BaseProperty(base.BaseObject):
 
         if -len(self._values) <= index < 0:
             index = len(self._values) + index + 1
-            print("INDEX!", index)
 
         self._values.insert(index, dtypes.get(new_value[0], self.dtype))
 
