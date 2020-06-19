@@ -772,6 +772,33 @@ class BaseProperty(base.BaseObject):
         except KeyError:
             return None
 
+    def _reorder(self, childlist, new_index):
+        print(childlist, new_index)
+        lst = childlist
+        old_index = lst.index(self)
+
+        # 2 cases: insert after old_index / insert before
+        if new_index > old_index:
+            new_index += 1
+        lst.insert(new_index, self)
+        if new_index < old_index:
+            del lst[old_index + 1]
+        else:
+            del lst[old_index]
+        return old_index
+
+    def reorder(self, new_index):
+        """
+        Move this object in its parent child-list to the position *new_index*.
+
+        :return: The old index at which the object was found.
+        """
+        if not self.parent:
+            raise ValueError("odml.Property.reorder: "
+                             "Property has no parent, cannot reorder in parent list.")
+
+        return self._reorder(self.parent.properties, new_index)
+
     def extend(self, obj, strict=True):
         """
         Extend the list of values stored in this property by the passed values. Method
