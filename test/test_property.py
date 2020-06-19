@@ -354,11 +354,41 @@ class TestProperty(unittest.TestCase):
         self.assertRaises(ValueError, prop4.extend, [[10, 11]])
 
     def test_insert(self):
-        prop = Property(name="prop", dtype="int", values=[0,2])
-        prop.insert(1, 1)
-        self.assertEqual(prop.values, [0, 1, 2])
-        prop.insert(4, 3)
-        self.assertEqual(prop.values, [0, 1, 2, 3])
+        prop1 = Property(name="prop1", dtype="int", values=[0,2])
+        prop1.insert(1, 1)
+        self.assertEqual(prop1.values, [0, 1, 2])
+        prop1.insert(4, 3)
+        self.assertEqual(prop1.values, [0, 1, 2, 3])
+
+        with self.assertRaises(ValueError):
+            prop1.append([4, 5])
+        self.assertEqual(prop1.values, [0, 1, 2, 3])
+
+        with self.assertRaises(ValueError):
+            prop1.insert(1, 3.14)
+        with self.assertRaises(ValueError):
+            prop1.insert(1, True)
+        with self.assertRaises(ValueError):
+            prop1.insert(1, "5.927")
+        self.assertEqual(prop1.values, [0, 1, 2, 3])
+    
+        prop2 = Property(name="prop2", dtype="string", values=["a", "c"])
+        prop2.insert(1, "b")
+        self.assertEqual(prop2.values, ["a", "b", "c"])
+    
+        prop3 = Property(name="prop3", dtype="float", values=[1.1, 1.3])
+        prop3.insert(1, 1.2)
+        self.assertEqual(prop3.values, [1.1, 1.2, 1.3])
+    
+        prop4 = Property(name="prop4", dtype="2-tuple", values=["(1; 2)", "(5; 6)"])
+        prop4.insert(1, "(3; 4)")
+        self.assertEqual(prop4.values, [['1', '2'], ['3', '4'], ['5', '6']])
+    
+        prop5 = Property(name="prop5", dtype="int", values=[1, 2])
+        prop5.insert(1, 3.14, strict=False)
+        prop5.insert(1, True, strict=False)
+        prop5.insert(1, "5.927", strict=False)
+        self.assertEqual(prop5.values, [1, 5, 1, 3, 2])
 
     def test_reorder(self):
         sec = Section()
