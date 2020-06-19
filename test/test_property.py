@@ -371,24 +371,50 @@ class TestProperty(unittest.TestCase):
         with self.assertRaises(ValueError):
             prop1.insert(1, "5.927")
         self.assertEqual(prop1.values, [0, 1, 2, 3])
+
+        prop2 = Property(name="prop2", dtype="int", values=[1, 2])
+        prop2.insert(1, 3.14, strict=False)
+        self.assertEqual(prop2.values, [1, 3, 2])
+        prop2.insert(1, True, strict=False)
+        self.assertEqual(prop2.values, [1, 1, 3, 2])
+        prop2.insert(1, "5.927", strict=False)
+        self.assertEqual(prop2.values, [1, 5, 1, 3, 2])
     
-        prop2 = Property(name="prop2", dtype="string", values=["a", "c"])
-        prop2.insert(1, "b")
-        self.assertEqual(prop2.values, ["a", "b", "c"])
+        prop3 = Property(name="prop3", dtype="string", values=["a", "c"])
+        prop3.insert(1, "b")
+        self.assertEqual(prop3.values, ["a", "b", "c"])
+        prop3.insert(1, 1, strict=False)
+        self.assertEqual(prop3.values, ["a", "1", "b", "c"])
+        with self.assertRaises(ValueError):
+            prop3.insert(1, 2, strict=True)
+        self.assertEqual(prop3.values, ["a", "1", "b", "c"])
+
+        prop4 = Property(name="prop4", dtype="float", values=[1.1, 1.3])
+        prop4.insert(1, 1.2)
+        self.assertEqual(prop4.values, [1.1, 1.2, 1.3])
+        prop4.insert(1, 2, strict=False)
+        self.assertEqual(prop4.values, [1.1, 2.0, 1.2, 1.3])
+        with self.assertRaises(ValueError):
+            prop4.insert(1, 2, strict=True)
+        self.assertEqual(prop4.values, [1.1, 2.0, 1.2, 1.3])
     
-        prop3 = Property(name="prop3", dtype="float", values=[1.1, 1.3])
-        prop3.insert(1, 1.2)
-        self.assertEqual(prop3.values, [1.1, 1.2, 1.3])
-    
-        prop4 = Property(name="prop4", dtype="2-tuple", values=["(1; 2)", "(5; 6)"])
-        prop4.insert(1, "(3; 4)")
-        self.assertEqual(prop4.values, [['1', '2'], ['3', '4'], ['5', '6']])
-    
-        prop5 = Property(name="prop5", dtype="int", values=[1, 2])
-        prop5.insert(1, 3.14, strict=False)
-        prop5.insert(1, True, strict=False)
-        prop5.insert(1, "5.927", strict=False)
-        self.assertEqual(prop5.values, [1, 5, 1, 3, 2])
+        prop5 = Property(name="prop5", dtype="2-tuple", values=["(1; 2)", "(5; 6)"])
+        prop5.insert(1, "(3; 4)", strict=True)
+        self.assertEqual(prop5.values, [['1', '2'], ['3', '4'], ['5', '6']])
+        prop5.insert(1, [['4', '5']], strict=True)
+        self.assertEqual(prop5.values, [['1', '2'], ['4', '5'], ['3', '4'], ['5', '6']])
+        
+        prop6 = Property(name="prop6", dtype="boolean", values=[True, True])
+        prop6.insert(1, False)
+        self.assertEqual(prop6.values, [True, False, True])
+        prop6.insert(1, 1, strict=False)
+        self.assertEqual(prop6.values, [True, True, False, True])
+        with self.assertRaises(ValueError):
+            prop6.insert(1, 2, strict=False)
+        self.assertEqual(prop6.values, [True, True, False, True])
+        with self.assertRaises(ValueError):
+            prop6.insert(1, 0, strict=True)
+        self.assertEqual(prop6.values, [True, True, False, True])
 
     def test_reorder(self):
         sec = Section()
