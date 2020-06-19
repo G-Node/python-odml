@@ -929,17 +929,9 @@ class BaseProperty(base.BaseObject):
             raise ValueError("odml.Property.insert: passed value(s) cannot be converted "
                              "to data type \'%s\'!" % self._dtype)
 
-
         if index > len(self._values):
             warnings.warn("odml.Property.insert: Index %i larger than length of property.values. "
                           "Added value at end of list." % index, stacklevel=2)
-        elif index < - len(self._values) - 1:
-            warnings.warn("odml.Property.insert: Negative index %i smaller than length "
-                          "of property.values. "
-                          "Added value at beginning of list." % index, stacklevel=2)
-
-        if -len(self._values) <= index < 0:
-            index = len(self._values) + index + 1
 
         self._values.insert(index, dtypes.get(new_value[0], self.dtype))
 
