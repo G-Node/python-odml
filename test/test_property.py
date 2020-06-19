@@ -555,6 +555,24 @@ class TestProperty(unittest.TestCase):
                                         datetime.datetime(2011, 12, 1, 12, 0, 2),
                                         datetime.datetime(2011, 12, 1, 12, 0, 3), 
                                         datetime.datetime(2011, 12, 1, 12, 0, 4)])
+        
+        prop10 = Property(name="prop", value=["Earth is\n No. 3."], dtype=DType.text)
+        prop10.insert(1, "Mars is\n No. 4.", strict=False)
+        self.assertEqual(len(prop10), 2)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.", "Mars is\n No. 4."])
+        prop10.insert(1, 'A new world emerged?', strict=True)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.",
+                                         "A new world emerged?",
+                                         "Mars is\n No. 4."])
+        prop10.insert(1, 1, strict=False)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.", "1",
+                                         "A new world emerged?",
+                                         "Mars is\n No. 4."])
+        with self.assertRaises(ValueError):
+            prop10.insert(1, 1, strict=True)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.", "1",
+                                         "A new world emerged?",
+                                         "Mars is\n No. 4."])
 
     def test_reorder(self):
         sec = Section()
