@@ -353,6 +353,21 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(prop4), 5)
         self.assertRaises(ValueError, prop4.extend, [[10, 11]])
 
+    def test_insert(self):
+        prop = Property(name="prop", dtype="int", values=[0,2])
+        prop.insert(1, 1)
+        self.assertEqual(prop.values, [0, 1, 2])
+        prop.insert(4, 3)
+        self.assertEqual(prop.values, [0, 1, 2, 3])
+        prop.insert(-1, 4)
+        self.assertEqual(prop.values, [0, 1, 2, 3, 4])
+        prop.insert(-2, 5)
+        self.assertEqual(prop.values, [0, 1, 2, 3, 5, 4])
+        prop.insert(-7, 6)
+        self.assertEqual(prop.values, [6, 0, 1, 2, 3, 5, 4])
+        prop.insert(-9, 7)
+        self.assertEqual(prop.values, [7, 6, 0, 1, 2, 3, 5, 4])
+
     def test_reorder(self):
         sec = Section()
         prop_zero = Property(name="prop_zero", parent=sec)
