@@ -353,6 +353,34 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(prop4), 5)
         self.assertRaises(ValueError, prop4.extend, [[10, 11]])
 
+    def test_reorder(self):
+        sec = Section()
+        prop_zero = Property(name="prop_zero", parent=sec)
+        prop_one = Property(name="prop_one", parent=sec)
+        prop_two = Property(name="prop_two", parent=sec)
+        prop_three = Property(name="prop_three", parent=sec)
+
+        self.assertEqual(sec.properties[0].name, prop_zero.name)
+        self.assertEqual(sec.properties[2].name, prop_two.name)
+        prop_two.reorder(0)
+
+        self.assertEqual(sec.properties[0].name, prop_two.name)
+        self.assertEqual(sec.properties[1].name, prop_zero.name)
+        self.assertEqual(sec.properties[2].name, prop_one.name)
+        self.assertEqual(sec.properties[3].name, prop_three.name)
+
+        prop_two.reorder(2)
+
+        self.assertEqual(sec.properties[0].name, prop_zero.name)
+        self.assertEqual(sec.properties[1].name, prop_one.name)
+        self.assertEqual(sec.properties[2].name, prop_two.name)
+        self.assertEqual(sec.properties[3].name, prop_three.name)
+
+        # Test Exception on unconnected property
+        prop = Property(name="main")
+        with self.assertRaises(ValueError):
+            prop.reorder(0)
+
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]
         prop = Property("property", value=values)
