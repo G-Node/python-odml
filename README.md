@@ -134,7 +134,8 @@ working as expected. Use the release tags instead.
 
 # Contributing and Governance
 
-See the [CONTRIBUTING](CONTIBUTING.md) document for more information on this.
+See the [CONTRIBUTING](https://github.com/G-Node/python-odml/blob/master/CONTRIBUTING.md) document 
+for more information on this.
 
 
 # Bugs & Questions
