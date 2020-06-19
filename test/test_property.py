@@ -359,14 +359,6 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(prop.values, [0, 1, 2])
         prop.insert(4, 3)
         self.assertEqual(prop.values, [0, 1, 2, 3])
-        prop.insert(-1, 4)
-        self.assertEqual(prop.values, [0, 1, 2, 3, 4])
-        prop.insert(-2, 5)
-        self.assertEqual(prop.values, [0, 1, 2, 3, 5, 4])
-        prop.insert(-7, 6)
-        self.assertEqual(prop.values, [6, 0, 1, 2, 3, 5, 4])
-        prop.insert(-9, 7)
-        self.assertEqual(prop.values, [7, 6, 0, 1, 2, 3, 5, 4])
 
     def test_reorder(self):
         sec = Section()
