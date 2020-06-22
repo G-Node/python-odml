@@ -1,4 +1,5 @@
 import unittest
+import datetime
 
 from odml import Property, Section, Document, DType
 from odml.property import BaseProperty
@@ -245,6 +246,45 @@ class TestProperty(unittest.TestCase):
         self.assertEqual(len(prop9), 3)
         self.assertRaises(ValueError, prop9.append, [[10, 11]])
 
+        prop10 = Property(name="prop10", dtype="date", values=['2011-12-01', '2011-12-02'])
+        with self.assertRaises(ValueError):
+            prop10.append('2011-12-03', strict=True)
+        self.assertEqual(prop10.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2)])
+        prop10.append('2011-12-03', strict=False)
+        self.assertEqual(prop10.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2),
+                                         datetime.date(2011, 12, 3)])
+        prop10.append([datetime.date(2011, 12, 4)], strict=True)
+        self.assertEqual(prop10.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2),
+                                         datetime.date(2011, 12, 3), datetime.date(2011, 12, 4)])
+
+
+        prop11 = Property(name="prop11", dtype="time", values=['12:00:01', '12:00:02'])
+        with self.assertRaises(ValueError):
+            prop11.append('12:00:03', strict=True)
+        self.assertEqual(prop11.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2)])
+        prop11.append('12:00:03', strict=False)
+        self.assertEqual(prop11.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2),
+                                         datetime.time(12, 0, 3)])
+        prop11.append([datetime.time(12, 0, 4)], strict=True)
+        self.assertEqual(prop11.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2),
+                                         datetime.time(12, 0, 3), datetime.time(12, 0, 4)])
+
+        prop12 = Property(name="prop12", dtype="datetime",
+                          values=['2011-12-01 12:00:01', '2011-12-01 12:00:02'])
+        with self.assertRaises(ValueError):
+            prop12.append('2011-12-01 12:00:03', strict=True)
+        self.assertEqual(prop12.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                         datetime.datetime(2011, 12, 1, 12, 0, 2)])
+        prop12.append('2011-12-01 12:00:03', strict=False)
+        self.assertEqual(prop12.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                         datetime.datetime(2011, 12, 1, 12, 0, 2),
+                                         datetime.datetime(2011, 12, 1, 12, 0, 3)])
+        prop12.append([datetime.datetime(2011, 12, 1, 12, 0, 4)], strict=True)
+        self.assertEqual(prop12.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                         datetime.datetime(2011, 12, 1, 12, 0, 2),
+                                         datetime.datetime(2011, 12, 1, 12, 0, 3),
+                                         datetime.datetime(2011, 12, 1, 12, 0, 4)])
+
     def test_value_extend(self):
         prop = Property(name="extend")
 
@@ -352,6 +392,215 @@ class TestProperty(unittest.TestCase):
         prop4.extend([[2, 3, 4], [5, 6, 7]])
         self.assertEqual(len(prop4), 5)
         self.assertRaises(ValueError, prop4.extend, [[10, 11]])
+
+        prop4 = Property(name="prop4", dtype="date", values=['2011-12-01', '2011-12-02'])
+        with self.assertRaises(ValueError):
+            prop4.extend('2011-12-03', strict=True)
+        self.assertEqual(prop4.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2)])
+        prop4.extend('2011-12-03', strict=False)
+        self.assertEqual(prop4.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2),
+                                        datetime.date(2011, 12, 3)])
+        prop4.extend([datetime.date(2011, 12, 4)], strict=True)
+        self.assertEqual(prop4.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2),
+                                        datetime.date(2011, 12, 3), datetime.date(2011, 12, 4)])
+        prop4.extend([datetime.date(2011, 12, 5), datetime.date(2011, 12, 6)], strict=True)
+        self.assertEqual(prop4.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2),
+                                        datetime.date(2011, 12, 3), datetime.date(2011, 12, 4),
+                                        datetime.date(2011, 12, 5), datetime.date(2011, 12, 6)])
+        with self.assertRaises(ValueError):
+            prop4.extend(['2011-12-03', 'abc'], strict=False)
+
+
+        prop5 = Property(name="prop5", dtype="time", values=['12:00:01', '12:00:02'])
+        with self.assertRaises(ValueError):
+            prop5.extend('12:00:03', strict=True)
+        self.assertEqual(prop5.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2)])
+        prop5.extend('12:00:03', strict=False)
+        self.assertEqual(prop5.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2),
+                                        datetime.time(12, 0, 3)])
+        prop5.extend([datetime.time(12, 0, 4)], strict=True)
+        self.assertEqual(prop5.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2),
+                                        datetime.time(12, 0, 3), datetime.time(12, 0, 4)])
+        prop5.extend([datetime.time(12, 0, 5), datetime.time(12, 0, 6)], strict=True)
+        self.assertEqual(prop5.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2),
+                                        datetime.time(12, 0, 3), datetime.time(12, 0, 4),
+                                        datetime.time(12, 0, 5), datetime.time(12, 0, 6)])
+        with self.assertRaises(ValueError):
+            prop4.extend(['12:00:07', 'abc'], strict=False)
+
+        prop6 = Property(name="prop6", dtype="datetime",
+                         values=['2011-12-01 12:00:01', '2011-12-01 12:00:02'])
+        with self.assertRaises(ValueError):
+            prop6.extend('2011-12-01 12:00:03', strict=True)
+        self.assertEqual(prop6.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 2)])
+        prop6.extend('2011-12-01 12:00:03', strict=False)
+        self.assertEqual(prop6.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 2),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 3)])
+        prop6.extend([datetime.datetime(2011, 12, 1, 12, 0, 4)], strict=True)
+        self.assertEqual(prop6.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 2),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 3),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 4)])
+        prop6.extend([datetime.datetime(2011, 12, 1, 12, 0, 5),
+                      datetime.datetime(2011, 12, 1, 12, 0, 6)], strict=True)
+        self.assertEqual(prop6.values, [datetime.datetime(2011, 12, 1, 12, 0, 1),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 2),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 3),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 4),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 5),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 6)])
+        with self.assertRaises(ValueError):
+            prop4.extend(['2011-12-03 12:00:07', 'abc'], strict=False)
+
+    def test_insert(self):
+        prop1 = Property(name="prop1", dtype="int", values=[0,2])
+        prop1.insert(1, 1)
+        self.assertEqual(prop1.values, [0, 1, 2])
+        prop1.insert(4, 3)
+        self.assertEqual(prop1.values, [0, 1, 2, 3])
+
+        with self.assertRaises(ValueError):
+            prop1.append([4, 5])
+        self.assertEqual(prop1.values, [0, 1, 2, 3])
+
+        with self.assertRaises(ValueError):
+            prop1.insert(1, 3.14)
+        with self.assertRaises(ValueError):
+            prop1.insert(1, True)
+        with self.assertRaises(ValueError):
+            prop1.insert(1, "5.927")
+        self.assertEqual(prop1.values, [0, 1, 2, 3])
+
+        prop2 = Property(name="prop2", dtype="int", values=[1, 2])
+        prop2.insert(1, 3.14, strict=False)
+        self.assertEqual(prop2.values, [1, 3, 2])
+        prop2.insert(1, True, strict=False)
+        self.assertEqual(prop2.values, [1, 1, 3, 2])
+        prop2.insert(1, "5.927", strict=False)
+        self.assertEqual(prop2.values, [1, 5, 1, 3, 2])
+    
+        prop3 = Property(name="prop3", dtype="string", values=["a", "c"])
+        prop3.insert(1, "b")
+        self.assertEqual(prop3.values, ["a", "b", "c"])
+        prop3.insert(1, 1, strict=False)
+        self.assertEqual(prop3.values, ["a", "1", "b", "c"])
+        with self.assertRaises(ValueError):
+            prop3.insert(1, 2, strict=True)
+        self.assertEqual(prop3.values, ["a", "1", "b", "c"])
+
+        prop4 = Property(name="prop4", dtype="float", values=[1.1, 1.3])
+        prop4.insert(1, 1.2)
+        self.assertEqual(prop4.values, [1.1, 1.2, 1.3])
+        prop4.insert(1, 2, strict=False)
+        self.assertEqual(prop4.values, [1.1, 2.0, 1.2, 1.3])
+        with self.assertRaises(ValueError):
+            prop4.insert(1, 2, strict=True)
+        self.assertEqual(prop4.values, [1.1, 2.0, 1.2, 1.3])
+    
+        prop5 = Property(name="prop5", dtype="2-tuple", values=["(1; 2)", "(5; 6)"])
+        prop5.insert(1, "(3; 4)", strict=True)
+        self.assertEqual(prop5.values, [['1', '2'], ['3', '4'], ['5', '6']])
+        prop5.insert(1, [['4', '5']], strict=True)
+        self.assertEqual(prop5.values, [['1', '2'], ['4', '5'], ['3', '4'], ['5', '6']])
+        
+        prop6 = Property(name="prop6", dtype="boolean", values=[True, True])
+        prop6.insert(1, False)
+        self.assertEqual(prop6.values, [True, False, True])
+        prop6.insert(1, 1, strict=False)
+        self.assertEqual(prop6.values, [True, True, False, True])
+        with self.assertRaises(ValueError):
+            prop6.insert(1, 2, strict=False)
+        self.assertEqual(prop6.values, [True, True, False, True])
+        with self.assertRaises(ValueError):
+            prop6.insert(1, 0, strict=True)
+        self.assertEqual(prop6.values, [True, True, False, True])
+
+        prop7 = Property(name="prop7", dtype="date", values=['2011-12-01', '2011-12-04'])
+        with self.assertRaises(ValueError):
+            prop7.insert(1, '2011-12-03', strict=True)
+        self.assertEqual(prop7.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 4)])
+        prop7.insert(1, '2011-12-03', strict=False)
+        self.assertEqual(prop7.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 3),
+                                        datetime.date(2011, 12, 4)])
+        prop7.insert(1, [datetime.date(2011, 12, 2)], strict=True)
+        self.assertEqual(prop7.values, [datetime.date(2011, 12, 1), datetime.date(2011, 12, 2),
+                                        datetime.date(2011, 12, 3), datetime.date(2011, 12, 4)])
+
+
+        prop8 = Property(name="prop8", dtype="time", values=['12:00:01', '12:00:04'])
+        with self.assertRaises(ValueError):
+            prop8.insert(1, '12:00:03', strict=True)
+        self.assertEqual(prop8.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 4)])
+        prop8.insert(1, '12:00:03', strict=False)
+        self.assertEqual(prop8.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 3),
+                                        datetime.time(12, 0, 4)])
+        prop8.insert(1, [datetime.time(12, 0, 2)], strict=True)
+        self.assertEqual(prop8.values, [datetime.time(12, 0, 1), datetime.time(12, 0, 2),
+                                        datetime.time(12, 0, 3), datetime.time(12, 0, 4)])
+
+        prop9 = Property(name="prop9", dtype="datetime",
+                         values=['2011-12-01 12:00:01', '2011-12-01 12:00:04'])
+        with self.assertRaises(ValueError):
+            prop9.insert(1, '2011-12-01 12:00:03', strict=True)
+        self.assertEqual(prop9.values, [datetime.datetime(2011, 12, 1, 12, 0, 1), 
+                                        datetime.datetime(2011, 12, 1, 12, 0, 4)])
+        prop9.insert(1, '2011-12-01 12:00:03', strict=False)
+        self.assertEqual(prop9.values, [datetime.datetime(2011, 12, 1, 12, 0, 1), 
+                                        datetime.datetime(2011, 12, 1, 12, 0, 3),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 4)])
+        prop9.insert(1, [datetime.datetime(2011, 12, 1, 12, 0, 2)], strict=True)
+        self.assertEqual(prop9.values, [datetime.datetime(2011, 12, 1, 12, 0, 1), 
+                                        datetime.datetime(2011, 12, 1, 12, 0, 2),
+                                        datetime.datetime(2011, 12, 1, 12, 0, 3), 
+                                        datetime.datetime(2011, 12, 1, 12, 0, 4)])
+        
+        prop10 = Property(name="prop", value=["Earth is\n No. 3."], dtype=DType.text)
+        prop10.insert(1, "Mars is\n No. 4.", strict=False)
+        self.assertEqual(len(prop10), 2)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.", "Mars is\n No. 4."])
+        prop10.insert(1, 'A new world emerged?', strict=True)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.",
+                                         "A new world emerged?",
+                                         "Mars is\n No. 4."])
+        prop10.insert(1, 1, strict=False)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.", "1",
+                                         "A new world emerged?",
+                                         "Mars is\n No. 4."])
+        with self.assertRaises(ValueError):
+            prop10.insert(1, 1, strict=True)
+        self.assertEqual(prop10.values, ["Earth is\n No. 3.", "1",
+                                         "A new world emerged?",
+                                         "Mars is\n No. 4."])
+
+    def test_reorder(self):
+        sec = Section()
+        prop_zero = Property(name="prop_zero", parent=sec)
+        prop_one = Property(name="prop_one", parent=sec)
+        prop_two = Property(name="prop_two", parent=sec)
+        prop_three = Property(name="prop_three", parent=sec)
+
+        self.assertEqual(sec.properties[0].name, prop_zero.name)
+        self.assertEqual(sec.properties[2].name, prop_two.name)
+        prop_two.reorder(0)
+
+        self.assertEqual(sec.properties[0].name, prop_two.name)
+        self.assertEqual(sec.properties[1].name, prop_zero.name)
+        self.assertEqual(sec.properties[2].name, prop_one.name)
+        self.assertEqual(sec.properties[3].name, prop_three.name)
+
+        prop_two.reorder(2)
+
+        self.assertEqual(sec.properties[0].name, prop_zero.name)
+        self.assertEqual(sec.properties[1].name, prop_one.name)
+        self.assertEqual(sec.properties[2].name, prop_two.name)
+        self.assertEqual(sec.properties[3].name, prop_three.name)
+
+        # Test Exception on unconnected property
+        prop = Property(name="main")
+        with self.assertRaises(ValueError):
+            prop.reorder(0)
 
     def test_get_set_value(self):
         values = [1, 2, 3, 4, 5]

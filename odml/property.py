@@ -772,6 +772,32 @@ class BaseProperty(base.BaseObject):
         except KeyError:
             return None
 
+    def _reorder(self, childlist, new_index):
+        lst = childlist
+        old_index = lst.index(self)
+
+        # 2 cases: insert after old_index / insert before
+        if new_index > old_index:
+            new_index += 1
+        lst.insert(new_index, self)
+        if new_index < old_index:
+            del lst[old_index + 1]
+        else:
+            del lst[old_index]
+        return old_index
+
+    def reorder(self, new_index):
+        """
+        Move this object in its parent child-list to the position *new_index*.
+
+        :return: The old index at which the object was found.
+        """
+        if not self.parent:
+            raise ValueError("odml.Property.reorder: "
+                             "Property has no parent, cannot reorder in parent list.")
+
+        return self._reorder(self.parent.properties, new_index)
+
     def extend(self, obj, strict=True):
         """
         Extend the list of values stored in this property by the passed values. Method
@@ -856,6 +882,58 @@ class BaseProperty(base.BaseObject):
                              "to data type \'%s\'!" % self._dtype)
 
         self._values.append(dtypes.get(new_value[0], self.dtype))
+
+    def insert(self, index, obj, strict=True):
+        """
+        Insert a single value to the list of stored values. Method will raise
+        a ValueError if the passed value cannot be converted to the current dtype.
+
+        :param obj: the additional value.
+        :param index: position of the new value
+        :param strict: a Bool that controls whether dtypes must match. Default is True.
+        """
+
+        # Ignore empty values before nasty stuff happens, but make sure
+        # 0 and False get through.
+        if obj in [None, "", [], {}]:
+            return
+
+        if not self.values:
+            self.values = obj
+            return
+
+        new_value = self._convert_value_input(obj)
+        if len(new_value) > 1:
+            raise ValueError("odml.property.insert: Use extend to add a list of values!")
+
+        new_value = self._convert_value_input(obj)
+        if len(new_value) > 1:
+            raise ValueError("odml.property.insert: Use extend to add a list of values!")
+
+        if self._dtype.endswith("-tuple"):
+            t_count = int(self._dtype.split("-")[0])
+            new_value = odml_tuple_import(t_count, new_value)
+
+        if len(new_value) > 0 and strict and \
+                dtypes.infer_dtype(new_value[0]) != self.dtype:
+
+            type_check = dtypes.infer_dtype(new_value[0])
+            if not (type_check == "string" and self.dtype in dtypes.special_dtypes) \
+                    and not self.dtype.endswith("-tuple"):
+                msg = "odml.Property.insert: passed value data type found "
+                msg += "(\"%s\") does not match expected dtype \"%s\"!" % (type_check,
+                                                                           self._dtype)
+                raise ValueError(msg)
+
+        if not self._validate_values(new_value):
+            raise ValueError("odml.Property.insert: passed value(s) cannot be converted "
+                             "to data type \'%s\'!" % self._dtype)
+
+        if index > len(self._values):
+            warnings.warn("odml.Property.insert: Index %i larger than length of property.values. "
+                          "Added value at end of list." % index, stacklevel=2)
+
+        self._values.insert(index, dtypes.get(new_value[0], self.dtype))
 
     def pprint(self, indent=2, max_length=80, current_depth=-1):
         """
