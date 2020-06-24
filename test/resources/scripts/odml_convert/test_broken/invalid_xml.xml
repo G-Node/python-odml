@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="odml.xsl"  xmlns:odml="http://www.g-node.org/odml"?>
+<odML version="1">
+  <repository>http://portal.g-node.org/odml/terminologies/v1.0/terminologies.xml</repository>
+  <section>
+    <type>Recording</type>
+    <name>Recording-some-date-ah</name>
+    <property>
+      <name>Temperature</name>
+      <value>24<type>float</type><unit><B0>C</unit></value>
+    </property>
+  </section>
+</odML>
