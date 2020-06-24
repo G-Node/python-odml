@@ -57,14 +57,19 @@ class RDFWriter(object):
     """
     A writer to parse odML files into RDF documents.
 
+    Use the 'rdf_subclassing' flag to disable default usage
+    of Section type conversion to RDF Subclasses.
+
     Usage:
         RDFWriter(odml_docs).get_rdf_str('turtle')
         RDFWriter(odml_docs).write_file("/output_path", "rdf_format")
     """
 
-    def __init__(self, odml_documents):
+    def __init__(self, odml_documents, rdf_subclassing=True):
         """
         :param odml_documents: list of odML documents
+        :param rdf_subclassing: Flag whether Section types should be converted to RDF Subclasses
+                                for enhanced SPARQL queries. Default is 'True'.
         """
         if not isinstance(odml_documents, list):
             odml_documents = [odml_documents]
@@ -75,6 +80,7 @@ class RDFWriter(object):
         self.graph.bind("odml", ODML_NS)
 
         self.section_subclasses = load_rdf_subclasses()
+        self.rdf_subclassing = rdf_subclassing
 
     def convert_to_rdf(self):
         """
@@ -221,15 +227,25 @@ class RDFWriter(object):
 
         # Add type of current node to the RDF graph
         curr_type = fmt.rdf_type
+
+        print(curr_type)
+
         # Handle section subclass types
-        sub_sec = self._get_section_subclass(sec)
-        if sub_sec:
-            curr_type = sub_sec
+        if self.rdf_subclassing:
+            print("I'm in here")
+            sub_sec = self._get_section_subclass(sec)
+            if sub_sec:
+                curr_type = sub_sec
+
+        print(curr_type)
+
         self.graph.add((curr_node, RDF.type, URIRef(curr_type)))
 
         for k in fmt.rdf_map_keys:
             curr_pred = fmt.rdf_map(k)
             curr_val = getattr(sec, k)
+
+            print("pred: %s; val: %s" % (curr_pred, curr_val))
 
             # Ignore an "id" entry, it has already been used to create the node itself.
             if k == "id" or not curr_val:
