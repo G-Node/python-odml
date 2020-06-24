@@ -35,13 +35,7 @@ class TestScriptOdmlToRDF(unittest.TestCase):
         with self.assertRaises(SystemExit):
             odml_to_rdf.main(["--version"])
 
-    def test_valid_conversion(self):
-        # make sure temp dir is empty
-        self.assertListEqual(os.listdir(self.tmp_dir), [])
-
-        # run converter on root directory containing two files
-        odml_to_rdf.main(["-o", self.tmp_dir, self.dir_files])
-
+    def _check_intermediate_dirs(self):
         # make sure an odml version conversion output directory has been created
         out_dir_lst = os.listdir(self.tmp_dir)
         self.assertEqual(len(out_dir_lst), 1)
@@ -53,6 +47,17 @@ class TestScriptOdmlToRDF(unittest.TestCase):
         self.assertEqual(len(rdf_dir_lst), 1)
         rdf_dir = os.path.join(out_dir, rdf_dir_lst[0])
         self.assertTrue(os.path.isdir(rdf_dir))
+
+        return rdf_dir
+
+    def test_valid_conversion(self):
+        # make sure temp dir is empty
+        self.assertListEqual(os.listdir(self.tmp_dir), [])
+
+        # run converter on root directory containing two files
+        odml_to_rdf.main(["-o", self.tmp_dir, self.dir_files])
+
+        rdf_dir = self._check_intermediate_dirs()
 
         # make sure two files have been created
         file_lst = os.listdir(rdf_dir)
@@ -70,17 +75,7 @@ class TestScriptOdmlToRDF(unittest.TestCase):
         # run converter on directory with invalid files
         odml_to_rdf.main(["-o", self.tmp_dir, self.dir_invalid])
 
-        # make sure an output directory has been created
-        out_dir_lst = os.listdir(self.tmp_dir)
-        self.assertEqual(len(out_dir_lst), 1)
-        out_dir = os.path.join(self.tmp_dir, out_dir_lst[0])
-        self.assertTrue(os.path.isdir(out_dir))
-
-        # make sure an rdf conversion output directory has been created
-        rdf_dir_lst = os.listdir(out_dir)
-        self.assertEqual(len(rdf_dir_lst), 1)
-        rdf_dir = os.path.join(out_dir, rdf_dir_lst[0])
-        self.assertTrue(os.path.isdir(rdf_dir))
+        rdf_dir = self._check_intermediate_dirs()
 
         # make sure no file has been created
         self.assertListEqual(os.listdir(rdf_dir), [])
@@ -92,17 +87,7 @@ class TestScriptOdmlToRDF(unittest.TestCase):
         # run converter on root directory containing two files
         odml_to_rdf.main(["-r", "-o", self.tmp_dir, self.dir_recursive])
 
-        # make sure an odml version conversion output directory has been created
-        out_dir_lst = os.listdir(self.tmp_dir)
-        self.assertEqual(len(out_dir_lst), 1)
-        out_dir = os.path.join(self.tmp_dir, out_dir_lst[0])
-        self.assertTrue(os.path.isdir(out_dir))
-
-        # make sure an rdf conversion output directory has been created
-        rdf_dir_lst = os.listdir(out_dir)
-        self.assertEqual(len(rdf_dir_lst), 1)
-        rdf_dir = os.path.join(out_dir, rdf_dir_lst[0])
-        self.assertTrue(os.path.isdir(rdf_dir))
+        rdf_dir = self._check_intermediate_dirs()
 
         # make sure two files have been created
         file_lst = os.listdir(rdf_dir)
