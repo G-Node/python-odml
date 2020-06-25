@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1">
+  <section>
+    <property>
+      <value>0.0<unit>um</unit></value>
+      <name>Depth</name>
+    </property>
+    <property>
+      <value>P-unit</value>
+      <name>CellType</name>
+    </property>
+    <property>
+      <value>Nerve</value>
+      <name>Structure</name>
+    </property>
+    <property>
+      <value>0.1</value>
+      <name>CV</name>
+    </property>
+    <property>
+      <value>12.8<unit>Hz</unit></value>
+      <name>Baseline rate</name>
+    </property>
+    <name>Cell</name>
+    <type>Cell</type>
+  </section>
+  <author>tester</author>
+</odML>

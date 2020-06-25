@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet  type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet  type="text/xsl" href="odml.xsl"?>
+<odML version="1">
+  <section>
+    <property>
+      <value>0.0<unit>um</unit></value>
+      <name>Depth</name>
+    </property>
+    <property>
+      <value>P-unit</value>
+      <name>CellType</name>
+    </property>
+    <property>
+      <value>Nerve</value>
+      <name>Structure</name>
+    </property>
+    <property>
+      <value>0.1</value>
+      <name>CV</name>
+    </property>
+    <property>
+      <value>12.8<unit>Hz</unit></value>
+      <name>Baseline rate</name>
+    </property>
+    <name>Cell</name>
+    <type>Cell</type>
+  </section>
+  <section>
+    <property>
+      <value>weak response</value>
+      <name>Comment</name>
+    </property>
+    <property>
+      <value>2020-06-24-ab</value>
+      <name>Name</name>
+    </property>
+    <property>
+      <value>Good</value>
+      <name>Recording quality</name>
+    </property>
+    <property>
+      <value>12.8.7 (20/06/24)</value>
+      <name>Software version</name>
+    </property>
+    <property>
+      <value>Ex Perimenter</value>
+      <name>Experimenter</name>
+    </property>
+    <property>
+      <value>Acquisition</value>
+      <name>Mode</name>
+    </property>
+    <property>
+      <value>conversion_example.xml</value>
+      <name>File</name>
+    </property>
+    <property>
+      <value>16:35:51</value>
+      <name>Time</name>
+    </property>
+    <property>
+      <value>2020-06-24</value>
+      <name>Date</name>
+    </property>
+    <property>
+      <value>100<unit>m</unit></value>
+      <name>Recording duration</name>
+    </property>
+    <property>
+      <value>./odml_convert</value>
+      <name>Folder</name>
+    </property>
+    <property>
+      <value>SomeEphysSoftware</value>
+      <name>Software</name>
+    </property>
+    <name>Recording</name>
+    <type>Recording</type>
+  </section>
+  <section>
+    <property>
+      <value>12.0<unit>Hz</unit></value>
+      <name>Firing Rate1</name>
+    </property>
+    <property>
+      <value>12.0<unit>Hz</unit></value>
+      <name>EOD Frequency</name>
+    </property>
+    <property>
+      <value>0.1</value>
+      <name>P-Value1</name>
+    </property>
+    <name>Cell properties</name>
+    <type>Cell properties</type>
+  </section>
+  <section>
+    <property>
+      <value>unknown</value>
+      <name>Gender</name>
+    </property>
+    <property>
+      <value>Xen Omorph</value>
+      <name>Species</name>
+    </property>
+    <property>
+      <value>10.0<unit>cm</unit></value>
+      <name>Size</name>
+    </property>
+    <property>
+      <value>1.0<unit>mV</unit></value>
+      <name>Transdermal amplitude</name>
+    </property>
+    <property>
+      <value>1.4<unit>Hz</unit></value>
+      <name>EOD Frequency</name>
+    </property>
+    <name>Subject</name>
+    <type>Subject</type>
+  </section>
+  <author>tester</author>
+</odML>
