@@ -288,3 +288,25 @@ class TestRDFWriter(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             rdf_writer.get_rdf_str("abc")
+
+    def test_rdf_subclassing_switch(self):
+        """
+        Test the RDF section subclassing switch.
+        """
+        # Section type term defined in odml/resources/section_subclasses.yaml that will
+        # be converted to an RDF Section Subclass of Class "Cell".
+        sub_class_term = "cell"
+
+        # Create minimal document
+        doc = odml.Document()
+        _ = odml.Section(name="test_subclassing", type=sub_class_term, parent=doc)
+
+        # Test default subclassing
+        rdf_writer = RDFWriter([doc])
+        result = rdf_writer.get_rdf_str()
+        self.assertIn("odml:Cell", result)
+
+        # Test inactivation of subclassing feature
+        rdf_writer = RDFWriter([doc], rdf_subclassing=False)
+        result = rdf_writer.get_rdf_str()
+        self.assertNotIn("odml:Cell", result)
