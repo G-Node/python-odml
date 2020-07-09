@@ -5,6 +5,7 @@ the conversion of odML flavored RDF to odML documents.
 
 import os
 import uuid
+import warnings
 
 from io import StringIO
 from rdflib import Graph, Literal, URIRef
@@ -57,19 +58,32 @@ class RDFWriter(object):
     """
     A writer to parse odML files into RDF documents.
 
-    Use the 'rdf_subclassing' flag to disable default usage
-    of Section type conversion to RDF Subclasses.
+    Use the 'rdf_subclassing' flag to disable default usage of Section type conversion to
+    RDF Subclasses.
+    Provide a custom Section type to RDF Subclass Name mapping dictionary via the
+    'custom_subclasses' attribute to add custom or overwrite default RDF Subclass mappings.
 
     Usage:
         RDFWriter(odml_docs).get_rdf_str('turtle')
         RDFWriter(odml_docs).write_file("/output_path", "rdf_format")
+
+        RDFWriter(odml_docs, rdf_subclassing=False).write_file("path", "rdf_format")
+        RDFWriter(odml_docs, custom_subclasses=custom_dict).write_file("path", "rdf_format")
     """
 
-    def __init__(self, odml_documents, rdf_subclassing=True):
+    def __init__(self, odml_documents, rdf_subclassing=True, custom_subclasses=None):
         """
         :param odml_documents: list of odML documents
         :param rdf_subclassing: Flag whether Section types should be converted to RDF Subclasses
                                 for enhanced SPARQL queries. Default is 'True'.
+        :param custom_subclasses: A dict where the keys reference a Section type and the
+                                  corresponding values reference an RDF Class Name. When exporting
+                                  a Section of a type contained in this dict, the resulting RDF
+                                  Instance will be of the corresponding Class and this Class will
+                                  be added as a Subclass of RDF Class "odml:Section" to the
+                                  RDF document.
+                                  Key:value pairs of the "custom_subclasses" dict will overwrite
+                                  existing key:value pairs of the default subclassing dict.
         """
         if not isinstance(odml_documents, list):
             odml_documents = [odml_documents]
@@ -79,8 +93,13 @@ class RDFWriter(object):
         self.graph = Graph()
         self.graph.bind("odml", ODML_NS)
 
-        self.section_subclasses = load_rdf_subclasses()
         self.rdf_subclassing = rdf_subclassing
+
+        self.section_subclasses = load_rdf_subclasses()
+        # If a custom Section type to RDF Subclass dict has been provided,
+        # parse it and update the default section_subclasses dict with the content.
+        if custom_subclasses and isinstance(custom_subclasses, dict):
+            self._parse_custom_subclasses(custom_subclasses)
 
     def convert_to_rdf(self):
         """
@@ -228,24 +247,17 @@ class RDFWriter(object):
         # Add type of current node to the RDF graph
         curr_type = fmt.rdf_type
 
-        print(curr_type)
-
         # Handle section subclass types
         if self.rdf_subclassing:
-            print("I'm in here")
             sub_sec = self._get_section_subclass(sec)
             if sub_sec:
                 curr_type = sub_sec
-
-        print(curr_type)
 
         self.graph.add((curr_node, RDF.type, URIRef(curr_type)))
 
         for k in fmt.rdf_map_keys:
             curr_pred = fmt.rdf_map(k)
             curr_val = getattr(sec, k)
-
-            print("pred: %s; val: %s" % (curr_pred, curr_val))
 
             # Ignore an "id" entry, it has already been used to create the node itself.
             if k == "id" or not curr_val:
@@ -309,6 +321,32 @@ class RDFWriter(object):
             return ODML_NS[self.section_subclasses[sec_type]]
 
         return None
+
+    def _parse_custom_subclasses(self, custom_subclasses):
+        """
+        Parses a provided dictionary of "Section type": "RDF Subclass name"
+        key value pairs and adds the pairs to the parsers' 'section_subclasses'
+        default dictionary. Existing key:value pairs will be overwritten
+        with provided custom key:value pairs and a Warning will be issued.
+        Dictionary values containing whitespaces will raise a ValueError.
+
+        :param custom_subclasses: dictionary of "Section type": "RDF Subclass name" key value pairs.
+                                  Values must not contain whitespaces, a ValueError will be raised
+                                  otherwise.
+        """
+
+        # Do not allow whitespaces in values
+        if " " in "".join(custom_subclasses.values()):
+            msg = "Custom RDF Subclass names must not contain any whitespaces."
+            raise ValueError(msg)
+
+        for k in custom_subclasses:
+            val = custom_subclasses[k]
+            if k in self.section_subclasses:
+                msg = "RDFWriter custom subclasses: Key '%s' already exists. " % k
+                msg += "Value '%s' replaces default value '%s'." % (val, self.section_subclasses[k])
+                warnings.warn(msg, stacklevel=2)
+            self.section_subclasses[k] = val
 
     def __str__(self):
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
