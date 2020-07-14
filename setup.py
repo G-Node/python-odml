@@ -30,7 +30,9 @@ packages = [
 with open('README.md') as f:
     description_text = f.read()
 
-install_req = ["lxml", "pyyaml>=5.1", "rdflib", "docopt", "pathlib", "owlrl"]
+install_req = ["lxml", "pyyaml>=5.1", "rdflib", "docopt", "pathlib"]
+
+tests_req = ["owlrl", "requests"]
 
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
@@ -45,6 +47,7 @@ setup(
     packages=packages,
     test_suite='test',
     install_requires=install_req,
+    tests_require=tests_req,
     include_package_data=True,
     long_description=description_text,
     long_description_content_type="text/markdown",
