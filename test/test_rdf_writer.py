@@ -2,9 +2,12 @@ import datetime
 import os
 import unittest
 
+from sys import version_info
+
 import yaml
 
-from owlrl import DeductiveClosure, RDFS_Semantics
+if version_info > (3, 4):
+    from owlrl import DeductiveClosure, RDFS_Semantics
 
 from rdflib import URIRef, Literal
 from rdflib.namespace import Namespace, RDF, RDFS, XSD
@@ -358,10 +361,11 @@ class TestRDFWriter(unittest.TestCase):
         doc = odml.Document()
         _ = odml.Section(name="test_subclassing", type=sub_class_type, parent=doc)
 
-        with self.assertWarns(UserWarning):
-            rdf_writer = RDFWriter([doc], custom_subclasses=custom_class_dict)
-            self.assertNotIn("odml:Cell", rdf_writer.get_rdf_str())
-            self.assertIn("odml:Neuron", rdf_writer.get_rdf_str())
+        if version_info > (3, 4):
+            with self.assertWarns(UserWarning):
+                rdf_writer = RDFWriter([doc], custom_subclasses=custom_class_dict)
+                self.assertNotIn("odml:Cell", rdf_writer.get_rdf_str())
+                self.assertIn("odml:Neuron", rdf_writer.get_rdf_str())
 
     def test_rdf_subclassing_definitions(self):
         """
@@ -417,102 +421,103 @@ class TestRDFWriter(unittest.TestCase):
         Test the proper implementation of the RDF subclassing feature. Tests ensure, that queries
         relying on RDF Subclasses return appropriate results.
         """
-        namespace_map = {"odml": Namespace(ODML_NS), "rdf": RDF, "rdfs": RDFS}
+        if version_info > (3, 4):
+            namespace_map = {"odml": Namespace(ODML_NS), "rdf": RDF, "rdfs": RDFS}
 
-        doc = odml.Document()
-        _ = odml.Section(name="test_subclass", type="cell", parent=doc)
-        _ = odml.Section(name="test_regular_class", type="regular", parent=doc)
+            doc = odml.Document()
+            _ = odml.Section(name="test_subclass", type="cell", parent=doc)
+            _ = odml.Section(name="test_regular_class", type="regular", parent=doc)
 
-        rdf_writer = RDFWriter([doc])
-        _ = rdf_writer.get_rdf_str()
+            rdf_writer = RDFWriter([doc])
+            _ = rdf_writer.get_rdf_str()
 
-        use_graph = rdf_writer.graph
-        DeductiveClosure(RDFS_Semantics).expand(use_graph)
+            use_graph = rdf_writer.graph
+            DeductiveClosure(RDFS_Semantics).expand(use_graph)
 
-        q_string = "SELECT * WHERE {?s rdf:type odml:Section .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            q_string = "SELECT * WHERE {?s rdf:type odml:Section .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        # Make sure the query finds two sections
-        self.assertIs(len(use_graph.query(curr_query)), 2)
+            # Make sure the query finds two sections
+            self.assertIs(len(use_graph.query(curr_query)), 2)
 
-        # Make sure the query finds
-        result_section = []
-        for row in use_graph.query(curr_query):
-            result_section.append(row.s)
+            # Make sure the query finds
+            result_section = []
+            for row in use_graph.query(curr_query):
+                result_section.append(row.s)
 
-        q_string = "SELECT * WHERE {?s rdf:type odml:Cell .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            q_string = "SELECT * WHERE {?s rdf:type odml:Cell .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        self.assertIs(len(use_graph.query(curr_query)), 1)
-        for row in use_graph.query(curr_query):
-            self.assertIn(row.s, result_section)
+            self.assertIs(len(use_graph.query(curr_query)), 1)
+            for row in use_graph.query(curr_query):
+                self.assertIn(row.s, result_section)
 
-        # -- Test custom subclassing queries
-        type_custom_class = "species"
-        type_overwrite_class = "cell"
-        custom_class_dict = {type_custom_class: "Species", type_overwrite_class: "Neuron"}
+            # -- Test custom subclassing queries
+            type_custom_class = "species"
+            type_overwrite_class = "cell"
+            custom_class_dict = {type_custom_class: "Species", type_overwrite_class: "Neuron"}
 
-        doc = odml.Document()
-        sec = odml.Section(name="test_subclass", type="species", parent=doc)
-        _ = odml.Section(name="test_subclass_overwrite", type="cell", parent=sec)
-        _ = odml.Section(name="test_regular_class", type="regular", parent=sec)
+            doc = odml.Document()
+            sec = odml.Section(name="test_subclass", type="species", parent=doc)
+            _ = odml.Section(name="test_subclass_overwrite", type="cell", parent=sec)
+            _ = odml.Section(name="test_regular_class", type="regular", parent=sec)
 
-        rdf_writer = RDFWriter([doc], custom_subclasses=custom_class_dict)
-        _ = rdf_writer.get_rdf_str()
+            rdf_writer = RDFWriter([doc], custom_subclasses=custom_class_dict)
+            _ = rdf_writer.get_rdf_str()
 
-        use_graph = rdf_writer.graph
-        DeductiveClosure(RDFS_Semantics).expand(use_graph)
+            use_graph = rdf_writer.graph
+            DeductiveClosure(RDFS_Semantics).expand(use_graph)
 
-        q_string = "SELECT * WHERE {?s rdf:type odml:Section .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            q_string = "SELECT * WHERE {?s rdf:type odml:Section .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        # Make sure the query finds three sections
-        self.assertIs(len(use_graph.query(curr_query)), 3)
+            # Make sure the query finds three sections
+            self.assertIs(len(use_graph.query(curr_query)), 3)
 
-        # Make sure the query finds
-        result_section = []
-        for row in use_graph.query(curr_query):
-            result_section.append(row.s)
+            # Make sure the query finds
+            result_section = []
+            for row in use_graph.query(curr_query):
+                result_section.append(row.s)
 
-        # Custom class 'Species' should be found.
-        q_string = "SELECT * WHERE {?s rdf:type odml:Species .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            # Custom class 'Species' should be found.
+            q_string = "SELECT * WHERE {?s rdf:type odml:Species .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        self.assertIs(len(use_graph.query(curr_query)), 1)
-        for row in use_graph.query(curr_query):
-            self.assertIn(row.s, result_section)
+            self.assertIs(len(use_graph.query(curr_query)), 1)
+            for row in use_graph.query(curr_query):
+                self.assertIn(row.s, result_section)
 
-        # Custom class 'Neuron' should be found.
-        q_string = "SELECT * WHERE {?s rdf:type odml:Neuron .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            # Custom class 'Neuron' should be found.
+            q_string = "SELECT * WHERE {?s rdf:type odml:Neuron .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        self.assertIs(len(use_graph.query(curr_query)), 1)
-        for row in use_graph.query(curr_query):
-            self.assertIn(row.s, result_section)
+            self.assertIs(len(use_graph.query(curr_query)), 1)
+            for row in use_graph.query(curr_query):
+                self.assertIn(row.s, result_section)
 
-        # Default class 'Cell' was replaced and should not return any result.
-        q_string = "SELECT * WHERE {?s rdf:type odml:Cell .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            # Default class 'Cell' was replaced and should not return any result.
+            q_string = "SELECT * WHERE {?s rdf:type odml:Cell .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        self.assertIs(len(use_graph.query(curr_query)), 0)
+            self.assertIs(len(use_graph.query(curr_query)), 0)
 
-        # -- Test inactivated subclassing
-        doc = odml.Document()
-        _ = odml.Section(name="test_regular_class", type="regular", parent=doc)
-        _ = odml.Section(name="test_subclass", type="cell", parent=doc)
+            # -- Test inactivated subclassing
+            doc = odml.Document()
+            _ = odml.Section(name="test_regular_class", type="regular", parent=doc)
+            _ = odml.Section(name="test_subclass", type="cell", parent=doc)
 
-        rdf_writer = RDFWriter([doc], rdf_subclassing=False)
-        _ = rdf_writer.get_rdf_str()
+            rdf_writer = RDFWriter([doc], rdf_subclassing=False)
+            _ = rdf_writer.get_rdf_str()
 
-        use_graph = rdf_writer.graph
-        DeductiveClosure(RDFS_Semantics).expand(use_graph)
+            use_graph = rdf_writer.graph
+            DeductiveClosure(RDFS_Semantics).expand(use_graph)
 
-        q_string = "SELECT * WHERE {?s rdf:type odml:Section .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            q_string = "SELECT * WHERE {?s rdf:type odml:Section .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        self.assertIs(len(use_graph.query(curr_query)), 2)
+            self.assertIs(len(use_graph.query(curr_query)), 2)
 
-        q_string = "SELECT * WHERE {?s rdf:type odml:Cell .}"
-        curr_query = prepareQuery(q_string, initNs=namespace_map)
+            q_string = "SELECT * WHERE {?s rdf:type odml:Cell .}"
+            curr_query = prepareQuery(q_string, initNs=namespace_map)
 
-        self.assertIs(len(use_graph.query(curr_query)), 0)
+            self.assertIs(len(use_graph.query(curr_query)), 0)
