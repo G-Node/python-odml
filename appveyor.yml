@@ -37,7 +37,7 @@ init:
 build: false
 
 install:
-  - python -m pip install lxml enum34 pyyaml rdflib owlrl
+  - python -m pip install lxml enum34 pyyaml rdflib owlrl requests
 
 test_script:
   - python --version
