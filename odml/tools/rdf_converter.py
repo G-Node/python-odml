@@ -10,7 +10,7 @@ import warnings
 from io import StringIO
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
-from rdflib.namespace import XSD, RDF
+from rdflib.namespace import XSD, RDF, RDFS
 
 import yaml
 
@@ -252,6 +252,9 @@ class RDFWriter(object):
             sub_sec = self._get_section_subclass(sec)
             if sub_sec:
                 curr_type = sub_sec
+                self.graph.add((URIRef(fmt.rdf_type), RDF.type, RDFS.Class))
+                self.graph.add((URIRef(curr_type), RDF.type, RDFS.Class))
+                self.graph.add((URIRef(curr_type), RDFS.subClassOf, URIRef(fmt.rdf_type)))
 
         self.graph.add((curr_node, RDF.type, URIRef(curr_type)))
 
