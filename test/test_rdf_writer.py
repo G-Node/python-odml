@@ -338,7 +338,11 @@ class TestRDFWriter(unittest.TestCase):
         self.assertIn("odml:Cell", rdf_writer.get_rdf_str())
 
         # Test value whitespace
-        invalid_dict = {"type_1": "Class 1", "type_2": "Class 2"}
+        inval_a = "This should"
+        inval_b = "fail\nin"
+        inval_c = "the\tmost"
+        inval_d = "complete\rway"
+        invalid_dict = {"type_1": inval_a, "type_2": inval_b, "type_3": inval_c, "type_4": inval_d}
         with self.assertRaises(ValueError):
             _ = RDFWriter([doc], custom_subclasses=invalid_dict)
 

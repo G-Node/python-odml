@@ -4,6 +4,7 @@ the conversion of odML flavored RDF to odML documents.
 """
 
 import os
+import string
 import uuid
 import warnings
 
@@ -338,9 +339,10 @@ class RDFWriter(object):
                                   otherwise.
         """
 
-        # Do not allow whitespaces in values
-        if " " in "".join(custom_subclasses.values()):
-            msg = "Custom RDF Subclass names must not contain any whitespaces."
+        # Do not allow any whitespace characters in values
+        vals = "".join(custom_subclasses.values()).encode()
+        if vals != vals.translate(None, string.whitespace.encode()):
+            msg = "Custom RDF Subclass names must not contain any whitespace characters."
             raise ValueError(msg)
 
         for k in custom_subclasses:
