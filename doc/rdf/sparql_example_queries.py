@@ -1,7 +1,7 @@
 from rdflib import Graph, Namespace, RDF
 from rdflib.plugins.sparql import prepareQuery
 
-resource = "./python-odml/doc/example_rdfs/example_data/2010-04-16-ab_cutoff_300_contrast_20%.ttl"
+resource = "./python-odml/doc/rdf/example_data/odml_RDF_example_A.ttl"
 
 g = Graph()
 g.parse(resource, format='turtle')
