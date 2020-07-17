@@ -1,7 +1,11 @@
-from rdflib import Graph, Namespace, RDF
+from rdflib import Graph, RDF
 from rdflib.plugins.sparql import prepareQuery
 
-resource = "./python-odml/doc/rdf/example_data/odml_RDF_example_A.ttl"
+from odml.tools.rdf_converter import ODML_NS
+
+rdf_namespace = {"odml": ODML_NS, "rdf": RDF}
+
+resource = "./odml_RDF_example_A.ttl"
 
 g = Graph()
 g.parse(resource, format='turtle')
@@ -18,8 +22,7 @@ q1 = prepareQuery("""SELECT *
                ?p odml:hasUnit "%" .
                ?v rdf:type rdf:Bag .
                ?v rdf:li "20.0" .
-            }""", initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
-                          "rdf": RDF})
+            }""", initNs=rdf_namespace)
 
 g = Graph()
 g.parse(resource, format='turtle')
@@ -46,8 +49,7 @@ q2 = prepareQuery("""SELECT *
                    ?p1 odml:hasName "CellType" .
                    ?p1 odml:hasValue ?v1 .   
                    ?v1 rdf:li "P-unit" .                      
-                }""", initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
-                              "rdf": RDF})
+                }""", initNs=rdf_namespace)
 
 # select d.* from dataset d, CellProperties s, EOD Frequency c where c.unit = 'Hz'
 g = Graph()
@@ -64,8 +66,7 @@ q3 = prepareQuery("""SELECT *
                    ?p odml:hasUnit "Hz" .    
                    ?v rdf:type rdf:Bag .
                    ?v rdf:li ?value .                      
-                }""", initNs={"odml": Namespace("https://g-node.org/odml-rdf#"),
-                              "rdf": RDF})
+                }""", initNs=rdf_namespace)
 
 print("q1")
 for row in g.query(q1):
