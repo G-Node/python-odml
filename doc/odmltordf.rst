@@ -1,9 +1,9 @@
-=====================
-Exporting odML to RDF
-=====================
+===============================
+odML and RDF - Export and usage
+===============================
 
-Opening odML to the Semantic Web and graph database searches
-============================================================
+Semantic Web and graph database searches
+========================================
 
 Searches within odML documents are part of the library implementation and imports from linked, external sources into odML documents can be easily done with the core library functionality.
 With the option to export odML documents to the RDF format, users also gain the option to search across multiple documents using tools from the Semantic Web technology.
@@ -12,16 +12,13 @@ If you are unfamiliar with it, we linked additional information to the `Semantic
 
 RDF was designed by the World Wide Web Consortium (W3C) as a standard model for data representation and exchange on the web with the heterogeneity of data in mind. Even tough the RDF file format might vary, the underlying concept features two key points. The first is that information is structured in subject-predicate-object triples e.g. "apple hasColor red". The second key point is that multiple subjects and objects can be connected to form a graph e.g. "tree hasFruit apple" can be combined with the previous example to form a minimal graph. These graphs can contain very heterogeneous data, but can still be queried due to the semantic structure of the underlying data.
 
-odML to RDF usage
-=================
+odML to RDF export
+==================
 
 Without further ado the next sections will expose you to the range of odML to RDF features the core library provides.
 
-Saving an odML document to an RDF format file
----------------------------------------------
-
-Using odml.save to export to default XML RDF
-********************************************
+Default odML to XML RDF export
+------------------------------
 
 Once an odML document is available, it can most easily be exported to RDF by the odml.save feature.
 
@@ -62,16 +59,17 @@ The content of the file will look something like this (the UUIDs of the individu
       </rdf:Description>
     </rdf:RDF>
 
-Using the RDFWriter class to export to a specific RDF format
-************************************************************
 
-The RDFWriter class is used to convert odML documents to one of the supported RDF formats:
+Specific RDF format export
+--------------------------
+
+The ``RDFWriter`` class is used to convert odML documents to one of the supported RDF formats:
 
 ``xml, pretty-xml, trix, n3, turtle, ttl, ntriples, nt, nt11, trig``
 
-``turtle`` is the format that is best suited for storage and human readability which is why we will use it in our tutorial. For cross-tool usage, saving RDF in its ``XML`` variant is probably the safest choice.
+``turtle`` is the format that is best suited for storage and human readability while for cross-tool usage, saving RDF in its ``XML`` variant is probably the safest choice.
 
-The output can also be returned as a string instead of saving it to a file::
+The exported output can be returned as a string::
 
     from odml.tools.rdf_converter import RDFWriter
 
@@ -95,10 +93,21 @@ This will print the content of the odML document in the Turtle flavor of RDF::
         odml:hasProperty odml:281c5aa7-8fea-4852-85ec-db127f753647 ;
         odml:hasType "n.s." .
 
-The output can of course also be written to a file with a specified RDF output format; the output file will autmatically be assigned the appropriate file ending.::
+The output can of course also be written to a file with a specified RDF output format; the output file will autmatically be assigned the appropriate file ending::
 
     from odml.tools.rdf_converter import RDFWriter
 
     RDFWriter(doc).write_file("./rdf_export_turtle", "turtle")
 
 All available RDF output formats can be viewed via ``odml.tools.parser_utils.RDF_CONVERSION_FORMATS.keys()``.
+
+Bulk export to XML RDF
+----------------------
+
+Existing odML files can be exported to XML RDF in bulk using the ``odmltordf`` command line tool that is automatically installed with the core library.
+
+odmlToRDF searches for odML files within a provided SEARCHDIR and converts them to the newest odML format version and exports all found and resulting odML files to XML formatted RDF. Original files will never be overwritten. New files will be written either to a new directory at the current or a specified location.
+
+Usage: odmltordf [-r] [-o OUT] SEARCHDIR
+
+The command line option ``-r`` enables recursive search, ``-o OUT`` specifies a dedicated output folder for the created output files.
