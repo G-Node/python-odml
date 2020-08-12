@@ -214,3 +214,21 @@ Currently the following mappings of ``odml.Section.type`` values to odml-rdf:Sec
     stimulus/white_noise: Whitenoise
     subject: Subject
 
+Custom RDF subclassing
+----------------------
+
+The default list of odml.Section.types can be supplemented or even replaced by custom type to RDF subclass mappings.
+
+All required is to provide a dictionary of the format ``{"odml.Section.type value": "RDF subclass value"}``. Please note that the ``odml.Section.type`` value should be provided lower case, while the ``RDF subclass value`` should be provided upper case::
+
+    custom_class_dict = {"species": "Species", "cell": "Neuron"}
+    rdf_export = RDFWriter(doc, custom_subclasses=custom_class_dict)
+
+Please note that entries in a custom subclass dictionary will overwrite entries in the default subclass dictionary.
+
+Disable RDF subclassing
+-----------------------
+The subclassing feature can be disabled to export all odml.Sections as plain odml-rdf:Sections instead. This might be necessary if for e.g. a graph database is used that does not provide proper SPARQL reasoning and cannot make sense of RDF subclasses::
+
+    rdf_export = RDFWriter(doc, rdf_subclassing=False)
+
