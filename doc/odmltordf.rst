@@ -274,3 +274,45 @@ The documents saved above can now be loaded into single graph::
     curr_graph.parse(file_B)
 
 
+The graph is now ready to accept simple SPARQL queries. Queries need the odML RDF namespace though to process the odml specific entries::
+
+    from odml.tools.rdf_converter import ODML_NS
+
+    from rdflib import Namespace, RDF, RDFS
+    from rdflib.plugins.sparql import prepareQuery
+
+    # preparing the query namespace
+    NAMESPACE_MAP = {"odml": Namespace(ODML_NS), "rdf": RDF, "rdfs": RDFS}
+
+    # preparing a query requesting the name of all sections in the graph
+    q_string = "SELECT * WHERE {?s rdf:type odml:Section . ?s odml:hasName ?sec_name .}"
+    sec_query = prepareQuery(q_string, initNs=NAMESPACE_MAP)
+
+    for row in curr_graph.query(sec_query):
+        print("Section name: '%s'" % row.sec_name)
+
+The query returns::
+
+    Section name: 'recording_A'
+    Section name: 'recording_B'
+    Section name: 'analysis_A'
+
+
+This query returns all sections from the first file, since reasoning is not yet enabled. This can be changed by adding reasioning to the query::
+
+    from owlrl import DeductiveClosure, RDFS_Semantics
+
+    DeductiveClosure(RDFS_Semantics).expand(curr_graph)
+
+    for row in curr_graph.query(sec_query):
+        print("Section name: '%s'" % row.sec_name)
+
+
+This query now returns the sections from both files::
+
+    Section name: 'recording_B'
+    Section name: 'recording_A'
+    Section name: 'recording_protocol_B'
+    Section name: 'recording_protocol_A'
+    Section name: 'analysis_A'
+
