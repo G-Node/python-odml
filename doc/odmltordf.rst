@@ -241,3 +241,36 @@ The following section gives a basic example how multiple odML RDF files can be l
 
 Please note, that the `rdflib <https://rdflib.readthedocs.io/en/stable/>`_ library provides just basic implementation of a triple store and query features via SPARQL. To make full use of SPARQL additional RDF reasoning libraries are required. In our case the `owlrl <https://owl-rl.readthedocs.io/en/latest/>`_ library is used to provide proper reasoning and enable searches for the RDF subclassing feature.
 
+The following is a basic example how to load odML RDF documents into a single graph and provide the required to namespace to make the odml specific content of the graph accessible::
+
+    import odml
+
+    file_A = "./rdf_recordings.rdf"
+    file_B = "./rdf_protocols.rdf"
+
+    doc_A = odml.Document(author="MS")
+    sec_A = odml.Section(name="recording_A", type="paradigm_A", parent=doc_A)
+    _ = odml.Property(name="protocol", values="recording_protocol_A", parent=sec_A)
+    sec_B = odml.Section(name="recording_B", type="paradigm_A", parent=doc_A)
+    _ = odml.Property(name="protocol", values="recording_protocol_B", parent=sec_B)
+    _ = odml.Section(name="analysis_A", type="paradigm_A", parent=doc_A)
+
+    odml.save(doc_A, file_A, "RDF")
+
+    doc_B = odml.Document(author="MS")
+    _ = odml.Section(name="recording_protocol_A", type="protocol", parent=doc_B)
+    _ = odml.Section(name="recording_protocol_B", type="protocol", parent=doc_B)
+
+    odml.save(doc_B, file_B, "RDF")
+
+Please note, that every odML Document exported to RDF has a special ``odml-rdf:Hub`` node at the very root of the document. This node is identical in every exported odML Document and is used as the root Node connecting all individual odML RDF documents into a single graph.
+
+The documents saved above can now be loaded into single graph::
+
+    from rdflib import Graph
+
+    curr_graph = Graph()
+    curr_graph.parse(file_A)
+    curr_graph.parse(file_B)
+
+
