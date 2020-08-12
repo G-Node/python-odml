@@ -8,7 +8,7 @@ Opening odML to the Semantic Web and graph database searches
 Searches within odML documents are part of the library implementation and imports from linked, external sources into odML documents can be easily done with the core library functionality.
 With the option to export odML documents to the RDF format, users also gain the option to search across multiple documents using tools from the Semantic Web technology.
 
-If you are unfamiliar with it, we linked additional information to the `Semantic web<https://www.w3.org/standards/semanticweb>`_ and `RDF<https://www.w3.org/TR/rdf11-concepts>`_ for your convenience and give the briefest introduction below.
+If you are unfamiliar with it, we linked additional information to the `Semantic web <https://www.w3.org/standards/semanticweb>`_ and `RDF <https://www.w3.org/TR/rdf11-concepts>`_ for your convenience and give the briefest introduction below.
 
 RDF was designed by the World Wide Web Consortium (W3C) as a standard model for data representation and exchange on the web with the heterogeneity of data in mind. Even tough the RDF file format might vary, the underlying concept features two key points. The first is that information is structured in subject-predicate-object triples e.g. "apple hasColor red". The second key point is that multiple subjects and objects can be connected to form a graph e.g. "tree hasFruit apple" can be combined with the previous example to form a minimal graph. These graphs can contain very heterogeneous data, but can still be queried due to the semantic structure of the underlying data.
 
@@ -61,3 +61,44 @@ The content of the file will look something like this (the UUIDs of the individu
         <odml:hasDocument rdf:resource="https://g-node.org/odml-rdf#08c6e31a-533f-443b-acd2-8e961215d38e"/>
       </rdf:Description>
     </rdf:RDF>
+
+Using the RDFWriter class to export to a specific RDF format
+************************************************************
+
+The RDFWriter class is used to convert odML documents to one of the supported RDF formats:
+
+``xml, pretty-xml, trix, n3, turtle, ttl, ntriples, nt, nt11, trig``
+
+``turtle`` is the format that is best suited for storage and human readability which is why we will use it in our tutorial. For cross-tool usage, saving RDF in its ``XML`` variant is probably the safest choice.
+
+The output can also be returned as a string instead of saving it to a file::
+
+    from odml.tools.rdf_converter import RDFWriter
+
+    print(RDFWriter(doc).get_rdf_str('turtle'))
+
+This will print the content of the odML document in the Turtle flavor of RDF::
+
+    @prefix odml: <https://g-node.org/odml-rdf#> .
+
+    odml:Hub odml:hasDocument odml:08c6e31a-533f-443b-acd2-8e961215d38e .
+
+    odml:08c6e31a-533f-443b-acd2-8e961215d38e a odml:Document ;
+        odml:hasFileName "None" ;
+        odml:hasSection odml:eebe4bf7-af10-4321-87ec-2cdf77289478 .
+
+    odml:281c5aa7-8fea-4852-85ec-db127f753647 a odml:Property ;
+        odml:hasName "rdf_export_property" .
+
+    odml:eebe4bf7-af10-4321-87ec-2cdf77289478 a odml:Section ;
+        odml:hasName "rdf_export_section" ;
+        odml:hasProperty odml:281c5aa7-8fea-4852-85ec-db127f753647 ;
+        odml:hasType "n.s." .
+
+The output can of course also be written to a file with a specified RDF output format; the output file will autmatically be assigned the appropriate file ending.::
+
+    from odml.tools.rdf_converter import RDFWriter
+
+    RDFWriter(doc).write_file("./rdf_export_turtle", "turtle")
+
+All available RDF output formats can be viewed via ``odml.tools.parser_utils.RDF_CONVERSION_FORMATS.keys()``.
