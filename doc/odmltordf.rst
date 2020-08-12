@@ -111,3 +111,106 @@ odmlToRDF searches for odML files within a provided SEARCHDIR and converts them 
 Usage: odmltordf [-r] [-o OUT] SEARCHDIR
 
 The command line option ``-r`` enables recursive search, ``-o OUT`` specifies a dedicated output folder for the created output files.
+
+
+Advanced features
+=================
+
+RDF subclassing of odml.Section.type
+------------------------------------
+
+By default a set of pre-defined odml.Section.types will export Sections not as an odml:Section but as a specific RDF subclass of an odml:Section. This is meant to simplify SPARQL query searches on graph databases that contain odml specific RDF.
+
+As an example an odml.Section normally gets exported as RDF class type odml-rdf:Section::
+
+    <rdf:type rdf:resource="https://g-node.org/odml-rdf#Section"/>
+
+An odml.Section with the odml.Section.type="protocol" will by default be exported as a different RDF class type::
+
+    <rdf:type rdf:resource="https://g-node.org/odml-rdf#Protocol"/>
+
+In an RDF query this can now be searched for directly by asking for RDF class "odml-rdf:Protocol" instead of asking for RDF class "odml-rdf:Section" with type "Protocol".
+
+On install the core library already provides a list of odml.Section.type mappings to RDF subclasses. On initialisation the ``RDFWriter`` loads all subclasses that are available and uses them by default when exporting an odML document to RDF. The available terms and the mappings of odml.Section.types to RDF subclasses can be viewed by accessing the ``section_subclasses`` attribute of an initialised ``RDFWriter``::
+
+    rdf_export = RDFWriter(doc)
+    rdf_export.section_subclasses
+
+This export also adds all used subclass definitions to the resulting file to enable query reasoners to makes sense of the introduced subclasses upon a query.
+
+Currently the following mappings of ``odml.Section.type`` values to odml-rdf:Section subclass are available::
+
+    analysis: Analysis
+    analysis/power_spectrum: PowerSpectrum
+    analysis/psth: PSTH
+    cell: Cell
+    datacite/alternate_identifier: AlternateIdentifier
+    datacite/contributor: Contributer
+    datacite/contributor/affiliation: Affiliation
+    datacite/contributor/named_identifier: NamedIdentifier
+    datacite/creator: Creator
+    datacite/creator/affiliation: Affiliation
+    datacite/creator/named_identifier: NamedIdentifier
+    datacite/date: Date
+    datacite/description: Description
+    datacite/format: Format
+    datacite/funding_reference: FundingReference
+    datacite/geo_location: GeoLocation
+    datacite/identifier: Identifier
+    datacite/related_identifier: RelatedIdentifier
+    datacite/resource_type: ResourceType
+    datacite/rights: Rights
+    datacite/size: Size
+    datacite/subject: Subject
+    datacite/title: Title
+    dataset: Dataset
+    data_reference: DataReference
+    blackrock: Blackrock
+    electrode: Electrode
+    event: Event
+    event_list: EventList
+    experiment: Experiment
+    experiment/behavior: Behavior
+    experiment/electrophysiology: Electrophysiology
+    experiment/imaging: Imaging
+    experiment/psychophysics: Psychophysics
+    hardware_properties: HardwareProperties
+    hardware_settings: HardwareSettings
+    hardware: Hardware
+    hardware/amplifier: Amplifier
+    hardware/attenuator: Attenuator
+    hardware/camera_objective: CameraObjective
+    hardware/daq: DataAcquisition
+    hardware/eyetracker: Eyetracker
+    hardware/filter: Filter
+    hardware/filter_set: Filterset
+    hardware/iaq: ImageAcquisition
+    hardware/light_source: Lightsource
+    hardware/microscope: Microscope
+    hardware/microscope_objective: MicroscopeObjective
+    hardware/scanner: Scanner
+    hardware/stimulus_isolator: StimulusIsolator
+    model/lif: LeakyIntegrateAndFire
+    model/pif: PerfectIntegrateAndFire
+    model/multi_compartment: MultiCompartmentModel
+    model/single_compartment: SingleCompartmentModel
+    person: Person
+    preparation: Preparation
+    project: Project
+    protocol: Protocol
+    recording: Recording
+    setup: Setup
+    stimulus: Stimulus
+    stimulus/dc: DC
+    stimulus/gabor: Gabor
+    stimulus/grating: Grating
+    stimulus/pulse: Pulse
+    stimulus/movie: Movie
+    stimulus/ramp: Ramp
+    stimulus/random_dot: RandomDot
+    stimulus/sawtooth: Sawtooth
+    stimulus/sine_wave: Sinewave
+    stimulus/square_wave: Squarewave
+    stimulus/white_noise: Whitenoise
+    subject: Subject
+
