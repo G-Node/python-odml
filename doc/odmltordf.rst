@@ -8,14 +8,14 @@ Semantic Web and graph database searches
 Searches within odML documents are part of the library implementation and imports from linked, external sources into odML documents can be easily done with the core library functionality.
 With the option to export odML documents to the RDF format, users also gain the option to search across multiple documents using tools from the Semantic Web technology.
 
-If you are unfamiliar with it, we linked additional information to the `Semantic web <https://www.w3.org/standards/semanticweb>`_ and `RDF <https://www.w3.org/TR/rdf11-concepts>`_ for your convenience and give the briefest introduction below.
+If you are unfamiliar with it, we linked additional information to the `Semantic web <https://www.w3.org/standards/semanticweb>`_, `RDF <https://www.w3.org/TR/rdf11-concepts>`_ and `SPARQL <https://www.w3.org/TR/sparql11-query/>`_ for your convenience and give the briefest introduction below.
 
-RDF was designed by the World Wide Web Consortium (W3C) as a standard model for data representation and exchange on the web with the heterogeneity of data in mind. Even tough the RDF file format might vary, the underlying concept features two key points. The first is that information is structured in subject-predicate-object triples e.g. "apple hasColor red". The second key point is that multiple subjects and objects can be connected to form a graph e.g. "tree hasFruit apple" can be combined with the previous example to form a minimal graph. These graphs can contain very heterogeneous data, but can still be queried due to the semantic structure of the underlying data.
+RDF was designed by the World Wide Web Consortium (W3C) as a standard model for data representation and exchange on the web with the heterogeneity of data in mind. Even tough the RDF file format might vary, the underlying concept features two key points. The first is that information is structured in subject-predicate-object triples e.g. "apple hasColor red". The second key point is that multiple subjects and objects can be connected to form a graph e.g. "tree hasFruit apple" can be combined with the previous example to form a minimal graph. These graphs can contain very heterogeneous data, but can still be queried using the SPARQL query language due to the semantic structure of the underlying data.
 
 odML to RDF export
 ==================
 
-Without further ado the next sections will expose you to the range of odML to RDF features the core library provides.
+Without further ado the next sections will expose you to the range of odML to RDF features the core library provides. To check how to create a graph database from exported odML documents and how to query such a database please refer to the section below.
 
 Default odML to XML RDF export
 ------------------------------
@@ -30,9 +30,9 @@ Given below is a minimal example::
     sec = odml.Section(name="rdf_export_section", parent=doc)
     prop = odml.Property(name="rdf_export_property", parent=sec)
 
-    odml.save(doc, "./rdf_export", "RDF")
+    odml.save(doc, "./rdf_export.rdf", "RDF")
 
-This will export the odML document to the RDF format in the XML flavor and will save it to the file `./rdf_export.RDF`.
+This will export the odML document to the RDF format in the XML flavor and will save it to the file `./rdf_export.rdf`.
 The content of the file will look something like this (the UUIDs of the individual nodes will differ)::
 
     <?xml version="1.0" encoding="UTF-8"?>
@@ -214,6 +214,7 @@ Currently the following mappings of ``odml.Section.type`` values to odml-rdf:Sec
     stimulus/white_noise: Whitenoise
     subject: Subject
 
+
 Custom RDF subclassing
 ----------------------
 
@@ -231,4 +232,12 @@ Disable RDF subclassing
 The subclassing feature can be disabled to export all odml.Sections as plain odml-rdf:Sections instead. This might be necessary if for e.g. a graph database is used that does not provide proper SPARQL reasoning and cannot make sense of RDF subclasses::
 
     rdf_export = RDFWriter(doc, rdf_subclassing=False)
+
+
+odML RDF graph search
+=====================
+
+The following section gives a basic example how multiple odML RDF files can be loaded into a single graph database (a so called "triple store") and how queries can be done to retrieve information from such a database.
+
+Please note, that the `rdflib <https://rdflib.readthedocs.io/en/stable/>`_ library provides just basic implementation of a triple store and query features via SPARQL. To make full use of SPARQL additional RDF reasoning libraries are required. In our case the `owlrl <https://owl-rl.readthedocs.io/en/latest/>`_ library is used to provide proper reasoning and enable searches for the RDF subclassing feature.
 
