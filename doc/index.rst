@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
    
    tutorial
+   advanced_features
    odmltordf
    reference
 
