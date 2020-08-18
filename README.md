@@ -33,6 +33,14 @@ examples can be found at our odML [project page](https://g-node.github.io/python
 pip install odml
 ```
 
+To install the latest development version of odml you can use the git installation option of pip:
+
+```
+pip install git+https://github.com/G-Node/python-odml
+```
+
+Please note that this version might not be stable.
+
 ## Tutorial and examples
 
 - We have assembled a set of
@@ -126,7 +134,8 @@ working as expected. Use the release tags instead.
 
 # Contributing and Governance
 
-See the [CONTRIBUTING](CONTIBUTING.md) document for more information on this.
+See the [CONTRIBUTING](https://github.com/G-Node/python-odml/blob/master/CONTRIBUTING.md) document 
+for more information on this.
 
 
 # Bugs & Questions

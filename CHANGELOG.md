@@ -3,6 +3,16 @@
 Used to document all changes from previous releases and collect changes 
 until the next release.
 
+# Version 1.5.1
+
+# RDF Subclassing feature
+RDF subclasses are now properly added by default to any written RDF document. The RDF document will now also include RDF Subclass definitions in addition to the actual data to enable Subclass specific queries. See PR #400 and issue #397 for details.
+
+# Minor changes and updates
+- Section properties can now be reordered. See PR #398 for details.
+- Property values can now be inserted at a specified index. See PR #398 for details.
+- Tuples can now be assigned using a list instead of the `"(x;x;...)"` syntax as well. See PR #393 and issue #392 for details.
+
 # Version 1.5.0
 
 # Python 2 deprecation warning
