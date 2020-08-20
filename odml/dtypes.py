@@ -147,14 +147,13 @@ def set(value, dtype=None):
     """
     if not dtype:
         return str_set(value)
+
     if dtype.endswith("-tuple"):
         return tuple_set(value)
-    if sys.version_info > (3, 0):
-        if isinstance(value, str):
-            return str_set(value)
-    else:
-        if isinstance(value, str):
-            return str_set(value)
+
+    if isinstance(value, str):
+        return str_set(value)
+
     return self.get(dtype + "_set", str_set)(value)
 
 

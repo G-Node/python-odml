@@ -449,11 +449,7 @@ class XMLReader(object):
                 self.error("Invalid element <%s> in odML document section <%s> "
                            % (node.tag, root.tag), node)
 
-        if sys.version_info > (3,):
-            check_args = dict(list(arguments.items()) + list(extra_args.items()))
-        else:
-            check_args = dict(arguments.items() + extra_args.items())
-
+        check_args = dict(list(arguments.items()) + list(extra_args.items()))
         self.check_mandatory_arguments(check_args, fmt, root.tag, root)
 
         # Instantiate the current odML object with the parsed attributes.
