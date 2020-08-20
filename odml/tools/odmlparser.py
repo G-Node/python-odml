@@ -124,9 +124,6 @@ class ODMLWriter:
                 string_doc = json.dumps(odml_output, indent=4,
                                         cls=JSONDateTimeSerializer)
 
-        if sys.version_info.major < 3:
-            string_doc = string_doc.encode("utf-8")
-
         return string_doc
 
 

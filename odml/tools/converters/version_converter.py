@@ -518,8 +518,6 @@ class VersionConverter(object):
         :param backend: Format of the source file, default is XML.
         """
         data = self.convert(backend)
-        if sys.version_info < (3,):
-            data = data.encode('utf-8')
 
         ext = [".xml", ".odml"]
         if not filename.endswith(tuple(ext)):
