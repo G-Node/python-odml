@@ -6,7 +6,6 @@ All supported formats can be found in parser_utils.SUPPORTED_PARSERS.
 
 import datetime
 import json
-import sys
 import warnings
 
 from os.path import basename

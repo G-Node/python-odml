@@ -6,7 +6,6 @@ odML XML files from version 1.0 to 1.1.
 import io
 import json
 import os
-import sys
 import uuid
 import yaml
 
