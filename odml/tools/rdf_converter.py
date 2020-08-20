@@ -22,11 +22,6 @@ from ..info import FORMAT_VERSION, INSTALL_PATH
 from .dict_parser import DictReader
 from .parser_utils import ParserException, RDF_CONVERSION_FORMATS
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 ODML_NS = Format.namespace()
 
 
@@ -129,7 +124,7 @@ class RDFWriter(object):
                               to the current parent node.
         :param values: list of odml values.
         """
-        seq = URIRef(ODML_NS + unicode(uuid.uuid4()))
+        seq = URIRef(ODML_NS + str(uuid.uuid4()))
         self.graph.add((seq, RDF.type, RDF.Seq))
         self.graph.add((parent_node, rdf_predicate, seq))
 
@@ -138,14 +133,14 @@ class RDFWriter(object):
         # Once rdflib upgrades this should be reversed to RDF:li again!
         # see https://github.com/RDFLib/rdflib/issues/280
         # -- keep until supported
-        # bag = URIRef(ODML_NS + unicode(uuid.uuid4()))
+        # bag = URIRef(ODML_NS + str(uuid.uuid4()))
         # self.graph.add((bag, RDF.type, RDF.Bag))
         # self.graph.add((curr_node, fmt.rdf_map(k), bag))
         # for curr_val in values:
         #     self.graph.add((bag, RDF.li, Literal(curr_val)))
         counter = 1
         for curr_val in values:
-            custom_predicate = "%s_%s" % (unicode(RDF), counter)
+            custom_predicate = "%s_%s" % (str(RDF), counter)
             self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
             counter = counter + 1
 
@@ -160,7 +155,7 @@ class RDFWriter(object):
         :param odml_list: list of odml entities.
         """
         for curr_item in odml_list:
-            node = URIRef(ODML_NS + unicode(curr_item.id))
+            node = URIRef(ODML_NS + str(curr_item.id))
             self.graph.add((parent_node, rdf_predicate, node))
 
             fmt = curr_item.format()
@@ -185,7 +180,7 @@ class RDFWriter(object):
         if not terminology_node:
             # adding terminology url value to the graph and linking it
             # to the current RDF node.
-            terminology_node = URIRef(ODML_NS + unicode(uuid.uuid4()))
+            terminology_node = URIRef(ODML_NS + str(uuid.uuid4()))
             self.graph.add((terminology_node, RDF.type, URIRef(leaf_value)))
             self.graph.add((self.hub_root, ODML_NS.hasTerminology, terminology_node))
 
@@ -203,7 +198,7 @@ class RDFWriter(object):
         fmt = doc.format()
 
         if not curr_node:
-            curr_node = URIRef(ODML_NS + unicode(doc.id))
+            curr_node = URIRef(ODML_NS + str(doc.id))
 
         self.graph.add((curr_node, RDF.type, URIRef(fmt.rdf_type)))
         self.graph.add((self.hub_root, ODML_NS.hasDocument, curr_node))
@@ -478,7 +473,7 @@ class RDFReader(object):
             elif attr[0] == "id":
                 doc_attrs[attr[0]] = doc_uri.split("#", 1)[1]
             elif elems:
-                doc_attrs[attr[0]] = unicode(elems[0].toPython())
+                doc_attrs[attr[0]] = str(elems[0].toPython())
 
         return {'Document': doc_attrs, 'odml-version': FORMAT_VERSION}
 
@@ -503,7 +498,7 @@ class RDFReader(object):
             elif attr[0] == "id":
                 sec_attrs[attr[0]] = sec_uri.split("#", 1)[1]
             elif elems:
-                sec_attrs[attr[0]] = unicode(elems[0].toPython())
+                sec_attrs[attr[0]] = str(elems[0].toPython())
 
         self._check_mandatory_attrs(sec_attrs)
         return sec_attrs
@@ -537,7 +532,7 @@ class RDFReader(object):
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]
             elif elems:
-                prop_attrs[attr[0]] = unicode(elems[0].toPython())
+                prop_attrs[attr[0]] = str(elems[0].toPython())
 
         self._check_mandatory_attrs(prop_attrs)
         return prop_attrs

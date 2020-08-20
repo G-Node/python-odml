@@ -9,11 +9,6 @@ from enum import Enum
 
 from . import dtypes
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 LABEL_ERROR = 'error'
 LABEL_WARNING = 'warning'
 
@@ -92,7 +87,7 @@ class ValidationError(object):
 
     def __repr__(self):
         # Cleanup the odml object print strings
-        print_str = unicode(self.obj).split()[0].split("[")[0].split(":")[0]
+        print_str = str(self.obj).split()[0].split("[")[0].split(":")[0]
         # Document has no name attribute and should not print id or name info
         if hasattr(self.obj, "name"):
             if self.obj.name and self.obj.name != self.obj.id:

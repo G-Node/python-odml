@@ -21,11 +21,6 @@ from .parser_utils import SUPPORTED_PARSERS
 from .rdf_converter import RDFReader, RDFWriter
 from ..validation import Validation
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 class ODMLWriter:
     """
@@ -108,7 +103,9 @@ class ODMLWriter:
         """
         string_doc = ''
 
-        if self.parser == "RDF":
+        if self.parser == 'XML':
+            string_doc = str(xmlparser.XMLWriter(odml_document))
+        elif self.parser == "RDF":
             rdf_format = "xml"
             if "rdf_format" in kwargs and isinstance(kwargs["rdf_format"], str):
                 rdf_format = kwargs["rdf_format"]

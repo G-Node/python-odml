@@ -24,11 +24,6 @@ from .. import format as ofmt
 from ..info import FORMAT_VERSION
 from .parser_utils import InvalidVersionException, ParserException, odml_tuple_export
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 XML_HEADER = """<?xml version="1.0" encoding="UTF-8"?>"""
 EXTERNAL_STYLE_HEADER = """<?xml-stylesheet  type="text/xsl" href="odmlDocument.xsl"?>"""
@@ -86,7 +81,7 @@ def to_csv(val):
     """
     # Make sure all individual values do not contain
     # leading or trailing whitespaces.
-    unicode_values = list(map(unicode.strip, map(unicode, val)))
+    unicode_values = list(map(str.strip, map(str, val)))
     stream = StringIO()
     writer = csv.writer(stream, dialect="excel")
     writer.writerow(unicode_values)
@@ -172,10 +167,7 @@ class XMLWriter:
                         ele = XMLWriter.save_element(curr_val)
                         cur.append(ele)
                 else:
-                    if sys.version_info < (3,):
-                        ele = E(k, unicode(val))
-                    else:
-                        ele = E(k, str(val))
+                    ele = E(k, str(val))
                     cur.append(ele)
         return cur
 
@@ -205,10 +197,7 @@ class XMLWriter:
                                 tag: '<xsl:template match="odML">[custom]</xsl:template>'.
         """
         # calculate the data before opening the file in case we get any exception
-        if sys.version_info < (3,):
-            data = unicode(self).encode('utf-8')
-        else:
-            data = str(self)
+        data = str(self)
 
         with open(filename, "w") as file:
             file.write("%s\n" % XML_HEADER)
@@ -306,7 +295,7 @@ class XMLReader(object):
         doc = self.parse_element(root)
 
         # Provide original file name via the in memory document
-        if isinstance(xml_file, unicode):
+        if isinstance(xml_file, str):
             doc.origin_file_name = basename(xml_file)
 
         return doc

@@ -5,23 +5,18 @@ from datetime import datetime as dt, date, time
 from odml import Property, Section, Document
 from odml.tools.xmlparser import XMLReader, XMLWriter
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 class TestInferType(unittest.TestCase):
 
     def test_string(self):
         prop = Property("test", value="some_string")
         self.assertEqual(prop.dtype, "string")
-        self.assertIsInstance(prop.values[0], unicode)
+        self.assertIsInstance(prop.values[0], str)
 
     def test_text(self):
         prop = Property("test", value="some\nstring")
         self.assertEqual(prop.dtype, "text")
-        self.assertIsInstance(prop.values[0], unicode)
+        self.assertIsInstance(prop.values[0], str)
 
     def test_int(self):
         prop = Property("test", value=111)
@@ -70,18 +65,18 @@ class TestInferType(unittest.TestCase):
         sec.append(Property("timeprop", dt.now().time()))
         sec.append(Property("boolprop", True))
 
-        str_doc = unicode(XMLWriter(doc))
+        str_doc = str(XMLWriter(doc))
 
         new_doc = XMLReader().from_string(str_doc)
         new_sec = new_doc.sections[0]
 
         prop = new_sec.properties["strprop"]
         self.assertEqual(prop.dtype, "string")
-        self.assertIsInstance(prop.values[0], unicode)
+        self.assertIsInstance(prop.values[0], str)
 
         prop = new_sec.properties["txtprop"]
         self.assertEqual(prop.dtype, "text")
-        self.assertIsInstance(prop.values[0], unicode)
+        self.assertIsInstance(prop.values[0], str)
 
         prop = new_sec.properties["intprop"]
         self.assertEqual(prop.dtype, "int")

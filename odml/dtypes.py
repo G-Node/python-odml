@@ -10,11 +10,6 @@ from enum import Enum
 
 self = sys.modules[__name__].__dict__
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 FORMAT_DATE = "%Y-%m-%d"
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"
 FORMAT_TIME = "%H:%M:%S"
@@ -103,7 +98,7 @@ def valid_type(dtype):
     if dtype is None:
         return True
 
-    if not isinstance(dtype, str) and not isinstance(dtype, unicode):
+    if not isinstance(dtype, str):
         return False
 
     dtype = dtype.lower()
@@ -158,7 +153,7 @@ def set(value, dtype=None):
         if isinstance(value, str):
             return str_set(value)
     else:
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, str):
             return str_set(value)
     return self.get(dtype + "_set", str_set)(value)
 
@@ -205,9 +200,6 @@ def str_get(string):
     # Do not stringify empty list or dict but make sure boolean False gets through.
     if string in [None, "", [], {}]:
         return default_values("string")
-
-    if sys.version_info < (3, 0):
-        return unicode(string)
 
     return str(string)
 
@@ -296,7 +288,7 @@ def boolean_get(string):
     if string in [None, "", [], {}]:
         return default_values("boolean")
 
-    if isinstance(string, (unicode, str)):
+    if isinstance(string, str):
         string = string.lower()
 
     truth = ["true", "1", True, "t"]  # be kind, spec only accepts True / False

@@ -39,11 +39,6 @@ import odml
 from odml.tools.odmlparser import ODMLReader, ODMLWriter
 from odml.tools.converters import VersionConverter as VerConf
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 def run_rdf_export(odml_file, export_dir):
     """
@@ -75,7 +70,7 @@ def run_conversion(file_list, output_dir, rdf_dir, report, source_format="XML"):
     # Exceptions are kept as broad as possible to ignore any non-odML or
     # invalid odML files and ensuring everything that can be will be converted.
     for curr_file in file_list:
-        file_path = unicode(curr_file.absolute())
+        file_path = str(curr_file.absolute())
         report.write("[Info] Handling file '%s'\n" % file_path)
         # When loading the current file succeeds, it is
         # a recent odML format file and can be exported

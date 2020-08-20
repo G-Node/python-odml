@@ -19,11 +19,6 @@ from ...format import Document, Section, Property
 from ...info import FORMAT_VERSION
 from ...terminology import Terminologies, REPOSITORY_BASE
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 class VersionConverter(object):
     """
