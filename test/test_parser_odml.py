@@ -68,6 +68,39 @@ class TestOdmlParser(unittest.TestCase):
 
         self.assertEqual(xml_doc, self.odml_doc)
 
+    def test_xml_file_kwargs(self):
+        # Check unsupported kwargs
+        self.xml_writer.write_file(self.odml_doc, self.xml_file,
+                                   invalid_a=False, invalid_b=None, invalid_c="naughty")
+        xml_doc = self.xml_reader.from_file(self.xml_file)
+
+        self.assertEqual(xml_doc, self.odml_doc)
+
+        # Check invalid local_style
+        self.xml_writer.write_file(self.odml_doc, self.xml_file, local_style="this is not good")
+        xml_doc = self.xml_reader.from_file(self.xml_file)
+
+        self.assertEqual(xml_doc, self.odml_doc)
+
+        # Check valid local_style
+        self.xml_writer.write_file(self.odml_doc, self.xml_file, local_style=True)
+        xml_doc = self.xml_reader.from_file(self.xml_file)
+
+        self.assertEqual(xml_doc, self.odml_doc)
+
+        # Check invalid custom template
+        self.xml_writer.write_file(self.odml_doc, self.xml_file, custom_template=True)
+        xml_doc = self.xml_reader.from_file(self.xml_file)
+
+        self.assertEqual(xml_doc, self.odml_doc)
+
+        # Check custom template
+        custom = "<xsl:template></xsl:template>"
+        self.xml_writer.write_file(self.odml_doc, self.xml_file, custom_template=custom)
+        xml_doc = self.xml_reader.from_file(self.xml_file)
+
+        self.assertEqual(xml_doc, self.odml_doc)
+
     def test_yaml_file(self):
         self.yaml_writer.write_file(self.odml_doc, self.yaml_file)
         yaml_doc = self.yaml_reader.from_file(self.yaml_file)
