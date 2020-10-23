@@ -89,23 +89,29 @@ class ODMLWriter:
                                                           custom_template=custom_template)
         else:
             with open(filename, 'w') as file:
-                file.write(self.to_string(odml_document))
+                file.write(self.to_string(odml_document, **kwargs))
 
-    def to_string(self, odml_document):
+    def to_string(self, odml_document, **kwargs):
         """
         Parses an odml.Document to a string in the file format
         defined in the ODMLWriter.parser property. Supported formats are
         JSON, YAML and RDF.
 
         :param odml_document: odml.Document.
+        :param kwargs: Writer backend keyword arguments. Refer to the documentation
+                       of the available parsers to check which arguments are supported.
+
         :return: string containing the content of the odml.Document in the
                  specified format.
         """
         string_doc = ''
 
         if self.parser == "RDF":
-            # Use XML as default output format for now.
-            string_doc = RDFWriter(odml_document).get_rdf_str("xml")
+            rdf_format = "xml"
+            if "rdf_format" in kwargs and isinstance(kwargs["rdf_format"], str):
+                rdf_format = kwargs["rdf_format"]
+
+            string_doc = RDFWriter(odml_document).get_rdf_str(rdf_format)
         else:
             self.parsed_doc = DictWriter().to_dict(odml_document)
 
