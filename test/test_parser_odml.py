@@ -176,6 +176,22 @@ class TestOdmlParser(unittest.TestCase):
         self.assertIn(doc.sections[2].properties[1].name, rdf_sec3.properties)
         self.assertIn(doc.sections[2].properties[1].name, rdf_sec3.properties)
 
+    def test_rdf_file_kwargs(self):
+
+        # Check unsupported kwarg
+        self.rdf_writer.write_file(self.odml_doc, self.rdf_file,
+                                   invalid_a=False, invalid_b=None, invalid_c="naughty")
+        self.rdf_reader.from_file(self.rdf_file, "xml")
+
+        # Check unsupported backend
+        with self.assertRaises(ValueError):
+            self.rdf_writer.write_file(self.odml_doc, self.rdf_file, rdf_format="i do not exist")
+
+        # Check supported backend different from xml
+        rdf_format = "turtle"
+        self.rdf_writer.write_file(self.odml_doc, self.rdf_file, rdf_format=rdf_format)
+        self.rdf_reader.from_file(self.rdf_file, rdf_format)
+
     def test_xml_string(self):
         # Read from string
         author = "HPL"
