@@ -33,8 +33,10 @@ def save(obj, filename, backend="xml", **kwargs):
                      should be saved.
     :param backend: Format in which the odML document is to be saved.
                     The default format is XML.
-    :param kwargs: Writer backend keyword arguments. Refer to the documentation
-                   of the available parsers to check which arguments are supported.
+    :param kwargs: Writer backend keyword arguments e.g. for adding specific
+                   stylesheets for xml documents or specifying an RDF format.
+                   Refer to the documentation of the available parsers to check
+                   which arguments are supported.
     """
     writer = ODMLWriter(backend)
     if "." not in filename.split(os.pathsep)[-1]:

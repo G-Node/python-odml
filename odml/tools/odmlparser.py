@@ -98,8 +98,10 @@ class ODMLWriter:
         JSON, YAML and RDF.
 
         :param odml_document: odml.Document.
-        :param kwargs: Writer backend keyword arguments. Refer to the documentation
-                       of the available parsers to check which arguments are supported.
+        :param kwargs: Writer backend keyword arguments e.g. for adding specific
+                       stylesheets for xml documents or specifying an RDF format.
+                       Refer to the documentation of the available parsers to check
+                       which arguments are supported.
 
         :return: string containing the content of the odml.Document in the
                  specified format.
