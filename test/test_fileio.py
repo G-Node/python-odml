@@ -27,6 +27,14 @@ class TestTypes(unittest.TestCase):
         odml.save(doc, file_name)
         os.remove(file_name)
 
+    def test_save_kwargs(self):
+        doc = odml.load(self.file)
+        file_name = "%s_copy" % self.file
+
+        # Test unsupported kwarg does not raise an exception
+        odml.save(doc, file_name, unsupported_kwarg="I do not matter")
+        os.remove(file_name)
+
     def test_display(self):
         doc = odml.load(self.file)
         odml.display(doc)

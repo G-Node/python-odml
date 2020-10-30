@@ -46,7 +46,7 @@ class ODMLWriter:
 
         self.parser = parser
 
-    def write_file(self, odml_document, filename):
+    def write_file(self, odml_document, filename, **kwargs):
         """
         Writes an odml.Document to a file using the format
         defined in the ODMLWriter.parser property. Supported formats are
@@ -55,6 +55,8 @@ class ODMLWriter:
 
         :param odml_document: odml.Document.
         :param filename: path and filename of the output file.
+        :param kwargs: Writer backend keyword arguments. Refer to the documentation
+                       of the available parsers to check which arguments are supported.
         """
 
         # Write document only if it does not contain validation errors.
@@ -74,30 +76,44 @@ class ODMLWriter:
             msg += " Run the Documents 'validate' method to access them.\n%s" % report
             warnings.warn(msg)
 
-        with open(filename, 'w') as file:
-            # Add XML header to support odML stylesheets.
-            if self.parser == 'XML':
-                file.write(xmlparser.XMLWriter.header)
+        # Allow kwargs when writing XML documents to support individual style sheets
+        if self.parser == 'XML':
+            local_style = False
+            custom_template = None
 
-            file.write(self.to_string(odml_document))
+            if "local_style" in kwargs and isinstance(kwargs["local_style"], bool):
+                local_style = kwargs["local_style"]
+            if "custom_template" in kwargs and isinstance(kwargs["custom_template"], str):
+                custom_template = kwargs["custom_template"]
+            xmlparser.XMLWriter(odml_document).write_file(filename, local_style=local_style,
+                                                          custom_template=custom_template)
+        else:
+            with open(filename, 'w') as file:
+                file.write(self.to_string(odml_document, **kwargs))
 
-    def to_string(self, odml_document):
+    def to_string(self, odml_document, **kwargs):
         """
         Parses an odml.Document to a string in the file format
         defined in the ODMLWriter.parser property. Supported formats are
-        JSON, XML, YAML and RDF.
+        JSON, YAML and RDF.
 
         :param odml_document: odml.Document.
+        :param kwargs: Writer backend keyword arguments e.g. for adding specific
+                       stylesheets for xml documents or specifying an RDF format.
+                       Refer to the documentation of the available parsers to check
+                       which arguments are supported.
+
         :return: string containing the content of the odml.Document in the
                  specified format.
         """
         string_doc = ''
 
-        if self.parser == 'XML':
-            string_doc = unicode(xmlparser.XMLWriter(odml_document))
-        elif self.parser == "RDF":
-            # Use XML as default output format for now.
-            string_doc = RDFWriter(odml_document).get_rdf_str("xml")
+        if self.parser == "RDF":
+            rdf_format = "xml"
+            if "rdf_format" in kwargs and isinstance(kwargs["rdf_format"], str):
+                rdf_format = kwargs["rdf_format"]
+
+            string_doc = RDFWriter(odml_document).get_rdf_str(rdf_format)
         else:
             self.parsed_doc = DictWriter().to_dict(odml_document)
 

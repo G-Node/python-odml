@@ -25,7 +25,7 @@ def load(filename, backend="xml", show_warnings=True):
     return reader.from_file(filename)
 
 
-def save(obj, filename, backend="xml"):
+def save(obj, filename, backend="xml", **kwargs):
     """
     Save an open odML document to file of a specified format.
     :param obj: odML document do be saved.
@@ -33,11 +33,15 @@ def save(obj, filename, backend="xml"):
                      should be saved.
     :param backend: Format in which the odML document is to be saved.
                     The default format is XML.
+    :param kwargs: Writer backend keyword arguments e.g. for adding specific
+                   stylesheets for xml documents or specifying an RDF format.
+                   Refer to the documentation of the available parsers to check
+                   which arguments are supported.
     """
     writer = ODMLWriter(backend)
     if "." not in filename.split(os.pathsep)[-1]:
         filename = filename + ".%s" % backend
-    return writer.write_file(obj, filename)
+    return writer.write_file(obj, filename, **kwargs)
 
 
 def display(obj, backend="xml"):
