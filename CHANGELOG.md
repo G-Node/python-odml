@@ -3,6 +3,16 @@
 Used to document all changes from previous releases and collect changes 
 until the next release.
 
+# Latest
+
+# Dropping Python 2 support
+
+Python 2 has reached end of life. The codebase has been cleaned from Python 2 and Python 3 compatible code, all tests now run exclusively on Python 3 versions.
+
+# Features
+- `odml.save` and `odmlparser.ODMLWriter` now support additional keywords. See issue #402 and PR #403 for details.
+
+
 # Version 1.5.1
 
 # RDF Subclassing feature
