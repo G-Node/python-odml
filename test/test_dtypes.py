@@ -1,24 +1,10 @@
 import datetime
 import unittest
 
-from sys import version_info
-
 import odml.dtypes as typ
 
 
 class TestTypes(unittest.TestCase):
-
-    def assert_local_regexp(self, text, regular_expression):
-        """
-        Python 2 is dead and assertRegexpMatches is deprecated and
-        will be removed, but keep compatibility until py 2 support is
-        fully dropped.
-        """
-
-        if version_info.major < 3:
-            self.assertRegexpMatches(text, regular_expression)
-        else:
-            self.assertRegex(text, regular_expression)
 
     def test_valid_type(self):
         # Test None
@@ -47,8 +33,8 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.date_get(""), datetime.date)
 
         reg = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])$"
-        self.assert_local_regexp(typ.date_get(None).strftime(typ.FORMAT_DATE), reg)
-        self.assert_local_regexp(typ.date_get("").strftime(typ.FORMAT_DATE), reg)
+        self.assertRegex(typ.date_get(None).strftime(typ.FORMAT_DATE), reg)
+        self.assertRegex(typ.date_get("").strftime(typ.FORMAT_DATE), reg)
 
         date = datetime.date(2011, 12, 1)
         date_string = '2011-12-01'
@@ -79,8 +65,8 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.time_get(""), datetime.time)
 
         reg = "^[0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assert_local_regexp(typ.time_get(None).strftime(typ.FORMAT_TIME), reg)
-        self.assert_local_regexp(typ.time_get("").strftime(typ.FORMAT_TIME), reg)
+        self.assertRegex(typ.time_get(None).strftime(typ.FORMAT_TIME), reg)
+        self.assertRegex(typ.time_get("").strftime(typ.FORMAT_TIME), reg)
 
         time = datetime.time(12, 34, 56)
         time_string = '12:34:56'
@@ -111,8 +97,8 @@ class TestTypes(unittest.TestCase):
         self.assertIsInstance(typ.datetime_get(""), datetime.datetime)
 
         reg = "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) [0-5][0-9]:[0-5][0-9]:[0-5][0-9]$"
-        self.assert_local_regexp(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), reg)
-        self.assert_local_regexp(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), reg)
+        self.assertRegex(typ.datetime_get(None).strftime(typ.FORMAT_DATETIME), reg)
+        self.assertRegex(typ.datetime_get("").strftime(typ.FORMAT_DATETIME), reg)
 
         date = datetime.datetime(2011, 12, 1, 12, 34, 56)
         date_string = '2011-12-01 12:34:56'

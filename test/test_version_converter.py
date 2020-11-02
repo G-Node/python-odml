@@ -11,11 +11,6 @@ from odml.terminology import REPOSITORY_BASE
 from odml.tools.converters import VersionConverter
 from .util import ODML_CACHE_DIR as CACHE_DIR, create_test_dir, TEST_RESOURCES_DIR as RES_DIR
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 class TestVersionConverter(unittest.TestCase):
     def setUp(self):
@@ -119,7 +114,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(prop.find("unit"), None)
         self.assertEqual(prop.find("type"), None)
 
-        file = io.StringIO(unicode(self.doc))
+        file = io.StringIO(str(self.doc))
         converter = self.VC(file)
         tree = converter._convert(converter._parse_xml())
         root = tree.getroot()
@@ -182,7 +177,7 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>
         """ % local_old_url
 
-        file = io.StringIO(unicode(doc))
+        file = io.StringIO(str(doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
@@ -198,7 +193,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertEqual(len(root.findall("value")), 0)
 
         # Test warning message on non-importable repository
-        file = io.StringIO(unicode(invalid_repo_doc))
+        file = io.StringIO(str(invalid_repo_doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
@@ -206,7 +201,7 @@ class TestVersionConverter(unittest.TestCase):
         self.assertIn("not odML v1.1 compatible", converter.conversion_log[0])
 
         # Test warning message on old repository
-        file = io.StringIO(unicode(old_repo_doc))
+        file = io.StringIO(str(old_repo_doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
@@ -261,7 +256,7 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>
         """ % (local_url, local_url)
 
-        file = io.StringIO(unicode(doc))
+        file = io.StringIO(str(doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
@@ -311,7 +306,7 @@ class TestVersionConverter(unittest.TestCase):
                   </section>
                 </odML>""" % local_old_url
 
-        file = io.StringIO(unicode(doc))
+        file = io.StringIO(str(doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         sec = conv_doc.getroot().findall("section")
@@ -327,7 +322,7 @@ class TestVersionConverter(unittest.TestCase):
                   </section>
                 </odML>""" % local_old_url
 
-        file = io.StringIO(unicode(doc))
+        file = io.StringIO(str(doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         sec = conv_doc.getroot().findall("section")
@@ -368,7 +363,7 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>
         """
 
-        file = io.StringIO(unicode(doc))
+        file = io.StringIO(str(doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()
@@ -533,7 +528,7 @@ class TestVersionConverter(unittest.TestCase):
                 </odML>
         """
 
-        file = io.StringIO(unicode(doc))
+        file = io.StringIO(str(doc))
         converter = self.VC(file)
         conv_doc = converter._convert(converter._parse_xml())
         root = conv_doc.getroot()

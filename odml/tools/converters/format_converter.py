@@ -33,11 +33,6 @@ from .. import RDFWriter
 from . import VersionConverter
 from ..parser_utils import RDF_CONVERSION_FORMATS
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 CONVERSION_FORMATS = copy.deepcopy(RDF_CONVERSION_FORMATS)
 CONVERSION_FORMATS.update({

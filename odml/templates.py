@@ -3,7 +3,6 @@ Handles (deferred) loading of odML templates
 """
 
 import os
-import sys
 import tempfile
 import threading
 try:
@@ -65,8 +64,7 @@ def cache_load(url):
             dati.fromtimestamp(os.path.getmtime(cache_file)) < (dati.now() - CACHE_AGE):
         try:
             data = urllib2.urlopen(url).read()
-            if sys.version_info.major > 2:
-                data = data.decode("utf-8")
+            data = data.decode("utf-8")
         except (ValueError, URLError) as exc:
             msg = "Failed to load resource from '%s': %s" % (url, exc)
             exc.args = (msg,)  # needs to be a tuple

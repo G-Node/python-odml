@@ -3,8 +3,6 @@ The module provides general format information and mappings of
 XML and RDF attributes to their Python class equivalents.
 """
 
-import sys
-
 from rdflib import Namespace
 
 import odml
@@ -76,12 +74,8 @@ class Format(object):
         if self._rev_map is None:
             # create the reverse map only if requested
             self._rev_map = {}
-            if sys.version_info < (3, 0):
-                for k, val in self._map.iteritems():
-                    self._rev_map[val] = k
-            else:
-                for k, val in self._map.items():
-                    self._rev_map[val] = k
+            for k, val in self._map.items():
+                self._rev_map[val] = k
 
         return self._rev_map.get(name)
 

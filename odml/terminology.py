@@ -4,7 +4,6 @@ Handles (deferred) loading of terminology data and access to it for odML documen
 
 import datetime
 import os
-import sys
 import tempfile
 import threading
 try:
@@ -47,8 +46,7 @@ def cache_load(url, replace_file=False):
             datetime.datetime.now() - CACHE_AGE:
         try:
             data = urllib2.urlopen(url).read()
-            if sys.version_info.major > 2:
-                data = data.decode("utf-8")
+            data = data.decode("utf-8")
         except Exception as exc:
             print("failed loading '%s': %s" % (url, exc))
             return

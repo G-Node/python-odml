@@ -14,20 +14,12 @@ from odml.info import FORMAT_VERSION
 from odml.tools import xmlparser
 from .util import create_test_dir
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 def dump(doc, filename):
     """
     Helper function to dump a document for debugging purposes
     """
-    if sys.version_info < (3, 0):
-        odml_string = unicode(xmlparser.XMLWriter(doc))
-    else:
-        odml_string = str(xmlparser.XMLWriter(doc))
+    odml_string = str(xmlparser.XMLWriter(doc))
     open(filename, "w").write(odml_string)
 
 
@@ -150,10 +142,7 @@ class SampleFileOperationTest(unittest.TestCase):
 
     def test_xml_writer_version(self):
         doc = odml.Document()
-        if sys.version_info < (3, 0):
-            val = unicode(xmlparser.XMLWriter(doc))
-        else:
-            val = str(xmlparser.XMLWriter(doc))
+        val = str(xmlparser.XMLWriter(doc))
 
         self.assertIn('version="%s"' % FORMAT_VERSION, val)
         doc = xmlparser.XMLReader().from_string(val)
@@ -174,7 +163,7 @@ class SampleFileOperationTest(unittest.TestCase):
 
         for Writer, Reader in modules:
             doc = Writer(self.doc)
-            doc = StringIO(unicode(doc))
+            doc = StringIO(str(doc))
             doc = Reader().from_file(doc)
             self.assertEqual(doc, self.doc)
 

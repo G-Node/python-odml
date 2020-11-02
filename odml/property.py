@@ -29,11 +29,6 @@ def odml_tuple_import(t_count, new_value):
     :param new_value: string containing an odml style tuple list.
     :return: list of odml style tuples.
     """
-    try:
-        unicode = unicode
-    except NameError:
-        unicode = str
-
     if not isinstance(new_value, (list, tuple)) and \
             not isinstance(new_value[0], (list, tuple)):
         new_value = [new_value]
@@ -48,9 +43,6 @@ def odml_tuple_import(t_count, new_value):
                     n_val_str += str(tuple_val) + "; "
                 return_value += [n_val_str[:-2] + ")"]
         else:
-            #non-unicode handling needed for python2
-            if len(n_val) != 1 and not isinstance(n_val[0], unicode):
-                n_val = n_val.encode('utf-8')
             cln = n_val.strip()
             br_check = cln.count("(") == cln.count(")")
             sep_check = t_count == 1 or cln.count("(") == (cln.count(";") / (t_count - 1))
