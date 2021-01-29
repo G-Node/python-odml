@@ -20,7 +20,7 @@ class TestXMLWriter(unittest.TestCase):
 
         doc = odml.Document()
         sec = doc.create_section(name="sec", type="test")
-        _ = sec.create_property(name="prop", value=['a', 'b', 'c'])
+        _ = sec.create_property(name="prop", value=['a', 'b', 'c', 'μ'])
 
         self.doc = doc
         self.writer = XMLWriter(doc)
