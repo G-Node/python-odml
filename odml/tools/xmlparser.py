@@ -199,7 +199,7 @@ class XMLWriter:
         # calculate the data before opening the file in case we get any exception
         data = str(self)
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding = "utf-8") as file:
             file.write("%s\n" % XML_HEADER)
             if not local_style and not custom_template:
                 file.write("%s\n" % EXTERNAL_STYLE_HEADER)
