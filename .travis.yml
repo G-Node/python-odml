@@ -65,9 +65,10 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       eval "$(pyenv init -)";
       eval "$(pyenv virtualenv-init -)";
-      pyenv install $OSXENV;
-      pyenv virtualenv $OSXENV venv;
-      pyenv activate venv;
+      # pyenv install $OSXENV;
+      pyenv global $OSXENV;
+      # pyenv virtualenv $OSXENV venv;
+      pyenv activate $OSXENV;
       which python;
       python --version;
       which pip;
