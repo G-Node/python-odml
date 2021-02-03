@@ -38,6 +38,13 @@ matrix:
       env:
         - OSXENV=3.8.0
 
+addons:
+  homebrew:
+    packages:
+      - pyenv
+      - pyenv-virtualenv
+    update: false
+
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
   - if [ $PYVER = 3 ]; then
@@ -53,10 +60,6 @@ install:
     fi;
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew update;
-      brew install pyenv;
-      brew upgrade pyenv;
-      brew install pyenv-virtualenv;
       eval "$(pyenv init -)";
       eval "$(pyenv virtualenv-init -)";
       pyenv install $OSXENV;
