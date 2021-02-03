@@ -3,6 +3,9 @@ dist: trusty
 
 language: python
 
+osx_image:
+  - xcode12.2
+ 
 matrix:
   allow_failures:
     - os: linux
@@ -76,6 +79,7 @@ install:
 
 script:
   - which $PYCMD
+  - $PYCMD --version
   - $PYCMD setup.py build
   - if [ $COVERALLS = 1 ]; then
         coverage${PYVER} run --source=odml setup.py test && coverage${PYVER} report -m;
