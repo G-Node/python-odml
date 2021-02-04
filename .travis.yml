@@ -5,7 +5,7 @@ language: python
 
 osx_image:
   - xcode12.2
- 
+
 matrix:
   allow_failures:
     - os: linux
@@ -65,9 +65,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       eval "$(pyenv init -)";
       eval "$(pyenv virtualenv-init -)";
-      # pyenv install $OSXENV;
       pyenv global $OSXENV;
-      # pyenv virtualenv $OSXENV venv;
       pyenv activate $OSXENV;
       which python;
       python --version;
