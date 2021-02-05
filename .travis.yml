@@ -23,16 +23,16 @@ matrix:
         homebrew:
           packages:
             - python3
-          update: false
+          update: true
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
-      export PYCMD = python${pymajor};
-      export PIPCMD = pip${pymajor};
+      export PYCMD=python${pymajor};
+      export PIPCMD=pip${pymajor};
     else
-      export PYCMD = python;
-      export PIPCMD = pip;
+      export PYCMD=python;
+      export PIPCMD=pip;
     fi;
 
 install:  
