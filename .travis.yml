@@ -4,15 +4,26 @@ language: python
 
 osx_image: xcode12.2
 
-os:
-  - linux
-  - osx
-
-addons:
-  homebrew:
-    packages:
-      - python3
-    update: false
+matrix:
+  include:
+    - python: "3.6"
+      os: linux
+      dist: xenial
+      env: pymajor=3
+      
+    - python: "3.7"
+      os: linux
+      env: pymajor=3
+      dist: xenial
+      
+    - language: generic
+      os: osx
+      env: pymajor=3
+      addons:
+        homebrew:
+          packages:
+            - python3
+          update: false
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
