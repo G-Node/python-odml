@@ -1,43 +1,18 @@
-dist: trusty
+dist: xenial
 
 language: python
 
-os:
-  - linux:
-    python: "3.5"
-    
-  - linux:
-    python: "3.6"
-    env: COVERALLS=1
-    
-  - linux:
-    python: "3.7"
-    dist: xenial
-    
-  - linux
-    python: "3.8"
-    dist: xenial
-
-  - linux
-    python: "3.9-dev"
-    dist: bionic
-    
-  - osx:  
-    env: pymajor = 3
-
 osx_image: xcode12.2
+
+os:
+  - linux
+  - osx
 
 addons:
   homebrew:
     packages:
       - python3
     update: false
-
-matrix:
-  allow_failures:
-    - os: linux
-      python: "3.9-dev"
-      dist: bionic
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ];
@@ -64,7 +39,7 @@ script:
     fi;
 
 after_success:
-- if [ $COVERALLS = 1 ];
+- if [ "$TRAVIS_OS_NAME" == "linux" ];
   then
     coveralls;
   fi;
