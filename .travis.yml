@@ -2,44 +2,53 @@ dist: trusty
 
 language: python
 
+osx_image: xcode12.2
+
+os:
+  - linux:
+    python: "3.5"
+    
+  - linux:
+    python: "3.6"
+    env: COVERALLS=1
+    
+  - linux:
+    python: "3.7"
+    dist: xenial
+    
+  - linux
+    python: "3.8"
+    dist: xenial
+
+  - linux
+    python: "3.9-dev"
+    dist: bionic
+    
+  - osx:  
+    env: pymajor = 3
+
+addons:
+  homebrew:
+    packages:
+      - python3
+    update: false
+
 matrix:
   allow_failures:
     - os: linux
       python: "3.9-dev"
       dist: bionic
 
-  include:
-    - os: linux
-      python: "3.5"
-    - os: linux
-      python: "3.6"
-      env: COVERALLS=1
-    - os: linux
-      python: "3.7"
-      dist: xenial
-    - os: linux
-      python: "3.8"
-      dist: xenial
-    - os: linux
-      python: "3.9-dev"
-      dist: bionic
-
-    - os: osx
-      language: generic
-      osx_image: xcode12.2
-      env: pymajor=3
-      addons:
-        homebrew:
-          packages:
-            - python3
-          update: false
-
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    export PYCMD = python${pymajor}
-    export PIPCMD = pip${pymajor}
+  - if [ "$TRAVIS_OS_NAME" == "osx" ];
+    then
+      export PYCMD = python${pymajor};
+      export PIPCMD = pip${pymajor};
+    else
+      export PYCMD = python;
+      export PIPCMD = pip;
     fi;
-    
+
 install:  
   - $PIPCMD install lxml enum34 pyyaml rdflib owlrl requests
 
@@ -47,11 +56,15 @@ script:
   - which $PYCMD
   - $PYCMD --version
   - $PYCMD setup.py build
-  - if [ $COVERALLS = 1 ]; then
-        coverage${PYVER} run --source=odml setup.py test && coverage${PYVER} report -m;
+  - if [ $COVERALLS = 1 ];
+    then
+      coverage${PYVER} run --source=odml setup.py test && coverage${PYVER} report -m;
     else
-        $PYCMD setup.py test;
+      $PYCMD setup.py test;
     fi;
 
 after_success:
-- if [ $COVERALLS = 1 ]; then coveralls; fi;
+- if [ $COVERALLS = 1 ];
+  then
+    coveralls;
+  fi;
