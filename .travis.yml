@@ -1,10 +1,6 @@
-sudo: required
 dist: trusty
 
 language: python
-
-osx_image:
-  - xcode12.2
 
 matrix:
   allow_failures:
@@ -30,50 +26,21 @@ matrix:
 
     - os: osx
       language: generic
-      env:
-        - OSXENV=3.6.0
-    - os: osx
-      language: generic
-      env:
-        - OSXENV=3.7.0
-    - os: osx
-      language: generic
-      env:
-        - OSXENV=3.8.0
+      osx_image: xcode12.2
+      env: pymajor=3
+      addons:
+        homebrew:
+          packages:
+            - python3
+          update: false
 
-addons:
-  homebrew:
-    packages:
-      - pyenv
-      - pyenv-virtualenv
-    update: false
-
-install:
-  - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
-  - if [ $PYVER = 3 ]; then
-      export PYCMD=python3;
-      export PIPCMD=pip3;
-    else
-      export PYCMD=python;
-      export PIPCMD=pip;
-    fi;
-
-  - if [ $COVERALLS = 1 ]; then
-        $PIPCMD install --upgrade coveralls;
-    fi;
-
+before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      eval "$(pyenv init -)";
-      eval "$(pyenv virtualenv-init -)";
-      pyenv global $OSXENV;
-      pyenv activate $OSXENV;
-      which python;
-      python --version;
-      which pip;
-      export PYCMD=python;
-      export PIPCMD=pip;
+    export PYCMD = python${pymajor}
+    export PIPCMD = pip${pymajor}
     fi;
-
+    
+install:  
   - $PIPCMD install lxml enum34 pyyaml rdflib owlrl requests
 
 script:
