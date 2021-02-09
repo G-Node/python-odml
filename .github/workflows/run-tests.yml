@@ -31,3 +31,24 @@ jobs:
           pip install -r requirements-test.txt
       - name: Run tests
         run: pytest
+  run-coverall:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Install dependencies
+        run: |
+          python setup.py install
+          pip install pytest coveralls
+      - name: Create coverage
+        run: |
+          coverage run --source=bren -m pytest test/ --ignore test/test_dependencies.py
+      - name: Submit to coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls --service=github
