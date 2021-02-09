@@ -25,26 +25,6 @@ matrix:
       python: "3.9-dev"
       dist: bionic
 
-    - os: osx
-      language: generic
-      env:
-        - OSXENV=3.6.0
-    - os: osx
-      language: generic
-      env:
-        - OSXENV=3.7.0
-    - os: osx
-      language: generic
-      env:
-        - OSXENV=3.8.0
-
-addons:
-  homebrew:
-    packages:
-      - pyenv
-      - pyenv-virtualenv
-    update: false
-
 install:
   - export PYVER=${TRAVIS_PYTHON_VERSION:0:1}
   - if [ $PYVER = 3 ]; then
@@ -57,19 +37,6 @@ install:
 
   - if [ $COVERALLS = 1 ]; then
         $PIPCMD install --upgrade coveralls;
-    fi;
-
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      eval "$(pyenv init -)";
-      eval "$(pyenv virtualenv-init -)";
-      pyenv install $OSXENV;
-      pyenv virtualenv $OSXENV venv;
-      pyenv activate venv;
-      which python;
-      python --version;
-      which pip;
-      export PYCMD=python;
-      export PIPCMD=pip;
     fi;
 
   - $PIPCMD install lxml enum34 pyyaml rdflib owlrl requests
