@@ -47,7 +47,7 @@ jobs:
           pip install pytest coveralls
       - name: Create coverage
         run: |
-          coverage run --source=bren -m pytest test/ --ignore test/test_dependencies.py
+          coverage run --source=odml -m pytest test/
       - name: Submit to coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
