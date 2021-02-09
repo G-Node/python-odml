@@ -30,9 +30,11 @@ packages = [
 with open('README.md') as f:
     description_text = f.read()
 
-install_req = ["lxml", "pyyaml>=5.1", "rdflib", "docopt", "pathlib"]
+# pyparsing needs to be pinned to 2.4.7 for the time being. setup install fetches a pre-release
+# package that currently results in issues with the rdflib library.
+install_req = ["lxml", "pyyaml>=5.1", "rdflib", "docopt", "pathlib", "pyparsing==2.4.7"]
 
-tests_req = ["owlrl", "requests"]
+tests_req = ["pytest", "owlrl", "requests"]
 
 if sys.version_info < (3, 4):
     install_req += ["enum34"]
