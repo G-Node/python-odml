@@ -28,6 +28,6 @@ jobs:
       - name: Install dependencies
         run: |
           python setup.py install
-          pip install owlrl requests pytest
+          pip install -r requirements-test.txt
       - name: Run tests
         run: pytest
