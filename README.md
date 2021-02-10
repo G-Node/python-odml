@@ -1,4 +1,4 @@
-[![Travis build](https://travis-ci.org/G-Node/python-odml.svg?branch=master)](https://travis-ci.org/G-Node/python-odml)
+[![gh actions tests](https://github.com/G-Node/python-odml/workflows/run-tests/badge.svg?branch=master)](https://github.com/G-Node/python-odml/actions)
 [![Build status](https://ci.appveyor.com/api/projects/status/br7pe6atlwdg5618/branch/master?svg=true)](https://ci.appveyor.com/project/G-Node/python-odml/branch/master)
 [![Test coverage](https://coveralls.io/repos/github/G-Node/python-odml/badge.svg?branch=master)](https://coveralls.io/github/G-Node/python-odml)
 [![PyPI version](https://img.shields.io/pypi/v/odml.svg)](https://pypi.org/project/odML/)
