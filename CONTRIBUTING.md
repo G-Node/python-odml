@@ -39,7 +39,7 @@ would stick to the following development workflow:
    The pull request message should explain the changes and reference the *issue* addressed by your code.
    Your pull request will be reviewed by one of our team members.
    Pull requests should never be merged by the author of the contribution, but by another team member.
-   Merge conflicts or errors reported by travis should be resolved by the original author before the request is merged.
+   Merge conflicts or errors reported by continous integration tools should be resolved by the original author before the request is merged.
 
 
 Google Summer of Code contributors

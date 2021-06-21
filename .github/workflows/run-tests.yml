@@ -1,8 +1,5 @@
 name: run-tests
 on:
-  # test cron by running it once a day at 01:00
-  schedule:
-  - cron:  '0 1 * * *'
   push:
     branches:
       - master
