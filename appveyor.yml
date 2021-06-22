@@ -31,8 +31,10 @@ init:
 build: false
 
 install:
-  - python -m pip install lxml enum34 pyyaml rdflib owlrl requests
+  - python -m pip install --upgrade pip setuptools wheel
+  - python -m pip install -r requirements-test.txt
+  - python -m pip install .
 
 test_script:
   - python --version
-  - python setup.py test
+  - python -m pytest -v
