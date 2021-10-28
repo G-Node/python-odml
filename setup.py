@@ -31,9 +31,11 @@ with open('README.md') as f:
 
 # pyparsing needs to be pinned to 2.4.7 for the time being. setup install fetches a pre-release
 # package that currently results in issues with the rdflib library.
-install_req = ["lxml", "pyyaml>=5.1", "rdflib", "docopt", "pathlib", "pyparsing==2.4.7"]
+install_req = ["lxml", "pyyaml>=5.1", "rdflib==5.0.0", "docopt", "pathlib", "pyparsing==2.4.7"]
 
-tests_req = ["pytest", "owlrl", "requests"]
+# owlrl depends on rdflib - the pinned version should be removed once the version pin has also been
+# removed from rdflib.
+tests_req = ["pytest", "owlrl==5.2.3", "requests"]
 
 setup(
     name='odML',
