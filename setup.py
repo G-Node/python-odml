@@ -1,6 +1,8 @@
 import json
 import os
 
+from sys import version_info as _python_version
+
 try:
     from setuptools import setup
 except ImportError as ex:
@@ -34,7 +36,7 @@ with open('README.md') as f:
 install_req = ["lxml", "pyyaml>=5.1", "rdflib==5.0.0", "docopt", "pathlib", "pyparsing==2.4.7"]
 
 # owlrl depends on rdflib - the pinned version should be removed once the version pin has also been
-# removed from rdflib.
+# removed from rdflib. Also needs to be updated in requirements-test.txt
 tests_req = ["pytest", "owlrl==5.2.3", "requests"]
 
 setup(
@@ -58,3 +60,13 @@ setup(
                                       'odmlconvert=odml.scripts.odml_convert:main',
                                       'odmlview=odml.scripts.odml_view:main']}
 )
+
+# Make this the last thing people read after a setup.py install
+if _python_version.major < 3:
+    msg = "\n\nPython 2 has been deprecated.\n"
+    msg += "\todML support for Python 2 will be dropped August 2020."
+    print(msg)
+elif _python_version.major == 3 and _python_version.minor < 6:
+    msg = "\n\nThis package is not tested with your Python version. "
+    msg += "\n\tPlease consider upgrading to the latest Python distribution."
+    print(msg)
