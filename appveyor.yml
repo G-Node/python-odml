@@ -13,6 +13,10 @@ environment:
     - PYTHON: "C:\\Python38"
       PYVER: 3
       BITS: 32
+    - PYTHON: "C:\\Python39"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYVER: 3
+      BITS: 32
     - PYTHON: "C:\\Python36-x64"
       PYVER: 3
       BITS: 64
@@ -20,6 +24,10 @@ environment:
       PYVER: 3
       BITS: 64
     - PYTHON: "C:\\Python38-x64"
+      PYVER: 3
+      BITS: 64
+    - PYTHON: "C:\\Python39-x64"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYVER: 3
       BITS: 64
 
@@ -37,4 +45,7 @@ install:
 
 test_script:
   - python --version
-  - python -m pytest -v
+  - python -m pytest -v -k "not handle_include and not handle_repository"
+# appveyor issues with SSL certificates; deactivating the affected tests,
+# since they run fine on GH actions Windows builds.
+# - python -m pytest -v

@@ -1,3 +1,3 @@
 pytest
-owlrl
+owlrl==5.2.3
 requests
