@@ -30,7 +30,8 @@ def _format_warning(warn_msg, *args, **kwargs):
 warnings.formatwarning = _format_warning
 
 if _python_version.major < 3:
-    msg = "Python 2 has been deprecated.\n\todML support for Python 2 will be dropped August 2020."
+    msg = "Python 2 has reached end of live."
+    msg += "\n\todML support for Python 2 has been dropped."
     warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
 elif _python_version.major == 3 and _python_version.minor < 6:
     msg = "The '%s' package is not tested with your Python version. " % __name__

@@ -63,8 +63,8 @@ setup(
 
 # Make this the last thing people read after a setup.py install
 if _python_version.major < 3:
-    msg = "\n\nPython 2 has been deprecated.\n"
-    msg += "\todML support for Python 2 will be dropped August 2020."
+    msg = "Python 2 has reached end of live."
+    msg += "\n\todML support for Python 2 has been dropped."
     print(msg)
 elif _python_version.major == 3 and _python_version.minor < 6:
     msg = "\n\nThis package is not tested with your Python version. "
