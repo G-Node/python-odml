@@ -76,7 +76,7 @@ python -c "import odmlui; print('-- Testing against odmlui version v%s' % odmlui
 echo
 echo "-- Running basic tests"
 cd ${ROOT_DIR}/resources/test_load
-BASIC_SCRIPT=${ROOT_DIR}/resources/scripts/test_odml_basics.py
+BASIC_SCRIPT=${ROOT_DIR}/resources/scripts/odml_basics.py
 python ${BASIC_SCRIPT}
 
 if [[ ! $? -eq 0 ]]; then
