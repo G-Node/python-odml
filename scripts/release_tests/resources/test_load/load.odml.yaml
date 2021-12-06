@@ -1,0 +1,250 @@
+Document:
+  date: 2018-08-28
+  id: 627bc48e-a889-49e1-b0b3-4451bfd493f1
+  sections:
+  - definition: The amplifier section defines elements that can be used to describe
+      amplifier properties and settings.
+    id: 48d8f8ff-74a1-4728-8857-473ff2a17eb1
+    name: ODML-Amplifier
+    properties:
+    - definition: The device's serial number.
+      id: 8996d231-6034-4840-81a9-664214492787
+      name: SerialNo
+      type: string
+      value:
+      - AMP 100 21151 VA16
+    - definition: The inventory number of the device.
+      id: 053fdb76-e3ca-4164-af1e-f0ce822c21ca
+      name: InventoryNo
+      type: string
+      value:
+      - '501421'
+    - definition: Who's the owner of the device.
+      id: 1683159c-f328-45c2-9e93-645a6adca0f0
+      name: Owner
+      type: string
+      value:
+      - University of West Bohemia
+    - definition: The model name of this hardware item.
+      id: 860015e1-045b-4dd8-bbe6-b6a4b1ca1426
+      name: Model
+      type: string
+      value:
+      - V-AMP 16
+    - definition: The Manufacturer of this hardware item.
+      id: ce8513c2-7ad6-4b72-adae-8bdf5f6d5a17
+      name: Manufacturer
+      type: string
+      value:
+      - BRAIN PRODUCT GmbH
+    - definition: The cutoff frequency of the amplifier's highpass filter.
+      id: e5446dd7-94ba-45b5-9957-f00628e49416
+      name: HighpassCutoff
+      type: string
+      value:
+      - 70 Hz
+    - definition: The cutoff frequency of the amplifier's lowpass filter.
+      id: bea37d74-611b-46c6-a18e-7880e4a5cb26
+      name: LowpassCutoff
+      type: string
+      value:
+      - 0,531 Hz
+    - definition: A description of this hardware item.
+      id: f2b5a298-718b-4fe0-93f2-4e073ebf25bd
+      name: Description
+      type: string
+      value:
+      - digital DC amplifier, input 5V DC, 450 mA
+    sections: []
+    type: hardware/amplifier
+  - definition: Sections of the Analysis type can be used to describe analyses.
+    id: 48f85a67-e1ef-4df9-b041-2e2fc3573dc9
+    name: ODML-Analysis
+    properties:
+    - definition: The name of the person who did the analysis, e.g. 'John Doe' or
+        'Doe, John'
+      id: 45a55b58-6a4a-437d-b0d2-99ba4cb30ec6
+      name: Author
+      type: string
+      value:
+      - "Luk\xE1\u0161 Va\u0159eka"
+    - definition: The date of analysis.
+      id: 60859316-6fb7-41f2-a314-ff7c3d942b0c
+      name: Date
+      type: string
+      value:
+      - 31. 5. 2017
+    - definition: A general description of the analysis.
+      id: 5bf76dfa-0244-4c27-a32d-3d8e5a9c0e6d
+      name: Description
+      type: string
+      value:
+      - P300 detection
+    - definition: The name of a method used in this analysis. E.g. "power spectrum".
+      id: c81848e8-b3b3-43ab-b118-9cef479e7b02
+      name: Method
+      type: string
+      value:
+      - P300
+    - definition: The command used to execute the analysis including the command line
+        parameter.
+      id: 20cbc0b6-4d69-458c-a547-5dfab03d7561
+      name: CommandlineCall
+      type: string
+      value:
+      - MATLAB script
+    - definition: Specific comments on this analysis.
+      id: b512c1d6-03b5-4342-a078-d66043960a91
+      name: Comment
+      type: string
+      value:
+      - Result plot
+    - definition: "A figure showing the results. This property is meant to strore\
+        \ the real figure content. \n         This will blow up the the size of the\
+        \ metadatafile and we recommend to rather define the URL of the figure."
+      id: 7204078d-29aa-477c-97cc-de143aa80d85
+      name: ResultFigure
+      type: string
+      value:
+      - http://home.zcu.cz/~pbruha/EEGbase/BASIL/1/Figure_4instr.pdf
+    sections: []
+    type: analysis
+  - definition: "Specification of an experiment. The Experiment is\n      part of\
+      \ a Project and the recorded data for a specific\n      Experiment are found\
+      \ in Datasets. Possible subsections are, for\n      example, Dataset and Stimulus."
+    id: e985c387-893c-4c40-a15b-426914a64e51
+    name: ODML-Experiment
+    properties:
+    - definition: "A description of the\n         experiment."
+      id: 7e370b24-bd66-49aa-97f7-13ec22ebc0c2
+      name: Description
+      type: string
+      value:
+      - Each patient or their legal representatives are acquainted with the course
+        of the experiment and answered questions concerning his/her health. Each patient
+        is given the standard EEG cap made by Electro-Cap International. The international
+        10-20 system of electrode placement was used. In fact, 7 electrodes from 19
+        were used as depicted in Figure. The reference electrode was placed at the
+        root of his/her nose and the ground electrode was placed on the ear. The patient
+        with EEG cap is sitting 1 m from the monitor and is told to watch the stimulation
+        protocols which contain figures, sounds or matrix with activities, and to
+        follow the rules for selecting thoughtful activity. EEG signal from all channels
+        are amplified and together with markers of the events from parallel port interface
+        from stimulation computer are delivered to recording PC. After the experiment
+        is finished, the recorded data and collected metadata are uploaded to the
+        EEG/ERP storage.
+    - definition: The type of experiment.
+      id: 7831bbac-1c4f-459d-ac7a-a09ce598531a
+      name: Type
+      type: string
+      value:
+      - electrophysiology
+      - behavior
+      - simulation
+    - id: 309e9ed4-f175-46b2-89de-7d4ff7262c3d
+      name: Subtype
+      type: string
+      value:
+      - event related potential
+    - definition: The name of the project this experiment belongs to.
+      id: 2064a3a9-cf89-423a-9fb5-ffcd09de1f3e
+      name: ProjectName
+      type: string
+      value:
+      - Brain-driven Computer Assistance System for People with Limited Mobility
+    - definition: "The ID of the project this experiment belongs\n         to."
+      id: abe83672-5283-4f7a-b604-fc0be9d558bd
+      name: ProjectID
+      type: string
+      value:
+      - '85'
+    sections: []
+    type: experiment
+  - definition: This is a software section .
+    id: b7e8bdfe-7c73-4550-815d-18c881a3f5d4
+    name: ODML-Software
+    properties:
+    - definition: The software's name.
+      id: fb27895f-55bf-4c73-ac7a-92e82b3fc99c
+      name: Software name
+      type: string
+      value:
+      - Presentation
+    - definition: The owner of the software.
+      id: f6b4502a-190f-4287-95d5-0b989f00c271
+      name: Owner
+      type: string
+      value:
+      - University of West Bohemia
+    - definition: The developer or the developers firm.
+      id: caaad507-35e7-48fe-8ecb-dca12f9a1bf0
+      name: Developer
+      type: string
+      value:
+      - Neurobehavioral Systems
+    - definition: Version of the software.
+      id: a2c7ca2a-cc8c-42fd-8cab-a81e018a8962
+      name: Version
+      type: string
+      value:
+      - '20.2'
+    - definition: The descrisption of the software.
+      id: 6668ee89-a026-46c7-a2f4-e5fb606565c5
+      name: Decsription
+      type: string
+      value:
+      - '"Presentation is a stimulus delivery and experiment control program for neuroscience.
+        It runs on any Windows PC, and delivers auditory, visual and multimodal stimuli
+        with sub-millisecond temporal precision. Presentation is powerful enough to
+        handle almost any behavioral, psychological or physiological experiment using
+        fMRI, ERP, MEG, psychophysics, eye movements, single neuron recording, reaction
+        time measures, other performance measures, and more." [https://www.neurobs.com/]'
+    sections: []
+    type: software
+  - definition: "The investigated experimental subject (animal or person).\n     \
+      \ May contain the Cell and Preparation sections as subsections."
+    id: 28e6d4ac-0466-4e41-b900-5c2021cab3db
+    name: ODML-Subject
+    properties:
+    - definition: "The scientific name of the species e.g. Apis\n         mellifera,\
+        \ Homo sapiens."
+      id: dd30d32e-77f0-4337-bf88-eabbf9ef00d7
+      name: Species
+      type: string
+      value:
+      - Homo sapiens
+    - definition: "The trivial name of the species like\n         Honeybee, Human."
+      id: dc505acf-cee3-4f16-b048-c961d1feb0c8
+      name: TrivialName
+      type: string
+      value:
+      - Human
+    - definition: Male or female?
+      id: 0752a110-eb7d-4757-8052-7f7b600e6da6
+      name: Gender
+      type: string
+      value:
+      - Female
+    - definition: "The birthday. Age can be inferred from the\n         date of recording."
+      id: 7392a3b4-1e12-4635-982a-938c1438828a
+      name: Birthday
+      type: string
+      value:
+      - 5.9.1983
+    - definition: "The age of the subject since birth. E.g. P19,&#xd;\n         or\
+        \ 5 days."
+      id: bee888b3-e836-4590-85c8-8beb9eabcbad
+      name: Age
+      type: string
+      value:
+      - '33'
+    - definition: "Information about the health status of this\n         subject."
+      id: a66b16c5-b5d9-45aa-ab6a-d2d308d9bf33
+      name: HealthStatus
+      type: string
+      value:
+      - Aneurysm
+    sections: []
+    type: subject
+  version: '1'
+odml-version: '1.1'

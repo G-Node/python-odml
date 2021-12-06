@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet type="text/xsl" href="odml.xsl"?>
+<odML xmlns:gui="http://www.g-node.org/guiml" version="1.1">
+  <version>1</version>
+  <date>2018-08-28</date>
+  <section>
+    <type>hardware/amplifier</type>
+    <name>ODML-Amplifier</name>
+    <definition>The amplifier section defines elements that can be used to describe amplifier properties and settings.</definition>
+    <property>
+      <name>SerialNo</name>
+      <definition>The device's serial number.</definition>
+      <type>string</type>
+      <value>AMP 100 21151 VA16</value>
+    </property>
+    <property>
+      <name>InventoryNo</name>
+      <definition>The inventory number of the device.</definition>
+      <type>string</type>
+      <value>501421</value>
+    </property>
+    <property>
+      <name>Owner</name>
+      <definition>Who's the owner of the device.</definition>
+      <type>string</type>
+      <value>University of West Bohemia</value>
+    </property>
+    <property>
+      <name>Model</name>
+      <definition>The model name of this hardware item.</definition>
+      <type>string</type>
+      <value>V-AMP 16</value>
+    </property>
+    <property>
+      <name>Manufacturer</name>
+      <definition>The Manufacturer of this hardware item.</definition>
+      <type>string</type>
+      <value>BRAIN PRODUCT GmbH</value>
+    </property>
+    <property>
+      <name>HighpassCutoff</name>
+      <definition>The cutoff frequency of the amplifier's highpass filter.</definition>
+      <type>string</type>
+      <value>70 Hz</value>
+    </property>
+    <property>
+      <name>LowpassCutoff</name>
+      <definition>The cutoff frequency of the amplifier's lowpass filter.</definition>
+      <type>string</type>
+      <value>0,531 Hz</value>
+    </property>
+    <property>
+      <name>Description</name>
+      <definition>A description of this hardware item.</definition>
+      <type>string</type>
+      <value>digital DC amplifier, input 5V DC, 450 mA</value>
+    </property>
+  </section>
+  <section>
+    <type>analysis</type>
+    <name>ODML-Analysis</name>
+    <definition>Sections of the Analysis type can be used to describe analyses.</definition>
+    <property>
+      <name>Author</name>
+      <definition>The name of the person who did the analysis, e.g. 'John Doe' or 'Doe, John'</definition>
+      <type>string</type>
+      <value>Lukáš Vařeka</value>
+    </property>
+    <property>
+      <name>Date</name>
+      <definition>The date of analysis.</definition>
+      <type>string</type>
+      <value>31. 5. 2017</value>
+    </property>
+    <property>
+      <name>Description</name>
+      <definition>A general description of the analysis.</definition>
+      <type>string</type>
+      <value>P300 detection</value>
+    </property>
+    <property>
+      <name>Method</name>
+      <definition>The name of a method used in this analysis. E.g. "power spectrum".</definition>
+      <type>string</type>
+      <value>P300</value>
+    </property>
+    <property>
+      <name>CommandlineCall</name>
+      <definition>The command used to execute the analysis including the command line parameter.</definition>
+      <type>string</type>
+      <value>MATLAB script</value>
+    </property>
+    <property>
+      <name>Comment</name>
+      <definition>Specific comments on this analysis.</definition>
+      <type>string</type>
+      <value>Result plot</value>
+    </property>
+    <property>
+      <name>ResultFigure</name>
+      <definition>A figure showing the results. This property is meant to strore the real figure content. 
+         This will blow up the the size of the metadatafile and we recommend to rather define the URL of the figure.</definition>
+      <type>string</type>
+      <value>http://home.zcu.cz/~pbruha/EEGbase/BASIL/1/Figure_4instr.pdf</value>
+    </property>
+  </section>
+  <section>
+    <type>experiment</type>
+    <name>ODML-Experiment</name>
+    <definition>Specification of an experiment. The Experiment is
+      part of a Project and the recorded data for a specific
+      Experiment are found in Datasets. Possible subsections are, for
+      example, Dataset and Stimulus.</definition>
+    <property>
+      <name>Description</name>
+      <definition>A description of the
+         experiment.</definition>
+      <type>string</type>
+      <value>Each patient or their legal representatives are acquainted with the course of the experiment and answered questions concerning his/her health. Each patient is given the standard EEG cap made by Electro-Cap International. The international 10-20 system of electrode placement was used. In fact, 7 electrodes from 19 were used as depicted in Figure. The reference electrode was placed at the root of his/her nose and the ground electrode was placed on the ear. The patient with EEG cap is sitting 1 m from the monitor and is told to watch the stimulation protocols which contain figures, sounds or matrix with activities, and to follow the rules for selecting thoughtful activity. EEG signal from all channels are amplified and together with markers of the events from parallel port interface from stimulation computer are delivered to recording PC. After the experiment is finished, the recorded data and collected metadata are uploaded to the EEG/ERP storage.</value>
+    </property>
+    <property>
+      <name>Type</name>
+      <definition>The type of experiment.</definition>
+      <type>string</type>
+      <value>[electrophysiology,behavior,simulation]</value>
+    </property>
+    <property>
+      <name>Subtype</name>
+      <type>string</type>
+      <value>event related potential</value>
+    </property>
+    <property>
+      <name>ProjectName</name>
+      <definition>The name of the project this experiment belongs to.</definition>
+      <type>string</type>
+      <value>Brain-driven Computer Assistance System for People with Limited Mobility</value>
+    </property>
+    <property>
+      <name>ProjectID</name>
+      <definition>The ID of the project this experiment belongs
+         to.</definition>
+      <type>string</type>
+      <value>85</value>
+    </property>
+  </section>
+  <section>
+    <type>software</type>
+    <name>ODML-Software</name>
+    <definition>This is a software section .</definition>
+    <property>
+      <name>Software name</name>
+      <definition>The software's name.</definition>
+      <type>string</type>
+      <value>Presentation</value>
+    </property>
+    <property>
+      <name>Owner</name>
+      <definition>The owner of the software.</definition>
+      <type>string</type>
+      <value>University of West Bohemia</value>
+    </property>
+    <property>
+      <name>Developer</name>
+      <definition>The developer or the developers firm.</definition>
+      <type>string</type>
+      <value>Neurobehavioral Systems</value>
+    </property>
+    <property>
+      <name>Version</name>
+      <definition>Version of the software.</definition>
+      <type>string</type>
+      <value>20.2</value>
+    </property>
+    <property>
+      <name>Decsription</name>
+      <definition>The descrisption of the software.</definition>
+      <type>string</type>
+      <value>"Presentation is a stimulus delivery and experiment control program for neuroscience. It runs on any Windows PC, and delivers auditory, visual and multimodal stimuli with sub-millisecond temporal precision. Presentation is powerful enough to handle almost any behavioral, psychological or physiological experiment using fMRI, ERP, MEG, psychophysics, eye movements, single neuron recording, reaction time measures, other performance measures, and more." [https://www.neurobs.com/]</value>
+    </property>
+  </section>
+  <section>
+    <type>subject</type>
+    <name>ODML-Subject</name>
+    <definition>The investigated experimental subject (animal or person).
+      May contain the Cell and Preparation sections as subsections.</definition>
+    <property>
+      <name>Species</name>
+      <definition>The scientific name of the species e.g. Apis
+         mellifera, Homo sapiens.</definition>
+      <type>string</type>
+      <value>Homo sapiens</value>
+    </property>
+    <property>
+      <name>TrivialName</name>
+      <definition>The trivial name of the species like
+         Honeybee, Human.</definition>
+      <type>string</type>
+      <value>Human</value>
+    </property>
+    <property>
+      <name>Gender</name>
+      <definition>Male or female?</definition>
+      <type>string</type>
+      <value>Female</value>
+    </property>
+    <property>
+      <name>Birthday</name>
+      <definition>The birthday. Age can be inferred from the
+         date of recording.</definition>
+      <type>string</type>
+      <value>5.9.1983</value>
+    </property>
+    <property>
+      <name>Age</name>
+      <definition>The age of the subject since birth. E.g. P19,&amp;#xd;
+         or 5 days.</definition>
+      <type>string</type>
+      <value>33</value>
+    </property>
+    <property>
+      <name>HealthStatus</name>
+      <definition>Information about the health status of this
+         subject.</definition>
+      <type>string</type>
+      <value>Aneurysm</value>
+    </property>
+  </section>
+</odML>

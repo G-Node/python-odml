@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="odmlTerms.xsl"?>
+<?xml-stylesheet type="text/xsl" href="odml.xsl"?>
+<odML version="1.1">
+  <section>
+    <property>
+      <name>LocalAnaesthesia</name>
+      <value>true</value>
+      <id>205bedd9-cc69-45e5-8a25-3a394a8eed44</id>
+    </property>
+    <property>
+      <name>Anaesthesia</name>
+      <value>true</value>
+      <id>467bc9be-3ba5-4249-9f33-20f41d04ee3b</id>
+    </property>
+    <property>
+      <name>AnaestheticDose</name>
+      <unit>mg</unit>
+      <value>120.0</value>
+      <id>5ddee430-3dca-4a16-9094-b6a3d490669b</id>
+    </property>
+    <property>
+      <name>Anaesthetic</name>
+      <value>MS 222</value>
+      <id>14f47e86-0d6d-47fb-ba29-10e2731d5711</id>
+    </property>
+    <property>
+      <name>Immobilization</name>
+      <value>Pancuronium bromide</value>
+      <id>48cd88d3-5c2d-4fce-92f5-6575b665d5ec</id>
+    </property>
+    <property>
+      <name>Type</name>
+      <value>in vivo</value>
+      <id>1698a70b-3a67-4243-8c45-d24d20755140</id>
+    </property>
+    <property>
+      <name>LocalAnaesthetic</name>
+      <value>Lidocaine</value>
+      <id>76bf2a41-5229-4c1b-a93c-a36ef4c8ec6b</id>
+    </property>
+    <name>Preparation</name>
+    <type>Preparation</type>
+    <id>6fb24f9f-8c2f-4678-ac44-adf6fe8f48c7</id>
+  </section>
+  <section>
+    <property>
+      <name>Depth</name>
+      <unit>um</unit>
+      <value>0.0</value>
+      <id>51e5373f-799d-42d6-812f-5007afa1e50a</id>
+    </property>
+    <property>
+      <name>CellType</name>
+      <value>P-unit</value>
+      <id>1a48e5b9-5432-459b-8813-e001451d1566</id>
+    </property>
+    <property>
+      <name>Structure</name>
+      <value>Nerve</value>
+      <id>8e5cc98e-00a2-4f09-be1a-56d31c028bc5</id>
+    </property>
+    <property>
+      <name>CV</name>
+      <value>0.202</value>
+      <id>d5374ebe-5d1b-4fd2-a8c0-f80168e9af09</id>
+    </property>
+    <property>
+      <name>Baseline rate</name>
+      <unit>Hz</unit>
+      <value>136.8</value>
+      <id>e3d3faa2-272b-45c1-90d3-d4f0000e555f</id>
+    </property>
+    <name>Cell</name>
+    <type>Cell</type>
+    <id>2a8cae63-13b9-4119-a45c-14b230bc0b2e</id>
+  </section>
+  <section>
+    <property>
+      <name>Maintainer</name>
+      <value>Jan Benda</value>
+      <id>f355503d-a213-4826-8a81-1f8466bdc051</id>
+    </property>
+    <property>
+      <name>Creator</name>
+      <value>Jan Benda</value>
+      <id>2dec9a5f-f6db-4106-9022-1445252ab536</id>
+    </property>
+    <property>
+      <name>University</name>
+      <value>Ludwig-Maximilian University, Munich</value>
+      <id>b7a73782-9abc-435c-9950-d3c17416acf1</id>
+    </property>
+    <property>
+      <name>Lab</name>
+      <value>Jan Benda</value>
+      <id>d9ad7065-d54d-42b4-8edf-f8dd74616a23</id>
+    </property>
+    <property>
+      <name>Location</name>
+      <value>D01-043</value>
+      <id>7789fa6d-c913-4aaf-a54d-77c6446ac650</id>
+    </property>
+    <property>
+      <name>Address</name>
+      <value>Grosshaderner Str. 2, 82152 Planegg-Martinsried, Germany</value>
+      <id>71f90162-11b5-477a-8686-a2d175d93ffd</id>
+    </property>
+    <property>
+      <name>Department</name>
+      <value>Department Biology II, LMU-Munich</value>
+      <id>51b000af-eade-44a8-a79d-595e31b876ed</id>
+    </property>
+    <property>
+      <name>Identifier</name>
+      <value>eFish-Setup</value>
+      <id>e418681a-88fa-4f99-b546-1e162a136209</id>
+    </property>
+    <name>Setup</name>
+    <type>Setup</type>
+    <id>a99f775a-0578-45a7-99ac-d2be6c4166d7</id>
+  </section>
+  <section>
+    <property>
+      <name>Comment</name>
+      <value>weak response</value>
+      <id>9aaffa74-4f2c-448c-ad65-2d43a573ffd0</id>
+    </property>
+    <property>
+      <name>Name</name>
+      <value>2010-04-16-ab</value>
+      <id>93bf6215-098d-424f-8683-0d0e756381ba</id>
+    </property>
+    <property>
+      <name>Recording quality</name>
+      <value>Good</value>
+      <id>46a3abeb-57e9-4564-a539-2a7b92615f7c</id>
+    </property>
+    <property>
+      <name>Software version</name>
+      <value>0.9.6 (04/12/10)</value>
+      <id>134d1306-d8a0-47fa-bbe3-923a2aa164e3</id>
+    </property>
+    <property>
+      <name>Experimenter</name>
+      <value>Henriette Walz</value>
+      <id>83d1c24d-b379-4e76-a03f-9f5cfdab6194</id>
+    </property>
+    <property>
+      <name>Mode</name>
+      <value>Acquisition</value>
+      <id>24406cb3-b28f-4761-884d-b815c0434b40</id>
+    </property>
+    <property>
+      <name>File</name>
+      <value>metadata.xml</value>
+      <id>c71180cd-d15c-4dea-8ced-e19f5fbd1b8b</id>
+    </property>
+    <property>
+      <name>Time</name>
+      <value>16:35:51</value>
+      <id>6805e00e-521e-4540-816a-c5d4da082f8f</id>
+    </property>
+    <property>
+      <name>Date</name>
+      <value>2010-04-16</value>
+      <id>a97e68cd-af54-4fdc-949a-7cbed59ab34f</id>
+    </property>
+    <property>
+      <name>Recording duration</name>
+      <unit>m</unit>
+      <value>13.9</value>
+      <id>d5d1ebc4-d1eb-4997-bfa3-fa745aed7ae9</id>
+    </property>
+    <property>
+      <name>Folder</name>
+      <value>/home/efish/relacs/plugins/efish/2010-04-16-ab</value>
+      <id>e8336958-4da2-4839-b905-66303e2a1495</id>
+    </property>
+    <property>
+      <name>Software</name>
+      <value>RELACS</value>
+      <id>be2a4b84-5fbb-4853-862f-bc4d1c89d53a</id>
+    </property>
+    <name>Recording</name>
+    <type>Recording</type>
+    <id>91001278-bcbc-4293-8c89-5a1970d4458b</id>
+  </section>
+  <section>
+    <property>
+      <name>Firing Rate1</name>
+      <unit>Hz</unit>
+      <value>136.0</value>
+      <id>5511a6ff-5b62-42ae-b66c-05bb17f04671</id>
+    </property>
+    <property>
+      <name>EOD Frequency</name>
+      <unit>Hz</unit>
+      <value>1007.0</value>
+      <id>5cdb1767-1d08-4b0d-8fd9-f3969a739eed</id>
+    </property>
+    <property>
+      <name>P-Value1</name>
+      <value>0.14</value>
+      <id>5b1e13cf-a944-4b66-ab76-dbb3e83b4ea6</id>
+    </property>
+    <name>Cell properties</name>
+    <type>Cell properties</type>
+    <id>1ab862db-bec1-4cbe-9189-1d7eab0f7806</id>
+  </section>
+  <section>
+    <property>
+      <name>Gender</name>
+      <value>unknown</value>
+      <id>2f50637d-85cd-4131-9ece-b0f244259922</id>
+    </property>
+    <property>
+      <name>Species</name>
+      <value>Apteronotus albifrons</value>
+      <id>6c8d84e9-d8c1-407b-9764-c6e26a424954</id>
+    </property>
+    <property>
+      <name>Size</name>
+      <unit>cm</unit>
+      <value>13.0</value>
+      <id>d891f257-f098-46f9-8240-c12567b78656</id>
+    </property>
+    <property>
+      <name>Transdermal amplitude</name>
+      <unit>mV</unit>
+      <value>1.82</value>
+      <id>d3086bd7-e78e-4324-ab9d-1aff9c6afc14</id>
+    </property>
+    <property>
+      <name>EOD Frequency</name>
+      <unit>Hz</unit>
+      <value>1003.4</value>
+      <id>77754764-e368-44cf-a1ff-431b053c86fb</id>
+    </property>
+    <name>Subject</name>
+    <type>Subject</type>
+    <id>871d3dfc-6ac4-44cb-bd46-696c566d898d</id>
+  </section>
+  <section>
+    <property>
+      <name>UpperCutoffFrequency</name>
+      <unit>Hz</unit>
+      <type>float</type>
+      <value>300.0</value>
+      <id>aa6e4dd5-033d-4ff3-9959-39df35e972e0</id>
+    </property>
+    <property>
+      <name>Duration</name>
+      <unit>s</unit>
+      <type>float</type>
+      <value>10.0</value>
+      <id>deef2e4a-64ed-43a5-be77-c737a36f914a</id>
+    </property>
+    <property>
+      <name>SampleRate</name>
+      <unit>s</unit>
+      <type>float</type>
+      <value>0.001</value>
+      <id>6697d0f7-bc87-409b-820f-30f2df66fc87</id>
+    </property>
+    <property>
+      <name>StandardDeviation</name>
+      <type>float</type>
+      <value>0.3</value>
+      <id>0d303a9a-89e3-45cd-8fe0-0a6e624b8476</id>
+    </property>
+    <property>
+      <name>Contrast</name>
+      <unit>%</unit>
+      <value>20.0</value>
+      <id>aebac43a-4a12-4bd7-a3ae-c34e4ebf03de</id>
+    </property>
+    <property>
+      <name>File</name>
+      <value>/home/efish/stimuli/whitenoise/gwn300Hz10s0.3.dat</value>
+      <id>406dc126-3f4f-4432-9016-788428705601</id>
+    </property>
+    <property>
+      <name>Additional noise</name>
+      <value>none</value>
+      <id>c4035d45-8e50-4ddf-9133-93a11cb7d3f0</id>
+    </property>
+    <property>
+      <name>Additional noise contrast</name>
+      <unit>%</unit>
+      <value>0.0</value>
+      <id>e4547a35-de77-4e08-8fed-c1ef90b20b58</id>
+    </property>
+    <property>
+      <name>Additional noise upper cutoff</name>
+      <unit>Hz</unit>
+      <value>0.0</value>
+      <id>e734bcef-12a9-4acf-b726-eb3ba17fdd97</id>
+    </property>
+    <property>
+      <name>Additional noise lower cutoff</name>
+      <unit>Hz</unit>
+      <value>0.0</value>
+      <id>6e0e5189-7d2b-48be-b129-d3d9015f3fcf</id>
+    </property>
+    <name>Stimulus</name>
+    <type>stimulus/white_noise</type>
+    <id>3e7b7c0c-576f-4028-a7ea-973d34c2ad53</id>
+  </section>
+  <author>grewe</author>
+  <id>231bd96d-0e54-4383-97bd-6d153a70cafe</id>
+</odML>
