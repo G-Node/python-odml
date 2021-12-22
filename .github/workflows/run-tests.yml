@@ -49,6 +49,7 @@ jobs:
       - name: Run tests
         run: pytest
   win_tests:
+    continue-on-error: true
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
