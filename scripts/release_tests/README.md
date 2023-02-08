@@ -18,27 +18,27 @@ The tests include
 
 To test the various local installations of odml, execute `run_test_matrix.sh` with option 'A'. odml will be installed into fresh conda environments using `pip install .` and `python setup.py install` and all Python versions >= 3.5.
 
-### odml Test PyPI installation tests
+### odml PyPI TEST installation tests
 
-To test the installation of the odml package from Test PyPI, execute `run_test_matrix.sh` with option 'B'. odml will be installed into fresh conda environments using `pip install odml` and all Python versions >= 3.5.
+To test the installation of the odml package from the PyPI TEST repository, execute `run_test_matrix.sh` with option 'B'. odml will be installed into fresh conda environments using `pip install odml` and all Python versions >= 3.5.
 The package `odml-ui` will be installed as well and all installable odml command line scripts will be tested after the odml installation.
 
-### odmltools Test PyPI installation tests
+### odmltools PyPI server installation tests
 
-When executing `run_test_matrix.sh` with option 'C', the odml dependent package `odmltools` will be pip installed into fresh conda environments for all Python versions >= 3.6 from the Test PyPI repository and appropriate conversion tests will be run using the installed command line tool.
+When executing `run_test_matrix.sh` with option 'C', the odml dependent package `odmltools` will be pip installed into fresh conda environments for all Python versions >= 3.6 from the PyPI TEST repository and appropriate conversion tests will be run using the installed command line tool.
 
-### nixodmlconverter Test PyPI installation tests
+### nixodmlconverter PyPI TEST installation tests
 
-When executing `run_test_matrix.sh` with option 'D' the odml dependent package `nixodmlconverter` will be pip installed into fresh conda environments for all Python versions >= 3.6 from the Test PyPI repository and appropriate conversion tests will be run using the installed command line tool.
+When executing `run_test_matrix.sh` with option 'D' the odml dependent package `nixodmlconverter` will be pip installed into fresh conda environments for all Python versions >= 3.6 from the PyPI TEST repository and appropriate conversion tests will be run using the installed command line tool.
 
-### odml PyPI installation tests
+### odml PyPI LIVE installation tests
 
 To test the installation of the odml package from PyPI proper, execute `run_test_matrix.sh` with option 'E'. odml will be installed into fresh conda environments using `pip install odml` and all Python versions >= 3.5.
 The package `odml-ui` will be installed as well and all installable odml command line scripts will be tested after the odml installation.
 
 ## Manual odml-ui tests
 
-To set up conda environments and run local or Test PyPI installations run the script `run_test_matrix.sh` with option `B` from the current directory.
+To set up conda environments and run local or PyPI TEST installations run the script `run_test_matrix.sh` with option `B` from the current directory.
 Once set up, the conda environments can be used to manually test `odml-ui` as well.
 
 Activate python installation environment

@@ -7,10 +7,10 @@ print_options () {
     echo
     echo "-- Missing or invalid test script selection letter (A|B|C|D|E), please provide one of the following"
     echo "     A: local install test (odml)"
-    echo "     B: Test PyPI install test (odml)"
-    echo "     C: Test PyPI install test (odmltools)"
-    echo "     D: Test PyPI install test (nixodmlconverter)"
-    echo "     E: PyPI install test (odml)"
+    echo "     B: PyPI TEST install test (odml)"
+    echo "     C: PyPI TEST install test (odmltools)"
+    echo "     D: PyPI TEST install test (nixodmlconverter)"
+    echo "     E: PyPI LIVE install test (odml)"
 }
 
 if [[ $# != 1 ]]; then
@@ -36,28 +36,28 @@ fi
 
 if [[ "${TEST}" == "B" ]]; then
     echo
-    echo "-- Running PyPI test odml installations"
+    echo "-- Running PyPI TEST server odml installations"
     LOG_DIR=/tmp/odml/pypi_test_install_odml
     SCRIPT=./run_test_pypi_odml.sh
 fi
 
 if [[ "${TEST}" == "C" ]]; then
     echo
-    echo "-- Running PyPI test odmltools installations"
+    echo "-- Running PyPI TEST server odmltools installations"
     LOG_DIR=/tmp/odml/pypi_test_install_odmltools
     SCRIPT=./run_test_pypi_odmltools.sh
 fi
 
 if [[ "${TEST}" == "D" ]]; then
     echo
-    echo "-- Running PyPI test nixodmlconverter installations"
+    echo "-- Running PyPI TEST server nixodmlconverter installations"
     LOG_DIR=/tmp/odml/pypi_test_install_nixodmlconverter
     SCRIPT=./run_test_pypi_nixodmlconverter.sh
 fi
 
 if [[ "${TEST}" == "E" ]]; then
     echo
-    echo "-- Running PyPI odml installations"
+    echo "-- Running PyPI LIVE server odml installations"
     LOG_DIR=/tmp/odml/pypi_install_odml
     SCRIPT=./run_pypi_odml.sh
 fi
