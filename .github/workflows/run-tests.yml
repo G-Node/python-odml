@@ -118,3 +118,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
+  run-codecov:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python setup.py install
+          pip install -r requirements-test.txt
+          pip install pytest pytest-cov
+      - name: Create coverage
+        run: |
+          pytest --cov=./ --cov-report=xml
+      - uses: codecov/codecov-action@v1
+        with:
+          name: Submit Codecov coverage
+          files: ./coverage.xml
+          verbose: true # optional (default = false)
