@@ -55,7 +55,13 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        # github actions currently resolves the pyyaml pip install package
+        # for python 3.9 not to the required macos package, but to the
+        # default pyyaml 6.0.tar package, which is a linux distribution
+        # and fails on install. MacOS Python version 3.9 build will stay
+        # disabled until this is resolved.
+        #python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.6", "3.7", "3.8", "3.10"]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python ${{ matrix.python-version }}
