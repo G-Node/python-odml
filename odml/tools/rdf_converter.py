@@ -10,13 +10,13 @@ import warnings
 
 from io import StringIO
 
-import rdflib
 from rdflib import __version__ as rdflib_version
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
 try:
     from rdflib.container import Seq as CollSeq
 except ImportError as exc:
+    # annoy people to upgrade their rdflib version but still support the usage
     print("deprecated rdflib version. Please upgrade to the latest version.")
 from rdflib.namespace import XSD, RDF, RDFS
 
