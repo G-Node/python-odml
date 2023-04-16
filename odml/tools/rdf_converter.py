@@ -155,22 +155,18 @@ class RDFWriter(object):
         #self.graph.add((parent_node, rdf_predicate, bag))
         #for curr_val in values:
         #    self.graph.add((bag, RDF.li, Literal(curr_val)))
-
-        # support both >=6.0.0 and <6.0.0 versions of rdflib for now
-        # this is very unsafe handling of the rdflib version but ok for
-        # now; should be properly handled later on
-        if rdflib_version_major() < 6:
+        if rdflib_version_major() >= 6:
+            seq_list = []
+            for curr_val in values:
+                seq_list.append(Literal(curr_val))
+            _ = CollSeq(self.graph, seq, seq_list)
+        else:
+            # manually create and use the value blank nodes order
             counter = 1
             for curr_val in values:
                 custom_predicate = "%s_%s" % (str(RDF), counter)
                 self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
                 counter = counter + 1
-        else:
-            seq_list = []
-            for curr_val in values:
-                seq_list.append(Literal(curr_val))
-            s = CollSeq(self.graph, seq, seq_list)
-            print(s)
 
     def save_odml_list(self, parent_node, rdf_predicate, odml_list):
         """
