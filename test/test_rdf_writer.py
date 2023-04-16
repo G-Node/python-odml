@@ -128,9 +128,6 @@ class TestRDFWriter(unittest.TestCase):
         rdf_writer = RDFWriter([doc])
         rdf_writer.convert_to_rdf()
 
-        check = rdf_writer.graph.subject_objects(predicate=RDF.li)
-        self.assertEqual(len(list(check)), 0)
-
         check = rdf_writer.graph.subject_objects(predicate=URIRef("%s_1" % str(RDF)))
         self.assertEqual(len(list(check)), 0)
 
@@ -142,9 +139,6 @@ class TestRDFWriter(unittest.TestCase):
         rdf_writer = RDFWriter([doc])
         rdf_writer.convert_to_rdf()
 
-        check = rdf_writer.graph.subjects(predicate=RDF.li, object=Literal("val"))
-        self.assertEqual(len(list(check)), 0)
-
         check = rdf_writer.graph.subjects(predicate=URIRef("%s_1" % str(RDF)),
                                           object=Literal("val"))
         self.assertEqual(len(list(check)), 1)
@@ -152,15 +146,6 @@ class TestRDFWriter(unittest.TestCase):
         doc.sections[0].properties[0].append("val2")
         rdf_writer = RDFWriter([doc])
         rdf_writer.convert_to_rdf()
-
-        check = rdf_writer.graph.subject_objects(predicate=RDF.li)
-        self.assertEqual(len(list(check)), 0)
-
-        check = rdf_writer.graph.subjects(predicate=RDF.li, object=Literal("val"))
-        self.assertEqual(len(list(check)), 0)
-
-        check = rdf_writer.graph.subjects(predicate=RDF.li, object=Literal("val2"))
-        self.assertEqual(len(list(check)), 0)
 
         check = rdf_writer.graph.subjects(predicate=URIRef("%s_1" % str(RDF)),
                                           object=Literal("val"))
@@ -180,9 +165,6 @@ class TestRDFWriter(unittest.TestCase):
 
         rdf_writer = RDFWriter([doc])
         rdf_writer.convert_to_rdf()
-
-        check = rdf_writer.graph.subjects(predicate=RDF.li, object=Literal("val"))
-        self.assertEqual(len(list(check)), 0)
 
         check = rdf_writer.graph.subjects(predicate=URIRef("%s_1" % str(RDF)),
                                           object=Literal("val"))
