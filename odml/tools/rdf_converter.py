@@ -9,6 +9,8 @@ import uuid
 import warnings
 
 from io import StringIO
+
+import rdflib
 from rdflib import __version__ as rdflib_version
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
@@ -550,10 +552,11 @@ class RDFReader(object):
 
                 if rdflib_version_major() >= 6:
                     # rdflib version 6.x.x+ should support rdf:_nnn only, RDF.li
-                    # is not supported
-                    print(elems)
-                    for curr_val in elems[0].items():
-                        prop_attrs[attr[0]].append(curr_val.toPython())
+                    # are not supported; reverse import the blank node values;
+                    # hopefully in the correct order.
+                    val_seq = Seq(graph=self.graph, subject=elems[0])
+                    for seq_item in val_seq:
+                        prop_attrs[attr[0]].append(seq_item.toPython())
                 else:
                     # rdflib does not respect order with RDF.li items yet, see comment above
                     # support both RDF.li and rdf:_nnn for now.
