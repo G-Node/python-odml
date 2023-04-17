@@ -62,7 +62,7 @@ if _python_version.major < 3:
     msg = "Python 2 has reached end of live."
     msg += "\n\todML support for Python 2 has been dropped."
     print(msg)
-elif _python_version.major == 3 and _python_version.minor < 6:
+elif _python_version.major == 3 and _python_version.minor < 7:
     msg = "\n\nThis package is not tested with your Python version. "
     msg += "\n\tPlease consider upgrading to the latest Python distribution."
     print(msg)
