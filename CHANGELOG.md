@@ -6,18 +6,19 @@ until the next release.
 
 # Version 1.5.3
 
-## rdflib support 6.0.2
+## Support rdflib version 6+
 
-The rdflib upgrade from version 5.0.0 to 6.0.2 introduced breaking changes 
+The rdflib upgrade from version 5.0.0 to 6+ introduced breaking changes 
 in the rdflib library. This update fixes these breaks without changing 
-functionality.
+functionality, unpins the rdflib version and defaults to the latest
+version on install.
 
 ## Dropping official support for Python 3.5 and 3.6
 
 The introduction of the rdflib 6+ library restricts the
 Python support for 3.7+.
 
-It is still possible to install odml with a Python version >=3.6, 
+It is still possible to install odml with a Python version <=3.6, 
 but these versions are no longer tested and officially supported.
 
 
