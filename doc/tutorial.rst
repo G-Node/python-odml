@@ -1,13 +1,12 @@
-
 =============
 odML Tutorial
 =============
 
 :Author:
-    Lyuba Zehl;
+    Lyuba Zehl, Michael Sonntag;
     based on work by Hagen Fritsch
 :Release:
-    1.4
+    1.5
 :License:
     Creative Commons Attribution-ShareAlike 4.0 International
     `License <http://creativecommons.org/licenses/by-sa/4.0/>`_
