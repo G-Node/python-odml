@@ -7,7 +7,7 @@ These classes are
 
 
 Validation
--------
+----------
 .. autoclass:: odml.validation.Validation
    :members:
    :inherited-members:
