@@ -99,6 +99,9 @@ function run_script () {
     fi
 }
 
+PYVER=3.11
+run_script
+
 PYVER=3.10
 run_script
 
