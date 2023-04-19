@@ -34,11 +34,9 @@ ODML_NS = Format.namespace()
 
 def rdflib_version_major():
     version_split = rdflib_version.split(".")
-    if len(version_split) < 3:
+    if len(version_split) < 3 or not version_split[0].isdigit():
         print("Could not parse rdflib version %s" % rdflib_version)
         return 0
-    elif not version_split[0].isdigit():
-        print("Could not parse rdflib version %s" % rdflib_version)
     return int(version_split[0])
 
 
