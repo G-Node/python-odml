@@ -77,7 +77,7 @@ release notes](https://github.com/G-Node/python-odml/releases).
 
 # Dependencies
 
-* Python 3.6+
+* Python 3.7+
 * Python packages:
 
   * lxml (version 3.7.2)
@@ -101,7 +101,9 @@ release notes](https://github.com/G-Node/python-odml/releases).
 
 ## Previous Python versions
 
-Python 2 has reached end of life. We will not keep any future versions of odml Python 2 compatible and will completely drop support for Python 2 with August 2020. We also recommend using a Python version >= 3.6. If a Python version < 3.6 is a requirement, the following dependency needs to be installed as well:
+Python 2 has reached end of life. Current and future versions of odml are not Python 2 compatible. We removed support 
+for Python 2 in August 2020 with version 1.5.2. We also recommend using a Python version >= 3.7. If a 
+Python version < 3.7 is a requirement, the following dependency needs to be installed as well:
 
 * pip install
   * enum34 (version 0.4.4)

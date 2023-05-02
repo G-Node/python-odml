@@ -9,8 +9,15 @@ import uuid
 import warnings
 
 from io import StringIO
+
+from rdflib import __version__ as rdflib_version
 from rdflib import Graph, Literal, URIRef
 from rdflib.graph import Seq
+try:
+    from rdflib.container import Seq as CollSeq
+except ImportError as exc:
+    # annoy people to upgrade their rdflib version but still support the usage
+    print("deprecated rdflib version. Please upgrade to the latest version.")
 from rdflib.namespace import XSD, RDF, RDFS
 
 import yaml
@@ -23,6 +30,14 @@ from .dict_parser import DictReader
 from .parser_utils import ParserException, RDF_CONVERSION_FORMATS
 
 ODML_NS = Format.namespace()
+
+
+def rdflib_version_major():
+    version_split = rdflib_version.split(".")
+    if len(version_split) < 3 or not version_split[0].isdigit():
+        print("Could not parse rdflib version %s" % rdflib_version)
+        return 0
+    return int(version_split[0])
 
 
 def load_rdf_subclasses():
@@ -133,16 +148,23 @@ class RDFWriter(object):
         # Once rdflib upgrades this should be reversed to RDF:li again!
         # see https://github.com/RDFLib/rdflib/issues/280
         # -- keep until supported
-        # bag = URIRef(ODML_NS + str(uuid.uuid4()))
-        # self.graph.add((bag, RDF.type, RDF.Bag))
-        # self.graph.add((curr_node, fmt.rdf_map(k), bag))
-        # for curr_val in values:
-        #     self.graph.add((bag, RDF.li, Literal(curr_val)))
-        counter = 1
-        for curr_val in values:
-            custom_predicate = "%s_%s" % (str(RDF), counter)
-            self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
-            counter = counter + 1
+        #bag = URIRef(ODML_NS + str(uuid.uuid4()))
+        #self.graph.add((bag, RDF.type, RDF.Bag))
+        #self.graph.add((parent_node, rdf_predicate, bag))
+        #for curr_val in values:
+        #    self.graph.add((bag, RDF.li, Literal(curr_val)))
+        if rdflib_version_major() >= 6:
+            seq_list = []
+            for curr_val in values:
+                seq_list.append(Literal(curr_val))
+            _ = CollSeq(self.graph, seq, seq_list)
+        else:
+            # manually create and use the value blank nodes order
+            counter = 1
+            for curr_val in values:
+                custom_predicate = "%s_%s" % (str(RDF), counter)
+                self.graph.add((seq, URIRef(custom_predicate), Literal(curr_val)))
+                counter = counter + 1
 
     def save_odml_list(self, parent_node, rdf_predicate, odml_list):
         """
@@ -349,9 +371,13 @@ class RDFWriter(object):
             self.section_subclasses[k] = val
 
     def __str__(self):
+        if rdflib_version_major() >= 6:
+            return self.convert_to_rdf().serialize(format='turtle')
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
 
     def __unicode__(self):
+        if rdflib_version_major() >= 6:
+            return self.convert_to_rdf().serialize(format='turtle')
         return self.convert_to_rdf().serialize(format='turtle').decode("utf-8")
 
     def get_rdf_str(self, rdf_format="turtle"):
@@ -370,6 +396,8 @@ class RDFWriter(object):
             msg = "%s Please choose from the list: %s" % (msg, list(RDF_CONVERSION_FORMATS))
             raise ValueError(msg)
 
+        if rdflib_version_major() >= 6:
+            return self.convert_to_rdf().serialize(format=rdf_format)
         return self.convert_to_rdf().serialize(format=rdf_format).decode("utf-8")
 
     def write_file(self, filename, rdf_format="turtle"):
@@ -516,18 +544,26 @@ class RDFReader(object):
             if attr[0] == "value" and elems:
                 prop_attrs[attr[0]] = []
 
-                # rdflib does not respect order with RDF.li items yet, see comment above
-                # support both RDF.li and rdf:_nnn for now.
-                # Remove rdf:_nnn once rdflib respects RDF.li order in an RDF.Seq obj.
-                values = list(self.graph.objects(subject=elems[0], predicate=RDF.li))
-                if values:
-                    for curr_val in values:
-                        prop_attrs[attr[0]].append(curr_val.toPython())
-                else:
-                    # rdf:__nnn part
+                if rdflib_version_major() >= 6:
+                    # rdflib version 6.x.x+ should support rdf:_nnn only, RDF.li
+                    # are not supported; reverse import the blank node values;
+                    # hopefully in the correct order.
                     val_seq = Seq(graph=self.graph, subject=elems[0])
                     for seq_item in val_seq:
                         prop_attrs[attr[0]].append(seq_item.toPython())
+                else:
+                    # rdflib does not respect order with RDF.li items yet, see comment above
+                    # support both RDF.li and rdf:_nnn for now.
+                    # Remove rdf:_nnn once rdflib respects RDF.li order in an RDF.Seq obj.
+                    values = list(self.graph.objects(subject=elems[0], predicate=RDF.li))
+                    if values:
+                        for curr_val in values:
+                            prop_attrs[attr[0]].append(curr_val.toPython())
+                    else:
+                        # rdf:__nnn part
+                        val_seq = Seq(graph=self.graph, subject=elems[0])
+                        for seq_item in val_seq:
+                            prop_attrs[attr[0]].append(seq_item.toPython())
 
             elif attr[0] == "id":
                 prop_attrs[attr[0]] = prop_uri.split("#", 1)[1]

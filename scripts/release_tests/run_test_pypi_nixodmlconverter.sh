@@ -3,7 +3,7 @@
 echo
 echo "-- MAKE SURE TO RUN THIS SCRIPT IN INTERACTIVE MODE '-i' --"
 
-PY_VER_ARRAY=("|3.5|3.6|3.7|3.8|3.9|3.10|")
+PY_VER_ARRAY=("|3.5|3.6|3.7|3.8|3.9|3.10|3.11|")
 
 if [[ $# != 1 ]]; then
     echo

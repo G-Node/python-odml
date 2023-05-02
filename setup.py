@@ -31,13 +31,18 @@ packages = [
 with open('README.md') as f:
     description_text = f.read()
 
-# pyparsing needs to be pinned to 2.4.7 for the time being. setup install fetches a pre-release
-# package that currently results in issues with the rdflib library.
-install_req = ["lxml", "pyyaml>=5.1", "rdflib==5.0.0", "docopt", "pathlib", "pyparsing==2.4.7"]
+install_req = ["docopt", "lxml", "pathlib", "pyyaml>=5.1", "rdflib>=6.0.0"]
+# owlrl depends on rdflib; update any changes in requirements-test.txt as well.
+tests_req = ["owlrl", "pytest", "requests"]
 
-# owlrl depends on rdflib - the pinned version should be removed once the version pin has also been
-# removed from rdflib. Also needs to be updated in requirements-test.txt
-tests_req = ["pytest", "owlrl==5.2.3", "requests"]
+# Keep support for for Python versions below 3.7; relevant for the
+# rdflib usage; rdflib >= 6 does not support Python versions below 3.7.
+if _python_version.minor <= 6:
+    # pyparsing needs to be pinned to 2.4.7 due to issues with the rdflib 5.0.0 library.
+    install_req = ["docopt", "lxml", "pathlib", "pyyaml>=5.1", "rdflib==5.0.0", "pyparsing==2.4.7"]
+
+    # owlrl depends on rdflib and needs to be pinned to a corresponding version.
+    tests_req = ["owlrl==5.2.3", "pytest", "requests"]
 
 setup(
     name='odML',
@@ -66,7 +71,7 @@ if _python_version.major < 3:
     msg = "Python 2 has reached end of live."
     msg += "\n\todML support for Python 2 has been dropped."
     print(msg)
-elif _python_version.major == 3 and _python_version.minor < 6:
+elif _python_version.major == 3 and _python_version.minor < 7:
     msg = "\n\nThis package is not tested with your Python version. "
     msg += "\n\tPlease consider upgrading to the latest Python distribution."
     print(msg)

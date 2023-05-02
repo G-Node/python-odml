@@ -1,13 +1,12 @@
-
 =============
 odML Tutorial
 =============
 
 :Author:
-    Lyuba Zehl;
+    Lyuba Zehl, Michael Sonntag;
     based on work by Hagen Fritsch
 :Release:
-    1.4
+    1.5
 :License:
     Creative Commons Attribution-ShareAlike 4.0 International
     `License <http://creativecommons.org/licenses/by-sa/4.0/>`_
@@ -89,7 +88,7 @@ the project name `python-odml <https://github.com/G-Node/python-odml>`_.
 Dependencies
 ------------
 
-The Python-odML library (version 1.4+) runs under Python 3.6+.
+The Python-odML library (version 1.5+) is tested and fully supported using Python 3.7+.
 
 Additionally, the Python-odML library depends on the lxml, pyyaml and rdflib python packages.
 
@@ -102,7 +101,9 @@ On Ubuntu, the dependency packages are available as ``python-lxml``, ``python-ya
 Note that on Ubuntu 14.04, the latter package additionally requires the
 installation of ``libxml2-dev``, ``libxslt1-dev``, and ``lib32z1-dev``.
 
-Python 2 has reached end of life. We will not keep any future versions of odml Python 2 compatible and also recommend using a Python version >= 3.6. If a Python version < 3.6 is a requirement, the following dependency needs to be installed as well:
+Python 2 has reached end of life. Current and future versions of odml are not Python 2 compatible. We removed support
+for Python 2 in August 2020 with version 1.5.2. We also recommend using a Python version >= 3.7. If a
+Python version < 3.7 is a requirement, the following dependency needs to be installed as well:
 
 The ``enum34`` package with a ``pip`` installation or ``python-enum`` using the OS package manager.
 

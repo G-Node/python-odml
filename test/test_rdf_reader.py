@@ -5,7 +5,7 @@ from rdflib import Literal
 
 from odml import Property, Section, Document
 from odml.format import Format
-from odml.tools.rdf_converter import RDFWriter, RDFReader
+from odml.tools.rdf_converter import RDFWriter, RDFReader, rdflib_version_major
 from odml.tools.parser_utils import ParserException
 
 ODMLNS = Format.namespace()
@@ -115,7 +115,11 @@ class TestRDFReader(unittest.TestCase):
         for rdf_sec in rdf_writer.graph.subjects(predicate=ODMLNS.hasName, object=Literal("sec1")):
             rdf_writer.graph.remove((rdf_sec, ODMLNS.hasName, Literal("sec1")))
 
-        new_graph = rdf_writer.graph.serialize(format="turtle").decode("utf-8")
+        # support both >=6.0.0 and <6.0.0 versions of rdflib for the time being
+        if rdflib_version_major() < 6:
+            new_graph = rdf_writer.graph.serialize(format="turtle").decode("utf-8")
+        else:
+            new_graph = rdf_writer.graph.serialize(format="turtle")
 
         with self.assertRaises(ParserException):
             RDFReader().from_string(new_graph, "turtle")
@@ -129,7 +133,11 @@ class TestRDFReader(unittest.TestCase):
         for rdf_sec in rdf_writer.graph.subjects(predicate=ODMLNS.hasName, object=Literal("prop1")):
             rdf_writer.graph.remove((rdf_sec, ODMLNS.hasName, Literal("prop1")))
 
-        new_graph = rdf_writer.graph.serialize(format="turtle").decode("utf-8")
+        # support both >=6.0.0 and <6.0.0 versions of rdflib for the time being
+        if rdflib_version_major() < 6:
+            new_graph = rdf_writer.graph.serialize(format="turtle").decode("utf-8")
+        else:
+            new_graph = rdf_writer.graph.serialize(format="turtle")
 
         with self.assertRaises(ParserException):
             RDFReader().from_string(new_graph, "turtle")
