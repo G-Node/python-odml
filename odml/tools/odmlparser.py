@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 A generic odML parsing module. It parses odML files and documents.
 All supported formats can be found in parser_utils.SUPPORTED_PARSERS.

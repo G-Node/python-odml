@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 The xmlparser module provides access to the XMLWriter and XMLReader classes.
 Both handle the conversion of odML documents from and to XML files and strings.
