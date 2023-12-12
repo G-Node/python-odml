@@ -31,7 +31,7 @@ packages = [
 with open('README.md') as f:
     description_text = f.read()
 
-install_req = ["docopt", "lxml", "pathlib", "pyyaml>=5.1", "rdflib>=6.0.0"]
+install_req = ["docopt", "lxml", "pyyaml>=5.1", "rdflib>=6.0.0"]
 # owlrl depends on rdflib; update any changes in requirements-test.txt as well.
 tests_req = ["owlrl", "pytest", "requests"]
 
@@ -39,7 +39,7 @@ tests_req = ["owlrl", "pytest", "requests"]
 # rdflib usage; rdflib >= 6 does not support Python versions below 3.7.
 if _python_version.minor <= 6:
     # pyparsing needs to be pinned to 2.4.7 due to issues with the rdflib 5.0.0 library.
-    install_req = ["docopt", "lxml", "pathlib", "pyyaml>=5.1", "rdflib==5.0.0", "pyparsing==2.4.7"]
+    install_req = ["docopt", "lxml", "pyyaml>=5.1", "rdflib==5.0.0", "pyparsing==2.4.7"]
 
     # owlrl depends on rdflib and needs to be pinned to a corresponding version.
     tests_req = ["owlrl==5.2.3", "pytest", "requests"]
