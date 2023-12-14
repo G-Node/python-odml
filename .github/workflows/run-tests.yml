@@ -24,7 +24,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          python setup.py install
+          pip install . install
           pip install -r requirements-test.txt
       - name: Run tests
         run: pytest
@@ -46,7 +46,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          python setup.py install
+          pip install . install
           pip install -r requirements-test.txt
       - name: Run tests
         run: pytest
@@ -72,7 +72,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          python setup.py install
+          pip install .
           pip install -r requirements-test.txt
       - name: Run tests
         run: pytest
@@ -98,7 +98,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          python setup.py install
+          pip install .
           pip install -r requirements-test.txt
       - name: Run tests
         run: pytest
@@ -114,7 +114,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          python setup.py install
+          pip install .
           pip install -r requirements-test.txt
           pip install pytest coveralls
       - name: Create coverage
@@ -134,7 +134,7 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: |
-          python setup.py install
+          pip install .
           pip install -r requirements-test.txt
           pip install pytest pytest-cov
       - name: Create coverage
