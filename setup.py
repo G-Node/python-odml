@@ -23,6 +23,7 @@ CLASSIFIERS = infodict["CLASSIFIERS"]
 packages = [
     'odml',
     'odml.rdf',
+    'odml.resources',
     'odml.scripts',
     'odml.tools',
     'odml.tools.converters'
